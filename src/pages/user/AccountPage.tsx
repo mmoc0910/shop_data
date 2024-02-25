@@ -13,7 +13,9 @@ import { useSelector } from "react-redux";
 import { Radio, Tooltip } from "antd";
 import { copyToClipboard } from "../../utils/copyToClipboard";
 import { countries } from "../../constants";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { AuthState } from "../../store/auth/authSlice";
+import { api } from "../../api";
 
 const schema = yup
   .object({
@@ -32,9 +34,7 @@ const schema = yup
   })
   .required();
 const AccountPage = () => {
-  const { _id, email, level } = useSelector(
-    (state: RootState) => state.auth
-  );
+  const { _id, email, level } = useSelector((state: RootState) => state.auth);
   const { value: tooglePassword, handleToogleValue: handleTooglePassword } =
     useToogleValue();
   const {
@@ -161,18 +161,33 @@ const schemaProfile = yup
   .required();
 
 const ChangeProfile = () => {
-  const auth = useSelector((state: RootState) => state.auth);
+  const { _id } = useSelector((state: RootState) => state.auth);
+  const [user, setUser] = useState<AuthState>();
   const { handleSubmit, control, setValue, watch } = useForm({
     resolver: yupResolver(schemaProfile),
     mode: "onSubmit",
   });
   useEffect(() => {
-    if (auth) {
-      auth.country && setValue("country", auth.country);
-      auth.phone && setValue("phone", auth.phone);
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [_id]);
+  const fetchData = async () => {
+    try {
+      const resultUser = await api.get<AuthState>(`/users/${_id}`);
+      console.log('result - ', resultUser.data)
+      setUser(resultUser.data);
+    } catch (error) {
+      console.log("error - ", error);
+      // toast.error(messages.error);
     }
-  }, [auth, setValue]);
-  const onSubmit = (data: unknown) => {
+  };
+  useEffect(() => {
+    if (user) {
+      user.country && setValue("country", user.country);
+      user.phone && setValue("phone", user.phone);
+    }
+  }, [user, setValue]);
+  const onSubmit = (data: { phone: string; country: string }) => {
     try {
       console.log("data sign in - ", data);
     } catch (error) {
