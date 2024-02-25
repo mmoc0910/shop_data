@@ -74,7 +74,7 @@ const SignUpPage = () => {
         : navigation("/user/dashboard");
     }
   }, [email, navigation, role]);
-  const country = watch("country", "en");
+  const country = watch("country", "vi");
   const purpose = watch("purpose", 1);
   console.log("country - ", country);
   const onSubmit = async (data: {

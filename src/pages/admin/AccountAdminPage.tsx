@@ -138,7 +138,7 @@ const AccountAdminPage = () => {
         key: "money",
         render: (_: string, record: AuthState) => (
           <p className="font-primary text-sm">
-            {record.money && VND.format(record.money)}VND
+            {record.cash && VND.format(record.cash)}VND
           </p>
         ),
       },

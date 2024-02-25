@@ -10,6 +10,7 @@ export interface AuthState {
   purpose?: number;
   money?: number;
   transaction?: number;
+  cash?: number;
   _id?: string;
   createdAt?: Date;
   updatedAt?: Date;

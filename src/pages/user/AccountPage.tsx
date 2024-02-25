@@ -10,8 +10,10 @@ import IconEyeToogle from "../../icons/IconEyeToogle";
 import Button from "../../components/button/Button";
 import { RootState } from "../../store/configureStore";
 import { useSelector } from "react-redux";
-import { Tooltip } from "antd";
+import { Radio, Tooltip } from "antd";
 import { copyToClipboard } from "../../utils/copyToClipboard";
+import { countries } from "../../constants";
+import { useEffect } from "react";
 
 const schema = yup
   .object({
@@ -30,7 +32,7 @@ const schema = yup
   })
   .required();
 const AccountPage = () => {
-  const { _id, email, level, phone } = useSelector(
+  const { _id, email, level } = useSelector(
     (state: RootState) => state.auth
   );
   const { value: tooglePassword, handleToogleValue: handleTooglePassword } =
@@ -58,7 +60,7 @@ const AccountPage = () => {
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             {" "}
-            <p>
+            <p className="text-sm">
               <span className="font-medium">Mã CTV:</span> {_id}
             </p>
             <Tooltip title="copy">
@@ -84,17 +86,18 @@ const AccountPage = () => {
             </Tooltip>
           </div>
 
-          <p>
+          <p className="text-sm">
             <span className="font-medium">Email:</span> {email}
           </p>
-          <p>
+          {/* <p className="text-sm">
             <span className="font-medium">Số điện thoại:</span> {phone}
-          </p>
-          <p>
+          </p> */}
+          <p className="text-sm">
             <span className="font-medium">Cấp Độ:</span>{" "}
             {level === 0 ? "Công tác  viên" : `Đại lý cấp ${level}`}
           </p>
         </div>
+        <ChangeProfile />
       </div>
       <div className="space-y-4 col-span-5">
         <Heading>Đổi Mật Khẩu</Heading>
@@ -146,6 +149,69 @@ const AccountPage = () => {
         </form>
       </div>
     </div>
+  );
+};
+
+const schemaProfile = yup
+  .object({
+    // ctv: yup.string(),
+    phone: yup.string().required("This field is required"),
+    country: yup.string().required("This field is required"),
+  })
+  .required();
+
+const ChangeProfile = () => {
+  const auth = useSelector((state: RootState) => state.auth);
+  const { handleSubmit, control, setValue, watch } = useForm({
+    resolver: yupResolver(schemaProfile),
+    mode: "onSubmit",
+  });
+  useEffect(() => {
+    if (auth) {
+      auth.country && setValue("country", auth.country);
+      auth.phone && setValue("phone", auth.phone);
+    }
+  }, [auth, setValue]);
+  const onSubmit = (data: unknown) => {
+    try {
+      console.log("data sign in - ", data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const country = watch("country");
+  return (
+    <form
+      className="space-y-[15px] md:space-y-5"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <FormGroup>
+        <Label htmlFor="email">Số điện thoại*</Label>
+        <Input name="phone" placeholder={""} control={control} />
+      </FormGroup>
+      <FormGroup>
+        <Label htmlFor="country">Quốc gia*</Label>
+        <div className="grid grid-cols-4 gap-5">
+          {countries.map((item) => (
+            <Radio
+              checked={item.key === country}
+              key={item.key}
+              onClick={() => setValue("country", item.key)}
+            >
+              {item.title}
+            </Radio>
+          ))}
+        </div>
+        {/* {errors.country?.message ? (
+          <p className="text-sm font-medium text-error">
+            {errors.country.message}
+          </p>
+        ) : null} */}
+      </FormGroup>
+      <Button type="submit" className="w-full text-white bg-primary">
+        Lưu
+      </Button>
+    </form>
   );
 };
 
