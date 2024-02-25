@@ -1,4 +1,4 @@
-import React from "react";
+
 import Container from "../common/Container";
 
 const AboutBox = () => {

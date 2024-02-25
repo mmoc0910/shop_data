@@ -5,12 +5,12 @@ import { toast } from "react-toastify";
 import { messages } from "../../constants";
 import { Link } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { Checkbox } from "../../components/checkbox";
+// import { Checkbox } from "../../components/checkbox";
 
 const KeyAdminPage = () => {
   const [keys, setKeys] = useState<KeySeverType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectRowKeys, setSelectRowKeys] = useState<number[]>([]);
+  // const [selectRowKeys, setSelectRowKeys] = useState<number[]>([]);
   useEffect(() => {
     handleFetchData();
   }, []);
@@ -43,14 +43,14 @@ const KeyAdminPage = () => {
           <div className="p-5 rounded-lg bg-slate-400 space-y-3 text-white">
             <p className="text-lg">Tổng số key đang active</p>
             <p className="font-semibold text-4xl">
-              {keys.filter((item) => item.used).length}
+              {/* {keys.filter((item) => item.used).length} */}
             </p>
           </div>
           <div className="p-5 rounded-lg bg-slate-400 space-y-3 text-white">
             <p className="text-lg">Tổng số key có thể cấp</p>
-            <p className="font-semibold text-4xl">
+            {/* <p className="font-semibold text-4xl">
               {keys.filter((item) => !item.used).length}
-            </p>
+            </p> */}
           </div>
         </div>
         <div className="space-y-7">
@@ -83,7 +83,7 @@ const KeyAdminPage = () => {
                   key={uuidv4()}
                 >
                   <div className="flex items-center">
-                    <div className="px-4">
+                    {/* <div className="px-4">
                       <Checkbox
                         checked={selectRowKeys.some((i) => i === item.keyId)}
                         onClick={() =>
@@ -94,7 +94,7 @@ const KeyAdminPage = () => {
                           )
                         }
                       />
-                    </div>
+                    </div> */}
                     <div className="px-4">{item.keyId}</div>
                     <div className="flex-1 px-4">
                       {item.name}

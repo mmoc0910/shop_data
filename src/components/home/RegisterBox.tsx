@@ -12,8 +12,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../api";
 import { AuthState, setAuth } from "../../store/auth/authSlice";
 import { useDispatch } from "react-redux";
-import { AxiosError } from "axios";
-import { toast } from "react-toastify";
 
 const schema = yup
   .object({
@@ -58,7 +56,7 @@ const RegisterBox = () => {
       navigation("/#home");
     } catch (error) {
       console.log(error);
-      toast.error(error?.response.data.message);
+      // toast.error(error?.response.data.message);
     }
   };
   return (
