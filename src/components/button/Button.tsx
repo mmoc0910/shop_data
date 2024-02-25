@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import classNames from "../../utils/classNames";
 
 type ButtonType = {
-  type: "button" | "submit" | "reset" | undefined;
+  type?: "button" | "submit" | "reset";
   children: React.ReactNode;
   className?: string;
   href?: string;

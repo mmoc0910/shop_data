@@ -4,7 +4,7 @@ import classNames from "../../utils/classNames";
 type CheckboxType = {
   checked?: boolean;
   onClick?: () => void;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 const Checkbox: FC<CheckboxType> = ({
   checked = false,
@@ -15,7 +15,7 @@ const Checkbox: FC<CheckboxType> = ({
     <div className="flex items-start gap-4 max-sm:items-start max-md:items-center">
       <div
         className={classNames(
-          "w-4 h-4 rounded-[4px] border flex items-center justify-center transition-all duration-75",
+          "w-4 h-4 rounded-[4px] border flex items-center justify-center transition-all duration-75 cursor-pointer",
           checked
             ? "border-primary bg-primary text-white"
             : "border-text4 text-white dark:bg-dark-secondary dark:border-text3 dark:text-dark-secondary"

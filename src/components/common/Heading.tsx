@@ -6,7 +6,7 @@ const Heading: FC<HeadingType> = ({ children, className = "mb-5" }) => {
   return (
     <h2
       className={classNames(
-        "text-lg font-semibold text-text1 dark:text-white",
+        "text-lg font-semibold text-text1 dark:text-white before:",
         className
       )}
     >

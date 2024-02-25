@@ -1,9 +1,9 @@
-import React from "react";
+
 
 const IconEdit = () => {
   return (
     <svg
-      className="w-[18px] h-[18px] md:w-5 md:h-5 lg:w-6 lg:h-6"
+      className="w-5 h-5"
       width={24}
       height={24}
       viewBox="0 0 24 24"

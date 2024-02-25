@@ -1,4 +1,3 @@
-import React from "react";
 import Heading from "../../components/common/Heading";
 import { useToogleValue } from "../../hooks/useToogleValue";
 import { useForm } from "react-hook-form";
@@ -9,6 +8,10 @@ import { Label } from "../../components/label";
 import { Input } from "../../components/input";
 import IconEyeToogle from "../../icons/IconEyeToogle";
 import Button from "../../components/button/Button";
+import { RootState } from "../../store/configureStore";
+import { useSelector } from "react-redux";
+import { Tooltip } from "antd";
+import { copyToClipboard } from "../../utils/copyToClipboard";
 
 const schema = yup
   .object({
@@ -27,6 +30,9 @@ const schema = yup
   })
   .required();
 const AccountPage = () => {
+  const { _id, email, level, phone } = useSelector(
+    (state: RootState) => state.auth
+  );
   const { value: tooglePassword, handleToogleValue: handleTooglePassword } =
     useToogleValue();
   const {
@@ -37,6 +43,7 @@ const AccountPage = () => {
     resolver: yupResolver(schema),
     mode: "onSubmit",
   });
+
   const onSubmit = (data: unknown) => {
     try {
       console.log("data sign in - ", data);
@@ -45,52 +52,54 @@ const AccountPage = () => {
     }
   };
   return (
-    <div className="space-y-16">
-      <div className="space-y-4">
+    <div className="gap-16 grid grid-cols-10">
+      <div className="space-y-4 col-span-5">
         <Heading>Thông Tin Tài Khoản</Heading>
         <div className="space-y-4">
-          <p>
-            <span className="font-medium">Id:</span> 14968
-          </p>
-          <p>
-            <span className="font-medium">Email:</span> Account@gmail.com
-          </p>
-          <p>
-            <span className="font-medium">Cấp Độ:</span> 0
-          </p>
-          <p>
-            <span className="font-medium">Giảm Giá Gói:</span> 0%
-          </p>
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-2">
+            {" "}
             <p>
-              <span className="font-medium">Số dư:</span> 0
-              <span className="underline">đ</span>
+              <span className="font-medium">Mã CTV:</span> {_id}
             </p>
-            <button
-              type="button"
-              className="bg-secondary px-4 py-2 rounded-xl text-white font-medium"
-            >
-              Nạp số dư
-            </button>
+            <Tooltip title="copy">
+              <button
+                className="-translate-y-[2px]"
+                onClick={() => _id && copyToClipboard(_id)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="w-5 h-5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"
+                  />
+                </svg>
+              </button>
+            </Tooltip>
           </div>
-          <div className="flex items-center gap-5">
-            <p>
-              <span className="font-medium">Hoa hồng:</span> 0
-              <span className="underline">đ</span>
-            </p>
-            <button
-              type="button"
-              className="bg-secondary px-4 py-2 rounded-xl text-white font-medium"
-            >
-              Rút hoa hồng
-            </button>
-          </div>
+
+          <p>
+            <span className="font-medium">Email:</span> {email}
+          </p>
+          <p>
+            <span className="font-medium">Số điện thoại:</span> {phone}
+          </p>
+          <p>
+            <span className="font-medium">Cấp Độ:</span>{" "}
+            {level === 0 ? "Công tác  viên" : `Đại lý cấp ${level}`}
+          </p>
         </div>
       </div>
-      <div className="space-y-4">
+      <div className="space-y-4 col-span-5">
         <Heading>Đổi Mật Khẩu</Heading>
         <form
-          className="space-y-[15px] md:space-y-5 w-1/2"
+          className="space-y-[15px] md:space-y-5"
           onSubmit={handleSubmit(onSubmit)}
         >
           <FormGroup>

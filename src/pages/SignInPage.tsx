@@ -1,5 +1,5 @@
 import IconEyeToogle from "../icons/IconEyeToogle";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LayoutAuthentication from "../layouts/LayoutAuthentication";
 import { useToogleValue } from "../hooks/useToogleValue";
 import { useForm } from "react-hook-form";
@@ -9,6 +9,13 @@ import Button from "../components/button/Button";
 import FormGroup from "../components/common/FormGroup";
 import { Label } from "../components/label";
 import { Input } from "../components/input";
+import { useDispatch, useSelector } from "react-redux";
+import { api } from "../api";
+import { AuthState, setAuth } from "../store/auth/authSlice";
+import { RootState } from "../store/configureStore";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const schema = yup
   .object({
@@ -19,22 +26,47 @@ const schema = yup
     password: yup
       .string()
       .required("This field is required")
-      .min(8, "Minimum of 8 characters"),
+      // .min(8, "Minimum of 8 characters"),
   })
   .required();
 
 const SignInPage = () => {
+  const { email, role } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
+  const navigation = useNavigate();
   const { value: tooglePassword, handleToogleValue: handleTooglePassword } =
     useToogleValue();
   const { handleSubmit, control } = useForm({
     resolver: yupResolver(schema),
     mode: "onSubmit",
   });
-  const onSubmit = (data: unknown) => {
+  useEffect(() => {
+    if (email) {
+      role === 1
+        ? navigation("/admin/dashboard")
+        : navigation("/user/dashboard");
+    }
+  }, [email, navigation, role]);
+  const onSubmit = async (data: { email: string; password: string }) => {
     try {
       console.log("data sign in - ", data);
+      const result = await api.post<{ data: AuthState }>("/users/login", data);
+      console.log("resut - ", result);
+      dispatch(setAuth(result.data.data));
+      if (result.data.data.role === 1) {
+        navigation("/admin/dashboard");
+      } else if (result.data.data.role === 2) {
+        navigation("/user/dashboard");
+      }
+      toast.success("Đăng nhập thành công");
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error)) {
+        console.log("error message: ", error);
+        toast.error(error.response?.data.message);
+      } else {
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
+      }
     }
   };
   return (
@@ -48,7 +80,6 @@ const SignInPage = () => {
           Sign up
         </Link>
       </p>
-      {/* <ButtonGoogle text="Sign in with google"></ButtonGoogle> */}
       <form
         className="space-y-[15px] md:space-y-5"
         onSubmit={handleSubmit(onSubmit)}

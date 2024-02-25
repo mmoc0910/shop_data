@@ -1,22 +1,34 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
-interface AuthState {
-  token?: string;
+export interface AuthState {
+  level?: number;
+  email?: string;
+  role?: 1 | 2;
+  phone?: string;
+  country?: string;
+  purpose?: number;
+  money?: number;
+  transaction?: number;
+  _id?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  __v?: number;
 }
 
 // Define the initial state using that type
-const initialState: AuthState = {
-  token: undefined,
-};
+const initialState: AuthState = {};
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setAuth: (_, action: PayloadAction<AuthState>) => ({
-      token: action.payload.token,
-    }),
+    setAuth: (_, action: PayloadAction<AuthState>) =>
+      action.payload
+        ? {
+            ...action.payload,
+          }
+        : {},
   },
 });
 

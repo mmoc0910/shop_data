@@ -1,5 +1,4 @@
 import React, { FC } from "react";
-import { Link } from "react-router-dom";
 import bg from "../assets/Ellipse.png";
 import Logo from "../components/logo/Logo";
 
