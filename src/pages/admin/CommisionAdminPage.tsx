@@ -52,30 +52,34 @@ const CommisionAdminPage = () => {
     }
   };
   return (
-    <div className="space-y-6">
-      <Heading>Chính sách CTV</Heading>
-      <div className="">
-        <form
-          className="space-y-[15px] md:space-y-5"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <FormGroup>
-            <Label htmlFor="value">Tỷ lệ % hoa hồng ( % )</Label>
-            <div className="flex gap-6">
-              <Input
-                name="value"
-                type="number"
-                placeholder={"% Hoa hồng"}
-                control={control}
-                containerclass="flex-1"
-              />
-            </div>
-          </FormGroup>{" "}
-          <Button type="submit" className="px-5 text-white bg-primary">
-            Chỉnh sửa
-          </Button>
-        </form>
-        <Collab />
+    <div className="grid grid-cols-2 gap-20">
+      <div className="space-y-6">
+        <Heading>Chính sách CTV</Heading>
+        <div className="">
+          <form
+            className="space-y-[15px] md:space-y-5"
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <FormGroup>
+              <Label htmlFor="value">Tỷ lệ % hoa hồng ( % )</Label>
+              <div className="flex gap-6">
+                <Input
+                  name="value"
+                  type="number"
+                  placeholder={"% Hoa hồng"}
+                  control={control}
+                  containerclass="flex-1"
+                />
+              </div>
+            </FormGroup>{" "}
+            <Button type="submit" className="px-5 text-white bg-primary">
+              Chỉnh sửa
+            </Button>
+          </form>
+        </div>
+      </div>
+      <div className="space-y-6">
+        <Heading>Chính sách Đại lý</Heading> <Collab />
       </div>
     </div>
   );
@@ -130,10 +134,9 @@ const Collab = () => {
   };
   return (
     <form
-      className="space-y-[15px] md:space-y-6 mt-6"
+      className="space-y-[15px] md:space-y-6"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <Heading>Chính sách Đại lý</Heading>
       <FormGroup>
         <Label htmlFor="value">Đại lý cấp 1</Label>
         <Input

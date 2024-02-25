@@ -16,6 +16,8 @@ import { countries } from "../../constants";
 import { useEffect, useState } from "react";
 import { AuthState } from "../../store/auth/authSlice";
 import { api } from "../../api";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const schema = yup
   .object({
@@ -174,7 +176,7 @@ const ChangeProfile = () => {
   const fetchData = async () => {
     try {
       const resultUser = await api.get<AuthState>(`/users/${_id}`);
-      console.log('result - ', resultUser.data)
+      console.log("result - ", resultUser.data);
       setUser(resultUser.data);
     } catch (error) {
       console.log("error - ", error);
@@ -187,11 +189,19 @@ const ChangeProfile = () => {
       user.phone && setValue("phone", user.phone);
     }
   }, [user, setValue]);
-  const onSubmit = (data: { phone: string; country: string }) => {
+  const onSubmit = async (data: { phone: string; country: string }) => {
     try {
       console.log("data sign in - ", data);
+      await api.patch(`/users/${_id}`, data);
+      toast.success("Chỉnh sửa thành công");
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error)) {
+        console.log("error message: ", error);
+        toast.error(error.response?.data.message);
+      } else {
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
+      }
     }
   };
   const country = watch("country");

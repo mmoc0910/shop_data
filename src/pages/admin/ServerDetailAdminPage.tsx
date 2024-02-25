@@ -15,6 +15,7 @@ import { Input } from "../../components/input";
 import Button from "../../components/button/Button";
 import IconEdit from "../../icons/IconEdit";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const ServerDetailAdminPage = () => {
   const { serverId } = useParams();
@@ -38,70 +39,18 @@ const ServerDetailAdminPage = () => {
       toast.error(messages.error);
     }
   };
-  const handleSync = async (apiUrl: string, fingerPrint: string) => {
-    try {
-      await api.post("/servers", {
-        apiUrl,
-        fingerPrint,
-      });
-      handleFetchServerDetail();
-    } catch (error) {
-      console.log("error - ", error);
-    }
-  };
-  // const handleAddNewKey = async (apiUrl: string, fingerPrint: string) => {
+  // const handleSync = async (apiUrl: string, fingerPrint: string) => {
   //   try {
-  //     const result = await api.post("/servers/add-key", {
+  //     await api.post("/servers", {
   //       apiUrl,
   //       fingerPrint,
   //     });
-  //     console.log("data - ", result.data);
-  //     handleSync(apiUrl, fingerPrint);
-  //     // handleFetchServerDetail()
-  //     toast.success(result.data.message);
+  //     handleFetchServerDetail();
   //   } catch (error) {
   //     console.log("error - ", error);
   //   }
   // };
-  // const handleRenameKey = async (
-  //   keyId: number,
-  //   name: string,
-  //   apiUrl: string,
-  //   fingerPrint: string
-  // ) => {
-  //   try {
-  //     await api.patch(`/servers/rename-key/${keyId}`, {
-  //       name,
-  //       apiUrl,
-  //       fingerPrint,
-  //     });
-  //     handleSync(apiUrl, fingerPrint);
-  //     toast.success("Đổi tên thành công");
-  //   } catch (error) {
-  //     console.log(error);
-  //     toast.error(messages.error);
-  //   }
-  // };
-  // const handleAddLimitData = async (
-  //   keyId: number,
-  //   bytes: number,
-  //   apiUrl: string,
-  //   fingerPrint: string
-  // ) => {
-  //   try {
-  //     await api.patch(`/servers/add-data-limit/${keyId}`, {
-  //       bytes,
-  //       apiUrl,
-  //       fingerPrint,
-  //     });
-  //     // handleSync(apiUrl, fingerPrint);
-  //     handleFetchServerDetail();
-  //     toast.success("Thành công");
-  //   } catch (error) {
-  //     console.log(error);
-  //     toast.error(messages.error);
-  //   }
-  // };
+
   const handleRemoveKey = async (
     keyId: number,
     apiUrl: string,
@@ -115,13 +64,13 @@ const ServerDetailAdminPage = () => {
         confirmButtonColor: "#1DC071",
         cancelButtonColor: "#d33",
         cancelButtonText: "Thoát",
-        confirmButtonText: "Có, mua ngay",
+        confirmButtonText: "Xóa",
       }).then(async (result) => {
         if (result.isConfirmed) {
           await api.delete(`/servers/remove-key/${keyId}`, {
             data: { apiUrl, fingerPrint },
           });
-          handleSync(apiUrl, fingerPrint);
+          // handleSync(apiUrl, fingerPrint);
           toast.success("Xóa thành công");
         }
       });
@@ -189,12 +138,12 @@ const ServerDetailAdminPage = () => {
                 </div>
                 <div>{serverDetail.portForNewAccessKeys}</div>
               </div>
-              <div className="col-span-1 border border-gray-200 rounded-lg p-3 space-y-1">
+              {/* <div className="col-span-1 border border-gray-200 rounded-lg p-3 space-y-1">
                 <div className="font-medium text-gray-500">
                   Data transferred / last 30 days
                 </div>
                 <div>{serverDetail.name}</div>
-              </div>
+              </div> */}
               <div className="col-span-1 border border-gray-200 rounded-lg p-3 space-y-1">
                 <div className="font-medium text-gray-500">Created</div>
                 <div>
@@ -222,7 +171,7 @@ const ServerDetailAdminPage = () => {
                 </div>
               </div>
               <div className="col-span-1 border border-gray-200 rounded-lg p-3 space-y-1">
-                <div className="font-medium">Server version</div>
+                <div className="font-medium text-gray-500">Server version</div>
                 <div>{serverDetail.version}</div>
               </div>
             </div>
@@ -239,6 +188,7 @@ const ServerDetailAdminPage = () => {
                 <div className="col-span-1 pb-3 flex">
                   <div className="px-4 font-semibold">#</div>
                   <div className="flex-1 px-4 font-semibold">Name</div>
+                  <div className="flex-1 px-4 font-semibold">Email</div>
                   <div className="px-4 font-semibold">Usage</div>
                 </div>
                 <div className="col-span-1 pb-3 flex">
@@ -268,6 +218,7 @@ const ServerDetailAdminPage = () => {
                             }
                           /> */}
                         </div>
+                        <div className="flex-1 px-4">{item.account}</div>
                         <div className="px-4">
                           {(item.dataUsage / 1000 / 1000 / 1000).toFixed(2)} GB
                         </div>
@@ -294,29 +245,32 @@ const ServerDetailAdminPage = () => {
                             className="bg-secondary20 text-white rounded-lg p-3 font-semibold"
                             onClick={async () => {
                               try {
-                                Swal.fire({
+                                const { isConfirmed } = await Swal.fire({
                                   title: `Bạn có nâng cấp key này`,
                                   icon: "success",
                                   showCancelButton: true,
                                   confirmButtonColor: "#1DC071",
                                   cancelButtonColor: "#d33",
                                   cancelButtonText: "Thoát",
-                                  confirmButtonText: "Có, mua ngay",
-                                }).then(async (result) => {
-                                  if (result.isConfirmed) {
-                                    await api.patch(
-                                      `/keys/upgrade/${item._id}`
-                                    );
-                                    handleFetchServerDetail();
-                                    toast.success("Thành công");
-                                  }
+                                  confirmButtonText: "Có, nâng cấp ngay",
                                 });
+                                if (isConfirmed) {
+                                  await api.patch(`/keys/upgrade/${item._id}`);
+                                  handleFetchServerDetail();
+                                  toast.success("Thành công");
+                                }
                               } catch (error) {
-                                console.log(error);
+                                if (axios.isAxiosError(error)) {
+                                  console.log("error message: ", error);
+                                  toast.error(error.response?.data.message);
+                                } else {
+                                  console.log("unexpected error: ", error);
+                                  return "An unexpected error occurred";
+                                }
                               }
                             }}
                           >
-                            Upgrade
+                            Gia hạn
                           </button>
                           <button
                             className="bg-error text-white rounded-lg p-3"

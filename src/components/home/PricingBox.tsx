@@ -86,7 +86,7 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
             console.log("abvdhsdv");
             if (_id) {
               try {
-                Swal.fire({
+                const { isConfirmed } = await Swal.fire({
                   title: `Bạn có muốn mua gói ${name}`,
                   text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
                   icon: "success",
@@ -95,18 +95,16 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
                   cancelButtonColor: "#d33",
                   cancelButtonText: "Thoát",
                   confirmButtonText: "Có, mua ngay",
-                }).then(async (result) => {
-                  if (result.isConfirmed) {
-                    setLoading(true);
-                    await api.post("/gists", {
-                      userId: _id,
-                      planId: plan._id,
-                    });
-                    setLoading(false);
-                    toast.success("Mua thành công");
-                    navigation("/user/order");
-                  }
                 });
+                if (isConfirmed) {
+                  setLoading(true);
+                  await api.post("/gists", {
+                    userId: _id,
+                    planId: plan._id,
+                  });
+                  toast.success("Mua thành công");
+                  navigation("/user/order");
+                }
               } catch (error) {
                 if (axios.isAxiosError(error)) {
                   console.log("error message: ", error);
@@ -115,6 +113,8 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
                   console.log("unexpected error: ", error);
                   return "An unexpected error occurred";
                 }
+              } finally {
+                setLoading(false);
               }
             } else {
               navigation("/sign-in");

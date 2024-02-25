@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { api } from "../../api";
 import Heading from "../../components/common/Heading";
-import { ServerType } from "../../type";
+import { KeySeverType, ServerType } from "../../type";
 import { toast } from "react-toastify";
 import { messages } from "../../constants";
 import { Link } from "react-router-dom";
@@ -42,6 +42,7 @@ const ServerAdminPage = () => {
       toast.error(messages.error);
     }
   };
+
   const onSubmit = async (data: {
     apiUrl: string;
     fingerPrint: string;
@@ -71,7 +72,7 @@ const ServerAdminPage = () => {
         confirmButtonColor: "#1DC071",
         cancelButtonColor: "#d33",
         cancelButtonText: "Thoát",
-        confirmButtonText: "Có, mua ngay",
+        confirmButtonText: "Xóa",
       }).then(async (result) => {
         if (result.isConfirmed) {
           await api.delete(`/servers/${_id}`);
@@ -132,12 +133,7 @@ const ServerAdminPage = () => {
         dataIndex: "usedkey",
         key: "usedkey",
         render: (_: string, record: ServerType) => (
-          <Link
-            to={`/admin/server/${record._id}`}
-            className="font-primary text-sm"
-          >
-            {10}
-          </Link>
+          <TotalKeyUsage serverId={record._id} />
         ),
       },
       {
@@ -194,44 +190,25 @@ const ServerAdminPage = () => {
 
       <Heading>Danh sách máy chủ({servers.length})</Heading>
       <Table dataSource={servers} columns={columns} />
-      {/* {servers.length > 0 ? (
-        <div className="grid grid-cols-2 gap-8" key={uuidv4()}>
-          {servers.map((server) => (
-            <div className="p-5 rounded-xl shadow-xl cursor-pointer space-y-5" key={uuidv4()}>
-              <Link to={`/admin/server/${server._id}`} className="space-y-3">
-                <div className="grid grid-cols-2 gap-y-4">
-                  <p>
-                    Server name:{" "}
-                    <span className="font-semibold text-lg">{server.name}</span>
-                  </p>
-                  <p>
-                    Số key giới hạn:{" "}
-                    <span className="font-semibold text-lg">{10}</span>
-                  </p>
-                  <p>
-                    Tổng key đã sử dụng:{" "}
-                    <span className="font-semibold text-lg">
-                      {server.listKeys.filter((item) => item.used).length}
-                    </span>
-                  </p>
-                </div>
-              </Link>
-              <button
-                className="text-white bg-error px-5 rounded-lg py-3 font-semibold"
-                onClick={() => handleRemoveServer(server._id)}
-              >
-                Xóa máy chủ
-              </button>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-center pt-20 font-medium">
-          Chưa có máy chủ nào được thêm
-        </p>
-      )} */}
     </div>
   );
+};
+
+const TotalKeyUsage = ({ serverId }: { serverId: string }) => {
+  const [total, setTotal] = useState<number>(0);
+  useEffect(() => {
+    (async () => {
+      try {
+        const result = await api.get<KeySeverType[]>(
+          `/keys?serverId=${serverId}&status=1`
+        );
+        setTotal(result.data.length);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, [serverId]);
+  return <p className="font-primary text-sm">{total}</p>;
 };
 
 export default ServerAdminPage;

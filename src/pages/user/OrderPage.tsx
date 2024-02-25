@@ -14,7 +14,9 @@ import UpdateExtension from "../../components/user/UpdateExtension";
 import { copyToClipboard } from "../../utils/copyToClipboard";
 import Swal from "sweetalert2";
 import Loading from "../../components/common/Loading";
+import axios from "axios";
 
+const linkGist = import.meta.env.VITE_LINK_GIST;
 const OrderPage = () => {
   const [loadingTable, setLoadingTable] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -32,7 +34,7 @@ const OrderPage = () => {
   const handleFetchData = async () => {
     try {
       const result = await api.get<GistType[]>(`/gists?userId=${_id}`);
-      console.log('data - ', result.data)
+      console.log("data - ", result.data);
       setListGist(result.data);
     } catch (error) {
       console.log("error - ", error);
@@ -52,11 +54,12 @@ const OrderPage = () => {
   }, []);
   const handleUpgradeBrandWidth = async (
     extendPlanId: string,
-    gistId: string
+    gistId: string,
+    bandWidth: number
   ) => {
     try {
-      Swal.fire({
-        title: `Bạn có muốn mua thêm băng thông`,
+      const { isConfirmed } = await Swal.fire({
+        title: `Bạn có muốn mua thêm ${bandWidth}GB băng thông`,
         // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
         icon: "success",
         showCancelButton: true,
@@ -64,25 +67,38 @@ const OrderPage = () => {
         cancelButtonColor: "#d33",
         cancelButtonText: "Thoát",
         confirmButtonText: "Có, mua ngay",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          setLoading(true);
-          await api.post("/upgrades/band-width", { gistId, extendPlanId });
-          handleOk();
-          handleFetchData();
-          setLoading(false);
-          toast.success("Mua thêm băng thông thành công");
-        }
       });
+      if (isConfirmed) {
+        setLoading(true);
+        await api.post("/upgrades/band-width", { gistId, extendPlanId });
+        handleOk();
+        handleFetchData();
+        toast.success("Mua thêm băng thông thành công");
+      }
     } catch (error) {
-      console.log("error - ", error);
-      toast.error(messages.error);
+      if (axios.isAxiosError(error)) {
+        console.log("error message: ", error);
+        toast.error(error.response?.data.message);
+      } else {
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
+      }
+    } finally {
+      setLoading(false);
     }
   };
-  const handleUpgradPlan = async (gistId: string) => {
+  const handleUpgradPlan = async (
+    gistId: string,
+    name: string,
+    price: number,
+    bandWidth: number,
+    type: string
+  ) => {
     try {
-      Swal.fire({
-        title: `Bạn có muốn gia hạn gói`,
+      const { isConfirmed } = await Swal.fire({
+        title: `Bạn có muốn gia hạn gói ${name}(${VND.format(
+          price
+        )}VND) ${bandWidth}GB/${type}`,
         // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
         icon: "success",
         showCancelButton: true,
@@ -90,19 +106,25 @@ const OrderPage = () => {
         cancelButtonColor: "#d33",
         cancelButtonText: "Thoát",
         confirmButtonText: "Có, gia hạn ngay",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          setLoading(true);
-          await api.post("/upgrades/plan", { gistId });
-          handleOk();
-          handleFetchData();
-          toast.success("Gia hạn gói thành công");
-          setLoading(false);
-        }
       });
+      if (isConfirmed) {
+        setLoading(true);
+        await api.post("/upgrades/plan", { gistId });
+        handleOk();
+        handleFetchData();
+        toast.success("Gia hạn gói thành công");
+        setLoading(false);
+      }
     } catch (error) {
-      console.log("error - ", error);
-      toast.error(messages.error);
+      if (axios.isAxiosError(error)) {
+        console.log("error message: ", error);
+        toast.error(error.response?.data.message);
+      } else {
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -218,7 +240,7 @@ const OrderPage = () => {
       dataIndex: "key",
       key: "key",
       render: (_: string, record: GistType) => {
-        const key = `ssconf://gist.github.com/mmoc0910/${record.gistId}/raw/${record.fileName}#`;
+        const key = `${linkGist}/mmoc0910/${record.gistId}/raw/${record.fileName}#`;
         return (
           <div className="flex items-center gap-2">
             <p className="font-primary text-sm w-[200px] line-clamp-1">
@@ -286,7 +308,15 @@ const OrderPage = () => {
             </button>
             <button
               className="px-4 py-2 rounded-lg bg-primary font-medium text-white font-primary text-sm"
-              onClick={() => handleUpgradPlan(record._id)}
+              onClick={() =>
+                handleUpgradPlan(
+                  record._id,
+                  record.planId.name,
+                  record.planId.price,
+                  record.planId.bandWidth,
+                  record.planId.type
+                )
+              }
             >
               Gia hạn
             </button>
@@ -324,7 +354,8 @@ const OrderPage = () => {
               <button
                 className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-sm"
                 onClick={() =>
-                  selectRow && handleUpgradeBrandWidth(item._id, selectRow)
+                  selectRow &&
+                  handleUpgradeBrandWidth(item._id, selectRow, item.bandWidth)
                 }
               >
                 Mua ngay

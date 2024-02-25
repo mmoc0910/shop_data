@@ -5,19 +5,25 @@ import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 import LayoutUser from "./layouts/LayoutUser";
 import LayoutAdmin from "./layouts/LayoutAdmin";
-import PackPage from "./pages/admin/PackPage";
-import ActionPackPage from "./pages/admin/ActionPackPage";
-import AccountAdminPage from "./pages/admin/AccountAdminPage";
-import ServerAdminPage from "./pages/admin/ServerAdminPage";
-import ServerDetailAdminPage from "./pages/admin/ServerDetailAdminPage";
-import KeyAdminPage from "./pages/admin/KeyAdminPage";
-import CashAdminPage from "./pages/admin/CashAdminPage";
-import CommisionAdminPage from "./pages/admin/CommisionAdminPage";
-import ExtendPlanPage from "./pages/admin/ExtendPlanPage";
-import DashboardAdminPage from "./pages/admin/DashboardAdminPage";
 import { useSelector } from "react-redux";
 import { RootState } from "./store/configureStore";
-import TransactionPage from "./pages/user/TransactionPage";
+const PackPage = lazy(() => import("./pages/admin/PackPage"));
+const ActionPackPage = lazy(() => import("./pages/admin/ActionPackPage"));
+const AccountAdminPage = lazy(() => import("./pages/admin/AccountAdminPage"));
+const ServerAdminPage = lazy(() => import("./pages/admin/ServerAdminPage"));
+const ServerDetailAdminPage = lazy(
+  () => import("./pages/admin/ServerDetailAdminPage")
+);
+const KeyAdminPage = lazy(() => import("./pages/admin/KeyAdminPage"));
+const CashAdminPage = lazy(() => import("./pages/admin/CashAdminPage"));
+const CommisionAdminPage = lazy(
+  () => import("./pages/admin/CommisionAdminPage")
+);
+const ExtendPlanPage = lazy(() => import("./pages/admin/ExtendPlanPage"));
+const TransactionPage = lazy(() => import("./pages/user/TransactionPage"));
+const DashboardAdminPage = lazy(
+  () => import("./pages/admin/DashboardAdminPage")
+);
 const SignInPage = lazy(() => import("./pages/SignInPage"));
 const SignUpPage = lazy(() => import("./pages/SignUpPage"));
 const HomePage = lazy(() => import("./pages/HomePage"));

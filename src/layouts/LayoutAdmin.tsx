@@ -15,7 +15,7 @@ const menu = [
   { to: "/admin/server", title: "Quản lý máy chủ" },
   // { to: "/admin/key", title: "Quản lý key" },
   { to: "/admin/cash", title: "Yêu cầu nạp" },
-  { to: "/admin/commision", title: "Chính sách CTV" },
+  { to: "/admin/commision", title: "Chính sách CTV & Đại lý" },
   // { to: "/admin/post", title: "Bài viết" },
 ];
 
