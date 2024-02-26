@@ -3,8 +3,8 @@ import Container from "../common/Container";
 
 const AboutBox = () => {
   return (
-    <Container className="w-[1000px] py-20">
-      <p className="font-medium text-4xl mb-7">
+    <Container className="xl:w-[1000px] py-10 lg:py-20">
+      <p className="font-medium text-2xl lg:text-4xl mb-5 lg:mb-7">
         Understanding about VPN ChinaVIP
       </p>
       <ul className="list-decimal pl-5 space-y-2">

@@ -240,7 +240,7 @@ const OrderPage = () => {
       dataIndex: "key",
       key: "key",
       render: (_: string, record: GistType) => {
-        const key = `${linkGist}/mmoc0910/${record.gistId}/raw/${record.fileName}#`;
+        const key = `${linkGist}/${record.gistId}/raw/${record.fileName}#`;
         return (
           <div className="flex items-center gap-2">
             <p className="font-primary text-sm w-[200px] line-clamp-1">

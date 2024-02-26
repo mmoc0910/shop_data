@@ -65,7 +65,7 @@ const RoseHistory = () => {
                 to={"/user/invite"}
                 className="text-primary underline decoration-primary text-center block"
               >
-                Xem thêm
+                Xem tất cả
               </Link>
             ) : null}
           </div>

@@ -4,19 +4,18 @@ import RegisterBox from "../components/home/RegisterBox";
 import CTVBox from "../components/home/CTVBox";
 import AboutBox from "../components/home/AboutBox";
 import PricingBox from "../components/home/PricingBox";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/configureStore";
+// import { useSelector } from "react-redux";
+// import { RootState } from "../store/configureStore";
 
 const HomePage = () => {
-  const { email } = useSelector((state: RootState) => state.auth);
+  // const { email } = useSelector((state: RootState) => state.auth);
   return (
     <div>
       <Header />
-      <div className="pt-[72px]">
+      <div className="pt-[52px] xl:pt-[72px]">
         <HomeBox />
         <PricingBox />
-        {!email ? <RegisterBox /> : null}
-
+        <RegisterBox />
         <div
           className="text-white bg-cover bg-center relative"
           style={{

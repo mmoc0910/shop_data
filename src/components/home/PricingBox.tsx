@@ -27,9 +27,9 @@ const PricingBox = () => {
   }, []);
   if (plans.length > 0)
     return (
-      <div className="py-20" id="pricing">
+      <div className="py-10 lg:py-20" id="pricing">
         <Container className="flex flex-col items-center">
-          <div className="w-3/5 space-y-5">
+          <div className="w-full lg:w-3/5 space-y-5">
             <h2 className="font-medium text-2xl text-center">
               Trải nghiệm tuyệt vời, giá bất ngờ
             </h2>
@@ -39,12 +39,12 @@ const PricingBox = () => {
               lúc, mọi nơi.
             </p>
           </div>
-          <div className="my-14 py-2 px-7 bg-[#f2f4f7] rounded-full">
+          {/* <div className="my-9 lg:my-14 py-2 px-7 bg-[#f2f4f7] rounded-full">
             <div className="font-medium text-white bg-primary px-4 py-3 rounded-full">
               Thanh toán hàng tháng
             </div>
-          </div>
-          <div className="grid grid-cols-3 gap-x-6 gap-y-16 w-full">
+          </div> */}
+          <div className="mt-16 lg:mt-20 grid grid-cols-1 lg:grid-cols-3 gap-x-6 gap-y-10 lg:gap-y-16 w-full">
             {plans.map((plan) => (
               <PricingItem key={uuidv4()} plan={plan} />
             ))}

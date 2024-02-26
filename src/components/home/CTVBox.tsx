@@ -2,12 +2,12 @@ import Container from "../common/Container";
 
 const CTVBox = () => {
   return (
-    <Container className="w-[1000px] pt-20 pb-10 grid grid-cols-2 gap-20">
+    <Container className="xl:w-[1000px] pt-10 lg:pt-20 pb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20">
       <div className="col-span-1">
-        <p className="font-medium text-4xl mb-7">
+        <p className="font-medium text-2xl lg:text-4xl mb-5 lg:mb-7">
           Tuyển CTV chính sách hấp dẫn
         </p>
-        <ul className="list-disc pl-5 space-y-5">
+        <ul className="list-disc pl-5 space-y-3 lg:space-y-5">
           <li>
             Bất kỳ người dùng đều có thể làm CTV khi chia sẻ mã giới thiệu cho
             người khác
@@ -18,10 +18,10 @@ const CTVBox = () => {
         </ul>
       </div>
       <div className="col-span-1">
-        <p className="font-medium text-4xl mb-7">
+        <p className="font-medium text-2xl lg:text-4xl mb-5 lg:mb-7">
           Chính sách phát triển đại lý
         </p>
-        <ul className="list-disc pl-5 space-y-5">
+        <ul className="list-disc pl-5 space-y-3 lg:space-y-5">
           <li>Mức hoa hồng cho đại lý lên tới 35%</li>
           <li>Phát triển đại lý nhiều cấp</li>
         </ul>

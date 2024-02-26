@@ -62,7 +62,7 @@ const TransactionHistory = () => {
               to={"/user/transaction"}
               className="text-primary underline decoration-primary text-center block"
             >
-              Xem thêm
+              Xem tất cả
             </Link>
           </div>
         )}
