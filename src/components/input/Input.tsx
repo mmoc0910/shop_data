@@ -41,7 +41,7 @@ const Input: FC<InputType> = ({
         autoComplete="off"
         type={type}
         className={classNames(
-          "focus:border-primary text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none dark:placeholder:text-text2",
+          "focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none dark:placeholder:text-text2",
           error
             ? "border-error text-error"
             : "border-strock dark:border-dark-strock text-text1 dark:text-white",

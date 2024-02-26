@@ -105,7 +105,7 @@ const ActionPackPage = () => {
     <div>
       <Heading>Thêm gói cước mới</Heading>
       <form
-        className="grid grid-cols-3 gap-6"
+        className="grid grid-cols-5 gap-6"
         onSubmit={handleSubmit(onSubmit)}
       >
         <FormGroup>
@@ -128,7 +128,7 @@ const ActionPackPage = () => {
           <Label htmlFor="day">Ngày*</Label>
           <Input name="day" control={control} type="number" min={0} />
         </FormGroup>
-        <FormGroup className="col-span-1">
+        <FormGroup className="col-span-5">
           <Label htmlFor="description">Nội dung gói cước*</Label>
           <Textarea
             name="description"
