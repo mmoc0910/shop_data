@@ -12,6 +12,7 @@ import { Input } from "../../components/input";
 import Button from "../../components/button/Button";
 import { Table } from "antd";
 import Swal from "sweetalert2";
+import RequireAuthPage from "../../components/common/RequireAuthPage";
 
 const schema = yup
   .object({
@@ -154,43 +155,49 @@ const ServerAdminPage = () => {
     []
   );
   return (
-    <div className="space-y-10">
-      <div className="space-y-5">
-        <Heading>Thêm máy chủ</Heading>
-        <form
-          className="flex items-center gap-5"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <div className="flex-1">
-            <Input name="location" placeholder={"Location"} control={control} />
-          </div>
-          <div className="flex-1">
-            <Input
-              name="numberRecomendKey"
-              type="number"
-              placeholder={"Tổng key giới hạn"}
-              control={control}
-            />
-          </div>
-          <div className="flex-1">
-            <Input name="apiUrl" placeholder={"apiUrl"} control={control} />
-          </div>
-          <div className="flex-1">
-            <Input
-              name="fingerPrint"
-              placeholder={"fingerPrint"}
-              control={control}
-            />
-          </div>
-          <Button className="text-white bg-secondary20 px-5" type="submit">
-            Thêm máy chủ
-          </Button>
-        </form>
-      </div>
+    <RequireAuthPage rolePage={1}>
+      <div className="space-y-10">
+        <div className="space-y-5">
+          <Heading>Thêm máy chủ</Heading>
+          <form
+            className="flex items-center gap-5"
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <div className="flex-1">
+              <Input
+                name="location"
+                placeholder={"Location"}
+                control={control}
+              />
+            </div>
+            <div className="flex-1">
+              <Input
+                name="numberRecomendKey"
+                type="number"
+                placeholder={"Tổng key giới hạn"}
+                control={control}
+              />
+            </div>
+            <div className="flex-1">
+              <Input name="apiUrl" placeholder={"apiUrl"} control={control} />
+            </div>
+            <div className="flex-1">
+              <Input
+                name="fingerPrint"
+                placeholder={"fingerPrint"}
+                control={control}
+              />
+            </div>
+            <Button className="text-white bg-secondary20 px-5" type="submit">
+              Thêm máy chủ
+            </Button>
+          </form>
+        </div>
 
-      <Heading>Danh sách máy chủ({servers.length})</Heading>
-      <Table dataSource={servers} columns={columns} />
-    </div>
+        <Heading>Danh sách máy chủ({servers.length})</Heading>
+        <Table dataSource={servers} columns={columns} />
+      </div>
+    </RequireAuthPage>
   );
 };
 

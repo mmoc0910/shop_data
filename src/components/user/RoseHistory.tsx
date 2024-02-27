@@ -1,10 +1,4 @@
-import { useEffect, useState } from "react";
-import { api } from "../../api";
 import { RoseType } from "../../type";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/configureStore";
-import { toast } from "react-toastify";
-import { messages } from "../../constants";
 import Heading from "../common/Heading";
 import classNames from "../../utils/classNames";
 import { VND } from "../../utils/formatPrice";
@@ -12,21 +6,7 @@ import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 
-const RoseHistory = () => {
-  const { _id } = useSelector((state: RootState) => state.auth);
-  const [roseHistory, setRoseHistory] = useState<RoseType[]>([]);
-  const fetchUserCashHistory = async () => {
-    try {
-      const result = await api.get<RoseType[]>(`/roses?reciveRoseId=${_id}`);
-      setRoseHistory(result.data);
-    } catch (error) {
-      toast.error(messages.error);
-    }
-  };
-  useEffect(() => {
-    fetchUserCashHistory();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+const RoseHistory = ({ roseHistory }: { roseHistory: RoseType[] }) => {
   return (
     <div className="space-y-4">
       <Heading>Lịch sử nhận hoa hồng</Heading>

@@ -41,10 +41,10 @@ const Input: FC<InputType> = ({
         autoComplete="off"
         type={type}
         className={classNames(
-          "focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none dark:placeholder:text-text2",
+          "focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none",
           error
             ? "border-error text-error"
-            : "border-strock dark:border-dark-strock text-text1 dark:text-white",
+            : "border-icon-color text-text1",
           children ? "pr-16" : "",
           className
         )}
@@ -55,7 +55,7 @@ const Input: FC<InputType> = ({
       />
       {error && (
         <div className="peer-focus:hidden w-full font-medium text-error absolute pointer-events-none h-full flex items-center justify-start px-[25px] top-0 left-0">
-          <p className="text-sm bg-white dark:bg-dark-secondary leading-none translate-y-[2px]">
+          <p className="text-sm bg-white line-clamp-1">
             {error.message}
           </p>
         </div>

@@ -19,14 +19,12 @@ import axios from "axios";
 
 const schema = yup
   .object({
-    email: yup
+    account: yup
       .string()
-      .required("This field is required")
-      .email("Incorrect email format"),
-    password: yup
-      .string()
-      .required("This field is required")
-      // .min(8, "Minimum of 8 characters"),
+      .required("This field is required"),
+      // .email("Incorrect email format"),
+    password: yup.string().required("This field is required"),
+    // .min(8, "Minimum of 8 characters"),
   })
   .required();
 
@@ -47,10 +45,10 @@ const SignInPage = () => {
         : navigation("/user/dashboard");
     }
   }, [email, navigation, role]);
-  const onSubmit = async (data: { email: string; password: string }) => {
+  const onSubmit = async (data: { account: string; password: string }) => {
     try {
       console.log("data sign in - ", data);
-      const result = await api.post<{ data: AuthState }>("/users/login", data);
+      const result = await api.post<{ data: AuthState }>("/users/login", {...data, email: data.account});
       console.log("resut - ", result);
       dispatch(setAuth(result.data.data));
       if (result.data.data.role === 1) {
@@ -85,10 +83,10 @@ const SignInPage = () => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <FormGroup>
-          <Label htmlFor="email">email*</Label>
+          <Label htmlFor="account">Username or Email*</Label>
           <Input
-            name="email"
-            placeholder={"example@gmail.com"}
+            name="account"
+            // placeholder={"example@gmail.com"}
             control={control}
           />
         </FormGroup>

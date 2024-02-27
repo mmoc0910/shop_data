@@ -29,7 +29,7 @@ const PricingBox = () => {
     return (
       <div className="py-10 lg:py-20" id="pricing">
         <Container className="flex flex-col items-center">
-          <div className="w-full lg:w-3/5 space-y-5">
+          <div className="w-full md:w-3/5 space-y-5">
             <h2 className="font-medium text-2xl text-center">
               Trải nghiệm tuyệt vời, giá bất ngờ
             </h2>
@@ -44,7 +44,7 @@ const PricingBox = () => {
               Thanh toán hàng tháng
             </div>
           </div> */}
-          <div className="mt-16 lg:mt-20 grid grid-cols-1 lg:grid-cols-3 gap-x-6 gap-y-10 lg:gap-y-16 w-full">
+          <div className="mt-16 lg:mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10 lg:gap-y-16 w-full">
             {plans.map((plan) => (
               <PricingItem key={uuidv4()} plan={plan} />
             ))}

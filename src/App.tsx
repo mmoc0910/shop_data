@@ -5,8 +5,6 @@ import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 import LayoutUser from "./layouts/LayoutUser";
 import LayoutAdmin from "./layouts/LayoutAdmin";
-import { useSelector } from "react-redux";
-import { RootState } from "./store/configureStore";
 const PackPage = lazy(() => import("./pages/admin/PackPage"));
 const ActionPackPage = lazy(() => import("./pages/admin/ActionPackPage"));
 const AccountAdminPage = lazy(() => import("./pages/admin/AccountAdminPage"));
@@ -34,7 +32,6 @@ const OrderPage = lazy(() => import("./pages/user/OrderPage"));
 const InvitePage = lazy(() => import("./pages/user/InvitePage"));
 
 function App() {
-  const { _id, role } = useSelector((state: RootState) => state.auth);
   return (
     <>
       <Suspense
@@ -46,62 +43,35 @@ function App() {
       >
         <Routes>
           <Route path="/" element={<HomePage />} />
-          {_id ? (
-            <>
-              {role === 1 ? (
-                <Route element={<LayoutAdmin />}>
-                  <Route
-                    path="/admin/dashboard"
-                    element={<DashboardAdminPage />}
-                  />
-                  <Route path="/admin/pack" element={<PackPage />} />
-                  <Route
-                    path="admin/extend-plan"
-                    element={<ExtendPlanPage />}
-                  />
-                  <Route path="/admin/pack/add" element={<ActionPackPage />} />
-                  <Route
-                    path="/admin/pack/edit/:packId"
-                    element={<ActionPackPage />}
-                  />
-                  <Route path="/admin/account" element={<AccountAdminPage />} />
-                  <Route path="/admin/server" element={<ServerAdminPage />} />
-                  <Route
-                    path="/admin/server/:serverId"
-                    element={<ServerDetailAdminPage />}
-                  />
-                  <Route path="/admin/key" element={<KeyAdminPage />} />
-                  <Route path="/admin/cash" element={<CashAdminPage />} />
-                  <Route
-                    path="/admin/commision"
-                    element={<CommisionAdminPage />}
-                  />
-                </Route>
-              ) : null}
-              {role === 2 ? (
-                <Route element={<LayoutUser />}>
-                  <Route
-                    path="/user/dashboard"
-                    element={<DashboardUserPage />}
-                  />
-                  <Route path="/user/account" element={<AccountPage />} />
-                  <Route path="user/plan" element={<PlanPage />} />
-                  <Route path="user/order" element={<OrderPage />} />
-                  <Route path="user/invite" element={<InvitePage />} />
-                  <Route
-                    path="user/transaction"
-                    element={<TransactionPage />}
-                  />
-                </Route>
-              ) : null}
-            </>
-          ) : (
-            <>
-              <Route path="/sign-in" element={<SignInPage />} />
-              <Route path="/sign-up" element={<SignUpPage />} />
-            </>
-          )}
-
+          <Route element={<LayoutAdmin />}>
+            <Route path="/admin/dashboard" element={<DashboardAdminPage />} />
+            <Route path="/admin/pack" element={<PackPage />} />
+            <Route path="admin/extend-plan" element={<ExtendPlanPage />} />
+            <Route path="/admin/pack/add" element={<ActionPackPage />} />
+            <Route
+              path="/admin/pack/edit/:packId"
+              element={<ActionPackPage />}
+            />
+            <Route path="/admin/account" element={<AccountAdminPage />} />
+            <Route path="/admin/server" element={<ServerAdminPage />} />
+            <Route
+              path="/admin/server/:serverId"
+              element={<ServerDetailAdminPage />}
+            />
+            <Route path="/admin/key" element={<KeyAdminPage />} />
+            <Route path="/admin/cash" element={<CashAdminPage />} />
+            <Route path="/admin/commision" element={<CommisionAdminPage />} />
+          </Route>
+          <Route element={<LayoutUser />}>
+            <Route path="/user/dashboard" element={<DashboardUserPage />} />
+            <Route path="/user/account" element={<AccountPage />} />
+            <Route path="user/plan" element={<PlanPage />} />
+            <Route path="user/order" element={<OrderPage />} />
+            <Route path="user/invite" element={<InvitePage />} />
+            <Route path="user/transaction" element={<TransactionPage />} />
+          </Route>
+          <Route path="/sign-in" element={<SignInPage />} />
+          <Route path="/sign-up" element={<SignUpPage />} />
           <Route
             path="*"
             element={

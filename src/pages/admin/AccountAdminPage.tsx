@@ -12,6 +12,7 @@ import { Label } from "../../components/label";
 import Button from "../../components/button/Button";
 import Radio from "../../components/radio/Radio";
 import { VND } from "../../utils/formatPrice";
+import RequireAuthPage from "../../components/common/RequireAuthPage";
 
 const levels = [
   { id: 0, title: "Cộng tác viên" },
@@ -177,7 +178,7 @@ const AccountAdminPage = () => {
     []
   );
   return (
-    <>
+    <RequireAuthPage rolePage={1}>
       <div className="space-y-6">
         <div className="relative">
           <input
@@ -247,7 +248,7 @@ const AccountAdminPage = () => {
           </Button>
         </form>
       </Modal>
-    </>
+    </RequireAuthPage>
   );
 };
 

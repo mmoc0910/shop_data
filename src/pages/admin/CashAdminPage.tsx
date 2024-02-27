@@ -7,6 +7,7 @@ import { messages } from "../../constants";
 import { api } from "../../api";
 import { Table, Tag } from "antd";
 import { VND } from "../../utils/formatPrice";
+import RequireAuthPage from "../../components/common/RequireAuthPage";
 
 const CashAdminPage = () => {
   const [listCash, setListCash] = useState<CashType[]>([]);
@@ -106,10 +107,12 @@ const CashAdminPage = () => {
     []
   );
   return (
-    <div className="space-y-6">
-      <Heading>Danh sách yêu cầu nạp</Heading>
-      <Table dataSource={listCash} columns={columns} />
-    </div>
+    <RequireAuthPage rolePage={1}>
+      <div className="space-y-6">
+        <Heading>Danh sách yêu cầu nạp</Heading>
+        <Table dataSource={listCash} columns={columns} />
+      </div>
+    </RequireAuthPage>
   );
 };
 

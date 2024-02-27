@@ -11,6 +11,7 @@ import { Label } from "../../components/label";
 import { api } from "../../api";
 import { useEffect, useState } from "react";
 import { CollabType } from "../../type";
+import RequireAuthPage from "../../components/common/RequireAuthPage";
 
 const schema = yup
   .object({
@@ -133,44 +134,46 @@ const Collab = () => {
     }
   };
   return (
-    <form
-      className="space-y-[15px] md:space-y-6"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <FormGroup>
-        <Label htmlFor="value">Đại lý cấp 1</Label>
-        <Input
-          name="level1"
-          type="number"
-          placeholder={"% Hoa hồng"}
-          control={control}
-          containerclass="flex-1"
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label htmlFor="value">Đại lý cấp 2</Label>
-        <Input
-          name="level2"
-          type="number"
-          placeholder={"% Hoa hồng"}
-          control={control}
-          containerclass="flex-1"
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label htmlFor="value">Đại lý cấp 3</Label>
-        <Input
-          name="level3"
-          type="number"
-          placeholder={"% Hoa hồng"}
-          control={control}
-          containerclass="flex-1"
-        />
-      </FormGroup>
-      <Button type="submit" className="px-5 text-white bg-primary">
-        Chỉnh sửa
-      </Button>
-    </form>
+    <RequireAuthPage rolePage={1}>
+      <form
+        className="space-y-[15px] md:space-y-6"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <FormGroup>
+          <Label htmlFor="value">Đại lý cấp 1</Label>
+          <Input
+            name="level1"
+            type="number"
+            placeholder={"% Hoa hồng"}
+            control={control}
+            containerclass="flex-1"
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="value">Đại lý cấp 2</Label>
+          <Input
+            name="level2"
+            type="number"
+            placeholder={"% Hoa hồng"}
+            control={control}
+            containerclass="flex-1"
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="value">Đại lý cấp 3</Label>
+          <Input
+            name="level3"
+            type="number"
+            placeholder={"% Hoa hồng"}
+            control={control}
+            containerclass="flex-1"
+          />
+        </FormGroup>
+        <Button type="submit" className="px-5 text-white bg-primary">
+          Chỉnh sửa
+        </Button>
+      </form>
+    </RequireAuthPage>
   );
 };
 

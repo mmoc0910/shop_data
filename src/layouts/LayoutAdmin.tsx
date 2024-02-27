@@ -23,24 +23,24 @@ const LayoutAdmin = () => {
   const navigation = useNavigate();
   const dispatch = useDispatch();
   return (
-    <div className="grid grid-cols-12 w-full h-screen">
+    <div className="grid grid-cols-12 w-full h-screen bg-[#191918]">
       <div
         className={
-          "relative col-span-2 h-full overflow-hidden bg-[url('https://images.unsplash.com/photo-1545987796-200677ee1011?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-center bg-cover"
+          "relative col-span-2 h-full overflow-hidden bg-[url('https://imas.unsplash.com/photo-1545987796-200677ee1011?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-center bg-cover"
         }
       >
         <div className="absolute inset-0 bg-black bg-opacity-50" />
         <div className="absolute w-full z-5 h-full py-10 px-5 ">
-          <Logo className="text-4xl text-white" />
-          <div className="flex flex-col gap-5 pt-28">
+          <Logo className="xl:text-4xl text-white" />
+          <div className="flex flex-col gap-2 pt-28">
             {menu.map((item) => {
               return (
                 <NavLink
                   to={item.to}
                   className={({ isActive }) =>
                     classNames(
-                      "",
-                      isActive ? "text-primary font-medium" : "text-white"
+                      "hover:bg-[#403f3f] px-4 py-3 rounded-lg transition-all duration-200",
+                      isActive ? "text-white font-medium bg-[#403f3f]" : "text-icon-color"
                     )
                   }
                   key={uuidv4()}
@@ -52,7 +52,7 @@ const LayoutAdmin = () => {
           </div>
         </div>
       </div>
-      <div className="col-span-10 h-full overflow-y-scroll py-10 px-7">
+      <div className="col-span-10 h-full overflow-y-scroll py-10 px-7 bg-white rounded-3xl">
         <div className="flex justify-end gap-5">
           <Link
             to={"/user/account"}

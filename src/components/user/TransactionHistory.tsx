@@ -1,35 +1,17 @@
-import { useEffect, useState } from "react";
-import { api } from "../../api";
-import { TransactionType } from "../../type";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/configureStore";
-import { toast } from "react-toastify";
-import { messages } from "../../constants";
+
 import Heading from "../common/Heading";
 import classNames from "../../utils/classNames";
-// import { VND } from "../../utils/formatPrice";
 import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 import { VND } from "../../utils/formatPrice";
 import { Link } from "react-router-dom";
+import { TransactionType } from "../../type";
 
-const TransactionHistory = () => {
-  const { _id } = useSelector((state: RootState) => state.auth);
-  const [transactions, setTransactions] = useState<TransactionType[]>([]);
-  const fetchUserCashHistory = async () => {
-    try {
-      const result = await api.get<TransactionType[]>(
-        `/transactions?userId=${_id}&approve=true`
-      );
-      setTransactions(result.data.slice(0, 5));
-    } catch (error) {
-      toast.error(messages.error);
-    }
-  };
-  useEffect(() => {
-    fetchUserCashHistory();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+const TransactionHistory = ({
+  transactions,
+}: {
+  transactions: TransactionType[];
+}) => {
   return (
     <div className="space-y-4">
       <Heading>Lịch sử mua</Heading>

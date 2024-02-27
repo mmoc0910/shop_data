@@ -15,6 +15,7 @@ import { copyToClipboard } from "../../utils/copyToClipboard";
 import Swal from "sweetalert2";
 import Loading from "../../components/common/Loading";
 import axios from "axios";
+import RequireAuthPage from "../../components/common/RequireAuthPage";
 
 const linkGist = import.meta.env.VITE_LINK_GIST;
 const OrderPage = () => {
@@ -326,7 +327,7 @@ const OrderPage = () => {
   ];
 
   return (
-    <>
+    <RequireAuthPage rolePage={2}>
       {loading ? <Loading /> : null}
       <Table dataSource={listGist} columns={columns} loading={loadingTable} />
       <Modal
@@ -364,7 +365,7 @@ const OrderPage = () => {
           ))}
         </div>
       </Modal>
-    </>
+    </RequireAuthPage>
   );
 };
 

@@ -14,6 +14,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import FormGroup from "../../components/common/FormGroup";
 import { Label } from "../../components/label";
 import { Input } from "../../components/input";
+import RequireAuthPage from "../../components/common/RequireAuthPage";
+import Swal from "sweetalert2";
 
 const schema = yup
   .object({
@@ -78,9 +80,20 @@ const ExtendPlanPage = () => {
   };
   const handleDeleteExtendPlan = async (_id: string) => {
     try {
-      await api.delete(`/extend-plans/${_id}`);
-      fetchData();
-      toast.success("Xóa thành công");
+      const { isConfirmed } = await Swal.fire({
+        title: `Bạn có muốn xóa gói cước mở rộng này`,
+        icon: "success",
+        showCancelButton: true,
+        confirmButtonColor: "#1DC071",
+        cancelButtonColor: "#d33",
+        cancelButtonText: "Thoát",
+        confirmButtonText: "Đồng ý",
+      });
+      if (isConfirmed) {
+        await api.delete(`/extend-plans/${_id}`);
+        fetchData();
+        toast.success("Xóa thành công");
+      }
     } catch (error) {
       console.log("error - ", error);
       toast.error(messages.error);
@@ -182,7 +195,7 @@ const ExtendPlanPage = () => {
     []
   );
   return (
-    <>
+    <RequireAuthPage rolePage={1}>
       <div className="space-y-6">
         <div className="flex justify-between">
           <Heading>Danh sách gói mở rộng</Heading>
@@ -214,18 +227,18 @@ const ExtendPlanPage = () => {
           </FormGroup>
           <FormGroup>
             <Label htmlFor="price">Giá*</Label>
-            <Input name="price" placeholder={""} control={control} />
+            <Input name="price" placeholder={""} control={control} type="number" min={0} />
           </FormGroup>
           <FormGroup>
             <Label htmlFor="bandWidth">Băng thông*</Label>
-            <Input name="bandWidth" placeholder={""} control={control} />
+            <Input name="bandWidth" placeholder={""} control={control} type="number" min={0} />
           </FormGroup>
           <Button type="submit" className="w-full text-white bg-primary">
             Thêm mới
           </Button>
         </form>
       </Modal>
-    </>
+    </RequireAuthPage>
   );
 };
 

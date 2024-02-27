@@ -16,8 +16,9 @@ import { countries } from "../constants";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/configureStore";
-import Radio from "../components/radio/Radio";
 import axios from "axios";
+import { DropdownWithComponents } from "../components/dropdown";
+import { v4 as uuidv4 } from "uuid";
 
 const purposes = [
   { id: 1, title: "Access global internet from China" },
@@ -28,6 +29,7 @@ const purposes = [
 
 const schema = yup
   .object({
+    username: yup.string().required("This field is required"),
     email: yup
       .string()
       .required("This field is required")
@@ -42,8 +44,8 @@ const schema = yup
       .min(8, "Minimum of 8 characters"),
     phone: yup.string().required(),
     // address: yup.string().required(),
-    country: yup.string().required().default("vi"),
-    purpose: yup.number().required().default(1),
+    country: yup.string().required(),
+    purpose: yup.number().required(),
     introduceCode: yup.string(),
     // job: yup.string().required(),
   })
@@ -74,10 +76,11 @@ const SignUpPage = () => {
         : navigation("/user/dashboard");
     }
   }, [email, navigation, role]);
-  const country = watch("country", "vi");
-  const purpose = watch("purpose", 1);
+  const country = watch("country");
+  const purpose = watch("purpose");
   console.log("country - ", country);
   const onSubmit = async (data: {
+    username: string;
     email: string;
     password: string;
     phone: string;
@@ -89,6 +92,7 @@ const SignUpPage = () => {
     try {
       console.log("data sign in - ", data);
       const {
+        username,
         email,
         password,
         country,
@@ -102,6 +106,7 @@ const SignUpPage = () => {
         if (introduceCode) {
           if (introduceCode.length === 24) {
             const result = await api.post<{ data: AuthState }>("/users", {
+              username,
               email,
               password,
               country,
@@ -119,6 +124,7 @@ const SignUpPage = () => {
           }
         } else {
           const result = await api.post<{ data: AuthState }>("/users", {
+            username,
             email,
             password,
             country,
@@ -126,7 +132,7 @@ const SignUpPage = () => {
             purpose,
           });
           console.log("result - ", result.data);
-          navigation("/sign-in");
+          navigation("/sign-in")
           toast.success("Đăng ký tài khoản thành công");
         }
       } else {
@@ -157,12 +163,12 @@ const SignUpPage = () => {
         className="space-y-[15px] md:space-y-5"
         onSubmit={handleSubmit(onSubmit)}
       >
-        {/* <FormGroup>
-          <Label htmlFor="name">full name*</Label>
-          <Input name="name" placeholder={"Jhon Doe"} control={control} />
-        </FormGroup> */}
         <FormGroup>
-          <Label htmlFor="email">email*</Label>
+          <Label htmlFor="username">Username*</Label>
+          <Input name="username" placeholder={""} control={control} />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="email">Email*</Label>
           <Input
             name="email"
             placeholder={"example@gmail.com"}
@@ -178,18 +184,31 @@ const SignUpPage = () => {
           <Input name="introduceCode" placeholder={""} control={control} />
         </FormGroup>
         <FormGroup>
-          <Label htmlFor="country">Country*</Label>
-          <div className="grid grid-cols-4 gap-5">
-            {countries.map((item) => (
-              <Radio
-                checked={item.key === country}
-                key={item.key}
-                onClick={() => setValue("country", item.key)}
-              >
-                {item.title}
-              </Radio>
-            ))}
-          </div>
+          <Label>Select country*</Label>
+          <DropdownWithComponents>
+            <DropdownWithComponents.Select
+              placeholder={
+                country ? (
+                  <span className="text-black dark:text-white">
+                    {countries.find((i) => i.key === country)?.title}
+                  </span>
+                ) : (
+                  <span className="text-text4 dark:text-text2">Select one</span>
+                )
+              }
+            ></DropdownWithComponents.Select>
+            <DropdownWithComponents.List>
+              {countries.length > 0 &&
+                countries.map((country) => (
+                  <DropdownWithComponents.Option
+                    key={uuidv4()}
+                    onClick={() => setValue("country", country.key)}
+                  >
+                    <span className="capitalize">{country.title}</span>
+                  </DropdownWithComponents.Option>
+                ))}
+            </DropdownWithComponents.List>
+          </DropdownWithComponents>
           {errors.country?.message ? (
             <p className="text-sm font-medium text-error">
               {errors.country.message}
@@ -197,18 +216,31 @@ const SignUpPage = () => {
           ) : null}
         </FormGroup>
         <FormGroup>
-          <Label htmlFor="country">Purpose using VPN</Label>
-          <div className="flex  flex-col gap-3">
-            {purposes.map((item) => (
-              <Radio
-                checked={item.id === purpose}
-                key={item.id}
-                onClick={() => setValue("purpose", item.id)}
-              >
-                {item.title}
-              </Radio>
-            ))}
-          </div>
+          <Label>Purpose using VPN*</Label>
+          <DropdownWithComponents>
+            <DropdownWithComponents.Select
+              placeholder={
+                purpose ? (
+                  <span className="text-black dark:text-white">
+                    {purposes.find((i) => i.id === purpose)?.title}
+                  </span>
+                ) : (
+                  <span className="text-text4 dark:text-text2">Select one</span>
+                )
+              }
+            ></DropdownWithComponents.Select>
+            <DropdownWithComponents.List>
+              {purposes.length > 0 &&
+                purposes.map((item) => (
+                  <DropdownWithComponents.Option
+                    key={uuidv4()}
+                    onClick={() => setValue("purpose", item.id)}
+                  >
+                    <span className="capitalize">{item.title}</span>
+                  </DropdownWithComponents.Option>
+                ))}
+            </DropdownWithComponents.List>
+          </DropdownWithComponents>
           {errors.purpose?.message ? (
             <p className="text-sm font-medium text-error">
               {errors.purpose.message}
@@ -216,7 +248,7 @@ const SignUpPage = () => {
           ) : null}
         </FormGroup>
         <FormGroup>
-          <Label htmlFor="password">password*</Label>
+          <Label htmlFor="password">Password*</Label>
           <Input
             type={tooglePassword ? "text" : "password"}
             name="password"

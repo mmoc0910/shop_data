@@ -12,7 +12,7 @@ const HomePage = () => {
   return (
     <div>
       <Header />
-      <div className="pt-[52px] xl:pt-[72px]">
+      <div className="pt-[52px] xl:pt-[88px]">
         <HomeBox />
         <PricingBox />
         <RegisterBox />

@@ -2,15 +2,21 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import authSlice from "./auth/authSlice";
+import satisfySlice from "./satisfy/satisfySlice";
+import commisionSlice from "./commision/commisionSlice";
 
 const persistConfig = {
   key: "root",
   storage,
   whitelist: ["auth"],
+  blacklist: ["satisfy", "commision", 'collab'],
 };
 
 const rootReducer = combineReducers({
   auth: authSlice,
+  satisfy: satisfySlice,
+  commision: commisionSlice,
+  // collab: collabSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

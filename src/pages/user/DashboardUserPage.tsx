@@ -6,10 +6,9 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "../../components/button/Button";
-import FormGroup from "../../components/common/FormGroup";
 import { Label } from "../../components/label";
 import { Input } from "../../components/input";
-import { useSelector } from "react-redux";
+import {useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
 import { toast } from "react-toastify";
 import { messages } from "../../constants";
@@ -17,8 +16,12 @@ import { api } from "../../api";
 import CashHistory from "../../components/user/CashHistory";
 import TransactionHistory from "../../components/user/TransactionHistory";
 import RoseHistory from "../../components/user/RoseHistory";
-import { SatisfyType } from "../../type";
+import { CashType, RoseType, TransactionType } from "../../type";
 import Swal from "sweetalert2";
+import RequireAuthPage from "../../components/common/RequireAuthPage";
+import classNames from "../../utils/classNames";
+import PlanDashborad from "../../components/user/PlanDashborad";
+import InviteDashboard from "../../components/user/InviteDashboard";
 
 const schema = yup
   .object({
@@ -28,25 +31,52 @@ const schema = yup
 
 const DashboardUserPage = () => {
   const { _id } = useSelector((state: RootState) => state.auth);
+  const satisfy = useSelector((state: RootState) => state.satisfy);
+  const [userCashHistory, setUserCashHistory] = useState<CashType[]>([]);
+  const [roseHistory, setRoseHistory] = useState<RoseType[]>([]);
+  const [transactions, setTransactions] = useState<TransactionType[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        const [resultCash, resultRose, resultTransaction] = await Promise.all([
+          api.get<CashType[]>(`/cashs?userId=${_id}&approve=true`),
+          api.get<RoseType[]>(`/roses?reciveRoseId=${_id}`),
+          api.get<TransactionType[]>(
+            `/transactions?userId=${_id}&approve=true`
+          ),
+        ]);
+        setUserCashHistory(resultCash.data);
+        setRoseHistory(resultRose.data);
+        setTransactions(resultTransaction.data);
+      } catch (error) {
+        toast.error(messages.error);
+      } finally {
+        setLoading(false);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [satisfy, setSatisfy] = useState<SatisfyType>();
+  // const [satisfy, setSatisfy] = useState<SatisfyType>();
   const { handleSubmit, control } = useForm({
     resolver: yupResolver(schema),
     mode: "onSubmit",
   });
-  useEffect(() => {
-    fetchSatify();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [_id]);
-  const fetchSatify = async () => {
-    try {
-      const result = await api.get<SatisfyType>(`/satisfy/${_id}`);
-      console.log("result - ", result.data);
-      setSatisfy(result.data);
-    } catch (error) {
-      console.log("error - ", error);
-    }
-  };
+  // useEffect(() => {
+  //   fetchSatify();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [_id]);
+  // const fetchSatify = async () => {
+  //   try {
+  //     const result = await api.get<SatisfyType>(`/satisfy/${_id}`);
+  //     console.log("result - ", result.data);
+  //     setSatisfy(result.data);
+  //   } catch (error) {
+  //     console.log("error - ", error);
+  //   }
+  // };
   const onSubmit = async (data: { money: number }) => {
     try {
       Swal.fire({
@@ -63,7 +93,8 @@ const DashboardUserPage = () => {
           console.log("data - ", data);
           await api.post("/cashs", { ...data, userId: _id });
           handleOk();
-          toast.success("Nạp tiền thành công. Vui lòng chờ admin phê duyệt");
+          Swal.fire("Nạp tiền thành công. Vui lòng chờ admin phê duyệt");
+          // toast.success("Nạp tiền thành công. Vui lòng chờ admin phê duyệt");
         }
       });
     } catch (error) {
@@ -83,36 +114,36 @@ const DashboardUserPage = () => {
     setIsModalOpen(false);
   };
   return (
-    <>
-      <div className="grid grid-cols-12 gap-16">
-        <div className="col-span-8 space-y-10">
-          <div className="space-y-4">
-            {/* <Heading>Thống kê chi tiết</Heading> */}
-            <div className="grid grid-cols-3 gap-7">
-              <div className="p-5 rounded-lg shadow-xl space-y-3">
-                <p className="text-gray-500 text-lg">Tổng nạp</p>
-                <p className="font-semibold text-2xl">
+    <RequireAuthPage rolePage={2}>
+      <div className="grid grid-cols-12 gap-x-12 gap-y-10">
+        <div className="space-y-4 col-span-12">
+          {/* <Heading>Thống kê chi tiết</Heading> */}
+          <div className="flex items-start rounded-xl border-2 border-[#eeeeed]">
+            <div className="p-5 flex-1 space-y-3">
+              <p className="text-gray-500 text-lg">Tổng nạp</p>
+              <p className="font-medium text-2xl">
+                {VND.format(
+                  // satisfy && satisfy.cash.length > 0 ? satisfy.cash[0].money : 0
+                  satisfy.cash
+                )}
+                VND
+              </p>
+            </div>
+            <div className="p-5 flex-1 space-y-3">
+              <p className="text-gray-500 text-lg">Số dư hiện tại</p>
+              <p className="font-medium text-2xl">
+                {VND.format(satisfy ? satisfy.currentMoney : 0)}VND
+              </p>
+            </div>
+            <div className="p-5 flex-1 space-y-3">
+              <p className="text-gray-500 text-lg">Số tiền đã sử dụng</p>
+              <div className="">
+                <p className="font-medium text-2xl text-error">
                   {VND.format(
-                    satisfy && satisfy.cash.length > 0
-                      ? satisfy.cash[0].money
-                      : 0
-                  )}
-                  VND
-                </p>
-              </div>
-              <div className="p-5 rounded-lg shadow-xl space-y-3">
-                <p className="text-gray-500 text-lg">Số dư hiện tại</p>
-                <p className="font-semibold text-2xl">
-                  {VND.format(satisfy ? satisfy.currentMoney : 0)}VND
-                </p>
-              </div>
-              <div className="p-5 rounded-lg shadow-xl space-y-3">
-                <p className="text-gray-500 text-lg">Số tiền đã sử dụng</p>
-                <p className="font-semibold text-2xl text-error">
-                  {VND.format(
-                    satisfy && satisfy.transaction.length > 0
-                      ? satisfy.transaction[0].money
-                      : 0
+                    // satisfy && satisfy.transaction.length > 0
+                    //   ? satisfy.transaction[0].money
+                    //   : 0
+                    satisfy.transaction
                   )}
                   VND
                 </p>
@@ -123,25 +154,37 @@ const DashboardUserPage = () => {
                   Nạp tiền ngay
                 </div>
               </div>
-              <div className="p-5 rounded-lg shadow-xl space-y-3">
-                <p className="text-gray-500 text-lg">Tiền hoa hồng</p>
-                <p className="font-semibold text-2xl">
-                  {VND.format(
-                    satisfy && satisfy.rose.length > 0
-                      ? satisfy.rose[0].money
-                      : 0
-                  )}
-                  VND
-                </p>
-              </div>
-              <div className="p-5 rounded-lg shadow-xl space-y-3">
-                <p className="text-gray-500 text-lg">Đã mời</p>
-                <p className="font-semibold text-2xl">
-                  {satisfy?.numberIntoduce || 0}
-                </p>
-              </div>
+            </div>
+            <div className="p-5 flex-1 space-y-3">
+              <p className="text-gray-500 text-lg">Tiền hoa hồng</p>
+              <p className="font-medium text-2xl">
+                {VND.format(
+                  // satisfy && satisfy.rose.length > 0 ? satisfy.rose[0].money : 0
+                  satisfy.rose
+                )}
+                VND
+              </p>
+            </div>
+            <div className="p-5 flex-1 space-y-3">
+              <p className="text-gray-500 text-lg">Đã mời</p>
+              <p className="font-medium text-2xl">
+                {/* {satisfy?.numberIntoduce || 0} */}
+                {satisfy.numberIntoduce}
+              </p>
             </div>
           </div>
+        </div>
+        <div
+          className={classNames(
+            "space-y-8",
+            userCashHistory.length === 0 &&
+              roseHistory.length === 0 &&
+              transactions.length === 0 &&
+              !loading
+              ? "col-span-12"
+              : "col-span-8"
+          )}
+        >
           <div className="space-y-4">
             <Heading>Liên hệ</Heading>
             <div className="">
@@ -155,6 +198,16 @@ const DashboardUserPage = () => {
               <p className="text-lg font-medium">Zalo: 0123456799</p>
             </div>
           </div>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Heading>Gói cước</Heading>
+              <button className="text-primary font-medium underline decoration-primary">
+                Xem tất cả
+              </button>
+            </div>
+            <PlanDashborad />
+          </div>
+          <InviteDashboard />
           <div className="space-y-4">
             <Heading>Hướng dẫn sử dụng</Heading>
             <div className="space-y-6">
@@ -185,11 +238,15 @@ const DashboardUserPage = () => {
             </div>
           </div>
         </div>
-        <div className="col-span-4 space-y-10">
-          <CashHistory />
-          <RoseHistory />
-          <TransactionHistory />
-        </div>
+        {userCashHistory.length === 0 &&
+        roseHistory.length === 0 &&
+        transactions.length === 0 ? null : (
+          <div className="col-span-4 space-y-10">
+            <CashHistory userCashHistory={userCashHistory} />
+            <RoseHistory roseHistory={roseHistory} />
+            <TransactionHistory transactions={transactions} />
+          </div>
+        )}
       </div>
       <Modal
         title="Nạp tiền"
@@ -198,23 +255,28 @@ const DashboardUserPage = () => {
         footer={[]}
       >
         <form
-          className="space-y-[15px] md:space-y-5"
+          className=""
           onSubmit={handleSubmit(onSubmit)}
         >
           <p className="font-primary text-icon-color">
             Bạn vui lòng nhập số tiền cần nạp sau đó liên hệ với admin để có thể
             nạp tiền hoặc đợi admin liên hệ trong ít phút nữa.
           </p>
-          <FormGroup>
-            <Label htmlFor="money">Số tiền*</Label>
-            <Input name="money" placeholder={""} control={control} />
-          </FormGroup>
-          <Button type="submit" className="w-full text-white bg-primary">
-            Nạp tiền
-          </Button>
+          <Label htmlFor="money" className="py-5 block">Số tiền*</Label>
+          <div className="flex gap-5">
+            <Input
+              name="money"
+              placeholder={""}
+              control={control}
+              containerclass="flex-1"
+            />
+            <Button type="submit" className="px-5 text-white bg-primary">
+              Nạp tiền
+            </Button>
+          </div>
         </form>
       </Modal>
-    </>
+    </RequireAuthPage>
   );
 };
 

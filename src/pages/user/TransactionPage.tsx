@@ -9,6 +9,7 @@ import Heading from "../../components/common/Heading";
 import { Table } from "antd";
 import { VND } from "../../utils/formatPrice";
 import dayjs from "dayjs";
+import RequireAuthPage from "../../components/common/RequireAuthPage";
 
 const TransactionPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -70,10 +71,12 @@ const TransactionPage = () => {
     },
   ];
   return (
-    <div className="space-y-6">
-      <Heading>Lịch sử mua</Heading>
-      <Table dataSource={transactions} columns={columns} loading={loading} />
-    </div>
+    <RequireAuthPage rolePage={2}>
+      <div className="space-y-6">
+        <Heading>Lịch sử mua</Heading>
+        <Table dataSource={transactions} columns={columns} loading={loading} />
+      </div>
+    </RequireAuthPage>
   );
 };
 

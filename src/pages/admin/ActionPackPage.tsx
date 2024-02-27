@@ -12,6 +12,7 @@ import { api } from "../../api";
 import { toast } from "react-toastify";
 import { messages } from "../../constants";
 import { PlanType } from "../../type";
+import RequireAuthPage from "../../components/common/RequireAuthPage";
 
 const schema = yup
   .object({
@@ -102,50 +103,52 @@ const ActionPackPage = () => {
     }
   };
   return (
-    <div>
-      <Heading>Thêm gói cước mới</Heading>
-      <form
-        className="grid grid-cols-5 gap-6"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <FormGroup>
-          <Label htmlFor="name">Mã/Tên gói cước*</Label>
-          <Input name="name" control={control} />
-        </FormGroup>
-        <FormGroup>
-          <Label htmlFor="price">Giá gói cước*</Label>
-          <Input name="price" control={control} type="number" min={0} />
-        </FormGroup>
-        <FormGroup>
-          <Label htmlFor="bandWidth">Băng thông*</Label>
-          <Input name="bandWidth" control={control} type="number" min={0} />
-        </FormGroup>
-        <FormGroup>
-          <Label htmlFor="type">Chu kỳ*</Label>
-          <Input name="type" control={control} />
-        </FormGroup>
-        <FormGroup>
-          <Label htmlFor="day">Ngày*</Label>
-          <Input name="day" control={control} type="number" min={0} />
-        </FormGroup>
-        <FormGroup className="col-span-5">
-          <Label htmlFor="description">Nội dung gói cước*</Label>
-          <Textarea
-            name="description"
-            control={control}
-            className="min-h-[200px]"
-          />
-        </FormGroup>
-        <FormGroup>
-          <Button
-            type="submit"
-            className="w-full text-white bg-primary mt-auto"
-          >
-            {plan ? "Chỉnh sửa" : "Thêm mới"}
-          </Button>
-        </FormGroup>
-      </form>
-    </div>
+    <RequireAuthPage rolePage={1}>
+      <div>
+        <Heading>Thêm gói cước mới</Heading>
+        <form
+          className="grid grid-cols-5 gap-6"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <FormGroup>
+            <Label htmlFor="name">Mã/Tên gói cước*</Label>
+            <Input name="name" control={control} />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="price">Giá gói cước*</Label>
+            <Input name="price" control={control} type="number" min={0} />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="bandWidth">Băng thông*</Label>
+            <Input name="bandWidth" control={control} type="number" min={0} />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="type">Chu kỳ*</Label>
+            <Input name="type" control={control} />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="day">Ngày*</Label>
+            <Input name="day" control={control} type="number" min={0} />
+          </FormGroup>
+          <FormGroup className="col-span-5">
+            <Label htmlFor="description">Nội dung gói cước*</Label>
+            <Textarea
+              name="description"
+              control={control}
+              className="min-h-[200px]"
+            />
+          </FormGroup>
+          <FormGroup>
+            <Button
+              type="submit"
+              className="w-full text-white bg-primary mt-auto"
+            >
+              {plan ? "Chỉnh sửa" : "Thêm mới"}
+            </Button>
+          </FormGroup>
+        </form>
+      </div>
+    </RequireAuthPage>
   );
 };
 

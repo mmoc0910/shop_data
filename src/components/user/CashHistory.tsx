@@ -1,33 +1,11 @@
-import { useEffect, useState } from "react";
-import { api } from "../../api";
 import { CashType } from "../../type";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/configureStore";
-import { toast } from "react-toastify";
-import { messages } from "../../constants";
 import Heading from "../common/Heading";
 import classNames from "../../utils/classNames";
 import { VND } from "../../utils/formatPrice";
 import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 
-const CashHistory = () => {
-  const { _id } = useSelector((state: RootState) => state.auth);
-  const [userCashHistory, setUserCashHistory] = useState<CashType[]>([]);
-  const fetchUserCashHistory = async () => {
-    try {
-      const result = await api.get<CashType[]>(
-        `/cashs?userId=${_id}&approve=true`
-      );
-      setUserCashHistory(result.data);
-    } catch (error) {
-      toast.error(messages.error);
-    }
-  };
-  useEffect(() => {
-    fetchUserCashHistory();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+const CashHistory = ({ userCashHistory }: { userCashHistory: CashType[] }) => {
   return (
     <div className="space-y-4">
       <Heading>Lịch sử nạp</Heading>
@@ -37,7 +15,8 @@ const CashHistory = () => {
         ) : (
           <div className="">
             {userCashHistory.map((item, index) => (
-              <div key={uuidv4()}
+              <div
+                key={uuidv4()}
                 className={classNames(
                   index === userCashHistory.length - 1
                     ? "mb-5 space-y-1 pl-10 relative after:absolute after:w-3 after:h-3 after:bg-white after:border-2 after:border-primary after:rounded-full after:left-0 after:top-1/2 after:-translate-y-1/2"

@@ -3,6 +3,7 @@ import bg from "../../assets/hero-1-bottom-shape.png";
 import Container from "../common/Container";
 import qrWechat from "../../assets/qr-wechat.png";
 import qrZalo from "../../assets/qr-zalo.png";
+import img from "../../assets/illustration-of-a-blue-smartphone-with-a-security-shield-vpn-technology-privacy-and-security-on-the-internet-banner-on-blue-background-secure-access-to-online-data-free-vector-removebg.png";
 
 const HomeBox = () => {
   return (
@@ -12,12 +13,12 @@ const HomeBox = () => {
     >
       <img src={bg} className="absolute bottom-0 left-0 right-0 z-[2]" />
       <div className="absolute w-full h-full inset-0 bg-[#000000a0] z-[1]"></div>
-      <Container className="py-14 lg:py-20 grid grid-cols-10 relative z-10">
-        <div className="col-span-10 lg:col-span-6">
-          <h1 className="text-3xl lg:text-5xl font-medium leading-relaxed text-white mb-7 lg:mb-10">
+      <Container className="py-14 md:py-8 grid grid-cols-10 relative z-10 md:gap-x-8">
+        <div className="col-span-10 md:col-span-6">
+          <h1 className="text-3xl lg:text-5xl font-medium text-white mb-7 lg:mb-8 !leading-relaxed tracking-wide">
             VPNCN2 cung cấp dịch vụ VPN VIP với chi phí rẻ nhất
           </h1>
-          <ul className="space-y-3 lg:space-y-5 w-5/6 text-white list-disc pl-5 text-base lg:text-lg">
+          <ul className="space-y-3 lg:space-y-5 lg:w-5/6 text-white list-disc pl-5 text-base lg:text-lg">
             <li>
               Giúp truy cập đến các ứng dụng bị chặn như Facebook, Google,
               Youtube, Telegram, Whatsapp, Tiktok ...
@@ -28,16 +29,13 @@ const HomeBox = () => {
             <li>Chuyên thị trường China, Iran users</li>
           </ul>
         </div>
-        <div className="col-span-4 pl-28 items-center justify-center hidden lg:flex">
-          <img
-            src="https://images.unsplash.com/photo-1695048064952-44b984f2af6d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            className="h-[400px] object-cover"
-          />
+        <div className="col-span-4 lg:pl-5 items-center justify-center hidden md:flex">
+          <img src={img} className="h-[400px] object-cover" />
         </div>
-        <div className="col-span-10 mt-16 lg:mt-24 mb-0 lg:mb-24">
+        <div className="col-span-10 mt-8 lg:mt-24 mb-0 lg:mb-24">
           <div className="grid grid-cols-12">
-            <div className="col-span-12 lg:col-span-4">
-              <p className="text-white font-medium mb-5 text-lg">
+            <div className="col-span-12 md:col-span-6 lg:col-span-5">
+              <p className="text-white font-medium mb-10 text-lg">
                 Tải và cài đặt phần mềm cho tất cả các loại thiết bị
               </p>
               <div className="flex justify-between">
@@ -95,8 +93,8 @@ const HomeBox = () => {
                 </div>
               </div>
             </div>
-            <div className="col-span-12 lg:col-span-8 ml-0 lg:ml-32 mt-10 lg:mt-0">
-              <p className="text-white font-medium mb-5 text-lg">
+            <div className="col-span-12 md:col-span-6 lg:col-span-7 ml-0 md:ml-10 lg:ml-32 mt-10 md:mt-0">
+              <p className="text-white font-medium mb-10 text-lg">
                 Quét mã để liên hệ đặt mua hoặc{" "}
                 <Link
                   to={"/sign-up"}
@@ -105,7 +103,7 @@ const HomeBox = () => {
                   Đăng ký
                 </Link>
               </p>
-              <div className="flex gap-10 justify-evenly">
+              <div className="flex gap-5 justify-evenly xl:justify-start xl:gap-10">
                 <div className="flex flex-col items-center gap-3">
                   <img
                     src={qrZalo}

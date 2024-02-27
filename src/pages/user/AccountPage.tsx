@@ -18,6 +18,7 @@ import { AuthState } from "../../store/auth/authSlice";
 import { api } from "../../api";
 import { toast } from "react-toastify";
 import axios from "axios";
+import RequireAuthPage from "../../components/common/RequireAuthPage";
 
 const schema = yup
   .object({
@@ -36,6 +37,8 @@ const schema = yup
   })
   .required();
 const AccountPage = () => {
+  const commision = useSelector((state: RootState) => state.commision);
+  const { cash } = useSelector((state: RootState) => state.satisfy);
   const { _id, email, level } = useSelector((state: RootState) => state.auth);
   const { value: tooglePassword, handleToogleValue: handleTooglePassword } =
     useToogleValue();
@@ -60,33 +63,39 @@ const AccountPage = () => {
       <div className="space-y-4 col-span-5">
         <Heading>Thông Tin Tài Khoản</Heading>
         <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            {" "}
-            <p className="text-sm">
-              <span className="font-medium">Mã CTV:</span> {_id}
-            </p>
-            <Tooltip title="copy">
-              <button
-                className="-translate-y-[2px]"
-                onClick={() => _id && copyToClipboard(_id)}
+          {cash >= 50000 && (
+            <div className="flex items-center gap-2">
+              <Tooltip
+                title={`Giới thiệu mã CTV này cho bạn bè bạn sẽ nhận được [${commision}%] hoa hồng cho mỗi giao dịch.`}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-5 h-5"
+                <p className="text-sm">
+                  <span className="font-medium">Mã CTV:</span> {_id}
+                </p>
+              </Tooltip>
+
+              <Tooltip title="copy">
+                <button
+                  className="-translate-y-[2px]"
+                  onClick={() => _id && copyToClipboard(_id)}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"
-                  />
-                </svg>
-              </button>
-            </Tooltip>
-          </div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"
+                    />
+                  </svg>
+                </button>
+              </Tooltip>
+            </div>
+          )}
 
           <p className="text-sm">
             <span className="font-medium">Email:</span> {email}
@@ -206,37 +215,39 @@ const ChangeProfile = () => {
   };
   const country = watch("country");
   return (
-    <form
-      className="space-y-[15px] md:space-y-5"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <FormGroup>
-        <Label htmlFor="email">Số điện thoại*</Label>
-        <Input name="phone" placeholder={""} control={control} />
-      </FormGroup>
-      <FormGroup>
-        <Label htmlFor="country">Quốc gia*</Label>
-        <div className="grid grid-cols-4 gap-5">
-          {countries.map((item) => (
-            <Radio
-              checked={item.key === country}
-              key={item.key}
-              onClick={() => setValue("country", item.key)}
-            >
-              {item.title}
-            </Radio>
-          ))}
-        </div>
-        {/* {errors.country?.message ? (
+    <RequireAuthPage rolePage={2}>
+      <form
+        className="space-y-[15px] md:space-y-5"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <FormGroup>
+          <Label htmlFor="email">Số điện thoại*</Label>
+          <Input name="phone" placeholder={""} control={control} />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="country">Quốc gia*</Label>
+          <div className="grid grid-cols-4 gap-5">
+            {countries.map((item) => (
+              <Radio
+                checked={item.key === country}
+                key={item.key}
+                onClick={() => setValue("country", item.key)}
+              >
+                {item.title}
+              </Radio>
+            ))}
+          </div>
+          {/* {errors.country?.message ? (
           <p className="text-sm font-medium text-error">
             {errors.country.message}
           </p>
         ) : null} */}
-      </FormGroup>
-      <Button type="submit" className="w-full text-white bg-primary">
-        Lưu
-      </Button>
-    </form>
+        </FormGroup>
+        <Button type="submit" className="w-full text-white bg-primary">
+          Lưu
+        </Button>
+      </form>
+    </RequireAuthPage>
   );
 };
 
