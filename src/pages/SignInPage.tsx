@@ -48,7 +48,7 @@ const SignInPage = () => {
   const onSubmit = async (data: { account: string; password: string }) => {
     try {
       console.log("data sign in - ", data);
-      const result = await api.post<{ data: AuthState }>("/users/login", {...data, email: data.account});
+      const result = await api.post<{ data: AuthState }>("/users/login", data);
       console.log("resut - ", result);
       dispatch(setAuth(result.data.data));
       if (result.data.data.role === 1) {
