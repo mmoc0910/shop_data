@@ -104,7 +104,7 @@ const SignUpPage = () => {
       console.log("data sign in - ", data);
       if (password === rePassword) {
         if (introduceCode) {
-          if (introduceCode.length === 24) {
+          if (introduceCode.length === 7) {
             const result = await api.post<{ data: AuthState }>("/users", {
               username,
               email,
@@ -119,7 +119,7 @@ const SignUpPage = () => {
             toast.success("Đăng ký tài khoản thành công");
           } else {
             setError("introduceCode", {
-              message: "Mã giới thiệu phải có độ dài 24 ký tự",
+              message: "Mã giới thiệu phải có độ dài 7 ký tự",
             });
           }
         } else {
