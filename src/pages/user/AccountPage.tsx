@@ -49,17 +49,28 @@ const AccountPage = () => {
   const { _id, email, level, introduceCode, username } = useSelector(
     (state: RootState) => state.auth
   );
-  const { value: tooglePassword, handleToogleValue: handleTooglePassword } =
-    useToogleValue();
+  const {
+    value: toogleOldPassword,
+    handleToogleValue: handleToogleOldPassword,
+  } = useToogleValue();
   const {
     value: toogleNewPassword,
     handleToogleValue: handleToogleNewPassword,
   } = useToogleValue();
-  const { handleSubmit, control, setError } = useForm({
+  const {
+    value: toogleReNewPassword,
+    handleToogleValue: handleToogleReNewPassword,
+  } = useToogleValue();
+  const {
+    handleSubmit,
+    control,
+    setError,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(schema),
     mode: "onSubmit",
   });
-
+  console.log("roor - ", errors);
   const onSubmit = async (data: {
     oldPassword: string;
     newPassword: string;
@@ -168,16 +179,17 @@ Chiết khấu [${collab.level3}%] cho mỗi đơn hàng mới
           onSubmit={handleSubmit(onSubmit)}
         >
           <FormGroup>
-            <Label htmlFor="email">Mật khẩu*</Label>
+            <Label htmlFor="oldPassword">Mật khẩu*</Label>
             <Input
-              name="password"
+              type={toogleOldPassword ? "text" : "password"}
+              name="oldPassword"
               placeholder={"Vui lòng nhập mật khẩu cũ"}
               control={control}
             >
               <IconEyeToogle
                 className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2"
-                open={tooglePassword}
-                onClick={handleTooglePassword}
+                open={toogleOldPassword}
+                onClick={handleToogleOldPassword}
               ></IconEyeToogle>
             </Input>
           </FormGroup>
@@ -199,11 +211,17 @@ Chiết khấu [${collab.level3}%] cho mỗi đơn hàng mới
           <FormGroup>
             <Label htmlFor="reNewPassword">Mật khẩu mới*</Label>
             <Input
-              type={toogleNewPassword ? "text" : "password"}
+              type={toogleReNewPassword ? "text" : "password"}
               name="reNewPassword"
               placeholder={"Vui lòng nhập mật lại khẩu mới"}
               control={control}
-            />
+            >
+              <IconEyeToogle
+                className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2"
+                open={toogleReNewPassword}
+                onClick={handleToogleReNewPassword}
+              ></IconEyeToogle>
+            </Input>
           </FormGroup>
           <Button type="submit" className="w-full text-white bg-primary">
             Lưu

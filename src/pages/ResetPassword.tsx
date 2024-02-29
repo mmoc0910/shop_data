@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import LayoutAuthentication from "../layouts/LayoutAuthentication";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -13,6 +13,8 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { api } from "../api";
+import { useToogleValue } from "../hooks/useToogleValue";
+import IconEyeToogle from "../icons/IconEyeToogle";
 
 const schema = yup
   .object({
@@ -22,7 +24,17 @@ const schema = yup
   .required();
 
 const ResetPassword = () => {
-  const { token } = useParams();
+  const {
+    value: toogleNewPassword,
+    handleToogleValue: handleToogleNewPassword,
+  } = useToogleValue();
+  const {
+    value: toogleReNewPassword,
+    handleToogleValue: handleToogleReNewPassword,
+  } = useToogleValue();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const token = searchParams.get("token");
   console.log("token - ", token);
   const { email, role } = useSelector((state: RootState) => state.auth);
   const navigation = useNavigate();
@@ -72,18 +84,32 @@ const ResetPassword = () => {
         <FormGroup>
           <Label htmlFor="newPassword">Mật khẩu mới*</Label>
           <Input
+            type={toogleNewPassword ? "text" : "password"}
             name="newPassword"
             control={control}
             placeholder="Nhập mật khẩu mới"
-          />
+          >
+            <IconEyeToogle
+              className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2"
+              open={toogleNewPassword}
+              onClick={handleToogleNewPassword}
+            ></IconEyeToogle>
+          </Input>
         </FormGroup>
         <FormGroup>
           <Label htmlFor="reNewPassword">Mật khẩu mới*</Label>
           <Input
+            type={toogleReNewPassword ? "text" : "password"}
             name="reNewPassword"
             placeholder="Xác nhận lại mật khẩu"
             control={control}
-          />
+          >
+            <IconEyeToogle
+              className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2"
+              open={toogleReNewPassword}
+              onClick={handleToogleReNewPassword}
+            ></IconEyeToogle>
+          </Input>
         </FormGroup>
         <Button type="submit" className="w-full text-white bg-primary">
           Đặt lại mật khẩu
