@@ -5,6 +5,9 @@ import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 import LayoutUser from "./layouts/LayoutUser";
 import LayoutAdmin from "./layouts/LayoutAdmin";
+const CashPage = lazy(() => import("./pages/user/CashPage"));
+const FogotPassword = lazy(() => import("./pages/FogotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const PackPage = lazy(() => import("./pages/admin/PackPage"));
 const ActionPackPage = lazy(() => import("./pages/admin/ActionPackPage"));
 const AccountAdminPage = lazy(() => import("./pages/admin/AccountAdminPage"));
@@ -69,9 +72,12 @@ function App() {
             <Route path="user/order" element={<OrderPage />} />
             <Route path="user/invite" element={<InvitePage />} />
             <Route path="user/transaction" element={<TransactionPage />} />
+            <Route path="user/cash" element={<CashPage />} />
           </Route>
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
+          <Route path="/forgot-password" element={<FogotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route
             path="*"
             element={

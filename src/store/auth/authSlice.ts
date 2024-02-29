@@ -12,6 +12,8 @@ export interface AuthState {
   transaction?: number;
   cash?: number;
   _id?: string;
+  introduceCode?: string;
+  username?: string;
   createdAt?: Date;
   updatedAt?: Date;
   __v?: number;

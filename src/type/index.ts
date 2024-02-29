@@ -61,6 +61,9 @@ export type CashType = {
   approve: boolean;
   createdAt: Date;
   updatedAt: Date;
+  status: 0 | 1 | 2;
+  description: string;
+  //2:pending, 1:approve, 0:reject
   __v: 0;
 };
 

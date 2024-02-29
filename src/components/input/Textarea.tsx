@@ -23,10 +23,10 @@ const Textarea: FC<TextareaType> = ({
       <textarea
         autoComplete="off"
         className={classNames(
-          "outline-none text-sm focus:border-primary font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer dark:placeholder:text-text2 resize-none min-h-[140px]",
+          "outline-none text-sm focus:border-primary font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer resize-none min-h-[140px]",
           error?.message
             ? "border-error text-error"
-            : "border-icon-color dark:border-dark-strock text-text1 dark:text-white",
+            : "border-icon-color text-text1",
           className
         )}
         placeholder={placeholder}
@@ -35,7 +35,7 @@ const Textarea: FC<TextareaType> = ({
       />
       {error?.message && (
         <div className="peer-focus:hidden w-full font-medium text-error absolute pointer-events-none py-[15px] px-[25px] top-0 left-0">
-          <p className="text-sm bg-white dark:bg-dark-secondary">
+          <p className="text-sm bg-white">
             {error.message}
           </p>
         </div>

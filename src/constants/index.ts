@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const messages = { error: "Xảy ra lỗi trong quá trình xử lý" };
 
 export const countries = [
@@ -7,3 +9,5 @@ export const countries = [
   { key: "ir", title: "Iran" },
   { key: "orther", title: "Orther" },
 ];
+
+export const DAY_FORMAT = (date: Date) => dayjs(date).format('DD-MM-YYYY HH:MM')

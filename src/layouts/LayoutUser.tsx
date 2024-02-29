@@ -10,17 +10,19 @@ import { RootState } from "../store/configureStore";
 import { setAuth } from "../store/auth/authSlice";
 import { useEffect } from "react";
 import { api } from "../api";
-import { SatisfyType } from "../type";
+import { CollabType, SatisfyType } from "../type";
 import { setSatify } from "../store/satisfy/satisfySlice";
 import { setCommision } from "../store/commision/commisionSlice";
 import { Tooltip } from "antd";
 import { copyToClipboard } from "../utils/copyToClipboard";
+import { setCollab } from "../store/collab/collabSlice";
 
 const menu = [
   { to: "/user/dashboard", title: "Dashboard" },
   { to: "/user/plan", title: "Mua gói cước" },
   { to: "/user/order", title: "Đơn hàng của tôi" },
   { to: "/user/transaction", title: "Lịch sử giao dịch" },
+  { to: "user/cash", title: "Lịch sử nạp" },
   { to: "/user/invite", title: "Cộng tác viên" },
   { to: "/user/account", title: "Thông tin người dùng" },
 ];
@@ -46,17 +48,23 @@ const menu = [
 const LayoutUser = () => {
   const navigation = useNavigate();
   const dispatch = useDispatch();
-  const { email, _id } = useSelector((state: RootState) => state.auth);
+  const { email, _id, introduceCode } = useSelector(
+    (state: RootState) => state.auth
+  );
   const commision = useSelector((state: RootState) => state.commision);
   const { cash } = useSelector((state: RootState) => state.satisfy);
   useEffect(() => {
     (async () => {
       try {
-        const [{ data: dataSatify }, { data: dataCommision }] =
-          await Promise.all([
-            api.get<SatisfyType>(`/satisfy/${_id}`),
-            api.get<{ value: number }>("/commisions"),
-          ]);
+        const [
+          { data: dataSatify },
+          { data: dataCommision },
+          { data: dataCollab },
+        ] = await Promise.all([
+          api.get<SatisfyType>(`/satisfy/${_id}`),
+          api.get<{ value: number }>("/commisions"),
+          api.get<CollabType>("/collab"),
+        ]);
         // console.log("result - ", data);
         dispatch(
           setSatify({
@@ -68,6 +76,13 @@ const LayoutUser = () => {
           })
         );
         dispatch(setCommision(dataCommision.value));
+        dispatch(
+          setCollab({
+            level1: dataCollab.level1,
+            level2: dataCollab.level2,
+            level3: dataCollab.level3,
+          })
+        );
       } catch (error) {
         console.log("error - ", error);
       }
@@ -113,7 +128,8 @@ const LayoutUser = () => {
                 title={`Giới thiệu mã CTV này cho bạn bè bạn sẽ nhận được [${commision}%] hoa hồng cho mỗi giao dịch.`}
               >
                 <p className="text-sm">
-                  <span className="font-medium">Mã CTV:</span> {_id}
+                  <span className="font-medium">Mã CTV:</span>{" "}
+                  {introduceCode || ""}
                 </p>
               </Tooltip>
 

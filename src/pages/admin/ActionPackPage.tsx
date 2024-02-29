@@ -16,7 +16,13 @@ import RequireAuthPage from "../../components/common/RequireAuthPage";
 
 const schema = yup
   .object({
-    name: yup.string().required(),
+    name: yup
+      .string()
+      .required()
+      .matches(
+        /^[a-zA-Z0-9_-]+$/,
+        "Chỉ viết liền, ký tự thường, hoa, dấu -, _"
+      ),
     description: yup.string().required(),
     type: yup.string().required(),
     day: yup.number().required(),
@@ -104,7 +110,7 @@ const ActionPackPage = () => {
   };
   return (
     <RequireAuthPage rolePage={1}>
-      <div>
+      <div className="space-y-4">
         <Heading>Thêm gói cước mới</Heading>
         <form
           className="grid grid-cols-5 gap-6"
@@ -116,11 +122,19 @@ const ActionPackPage = () => {
           </FormGroup>
           <FormGroup>
             <Label htmlFor="price">Giá gói cước*</Label>
-            <Input name="price" control={control} type="number" min={0} />
+            <Input name="price" control={control} type="number" min={0}>
+              <p className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2 font-semibold text-icon-color">
+                VND
+              </p>
+            </Input>
           </FormGroup>
           <FormGroup>
             <Label htmlFor="bandWidth">Băng thông*</Label>
-            <Input name="bandWidth" control={control} type="number" min={0} />
+            <Input name="bandWidth" control={control} type="number" min={0}>
+              <p className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2 font-semibold text-icon-color">
+                GB
+              </p>
+            </Input>
           </FormGroup>
           <FormGroup>
             <Label htmlFor="type">Chu kỳ*</Label>
@@ -128,7 +142,11 @@ const ActionPackPage = () => {
           </FormGroup>
           <FormGroup>
             <Label htmlFor="day">Ngày*</Label>
-            <Input name="day" control={control} type="number" min={0} />
+            <Input name="day" control={control} type="number" min={0}>
+              <p className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2 font-semibold text-icon-color">
+                Ngày
+              </p>
+            </Input>
           </FormGroup>
           <FormGroup className="col-span-5">
             <Label htmlFor="description">Nội dung gói cước*</Label>

@@ -1,4 +1,4 @@
-import { Table } from "antd";
+import { Table, TableColumnsType } from "antd";
 import { RoseType } from "../../type";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
@@ -9,6 +9,7 @@ import { messages } from "../../constants";
 import { VND } from "../../utils/formatPrice";
 import dayjs from "dayjs";
 import Heading from "../common/Heading";
+import { Link } from "react-router-dom";
 
 const InviteDashboard = () => {
   const { _id } = useSelector((state: RootState) => state.auth);
@@ -24,7 +25,16 @@ const InviteDashboard = () => {
       }
     })();
   }, [_id]);
-  const columns = [
+  const columns: TableColumnsType<RoseType> = [
+    {
+      title: () => (
+        <p className="font-primary text-base font-semibold">STT</p>
+      ),
+      dataIndex: "index",
+      render: (_text: string, _record: RoseType, index: number) => (
+        <p className="font-primary text-sm">{index + 1}</p>
+      ),
+    },
     {
       title: <p className="font-primary font-semibold">Tên gói</p>,
       dataIndex: "namePlan",
@@ -73,11 +83,22 @@ const InviteDashboard = () => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <Heading>Bạn bè được giới thiệu</Heading>
-          <button className="text-primary font-medium underline decoration-primary">
-            Xem tất cả
-          </button>
+          {roseHistory.length > 5 ? (
+            <Link
+              to={"/user/invite"}
+              className="text-primary font-medium underline decoration-primary"
+            >
+              Xem tất cả
+            </Link>
+          ) : null}
         </div>
-        <Table dataSource={roseHistory} columns={columns} />
+        <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
+          <Table
+            dataSource={roseHistory.slice(0, 5)}
+            columns={columns}
+            pagination={false}
+          />
+        </div>
       </div>
     );
   return;

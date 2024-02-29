@@ -1,4 +1,3 @@
-
 import Heading from "../common/Heading";
 import classNames from "../../utils/classNames";
 import dayjs from "dayjs";
@@ -20,7 +19,7 @@ const TransactionHistory = ({
           <p>Chưa có giao dịch nạp nào được thực hiện</p>
         ) : (
           <div className="">
-            {transactions.map((item, index) => (
+            {transactions.slice(0, 5).map((item, index) => (
               <div
                 key={uuidv4()}
                 className={classNames(
@@ -40,12 +39,14 @@ const TransactionHistory = ({
                 </div>
               </div>
             ))}
-            <Link
-              to={"/user/transaction"}
-              className="text-primary underline decoration-primary text-center block"
-            >
-              Xem tất cả
-            </Link>
+            {transactions.length > 5 ? (
+              <Link
+                to={"/user/transaction"}
+                className="text-primary underline decoration-primary text-center block"
+              >
+                Xem tất cả
+              </Link>
+            ) : null}
           </div>
         )}
       </div>

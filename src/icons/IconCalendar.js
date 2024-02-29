@@ -3,7 +3,7 @@ import React from "react";
 const IconCalendar = () => {
   return (
     <svg
-      className="text-[#A2A2A8] dark:text-[#4B5264]"
+      className="text-[#A2A2A8]"
       width={24}
       height={24}
       viewBox="0 0 24 24"

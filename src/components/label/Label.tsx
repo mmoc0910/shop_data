@@ -11,7 +11,7 @@ const Label: FC<LabelType> = ({ children, htmlFor = "", className = "" }) => {
     <label
       htmlFor={htmlFor}
       className={classNames(
-        "text-sm font-medium capitalize text-text-2 dark:text-text3",
+        "text-sm lg:text-base font-medium capitalize text-text-2",
         className
       )}
     >

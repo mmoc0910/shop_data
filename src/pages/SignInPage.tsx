@@ -49,7 +49,7 @@ const SignInPage = () => {
     try {
       console.log("data sign in - ", data);
       const result = await api.post<{ data: AuthState }>("/users/login", data);
-      console.log("resut - ", result);
+      console.log("resut - ", result.data);
       dispatch(setAuth(result.data.data));
       if (result.data.data.role === 1) {
         navigation("/admin/dashboard");
@@ -106,9 +106,9 @@ const SignInPage = () => {
           </Input>
         </FormGroup>
         <div className="flex justify-end">
-          <p className="text-sm font-medium cursor-pointer select-none text-primary">
+          <Link to={'/forgot-password'} className="text-sm font-medium cursor-pointer select-none text-primary">
             Forgot password
-          </p>
+          </Link>
         </div>
         <Button type="submit" className="w-full text-white bg-primary">
           Sign in

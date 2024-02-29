@@ -98,10 +98,11 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
                 });
                 if (isConfirmed) {
                   setLoading(true);
-                  await api.post("/gists", {
+                  const result = await api.post("/gists", {
                     userId: _id,
                     planId: plan._id,
                   });
+                  console.log("result - ", result.data);
                   toast.success("Mua thành công");
                   navigation("/user/order");
                 }

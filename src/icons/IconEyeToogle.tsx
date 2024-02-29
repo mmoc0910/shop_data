@@ -9,7 +9,7 @@ const IconEyeToogle = ({
   return (
     <span
       onClick={onClick}
-      className={classNames("text-[#A2A2A8] dark:text-[#4B5264]", className)}
+      className={classNames("text-[#A2A2A8]", className)}
     >
       {open ? (
         <svg

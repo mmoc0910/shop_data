@@ -18,7 +18,7 @@ const Checkbox: FC<CheckboxType> = ({
           "w-4 h-4 rounded-[4px] border flex items-center justify-center transition-all duration-75 cursor-pointer",
           checked
             ? "border-primary bg-primary text-white"
-            : "border-text4 text-white dark:bg-dark-secondary dark:border-text3 dark:text-dark-secondary"
+            : "border-text4 text-white"
         )}
         onClick={onClick}
       >

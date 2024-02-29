@@ -15,7 +15,7 @@ const RoseHistory = ({ roseHistory }: { roseHistory: RoseType[] }) => {
           <p>Chưa có giao dịch nạp nào được thực hiện</p>
         ) : (
           <div className="">
-            {roseHistory.map((item, index) => (
+            {roseHistory.slice(0, 5).map((item, index) => (
               <div
                 key={uuidv4()}
                 className={classNames(

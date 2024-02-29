@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import IconQuesionMarkCircle from "../../icons/IconQuesionMarkCircle";
-import { Table, Tooltip } from "antd";
+import { Table, TableColumnsType, Tooltip } from "antd";
 import { api } from "../../api";
 import { CommisionType, RoseType, SatisfyType } from "../../type";
 import { RootState } from "../../store/configureStore";
@@ -42,50 +42,62 @@ const InvitePage = () => {
       toast.error(messages.error);
     }
   };
-  const columns = [
-    {
-      title: <p className="font-primary font-semibold">Tên gói</p>,
-      dataIndex: "namePlan",
-      key: "namePlan",
-      render: (_: string, record: RoseType) => (
-        <p className="font-primary text-sm">{record.plan}</p>
-      ),
-    },
-    {
-      title: <p className="font-primary font-semibold">% hoa hồng</p>,
-      dataIndex: "percent",
-      key: "percent",
-      render: (_: string, record: RoseType) => (
-        <p className="font-primary text-sm">{record.percent}%</p>
-      ),
-    },
-    {
-      title: <p className="font-primary font-semibold">Tiền hoa hồng</p>,
-      dataIndex: "moneyPercent",
-      key: "moneyPercent",
-      render: (_: string, record: RoseType) => (
-        <p className="font-primary text-sm">{VND.format(record.recive)}VND</p>
-      ),
-    },
-    {
-      title: <p className="font-primary font-semibold">Người mua</p>,
-      dataIndex: "moneyPercent",
-      key: "moneyPercent",
-      render: (_: string, record: RoseType) => (
-        <p className="font-primary text-sm">{record.reciveRoseId.email}</p>
-      ),
-    },
-    {
-      title: <p className="font-primary font-semibold">Ngày nhận</p>,
-      dataIndex: "moneyPercent",
-      key: "moneyPercent",
-      render: (_: string, record: RoseType) => (
-        <p className="font-primary text-sm">
-          {dayjs(record.createdAt).format("DD-MM-YYYY")}
-        </p>
-      ),
-    },
-  ];
+  const columns: TableColumnsType<RoseType> = useMemo(
+    () => [
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">STT</p>
+        ),
+        dataIndex: "index",
+        render: (_text: string, _record: RoseType, index: number) => (
+          <p className="font-primary text-sm">{index + 1}</p>
+        ),
+      },
+      {
+        title: <p className="font-primary font-semibold">Tên gói</p>,
+        dataIndex: "namePlan",
+        key: "namePlan",
+        render: (_: string, record: RoseType) => (
+          <p className="font-primary text-sm">{record.plan}</p>
+        ),
+      },
+      {
+        title: <p className="font-primary font-semibold">% hoa hồng</p>,
+        dataIndex: "percent",
+        key: "percent",
+        render: (_: string, record: RoseType) => (
+          <p className="font-primary text-sm">{record.percent}%</p>
+        ),
+      },
+      {
+        title: <p className="font-primary font-semibold">Tiền hoa hồng</p>,
+        dataIndex: "moneyPercent",
+        key: "moneyPercent",
+        render: (_: string, record: RoseType) => (
+          <p className="font-primary text-sm">{VND.format(record.recive)}VND</p>
+        ),
+      },
+      {
+        title: <p className="font-primary font-semibold">Người mua</p>,
+        dataIndex: "moneyPercent",
+        key: "moneyPercent",
+        render: (_: string, record: RoseType) => (
+          <p className="font-primary text-sm">{record.reciveRoseId.email}</p>
+        ),
+      },
+      {
+        title: <p className="font-primary font-semibold">Ngày nhận</p>,
+        dataIndex: "moneyPercent",
+        key: "moneyPercent",
+        render: (_: string, record: RoseType) => (
+          <p className="font-primary text-sm">
+            {dayjs(record.createdAt).format("DD-MM-YYYY")}
+          </p>
+        ),
+      },
+    ],
+    []
+  );
   return (
     <RequireAuthPage rolePage={2}>
       <div className="space-y-14">

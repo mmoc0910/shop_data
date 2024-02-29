@@ -8,7 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "../../components/button/Button";
 import { Label } from "../../components/label";
 import { Input } from "../../components/input";
-import {useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
 import { toast } from "react-toastify";
 import { messages } from "../../constants";
@@ -41,7 +41,7 @@ const DashboardUserPage = () => {
       try {
         setLoading(true);
         const [resultCash, resultRose, resultTransaction] = await Promise.all([
-          api.get<CashType[]>(`/cashs?userId=${_id}&approve=true`),
+          api.get<CashType[]>(`/cashs?userId=${_id}`),
           api.get<RoseType[]>(`/roses?reciveRoseId=${_id}`),
           api.get<TransactionType[]>(
             `/transactions?userId=${_id}&approve=true`
@@ -198,15 +198,7 @@ const DashboardUserPage = () => {
               <p className="text-lg font-medium">Zalo: 0123456799</p>
             </div>
           </div>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Heading>Gói cước</Heading>
-              <button className="text-primary font-medium underline decoration-primary">
-                Xem tất cả
-              </button>
-            </div>
-            <PlanDashborad />
-          </div>
+          <PlanDashborad />
           <InviteDashboard />
           <div className="space-y-4">
             <Heading>Hướng dẫn sử dụng</Heading>
@@ -242,7 +234,7 @@ const DashboardUserPage = () => {
         roseHistory.length === 0 &&
         transactions.length === 0 ? null : (
           <div className="col-span-4 space-y-10">
-            <CashHistory userCashHistory={userCashHistory} />
+            <CashHistory userCashHistory={userCashHistory.filter(item => item.status !== 2)} />
             <RoseHistory roseHistory={roseHistory} />
             <TransactionHistory transactions={transactions} />
           </div>
@@ -254,15 +246,14 @@ const DashboardUserPage = () => {
         onCancel={handleCancel}
         footer={[]}
       >
-        <form
-          className=""
-          onSubmit={handleSubmit(onSubmit)}
-        >
+        <form className="" onSubmit={handleSubmit(onSubmit)}>
           <p className="font-primary text-icon-color">
             Bạn vui lòng nhập số tiền cần nạp sau đó liên hệ với admin để có thể
             nạp tiền hoặc đợi admin liên hệ trong ít phút nữa.
           </p>
-          <Label htmlFor="money" className="py-5 block">Số tiền*</Label>
+          <Label htmlFor="money" className="py-5 block">
+            Số tiền*
+          </Label>
           <div className="flex gap-5">
             <Input
               name="money"

@@ -4,6 +4,7 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import authSlice from "./auth/authSlice";
 import satisfySlice from "./satisfy/satisfySlice";
 import commisionSlice from "./commision/commisionSlice";
+import collabSlice from "./collab/collabSlice";
 
 const persistConfig = {
   key: "root",
@@ -16,7 +17,7 @@ const rootReducer = combineReducers({
   auth: authSlice,
   satisfy: satisfySlice,
   commision: commisionSlice,
-  // collab: collabSlice,
+  collab: collabSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

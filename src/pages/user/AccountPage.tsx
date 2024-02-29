@@ -9,20 +9,24 @@ import { Input } from "../../components/input";
 import IconEyeToogle from "../../icons/IconEyeToogle";
 import Button from "../../components/button/Button";
 import { RootState } from "../../store/configureStore";
-import { useSelector } from "react-redux";
-import { Radio, Tooltip } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { Tooltip } from "antd";
 import { copyToClipboard } from "../../utils/copyToClipboard";
 import { countries } from "../../constants";
 import { useEffect, useState } from "react";
-import { AuthState } from "../../store/auth/authSlice";
+import { AuthState, setAuth } from "../../store/auth/authSlice";
 import { api } from "../../api";
 import { toast } from "react-toastify";
 import axios from "axios";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
+import IconQuesionMarkCircle from "../../icons/IconQuesionMarkCircle";
+import { DropdownWithComponents } from "../../components/dropdown";
+import { v4 as uuidv4 } from "uuid";
+import { useNavigate } from "react-router-dom";
 
 const schema = yup
   .object({
-    password: yup
+    oldPassword: yup
       .string()
       .required("This field is required")
       .min(8, "Minimum of 8 characters"),
@@ -37,25 +41,54 @@ const schema = yup
   })
   .required();
 const AccountPage = () => {
+  const navigation = useNavigate();
+  const dispatch = useDispatch();
   const commision = useSelector((state: RootState) => state.commision);
+  const collab = useSelector((state: RootState) => state.collab);
   const { cash } = useSelector((state: RootState) => state.satisfy);
-  const { _id, email, level } = useSelector((state: RootState) => state.auth);
+  const { _id, email, level, introduceCode, username } = useSelector(
+    (state: RootState) => state.auth
+  );
   const { value: tooglePassword, handleToogleValue: handleTooglePassword } =
     useToogleValue();
   const {
     value: toogleNewPassword,
     handleToogleValue: handleToogleNewPassword,
   } = useToogleValue();
-  const { handleSubmit, control } = useForm({
+  const { handleSubmit, control, setError } = useForm({
     resolver: yupResolver(schema),
     mode: "onSubmit",
   });
 
-  const onSubmit = (data: unknown) => {
+  const onSubmit = async (data: {
+    oldPassword: string;
+    newPassword: string;
+    reNewPassword: string;
+  }) => {
+    const { newPassword, oldPassword, reNewPassword } = data;
     try {
       console.log("data sign in - ", data);
+      if (newPassword === reNewPassword) {
+        await api.patch(`/users/change-password/${_id}`, {
+          oldPassword,
+          newPassword,
+        });
+        dispatch(setAuth({}));
+        navigation("/sign-in");
+        toast.success("Đổi mật khẩu thành công vui lòng đăng nhập lại");
+      } else {
+        setError("reNewPassword", {
+          message: "Xác nhận mật khẩu mới không khớp",
+        });
+      }
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error)) {
+        console.log("error message: ", error);
+        toast.error(error.response?.data.message);
+      } else {
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
+      }
     }
   };
   return (
@@ -69,7 +102,8 @@ const AccountPage = () => {
                 title={`Giới thiệu mã CTV này cho bạn bè bạn sẽ nhận được [${commision}%] hoa hồng cho mỗi giao dịch.`}
               >
                 <p className="text-sm">
-                  <span className="font-medium">Mã CTV:</span> {_id}
+                  <span className="font-medium">Mã CTV:</span>{" "}
+                  {introduceCode || ""}
                 </p>
               </Tooltip>
 
@@ -100,13 +134,30 @@ const AccountPage = () => {
           <p className="text-sm">
             <span className="font-medium">Email:</span> {email}
           </p>
-          {/* <p className="text-sm">
-            <span className="font-medium">Số điện thoại:</span> {phone}
-          </p> */}
           <p className="text-sm">
-            <span className="font-medium">Cấp Độ:</span>{" "}
-            {level === 0 ? "Công tác  viên" : `Đại lý cấp ${level}`}
+            <span className="font-medium">Tên đăng nhập:</span> {username}
           </p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm">
+              <span className="font-medium">Loại người dùng:</span>{" "}
+              {level === 0 ? "Công tác  viên" : `Đại lý cấp ${level}`}
+            </p>
+            <Tooltip
+              title={`User/CTV: 
+Nhận được ${commision}% hoa hồng cho mỗi đơn hàng của người được giới thiệu || 
+Đại lý Cấp 1: 
+Chiết khấu [${collab.level1}%] cho mỗi đơn hàng mới ||
+Đại lý Cấp 2: 
+Chiết khấu [${collab.level2}%] cho mỗi đơn hàng mới ||
+Đại lý Cấp 3: 
+Chiết khấu [${collab.level3}%] cho mỗi đơn hàng mới
+`}
+            >
+              <span className="cursor-pointer">
+                <IconQuesionMarkCircle />
+              </span>
+            </Tooltip>
+          </div>
         </div>
         <ChangeProfile />
       </div>
@@ -168,12 +219,14 @@ const schemaProfile = yup
     // ctv: yup.string(),
     phone: yup.string().required("This field is required"),
     country: yup.string().required("This field is required"),
+    // username: yup.string().required("This field is required"),
   })
   .required();
 
 const ChangeProfile = () => {
-  const { _id } = useSelector((state: RootState) => state.auth);
+  const { _id, email } = useSelector((state: RootState) => state.auth);
   const [user, setUser] = useState<AuthState>();
+  const dispatch = useDispatch();
   const { handleSubmit, control, setValue, watch } = useForm({
     resolver: yupResolver(schemaProfile),
     mode: "onSubmit",
@@ -196,12 +249,19 @@ const ChangeProfile = () => {
     if (user) {
       user.country && setValue("country", user.country);
       user.phone && setValue("phone", user.phone);
+      // user.username && setValue("username", user.username);
     }
   }, [user, setValue]);
-  const onSubmit = async (data: { phone: string; country: string }) => {
+  const onSubmit = async (data: {
+    phone: string;
+    country: string;
+    // username: string;
+  }) => {
     try {
       console.log("data sign in - ", data);
-      await api.patch(`/users/${_id}`, data);
+      await api.patch(`/users/${_id}`, { ...data, email });
+      const resultUser = await api.get<AuthState>(`/users/${_id}`);
+      dispatch(setAuth(resultUser.data));
       toast.success("Chỉnh sửa thành công");
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -225,23 +285,31 @@ const ChangeProfile = () => {
           <Input name="phone" placeholder={""} control={control} />
         </FormGroup>
         <FormGroup>
-          <Label htmlFor="country">Quốc gia*</Label>
-          <div className="grid grid-cols-4 gap-5">
-            {countries.map((item) => (
-              <Radio
-                checked={item.key === country}
-                key={item.key}
-                onClick={() => setValue("country", item.key)}
-              >
-                {item.title}
-              </Radio>
-            ))}
-          </div>
-          {/* {errors.country?.message ? (
-          <p className="text-sm font-medium text-error">
-            {errors.country.message}
-          </p>
-        ) : null} */}
+          <Label>Select country*</Label>
+          <DropdownWithComponents>
+            <DropdownWithComponents.Select
+              placeholder={
+                country ? (
+                  <span className="text-black">
+                    {countries.find((i) => i.key === country)?.title}
+                  </span>
+                ) : (
+                  <span className="text-text4">Select one</span>
+                )
+              }
+            ></DropdownWithComponents.Select>
+            <DropdownWithComponents.List>
+              {countries.length > 0 &&
+                countries.map((country) => (
+                  <DropdownWithComponents.Option
+                    key={uuidv4()}
+                    onClick={() => setValue("country", country.key)}
+                  >
+                    <span className="capitalize">{country.title}</span>
+                  </DropdownWithComponents.Option>
+                ))}
+            </DropdownWithComponents.List>
+          </DropdownWithComponents>
         </FormGroup>
         <Button type="submit" className="w-full text-white bg-primary">
           Lưu

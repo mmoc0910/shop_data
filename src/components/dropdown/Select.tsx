@@ -11,11 +11,11 @@ const Select = ({
   const { toggle, show } = useDropdown();
   return (
     <div
-      className={`flex items-center justify-between py-[15px] px-[25px] bg-inherit dark:border-dark-strock border border-strock rounded-lg cursor-pointer text-sm font-medium ${className}`}
+      className={`flex items-center justify-between py-[15px] px-[25px] bg-inherit border border-strock rounded-lg cursor-pointer text-sm font-medium ${className}`}
       onClick={toggle}
     >
       <div className="capitalize line-clamp-1">{placeholder}</div>
-      <span className="dark:text-text2 text-icon-color">
+      <span className="text-icon-color">
         {show ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"

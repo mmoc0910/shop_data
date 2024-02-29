@@ -189,11 +189,11 @@ const SignUpPage = () => {
             <DropdownWithComponents.Select
               placeholder={
                 country ? (
-                  <span className="text-black dark:text-white">
+                  <span className="text-black">
                     {countries.find((i) => i.key === country)?.title}
                   </span>
                 ) : (
-                  <span className="text-text4 dark:text-text2">Select one</span>
+                  <span className="text-text4">Select one</span>
                 )
               }
             ></DropdownWithComponents.Select>
@@ -221,11 +221,11 @@ const SignUpPage = () => {
             <DropdownWithComponents.Select
               placeholder={
                 purpose ? (
-                  <span className="text-black dark:text-white">
+                  <span className="text-black">
                     {purposes.find((i) => i.id === purpose)?.title}
                   </span>
                 ) : (
-                  <span className="text-text4 dark:text-text2">Select one</span>
+                  <span className="text-text4">Select one</span>
                 )
               }
             ></DropdownWithComponents.Select>

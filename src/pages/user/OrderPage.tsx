@@ -1,5 +1,5 @@
-import { Modal, Table, Tag, Tooltip } from "antd";
-import { useEffect, useState } from "react";
+import { Modal, Table, TableColumnsType, Tag, Tooltip } from "antd";
+import { useEffect, useMemo, useState } from "react";
 import { ExtendPlanType, GistType } from "../../type";
 import { toast } from "react-toastify";
 import { messages } from "../../constants";
@@ -16,6 +16,7 @@ import Swal from "sweetalert2";
 import Loading from "../../components/common/Loading";
 import axios from "axios";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
+import { Link } from "react-router-dom";
 
 const linkGist = import.meta.env.VITE_LINK_GIST;
 const OrderPage = () => {
@@ -149,187 +150,192 @@ const OrderPage = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  const columns = [
-    {
-      title: <p className="font-primary font-semibold">Tên gói</p>,
-      dataIndex: "name",
-      key: "name",
-      render: (_: string, record: GistType) => (
-        <p className="font-primary text-sm">{record.planId.name}</p>
-      ),
-    },
-    // {
-    //   title: <p className="font-primary font-semibold">Giá</p>,
-    //   dataIndex: "price",
-    //   key: "price",
-    //   render: (_: string, record: GistType) => (
-    //     <p className="font-primary text-sm">
-    //       {VND.format(record.money)}VND
-    //     </p>
-    //   ),
-    // },
-    // {
-    //   title: <p className="font-primary font-semibold">Chu kỳ</p>,
-    //   dataIndex: "abc",
-    //   key: "abc",
-    //   render: (_: string, record: GistType) => (
-    //     <p className="font-primary text-sm">{record.planId.type}</p>
-    //   ),
-    // },
-    {
-      title: <p className="font-primary font-semibold">Thời gian</p>,
-      dataIndex: "day",
-      key: "day",
-      render: (_: string, record: GistType) => (
-        <p className="font-primary text-sm">
-          {dayjs(record.keyId.startDate).format("DD/MM/YYYY")} <br />-{" "}
-          {dayjs(record.keyId.endDate).format("DD/MM/YYYY")}
-        </p>
-      ),
-    },
-    {
-      title: <p className="font-primary font-semibold">Data limit</p>,
-      dataIndex: "bandWidth",
-      key: "bandWidth",
-      render: (_: string, record: GistType) => (
-        <p className="font-primary text-sm">
-          {record.keyId.dataLimit / 1000 / 1000 / 1000}GB
-        </p>
-      ),
-    },
-    {
-      title: <p className="font-primary font-semibold">Data Usage</p>,
-      dataIndex: "dataUsage",
-      key: "dataUsage",
-      render: (_: string, record: GistType) => (
-        <p className="font-primary text-sm">
-          {(record.keyId.dataUsage / 1000 / 1000 / 1000).toFixed(2)}GB
-        </p>
-      ),
-    },
-    // {
-    //   title: <p className="font-primary font-semibold">Data đã sd</p>,
-    //   dataIndex: "bandWidth",
-    //   key: "bandWidth",
-    //   render: (_: string, record: GistType) => (
-    //     <p className="font-primary text-sm">
-    //       {/* {record.keyId.used / 1000 / 1000 / 1000}GB */}
-    //     </p>
-    //   ),
-    // },
-    {
-      title: <p className="font-primary font-semibold">Trạng thái</p>,
-      dataIndex: "bandWidth",
-      key: "bandWidth",
-      render: (_: string, record: GistType) => (
-        <div className="font-primary text-sm">
-          {record.status ? (
-            <Tag color="green">
-              <span className="font-primary">Còn hạn</span>
-            </Tag>
-          ) : (
-            <Tag color="red">
-              <span className="font-primary">Hết hạn</span>
-            </Tag>
-          )}
-        </div>
-      ),
-    },
-
-    {
-      title: <p className="font-primary font-semibold">Key</p>,
-      dataIndex: "key",
-      key: "key",
-      render: (_: string, record: GistType) => {
-        const key = `${linkGist}/${record.gistId}/raw/${record.fileName}#`;
-        return (
-          <div className="flex items-center gap-2">
-            <p className="font-primary text-sm w-[200px] line-clamp-1">
-              {key}
-              {record.extension}
-            </p>
-            <Tooltip title="copy">
-              <button
-                className="-translate-y-[2px]"
-                onClick={() => copyToClipboard(`${key}${record.extension}`)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-5 h-5"
+  const columns: TableColumnsType<GistType> = useMemo(
+    () => [
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">STT</p>
+        ),
+        dataIndex: "index",
+        width: 70,
+        render: (_text: string, _record: GistType, index: number) => (
+          <p className="font-primary text-sm">{index + 1}</p>
+        ),
+      },
+      {
+        title: <p className="font-primary font-semibold">Tên gói</p>,
+        dataIndex: "name",
+        key: "name",
+        width: 150,
+        render: (_: string, record: GistType) => (
+          <p className="font-primary text-sm">{record.planId?.name}</p>
+        ),
+      },
+      {
+        title: <p className="font-primary font-semibold">Thời gian</p>,
+        dataIndex: "day",
+        key: "day",
+        width: 120,
+        render: (_: string, record: GistType) => (
+          <p className="font-primary text-sm">
+            {dayjs(record.keyId.startDate).format("DD/MM/YYYY")} <br />-{" "}
+            {dayjs(record.keyId.endDate).format("DD/MM/YYYY")}
+          </p>
+        ),
+      },
+      {
+        title: <p className="font-primary font-semibold">Data limit</p>,
+        dataIndex: "bandWidth",
+        key: "bandWidth",
+        width: 100,
+        render: (_: string, record: GistType) => (
+          <p className="font-primary text-sm">
+            {record.keyId.dataLimit / 1000 / 1000 / 1000}GB
+          </p>
+        ),
+      },
+      {
+        title: <p className="font-primary font-semibold">Data Usage</p>,
+        dataIndex: "dataUsage",
+        key: "dataUsage",
+        width: 120,
+        render: (_: string, record: GistType) => (
+          <p className="font-primary text-sm">
+            {(record.keyId.dataUsage / 1000 / 1000 / 1000).toFixed(2)}GB
+          </p>
+        ),
+      },
+      {
+        title: <p className="font-primary font-semibold">Trạng thái</p>,
+        dataIndex: "bandWidth",
+        key: "bandWidth",
+        width: 150,
+        render: (_: string, record: GistType) => (
+          <div className="font-primary text-sm">
+            {record.status ? (
+              <Tag color="green">
+                <span className="font-primary">Còn hạn</span>
+              </Tag>
+            ) : (
+              <Tag color="red">
+                <span className="font-primary">Hết hạn</span>
+              </Tag>
+            )}
+          </div>
+        ),
+      },
+      {
+        title: <p className="font-primary font-semibold">Key</p>,
+        dataIndex: "key",
+        key: "key",
+        render: (_: string, record: GistType) => {
+          const key = `${linkGist}/${record.gistId}/raw/${record.fileName}#`;
+          return (
+            <div className="flex items-center gap-2">
+              <p className="font-primary text-sm w-[350px] line-clamp-1">
+                {key}
+                {record.extension}
+              </p>
+              <Tooltip title="copy">
+                <button
+                  className="-translate-y-[2px]"
+                  onClick={() => copyToClipboard(`${key}${record.extension}`)}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"
-                  />
-                </svg>
-              </button>
-            </Tooltip>
-          </div>
-        );
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"
+                    />
+                  </svg>
+                </button>
+              </Tooltip>
+            </div>
+          );
+        },
       },
-    },
-    {
-      title: <p className="font-primary font-semibold">Extension</p>,
-      dataIndex: "extension",
-      key: "extension",
-      render: (_: string, record: GistType) => {
-        return (
-          <UpdateExtension
-            placeholder={record.extension}
-            onSubmit={(value: string) => {
-              handleUpdateExtension(record._id, value);
-              handleFetchData();
-              toast.success("Thay đổi thành công");
-            }}
-          />
-        );
-      },
-    },
-    {
-      title: <p className="font-primary font-semibold"></p>,
-      dataIndex: "action",
-      key: "action",
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      render: (_: string, record: GistType) =>
-        record.status ? (
-          <div className="flex gap-4">
-            <button
-              className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-sm"
-              onClick={() => {
-                setSelectRow(record._id);
-                showModal();
+      {
+        title: <p className="font-primary font-semibold">Đặt tên key</p>,
+        dataIndex: "extension",
+        key: "extension",
+        width: 150,
+        render: (_: string, record: GistType) => {
+          return (
+            <UpdateExtension
+              placeholder={record.extension}
+              onSubmit={(value: string) => {
+                handleUpdateExtension(record._id, value);
+                handleFetchData();
+                toast.success("Thay đổi thành công");
               }}
-            >
-              Mua thêm data
-            </button>
-            <button
-              className="px-4 py-2 rounded-lg bg-primary font-medium text-white font-primary text-sm"
-              onClick={() =>
-                handleUpgradPlan(
-                  record._id,
-                  record.planId.name,
-                  record.planId.price,
-                  record.planId.bandWidth,
-                  record.planId.type
-                )
-              }
-            >
-              Gia hạn
-            </button>
-          </div>
-        ) : null,
-    },
-  ];
+            />
+          );
+        },
+      },
+      {
+        title: <p className="font-primary font-semibold"></p>,
+        dataIndex: "action",
+        key: "action",
+        fixed: "right",
+        width: 250,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        render: (_: string, record: GistType) =>
+          record.status ? (
+            <div className="flex gap-4">
+              <button
+                className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-xs"
+                onClick={() => {
+                  setSelectRow(record._id);
+                  showModal();
+                }}
+              >
+                Mua thêm data
+              </button>
+              <button
+                className="px-4 py-2 rounded-lg bg-primary font-medium text-white font-primary text-xs"
+                onClick={() =>
+                  handleUpgradPlan(
+                    record._id,
+                    record.planId.name,
+                    record.planId.price,
+                    record.planId.bandWidth,
+                    record.planId.type
+                  )
+                }
+              >
+                Gia hạn
+              </button>
+            </div>
+          ) : null,
+      },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   return (
     <RequireAuthPage rolePage={2}>
       {loading ? <Loading /> : null}
-      <Table dataSource={listGist} columns={columns} loading={loadingTable} />
+      <p className="mb-5">
+        Vui lòng sửa tên key hoặc copy trực tiếp key và dán vào phần mềm theo
+        hướng dẫn để sử dụng{" "}
+        <Link to={""} className="text-primary underline decoration-primary">
+          Link hướng dẫn
+        </Link>
+      </p>
+      <Table
+        dataSource={listGist}
+        columns={columns}
+        loading={loadingTable}
+        scroll={{ x: 1500 }}
+      />
       <Modal
         width={900}
         open={isModalOpen}
@@ -363,6 +369,17 @@ const OrderPage = () => {
               </button>
             </div>
           ))}
+        </div>
+        <div className="mt-5 flex justify-end">
+          <button
+            className="px-4 py-2 rounded-lg bg-error font-medium text-white font-primary"
+            onClick={() => {
+              handleCancel();
+              setSelectRow(undefined);
+            }}
+          >
+            Thoát
+          </button>
         </div>
       </Modal>
     </RequireAuthPage>

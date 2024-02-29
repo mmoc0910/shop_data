@@ -6,7 +6,7 @@ import { PlanType } from "../../type";
 import dayjs from "dayjs";
 import { toast } from "react-toastify";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
-import { Table } from "antd";
+import { Table, TableColumnsType } from "antd";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Heading from "../../components/common/Heading";
@@ -52,8 +52,17 @@ const PackPage = () => {
       }
     }
   };
-  const columns = useMemo(
+  const columns: TableColumnsType<PlanType> = useMemo(
     () => [
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">STT</p>
+        ),
+        dataIndex: "index",
+        render: (_text: string, _record: PlanType, index: number) => (
+          <p className="font-primary text-sm">{index + 1}</p>
+        ),
+      },
       {
         title: () => (
           <p className="font-primary text-base font-semibold">Tên gói</p>

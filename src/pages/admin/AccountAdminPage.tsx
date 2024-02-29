@@ -3,7 +3,7 @@ import { AuthState } from "../../store/auth/authSlice";
 import { toast } from "react-toastify";
 import { countries, messages } from "../../constants";
 import { api } from "../../api";
-import { Modal, Table } from "antd";
+import { Modal, Table, TableColumnsType } from "antd";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -13,6 +13,9 @@ import Button from "../../components/button/Button";
 import Radio from "../../components/radio/Radio";
 import { VND } from "../../utils/formatPrice";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
+import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/configureStore";
 
 const levels = [
   { id: 0, title: "Cộng tác viên" },
@@ -28,6 +31,11 @@ const schema = yup
   .required();
 
 const AccountAdminPage = () => {
+  const collab = useSelector((state: RootState) => state.collab);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const level = searchParams.get("level");
+  console.log("level - ", level);
   const [search, setSearch] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -87,8 +95,17 @@ const AccountAdminPage = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  const columns = useMemo(
+  const columns: TableColumnsType<AuthState> = useMemo(
     () => [
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">STT</p>
+        ),
+        dataIndex: "index",
+        render: (_text: string, _record: AuthState, index: number) => (
+          <p className="font-primary text-sm">{index + 1}</p>
+        ),
+      },
       {
         title: () => (
           <p className="font-primary text-base font-semibold">Email</p>
@@ -182,14 +199,14 @@ const AccountAdminPage = () => {
       <div className="space-y-6">
         <div className="relative">
           <input
-            className="focus:border-primary text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none dark:placeholder:text-text2 border-strock dark:border-dark-strock text-text1 dark:text-white pr-16 "
+            className="focus:border-primary text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock text-text1 pr-16 "
             placeholder="Tìm kiếm"
             onChange={(e) => setSearch(e.target.value)}
             value={search}
           />
           {search && search?.length > 0 ? (
             <span
-              className="text-[#A2A2A8] dark:text-[#4B5264] absolute -translate-y-1/2 cursor-pointer right-5 top-1/2"
+              className="text-[#A2A2A8] absolute -translate-y-1/2 cursor-pointer right-5 top-1/2"
               onClick={() => setSearch("")}
             >
               <svg
@@ -209,10 +226,18 @@ const AccountAdminPage = () => {
             </span>
           ) : null}
         </div>
-        <Table dataSource={listUser} columns={columns} loading={loading} />
+        <Table
+          dataSource={
+            level
+              ? listUser.filter((item) => item.level === Number(level))
+              : listUser
+          }
+          columns={columns}
+          loading={loading}
+        />
       </div>{" "}
       <Modal
-        title="Thay dổi cấp độ"
+        title="Thay đổi cấp độ"
         open={isModalOpen}
         onCancel={() => {
           if (selectRow) setSelectRow(undefined);
@@ -237,7 +262,21 @@ const AccountAdminPage = () => {
                   }
                   onClick={() => setValue("level", item.id)}
                 >
-                  <p className="font-primary">{item.title}</p>
+                  <p className="font-primary w-fit">
+                    {item.title} (
+                    {item.id !== 0
+                      ? `Chiết khấu [${
+                          item.id === 1
+                            ? collab.level1
+                            : item.id === 2
+                            ? collab.level2
+                            : item.id === 3
+                            ? collab.level3
+                            : ""
+                        }%]`
+                      : ""}
+                    )
+                  </p>
                 </Radio>
               ))}
             </div>

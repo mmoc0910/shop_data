@@ -6,6 +6,10 @@ import IconLogout from "../icons/IconLogout";
 import { v4 as uuidv4 } from "uuid";
 import { useDispatch } from "react-redux";
 import { setAuth } from "../store/auth/authSlice";
+import { setCollab } from "../store/collab/collabSlice";
+import { CollabType } from "../type";
+import { api } from "../api";
+import { useEffect } from "react";
 
 const menu = [
   { to: "/admin/dashboard", title: "Dashboard" },
@@ -22,6 +26,22 @@ const menu = [
 const LayoutAdmin = () => {
   const navigation = useNavigate();
   const dispatch = useDispatch();
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data } = await api.get<CollabType>("/collab");
+        dispatch(
+          setCollab({
+            level1: data.level1,
+            level2: data.level2,
+            level3: data.level3,
+          })
+        );
+      } catch (error) {
+        console.log("error - ", error);
+      }
+    })();
+  }, [dispatch]);
   return (
     <div className="grid grid-cols-12 w-full h-screen bg-[#191918]">
       <div
@@ -40,7 +60,9 @@ const LayoutAdmin = () => {
                   className={({ isActive }) =>
                     classNames(
                       "hover:bg-[#403f3f] px-4 py-3 rounded-lg transition-all duration-200",
-                      isActive ? "text-white font-medium bg-[#403f3f]" : "text-icon-color"
+                      isActive
+                        ? "text-white font-medium bg-[#403f3f]"
+                        : "text-icon-color"
                     )
                   }
                   key={uuidv4()}

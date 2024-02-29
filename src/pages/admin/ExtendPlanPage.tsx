@@ -1,4 +1,4 @@
-import { Modal, Table } from "antd";
+import { Modal, Table, TableColumnsType } from "antd";
 import Heading from "../../components/common/Heading";
 import { ExtendPlanType } from "../../type";
 import { VND } from "../../utils/formatPrice";
@@ -110,8 +110,17 @@ const ExtendPlanPage = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  const columns = useMemo(
+  const columns: TableColumnsType<ExtendPlanType> = useMemo(
     () => [
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">STT</p>
+        ),
+        dataIndex: "index",
+        render: (_text: string, _record: ExtendPlanType, index: number) => (
+          <p className="font-primary text-sm">{index + 1}</p>
+        ),
+      },
       {
         title: () => (
           <p className="font-primary text-base font-semibold">Tên gói</p>
@@ -227,11 +236,23 @@ const ExtendPlanPage = () => {
           </FormGroup>
           <FormGroup>
             <Label htmlFor="price">Giá*</Label>
-            <Input name="price" placeholder={""} control={control} type="number" min={0} />
+            <Input
+              name="price"
+              placeholder={""}
+              control={control}
+              type="number"
+              min={0}
+            />
           </FormGroup>
           <FormGroup>
             <Label htmlFor="bandWidth">Băng thông*</Label>
-            <Input name="bandWidth" placeholder={""} control={control} type="number" min={0} />
+            <Input
+              name="bandWidth"
+              placeholder={""}
+              control={control}
+              type="number"
+              min={0}
+            />
           </FormGroup>
           <Button type="submit" className="w-full text-white bg-primary">
             Thêm mới

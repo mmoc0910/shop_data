@@ -1,4 +1,4 @@
-import { Table } from "antd";
+import { Table, TableColumnsType } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { PlanType } from "../../type";
 import { api } from "../../api";
@@ -7,10 +7,11 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { VND } from "../../utils/formatPrice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
 import Loading from "../common/Loading";
+import Heading from "../common/Heading";
 
 const PlanDashborad = () => {
   const { _id } = useSelector((state: RootState) => state.auth);
@@ -69,8 +70,17 @@ const PlanDashborad = () => {
       setLoading(false);
     }
   };
-  const columns = useMemo(
+  const columns: TableColumnsType<PlanType> = useMemo(
     () => [
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">STT</p>
+        ),
+        dataIndex: "index",
+        render: (_text: string, _record: PlanType, index: number) => (
+          <p className="font-primary text-sm">{index + 1}</p>
+        ),
+      },
       {
         title: () => (
           <p className="font-primary text-base font-semibold">Tên gói</p>
@@ -135,8 +145,25 @@ const PlanDashborad = () => {
   return (
     <>
       {loading && <Loading />}
-      <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
-        <Table dataSource={plans} columns={columns} pagination={false} />
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Heading>Gói cước</Heading>
+          {plans.length > 5 ? (
+            <Link
+              to={"/user/plan"}
+              className="text-primary font-medium underline decoration-primary"
+            >
+              Xem tất cả
+            </Link>
+          ) : null}
+        </div>{" "}
+        <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
+          <Table
+            dataSource={plans.slice(0, 5)}
+            columns={columns}
+            pagination={false}
+          />
+        </div>
       </div>
     </>
   );

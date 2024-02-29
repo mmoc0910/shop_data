@@ -11,10 +11,12 @@ const menu = [
   { title: "Bảng giá", to: "#pricing" },
 ];
 const Header = () => {
-  const { email, role } = useSelector((state: RootState) => state.auth);
+  const { email, username, role } = useSelector(
+    (state: RootState) => state.auth
+  );
   return (
     <div className="fixed top-0 left-0 right-0 bg-white z-20 shadow-sm">
-      <Container className="py-3 xl:py-5">
+      <Container className="py-2">
         <div className="flex items-center justify-between">
           <Logo />
           <div className="flex gap-3 md:gap-7 items-center">
@@ -23,7 +25,7 @@ const Header = () => {
                 key={uuidv4()}
                 href={item.to}
                 className={classNames(
-                  "font-medium text-sm xl:text-base",
+                  "font-medium text-sm xl:text-lg",
                   item.to === "#home" ? "text-primary" : "text-icon-color"
                 )}
               >
@@ -31,7 +33,7 @@ const Header = () => {
               </a>
             ))}
             <div className="font-medium text-icon-color cursor-pointer relative group">
-              <div className="text-sm xl:text-base">Download</div>
+              <div className="text-sm xl:text-lg">Download</div>
               <div className="absolute right-0 top-[calc(100%+1rem)] invisible opacity-0 group-hover:visible group-hover:opacity-100 group-hover:top-full transition-all duration-300">
                 <div className="py-4 px-8 mt-3 rounded-lg shadow-xl bg-white space-y-2 flex flex-col text-black">
                   <Link to={"/ô"} download className="text-sm">
@@ -82,7 +84,7 @@ const Header = () => {
                 </div>
                 <div className="hidden md:block">
                   <p>Xin chào</p>
-                  <p className="font-medium">{email}</p>
+                  <p className="font-medium">{username || email}</p>
                 </div>
               </Link>
             )}
