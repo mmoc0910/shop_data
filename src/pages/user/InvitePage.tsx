@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import IconQuesionMarkCircle from "../../icons/IconQuesionMarkCircle";
-import { Table, TableColumnsType, Tooltip } from "antd";
+import {
+  DatePicker,
+  DatePickerProps,
+  Table,
+  TableColumnsType,
+  Tooltip,
+} from "antd";
 import { api } from "../../api";
 import { CommisionType, RoseType, SatisfyType } from "../../type";
 import { RootState } from "../../store/configureStore";
@@ -8,7 +14,12 @@ import { useSelector } from "react-redux";
 import { VND } from "../../utils/formatPrice";
 import { AuthState } from "../../store/auth/authSlice";
 import { toast } from "react-toastify";
-import { messages } from "../../constants";
+import {
+  DAY_FORMAT,
+  isSameOrAfter,
+  isSameOrBefore,
+  messages,
+} from "../../constants";
 import dayjs from "dayjs";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import Heading from "../../components/common/Heading";
@@ -19,6 +30,47 @@ const InvitePage = () => {
   const [user, setUser] = useState<AuthState>();
   const [commision, setCommision] = useState<CommisionType>();
   const [roseHistory, setRoseHistory] = useState<RoseType[]>([]);
+  const [startDate, setStartDate] = useState<dayjs.Dayjs | undefined>();
+  const [endDate, setEndDate] = useState<dayjs.Dayjs | undefined>();
+  const [inputValue, setInputValue] = useState<string>("");
+  const listRoseHistoryFilter =
+    startDate && endDate && !inputValue
+      ? roseHistory.filter(
+          (item) =>
+            isSameOrAfter(item.createdAt, startDate) &&
+            isSameOrBefore(item.createdAt, endDate)
+        )
+      : startDate && endDate && inputValue
+      ? roseHistory.filter(
+          (item) =>
+            (item.plan.toLocaleLowerCase().includes(inputValue.toLowerCase()) ||
+              item.reciveRoseId.email
+                .toLocaleLowerCase()
+                .includes(inputValue.toLowerCase()) ||
+              item.reciveRoseId.username
+                .toLocaleLowerCase()
+                .includes(inputValue.toLowerCase()) ||
+              item.reciveRoseId.phone
+                .toLocaleLowerCase()
+                .includes(inputValue.toLowerCase())) &&
+            isSameOrAfter(item.createdAt, startDate) &&
+            isSameOrBefore(item.createdAt, endDate)
+        )
+      : inputValue
+      ? roseHistory.filter(
+          (item) =>
+            item.plan.toLocaleLowerCase().includes(inputValue.toLowerCase()) ||
+            item.reciveRoseId.email
+              .toLocaleLowerCase()
+              .includes(inputValue.toLowerCase()) ||
+            item.reciveRoseId.username
+              .toLocaleLowerCase()
+              .includes(inputValue.toLowerCase()) ||
+            item.reciveRoseId.phone
+              .toLocaleLowerCase()
+              .includes(inputValue.toLowerCase())
+        )
+      : roseHistory;
   useEffect(() => {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,52 +107,84 @@ const InvitePage = () => {
       },
       {
         title: <p className="font-primary font-semibold">Tên gói</p>,
-        dataIndex: "namePlan",
-        key: "namePlan",
-        render: (_: string, record: RoseType) => (
-          <p className="font-primary text-sm">{record.plan}</p>
+        dataIndex: "plan",
+        key: "plan",
+        render: (text: string) => (
+          <p className="font-primary text-sm">{text}</p>
         ),
       },
       {
         title: <p className="font-primary font-semibold">% hoa hồng</p>,
         dataIndex: "percent",
         key: "percent",
-        render: (_: string, record: RoseType) => (
-          <p className="font-primary text-sm">{record.percent}%</p>
+        render: (text: number) => (
+          <p className="font-primary text-sm">{text}%</p>
         ),
+        sorter: {
+          compare: (a, b) => a.percent - b.percent,
+          multiple: 1,
+        },
       },
       {
         title: <p className="font-primary font-semibold">Tiền hoa hồng</p>,
-        dataIndex: "moneyPercent",
-        key: "moneyPercent",
+        key: "recive",
         render: (_: string, record: RoseType) => (
           <p className="font-primary text-sm">{VND.format(record.recive)}VND</p>
         ),
+        sorter: {
+          compare: (a, b) => a.recive - b.recive,
+          multiple: 2,
+        },
       },
       {
         title: <p className="font-primary font-semibold">Người mua</p>,
-        dataIndex: "moneyPercent",
-        key: "moneyPercent",
+        key: "username",
+        render: (_: string, record: RoseType) => (
+          <p className="font-primary text-sm">{record.reciveRoseId.username}</p>
+        ),
+      },
+      {
+        title: <p className="font-primary font-semibold">Email</p>,
+        key: "email",
         render: (_: string, record: RoseType) => (
           <p className="font-primary text-sm">{record.reciveRoseId.email}</p>
         ),
       },
       {
-        title: <p className="font-primary font-semibold">Ngày nhận</p>,
-        dataIndex: "moneyPercent",
-        key: "moneyPercent",
+        title: <p className="font-primary font-semibold">SDT</p>,
+        key: "email",
         render: (_: string, record: RoseType) => (
-          <p className="font-primary text-sm">
-            {dayjs(record.createdAt).format("DD-MM-YYYY")}
-          </p>
+          <p className="font-primary text-sm">{record.reciveRoseId.phone}</p>
         ),
+      },
+      {
+        title: <p className="font-primary font-semibold">Ngày nhận</p>,
+        dataIndex: "createdAt",
+        key: "createdAt",
+        render: (text: Date) => (
+          <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+        ),
+        sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
       },
     ],
     []
   );
+  const onChangeStartDate: DatePickerProps["onChange"] = (date, dateString) => {
+    console.log(date, dateString);
+    setStartDate(date);
+  };
+  const onChangeEndDate: DatePickerProps["onChange"] = (date, dateString) => {
+    console.log(date, dateString);
+    setEndDate(date);
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setInputValue(value);
+  };
   return (
     <RequireAuthPage rolePage={2}>
-      <div className="space-y-14">
+      <div className="space-y-10">
         <div className="flex items-start rounded-xl border-2 border-[#eeeeed]">
           <div className="flex-1 px-5 py-7 flex flex-col items-center rounded-xl space-y-4">
             <p className="font-medium text-4xl">{user?.level || 0}</p>
@@ -152,9 +236,53 @@ const InvitePage = () => {
             </div>
           </div>
         </div>
-        <div className="space-y-6">
+        <div className="space-y-4">
           <Heading>Lịch sử nhận hoa hồng</Heading>
-          <Table dataSource={roseHistory} columns={columns} />
+          <div className="flex items-center gap-5 mb-5">
+            <div className="relative flex-1">
+              <input
+                type="text"
+                value={inputValue}
+                onChange={handleChange}
+                className="focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock"
+                placeholder="Tìm kiếm"
+              />
+              {inputValue.length > 0 ? (
+                <span
+                  className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2"
+                  onClick={() => setInputValue("")}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="w-5 h-5 text-icon-color"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </span>
+              ) : null}
+            </div>
+            <div className="flex items-center gap-5">
+              <DatePicker
+                onChange={onChangeStartDate}
+                className="!focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock"
+                placeholder="Start date"
+              />
+              <DatePicker
+                onChange={onChangeEndDate}
+                className="!focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock"
+                placeholder="End date"
+              />
+            </div>
+          </div>
+          <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
+            <Table dataSource={listRoseHistoryFilter} columns={columns} />
+          </div>
         </div>
       </div>
     </RequireAuthPage>

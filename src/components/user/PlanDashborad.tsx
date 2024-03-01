@@ -2,7 +2,6 @@ import { Table, TableColumnsType } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { PlanType } from "../../type";
 import { api } from "../../api";
-import dayjs from "dayjs";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
@@ -32,7 +31,7 @@ const PlanDashborad = () => {
   const handleChoosePlan = async (plan: PlanType) => {
     try {
       const { isConfirmed } = await Swal.fire({
-        title: `Bạn có muốn mua gói cước ${plan.name} ${plan.bandWidth}GB`,
+        title: `<p class="leading-tight">Bạn có muốn mua gói cước ${plan.name} ${plan.bandWidth}GB</p>`,
         html: `<div>
             <p class="text-2xl font-semibold">${VND.format(plan.price)}VND/${
           plan.type
@@ -113,13 +112,13 @@ const PlanDashborad = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Ngày tạo</p>
+          <p className="font-primary text-base font-semibold">Giá</p>
         ),
-        dataIndex: "createdAt",
-        key: "createdAt",
-        render: (text: string) => (
+        dataIndex: "price",
+        key: "price",
+        render: (text: number) => (
           <p className="font-primary text-sm">
-            {dayjs(text).format("DD-MM-YYYY")}
+            {VND.format(text)}VND
           </p>
         ),
       },

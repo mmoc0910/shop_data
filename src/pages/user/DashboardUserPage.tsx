@@ -22,6 +22,9 @@ import RequireAuthPage from "../../components/common/RequireAuthPage";
 import classNames from "../../utils/classNames";
 import PlanDashborad from "../../components/user/PlanDashborad";
 import InviteDashboard from "../../components/user/InviteDashboard";
+import zalo from "../../assets/contact/zalo1.jpg";
+import wechat from "../../assets/contact/wechat.png";
+import whatapp from "../../assets/contact/whatapp.png";
 
 const schema = yup
   .object({
@@ -80,7 +83,7 @@ const DashboardUserPage = () => {
   const onSubmit = async (data: { money: number }) => {
     try {
       Swal.fire({
-        title: `Bạn có muốn nạp ${VND.format(data.money)}VND`,
+        title: `<p class="leading-tight">Bạn có muốn nạp ${VND.format(data.money)}VND</p>`,
         // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
         icon: "success",
         showCancelButton: true,
@@ -93,7 +96,7 @@ const DashboardUserPage = () => {
           console.log("data - ", data);
           await api.post("/cashs", { ...data, userId: _id });
           handleOk();
-          Swal.fire("Nạp tiền thành công. Vui lòng chờ admin phê duyệt");
+          Swal.fire("<p class='leading-tight'>Bạn vừa yêu cầu nạp tiền thành công. Vui lòng gửi ảnh hóa đơn cho admin qua wechat/zalo để được phê duyệt.</p>");
           // toast.success("Nạp tiền thành công. Vui lòng chờ admin phê duyệt");
         }
       });
@@ -193,9 +196,29 @@ const DashboardUserPage = () => {
                 Nếu gặp khó khăn trong quá trình giao dịch quý khách hãy liên hệ
                 với admin qua :
               </p>
-              <p className="text-lg font-medium">Zalo: 0123456799</p>
-              <p className="text-lg font-medium">Zalo: 0123456799</p>
-              <p className="text-lg font-medium">Zalo: 0123456799</p>
+              <div className="flex items-center gap-10 mt-5">
+                <div className="flex flex-col gap-3 items-center">
+                  <img
+                    src={zalo}
+                    className="w-full aspect-square object-cover"
+                  />
+                  <p className="font-semibold uppercase">Zalo</p>
+                </div>
+                <div className="flex flex-col gap-3 items-center">
+                  <img
+                    src={wechat}
+                    className="w-full aspect-square object-cover"
+                  />
+                  <p className="font-semibold uppercase">Wechat</p>
+                </div>
+                <div className="flex flex-col gap-3 items-center">
+                  <img
+                    src={whatapp}
+                    className="w-full aspect-square object-cover"
+                  />
+                  <p className="font-semibold uppercase">whatapp</p>
+                </div>
+              </div>
             </div>
           </div>
           <PlanDashborad />
@@ -234,7 +257,11 @@ const DashboardUserPage = () => {
         roseHistory.length === 0 &&
         transactions.length === 0 ? null : (
           <div className="col-span-4 space-y-10">
-            <CashHistory userCashHistory={userCashHistory.filter(item => item.status !== 2)} />
+            <CashHistory
+              userCashHistory={userCashHistory.filter(
+                (item) => item.status !== 2
+              )}
+            />
             <RoseHistory roseHistory={roseHistory} />
             <TransactionHistory transactions={transactions} />
           </div>

@@ -1,5 +1,23 @@
 import { AuthState } from "../store/auth/authSlice";
 
+export interface UserState {
+  level: number;
+  email: string;
+  role: 1 | 2;
+  phone: string;
+  country: string;
+  purpose: number;
+  money: number;
+  transaction: number;
+  cash: number;
+  _id: string;
+  introduceCode: string;
+  username: string;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+}
+
 export type ServerType = {
   _id: string;
   serverId: string;
@@ -56,7 +74,7 @@ export type PlanType = {
 
 export type CashType = {
   _id: string;
-  userId: AuthState;
+  userId: UserState;
   money: number;
   approve: boolean;
   createdAt: Date;
@@ -99,8 +117,8 @@ export type TransactionType = {
 
 export type RoseType = {
   _id: string;
-  reciveRoseId: AuthState;
-  introducedId: AuthState;
+  reciveRoseId: UserState;
+  introducedId: UserState;
   plan: string;
   price: number;
   percent: number;

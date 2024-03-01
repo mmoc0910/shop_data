@@ -59,7 +59,7 @@ const ServerDetailAdminPage = () => {
   ) => {
     try {
       Swal.fire({
-        title: `Bạn có muốn xóa key này`,
+        title: `<p class="leading-tight">Bạn có muốn xóa key này</p>`,
         icon: "success",
         showCancelButton: true,
         confirmButtonColor: "#1DC071",
@@ -251,7 +251,7 @@ const ServerDetailAdminPage = () => {
                               onClick={async () => {
                                 try {
                                   const { isConfirmed } = await Swal.fire({
-                                    title: `Bạn có nâng cấp key này`,
+                                    title: `<p class="leading-tight">Bạn có nâng cấp key này</p>`,
                                     icon: "success",
                                     showCancelButton: true,
                                     confirmButtonColor: "#1DC071",

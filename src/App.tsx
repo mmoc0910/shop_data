@@ -5,6 +5,7 @@ import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 import LayoutUser from "./layouts/LayoutUser";
 import LayoutAdmin from "./layouts/LayoutAdmin";
+const AccountDetailPage = lazy(() => import("./pages/admin/AccountDetailPage"));
 const CashPage = lazy(() => import("./pages/user/CashPage"));
 const FogotPassword = lazy(() => import("./pages/FogotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
@@ -56,6 +57,7 @@ function App() {
               element={<ActionPackPage />}
             />
             <Route path="/admin/account" element={<AccountAdminPage />} />
+            <Route path="/admin/account/:accountId" element={<AccountDetailPage />} />
             <Route path="/admin/server" element={<ServerAdminPage />} />
             <Route
               path="/admin/server/:serverId"

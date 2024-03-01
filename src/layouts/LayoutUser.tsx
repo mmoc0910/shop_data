@@ -48,11 +48,12 @@ const menu = [
 const LayoutUser = () => {
   const navigation = useNavigate();
   const dispatch = useDispatch();
-  const { email, _id, introduceCode } = useSelector(
+  const { email, _id, introduceCode, username } = useSelector(
     (state: RootState) => state.auth
   );
   const commision = useSelector((state: RootState) => state.commision);
   const { cash } = useSelector((state: RootState) => state.satisfy);
+  console.log("cash - ", cash);
   useEffect(() => {
     (async () => {
       try {
@@ -65,7 +66,7 @@ const LayoutUser = () => {
           api.get<{ value: number }>("/commisions"),
           api.get<CollabType>("/collab"),
         ]);
-        // console.log("result - ", data);
+        console.log("result - ", dataSatify);
         dispatch(
           setSatify({
             cash: dataSatify.cash[0]?.money || 0,
@@ -136,7 +137,7 @@ const LayoutUser = () => {
               <Tooltip title="copy">
                 <button
                   className="-translate-y-[2px]"
-                  onClick={() => _id && copyToClipboard(_id)}
+                  onClick={() => introduceCode && copyToClipboard(introduceCode)}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -164,7 +165,7 @@ const LayoutUser = () => {
               <span>
                 <IconProfile />
               </span>
-              <p>{email}</p>
+              <p>{username || email}</p>
             </Link>
             <div
               className="flex gap-2 items-center text-white bg-primary px-4 py-2 rounded-xl cursor-pointer"

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { AuthState } from "../../store/auth/authSlice";
 import { toast } from "react-toastify";
-import { countries, messages } from "../../constants";
+import { DAY_FORMAT, messages } from "../../constants";
 import { api } from "../../api";
 import { Modal, Table, TableColumnsType } from "antd";
 import { useForm } from "react-hook-form";
@@ -13,9 +12,11 @@ import Button from "../../components/button/Button";
 import Radio from "../../components/radio/Radio";
 import { VND } from "../../utils/formatPrice";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
+import { UserState } from "../../type";
+import dayjs from "dayjs";
 
 const levels = [
   { id: 0, title: "Cộng tác viên" },
@@ -36,11 +37,19 @@ const AccountAdminPage = () => {
   const searchParams = new URLSearchParams(location.search);
   const level = searchParams.get("level");
   console.log("level - ", level);
-  const [search, setSearch] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [listUser, setListUser] = useState<AuthState[]>([]);
-  const [selectRow, setSelectRow] = useState<AuthState | undefined>(undefined);
+  const [listUser, setListUser] = useState<UserState[]>([]);
+  const [selectRow, setSelectRow] = useState<UserState | undefined>(undefined);
+  const [inputValue, setInputValue] = useState<string>("");
+  const listUserFilter = inputValue
+    ? listUser.filter(
+        (item) =>
+          item?.username?.toLowerCase().includes(inputValue.toLowerCase()) ||
+          item?.email?.toLowerCase().includes(inputValue.toLowerCase()) ||
+          item?.phone?.toLowerCase().includes(inputValue.toLowerCase())
+      )
+    : listUser;
   const { handleSubmit, reset, setValue, watch } = useForm({
     resolver: yupResolver(schema),
     mode: "onSubmit",
@@ -53,14 +62,18 @@ const AccountAdminPage = () => {
     }
   }, [selectRow, setValue]);
   useEffect(() => {
-    fetchData(search);
-  }, [search]);
+    fetchData();
+  }, []);
   const onSubmit = async (data: { level: number }) => {
     try {
       if (selectRow) {
         console.log("data - ", data);
-        await api.patch(`/users/${selectRow?._id}`, { ...data });
-        fetchData("");
+        await api.patch(`/users/${selectRow?._id}`, {
+          ...data,
+          username: selectRow.username,
+          email: selectRow.email,
+        });
+        fetchData();
         toast.success("Thành công");
       }
     } catch (error) {
@@ -72,10 +85,10 @@ const AccountAdminPage = () => {
       reset();
     }
   };
-  const fetchData = async (text?: string) => {
+  const fetchData = async () => {
     try {
       setLoading(true);
-      const result = await api.get<AuthState[]>(`/users?email=${text}`);
+      const result = await api.get<UserState[]>(`/users`);
       const data = result?.data?.filter((i) => i.role !== 1);
       setListUser(data);
     } catch (error) {
@@ -95,88 +108,76 @@ const AccountAdminPage = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  const columns: TableColumnsType<AuthState> = useMemo(
+  const columns: TableColumnsType<UserState> = useMemo(
     () => [
       {
-        title: () => (
-          <p className="font-primary text-base font-semibold">STT</p>
-        ),
+        title: () => <p className="font-primary text-sm font-semibold">STT</p>,
         dataIndex: "index",
-        render: (_text: string, _record: AuthState, index: number) => (
+        render: (_text: string, _record: UserState, index: number) => (
           <p className="font-primary text-sm">{index + 1}</p>
         ),
+        width: 70,
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Email</p>
+          <p className="font-primary text-sm font-semibold">Username</p>
         ),
-        dataIndex: "email",
-        key: "email",
-        render: (_: string, record: AuthState) => (
-          <p className="font-primary text-sm">{record.email}</p>
-        ),
-      },
-      {
-        title: () => (
-          <p className="font-primary text-base font-semibold">Số điện thoại</p>
-        ),
-        dataIndex: "phone",
-        key: "phone",
-        render: (_: string, record: AuthState) => (
-          <p className="font-primary text-sm">{record.phone}</p>
+        dataIndex: "username",
+        key: "username",
+        render: (text: string, record: UserState) => (
+          <Link
+            to={`/admin/account/${record._id}`}
+            className="font-primary text-sm text-primary"
+          >
+            {text}
+          </Link>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Mã giới thiệu</p>
+          <p className="font-primary text-sm font-semibold">Mã giới thiệu</p>
         ),
-        dataIndex: "id",
-        key: "id",
-        render: (_: string, record: AuthState) => (
-          <p className="font-primary text-sm">{record._id}</p>
-        ),
-      },
-      {
-        title: () => (
-          <p className="font-primary text-base font-semibold">Quốc gia</p>
-        ),
-        dataIndex: "country",
-        key: "country",
-        render: (_: string, record: AuthState) => (
-          <p className="font-primary text-sm">
-            {countries.find((item) => item.key === record.country)?.title || ""}
-          </p>
+        dataIndex: "introduceCode",
+        key: "introduceCode",
+        render: (text: string) => (
+          <p className="font-primary text-sm">{text}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Số tiền nạp</p>
+          <p className="font-primary text-sm font-semibold">Số dư</p>
         ),
         dataIndex: "money",
         key: "money",
-        render: (_: string, record: AuthState) => (
-          <p className="font-primary text-sm">
-            {record.cash && VND.format(record.cash)}VND
-          </p>
+        render: (text: number) => (
+          <p className="font-primary text-sm">{VND.format(text)}VND</p>
         ),
+        sorter: {
+          compare: (a, b) => a.money - b.money,
+          multiple: 1,
+        },
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Số gói đã mua</p>
+          <p className="font-primary text-sm font-semibold">Số gói đã mua</p>
         ),
         dataIndex: "transaction",
         key: "transaction",
-        render: (_: string, record: AuthState) => (
+        render: (_: string, record: UserState) => (
           <p className="font-primary text-sm">{record.transaction}</p>
         ),
+        sorter: {
+          compare: (a, b) => a.transaction - b.transaction,
+          multiple: 2,
+        },
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Đại lý</p>
+          <p className="font-primary text-sm font-semibold">Đại lý</p>
         ),
         dataIndex: "country",
         key: "country",
-        render: (_: string, record: AuthState) => (
+        render: (_: string, record: UserState) => (
           <p
             className="font-primary text-sm text-primary cursor-pointer"
             onClick={() => {
@@ -190,51 +191,70 @@ const AccountAdminPage = () => {
           </p>
         ),
       },
+      {
+        title: () => (
+          <p className="font-primary text-sm font-semibold">Ngày tạo</p>
+        ),
+        dataIndex: "createdAt",
+        key: "createdAt",
+        render: (text: Date) => (
+          <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+        ),
+        sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
+      },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setInputValue(value);
+  };
   return (
     <RequireAuthPage rolePage={1}>
       <div className="space-y-6">
-        <div className="relative">
-          <input
-            className="focus:border-primary text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock text-text1 pr-16 "
-            placeholder="Tìm kiếm"
-            onChange={(e) => setSearch(e.target.value)}
-            value={search}
-          />
-          {search && search?.length > 0 ? (
-            <span
-              className="text-[#A2A2A8] absolute -translate-y-1/2 cursor-pointer right-5 top-1/2"
-              onClick={() => setSearch("")}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="w-5 h-5"
+        <div className="flex items-center gap-5">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={handleChange}
+              className="focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock"
+              placeholder="Tìm kiếm"
+            />
+            {inputValue.length > 0 ? (
+              <span
+                className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2"
+                onClick={() => setInputValue("")}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                />
-              </svg>
-            </span>
-          ) : null}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-5 h-5 text-icon-color"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </span>
+            ) : null}
+          </div>
         </div>
-        <Table
-          dataSource={
-            level
-              ? listUser.filter((item) => item.level === Number(level))
-              : listUser
-          }
-          columns={columns}
-          loading={loading}
-        />
+        <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
+          <Table
+            dataSource={
+              level
+                ? listUserFilter.filter((item) => item.level === Number(level))
+                : listUserFilter
+            }
+            columns={columns}
+            loading={loading}
+            scroll={{ y: 420 }}
+          />
+        </div>
       </div>{" "}
       <Modal
         title="Thay đổi cấp độ"

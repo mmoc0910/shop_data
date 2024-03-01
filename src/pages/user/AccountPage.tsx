@@ -112,7 +112,7 @@ const AccountPage = () => {
               <Tooltip
                 title={`Giới thiệu mã CTV này cho bạn bè bạn sẽ nhận được [${commision}%] hoa hồng cho mỗi giao dịch.`}
               >
-                <p className="text-sm">
+                <p className="">
                   <span className="font-medium">Mã CTV:</span>{" "}
                   {introduceCode || ""}
                 </p>
@@ -121,7 +121,7 @@ const AccountPage = () => {
               <Tooltip title="copy">
                 <button
                   className="-translate-y-[2px]"
-                  onClick={() => _id && copyToClipboard(_id)}
+                  onClick={() => introduceCode && copyToClipboard(introduceCode)}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -142,14 +142,14 @@ const AccountPage = () => {
             </div>
           )}
 
-          <p className="text-sm">
+          <p className="">
             <span className="font-medium">Email:</span> {email}
           </p>
-          <p className="text-sm">
+          <p className="">
             <span className="font-medium">Tên đăng nhập:</span> {username}
           </p>
           <div className="flex items-center gap-2">
-            <p className="text-sm">
+            <p className="">
               <span className="font-medium">Loại người dùng:</span>{" "}
               {level === 0 ? "Công tác  viên" : `Đại lý cấp ${level}`}
             </p>

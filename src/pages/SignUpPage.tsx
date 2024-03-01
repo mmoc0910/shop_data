@@ -12,7 +12,7 @@ import { Input } from "../components/input";
 import { api } from "../api";
 import { AuthState } from "../store/auth/authSlice";
 import { toast } from "react-toastify";
-import { countries } from "../constants";
+import { countries, purposes } from "../constants";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/configureStore";
@@ -20,12 +20,7 @@ import axios from "axios";
 import { DropdownWithComponents } from "../components/dropdown";
 import { v4 as uuidv4 } from "uuid";
 
-const purposes = [
-  { id: 1, title: "Access global internet from China" },
-  { id: 2, title: "Access global internet from Iran" },
-  { id: 3, title: "Play Gaming" },
-  { id: 4, title: "Others" },
-];
+
 
 const schema = yup
   .object({

@@ -3,7 +3,7 @@ import { api } from "../../api";
 import Heading from "../../components/common/Heading";
 import { KeySeverType, ServerType } from "../../type";
 import { toast } from "react-toastify";
-import { DAY_FORMAT, messages } from "../../constants";
+import { DAY_FORMAT } from "../../constants";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -13,6 +13,7 @@ import Button from "../../components/button/Button";
 import { Table, TableColumnsType, Tag } from "antd";
 import Swal from "sweetalert2";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
+import axios from "axios";
 
 const schema = yup
   .object({
@@ -44,8 +45,13 @@ const ServerAdminPage = () => {
       setServers(resultServer.data);
       setListServerHistory(resultHistory.data);
     } catch (error) {
-      console.log("err - ", error);
-      toast.error(messages.error);
+      if (axios.isAxiosError(error)) {
+        console.log("error message: ", error);
+        toast.error(error.response?.data.message);
+      } else {
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
+      }
     }
   };
 
@@ -62,8 +68,13 @@ const ServerAdminPage = () => {
         toast.success("Import Server thành công");
         reset();
       } catch (error) {
-        console.log("error - ", error);
-        toast.error(messages.error);
+        if (axios.isAxiosError(error)) {
+          console.log("error message: ", error);
+          toast.error(error.response?.data.message);
+        } else {
+          console.log("unexpected error: ", error);
+          return "An unexpected error occurred";
+        }
       }
     } catch (error) {
       console.log(error);
@@ -72,7 +83,7 @@ const ServerAdminPage = () => {
   const handleRemoveServer = async (_id: string) => {
     try {
       Swal.fire({
-        title: `Bạn có muốn xóa máy chủ này`,
+        title: `<p class="leading-tight">Bạn có muốn xóa máy chủ này</p>`,
         icon: "success",
         showCancelButton: true,
         confirmButtonColor: "#1DC071",
@@ -87,8 +98,13 @@ const ServerAdminPage = () => {
         }
       });
     } catch (error) {
-      console.log("error - ", error);
-      toast.error(messages.error);
+      if (axios.isAxiosError(error)) {
+        console.log("error message: ", error);
+        toast.error(error.response?.data.message);
+      } else {
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
+      }
     }
   };
   const columns: TableColumnsType<ServerType> = useMemo(

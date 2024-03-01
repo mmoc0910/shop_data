@@ -1,14 +1,16 @@
+import { useParams } from "react-router-dom";
+import { UserState } from "../../type";
+import { countries, purposes } from "../../constants";
 import {
   DatePicker,
   DatePickerProps,
-  Modal,
   Table,
   TableColumnsType,
   Tag,
   Tooltip,
 } from "antd";
 import { useEffect, useMemo, useState } from "react";
-import { ExtendPlanType, GistType } from "../../type";
+import { GistType } from "../../type";
 import { toast } from "react-toastify";
 import {
   isSameOrAfter,
@@ -17,28 +19,83 @@ import {
   messages,
 } from "../../constants";
 import { api } from "../../api";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/configureStore";
 import { VND } from "../../utils/formatPrice";
 import dayjs from "dayjs";
-import { v4 as uuidv4 } from "uuid";
 import Heading from "../../components/common/Heading";
 import UpdateExtension from "../../components/user/UpdateExtension";
 import { copyToClipboard } from "../../utils/copyToClipboard";
-import Swal from "sweetalert2";
-import Loading from "../../components/common/Loading";
-import axios from "axios";
-import RequireAuthPage from "../../components/common/RequireAuthPage";
-import { Link, useNavigate } from "react-router-dom";
+import { AndroidXML, IosXML } from "../user/OrderPage";
 
-const OrderPage = () => {
-  const navigation = useNavigate();
+const AccountDetailPage = () => {
+  const { accountId } = useParams();
+  const [user, setUser] = useState<UserState>();
+  console.log("account id - ", accountId);
+  useEffect(() => {
+    (async () => {
+      try {
+        const resultUser = await api.get<UserState>(`/users/${accountId}`);
+        console.log("result - ", resultUser.data);
+        setUser(resultUser.data);
+      } catch (error) {
+        console.log("error - ", error);
+        // toast.error(messages.error);
+      }
+    })();
+  }, [accountId]);
+  return (
+    <div className="space-y-10">
+      <div className="space-y-4">
+        <Heading>Chi tiết người dùng</Heading>
+        {user ? (
+          <div className="grid grid-cols-3 gap-3">
+            <p>
+              Tên người dùng:{" "}
+              <span className="font-medium">{user.username}</span>
+            </p>
+            <p>
+              Email: <span className="font-medium">{user.email}</span>
+            </p>
+            <p>
+              Số điện thoại: <span className="font-medium">{user.phone}</span>
+            </p>
+            <p>
+              Mã giới thiệu:{" "}
+              <span className="font-medium">{user.introduceCode}</span>
+            </p>
+            <p>
+              Loại người dùng:{" "}
+              <span className="font-medium">
+                {user.level === 0
+                  ? "Cộng tác viên"
+                  : `Đại lý cấp ${user.level}`}
+              </span>
+            </p>
+            <p>
+              Số dư:{" "}
+              <span className="font-medium">{VND.format(user.money)}VND</span>
+            </p>
+            <p>
+              Quốc gia:{" "}
+              <span className="font-medium">
+                {countries.find((i) => i.key === user.country)?.title}
+              </span>
+            </p>
+            <p>
+              Mục đích sử dụng:{" "}
+              <span className="font-medium">
+                {purposes.find((i) => i.id === user.purpose)?.title}
+              </span>
+            </p>
+          </div>
+        ) : null}
+      </div>
+      <OrderKeyUser accountId={accountId as string} />
+    </div>
+  );
+};
+
+const OrderKeyUser = ({ accountId }: { accountId: string }) => {
   const [loadingTable, setLoadingTable] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [selectRow, setSelectRow] = useState<string | undefined>();
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [listExtendPlan, setListExtendPlan] = useState<ExtendPlanType[]>([]);
-  const { _id } = useSelector((state: RootState) => state.auth);
   const [listGist, setListGist] = useState<GistType[]>([]);
   const [startDate, setStartDate] = useState<dayjs.Dayjs | undefined>();
   const [endDate, setEndDate] = useState<dayjs.Dayjs | undefined>();
@@ -73,114 +130,12 @@ const OrderPage = () => {
   }, []);
   const handleFetchData = async () => {
     try {
-      const result = await api.get<GistType[]>(`/gists?userId=${_id}`);
+      const result = await api.get<GistType[]>(`/gists?userId=${accountId}`);
       console.log("data - ", result.data);
       setListGist(result.data);
     } catch (error) {
       console.log("error - ", error);
       toast.error(messages.error);
-    }
-  };
-  useEffect(() => {
-    (async () => {
-      try {
-        const result = await api.get<ExtendPlanType[]>("/extend-plans");
-        setListExtendPlan(result.data);
-      } catch (error) {
-        console.log("error - ", error);
-        toast.error(messages.error);
-      }
-    })();
-  }, []);
-  const handleUpgradeBrandWidth = async (
-    extendPlanId: string,
-    gistId: string,
-    bandWidth: number
-  ) => {
-    try {
-      const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn mua thêm ${bandWidth}GB băng thông</p>`,
-        // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
-        icon: "success",
-        showCancelButton: true,
-        confirmButtonColor: "#1DC071",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Thoát",
-        confirmButtonText: "Có, mua ngay",
-      });
-      if (isConfirmed) {
-        setLoading(true);
-        await api.post("/upgrades/band-width", { gistId, extendPlanId });
-        handleOk();
-        handleFetchData();
-        toast.success("Mua thêm băng thông thành công");
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log("error message: ", error);
-        toast.error(error.response?.data.message);
-        if (
-          error.response?.data.message ===
-            "Bạn không đủ tiền để đăng kí dịch vụ này" &&
-          error.response.status === 400
-        ) {
-          toast.warn("Nạp thêm tiền để sử dụng dịch vụ");
-          navigation("/user/dashboard");
-        }
-      } else {
-        console.log("unexpected error: ", error);
-        return "An unexpected error occurred";
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-  const handleUpgradPlan = async (
-    gistId: string,
-    name: string,
-    price: number,
-    bandWidth: number,
-    type: string
-  ) => {
-    try {
-      const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn gia hạn gói ${name}(${VND.format(
-          price
-        )}VND) ${bandWidth}GB/${type}</p>`,
-        // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
-        icon: "success",
-        showCancelButton: true,
-        confirmButtonColor: "#1DC071",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Thoát",
-        confirmButtonText: "Có, gia hạn ngay",
-      });
-      if (isConfirmed) {
-        setLoading(true);
-        await api.post("/upgrades/plan", { gistId });
-        handleOk();
-        handleFetchData();
-        toast.success("Gia hạn gói thành công");
-        setLoading(false);
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log("error message: ", error);
-        toast.error(error.response?.data.message);
-        if (
-          error.response?.data.message ===
-            "Bạn không đủ tiền để đăng kí dịch vụ này" &&
-          error.response.status === 400
-        ) {
-          toast.warn("Nạp thêm tiền để sử dụng dịch vụ");
-          navigation("/user/dashboard");
-        }
-      } else {
-        console.log("unexpected error: ", error);
-        return "An unexpected error occurred";
-      }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -192,18 +147,6 @@ const OrderPage = () => {
     }
   };
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setSelectRow(undefined);
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
   const columns: TableColumnsType<GistType> = useMemo(
     () => [
       {
@@ -253,10 +196,10 @@ const OrderPage = () => {
         },
       },
       {
-        title: <p className="font-primary font-semibold">Usage</p>,
+        title: <p className="font-primary font-semibold">Data Usage</p>,
         dataIndex: "dataUsage",
         key: "dataUsage",
-        width: 100,
+        width: 150,
         render: (_: string, record: GistType) => (
           <p className="font-primary text-sm">
             {(record.keyId.dataUsage / 1000 / 1000 / 1000).toFixed(2)}GB
@@ -354,42 +297,6 @@ const OrderPage = () => {
           );
         },
       },
-      {
-        title: <p className="font-primary font-semibold"></p>,
-        dataIndex: "action",
-        key: "action",
-        fixed: "right",
-        width: 250,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        render: (_: string, record: GistType) =>
-          record.status ? (
-            <div className="flex gap-4">
-              <button
-                className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-xs"
-                onClick={() => {
-                  setSelectRow(record._id);
-                  showModal();
-                }}
-              >
-                Mua thêm data
-              </button>
-              <button
-                className="px-4 py-2 rounded-lg bg-primary font-medium text-white font-primary text-xs"
-                onClick={() =>
-                  handleUpgradPlan(
-                    record._id,
-                    record.planId.name,
-                    record.planId.price,
-                    record.planId.bandWidth,
-                    record.planId.type
-                  )
-                }
-              >
-                Gia hạn
-              </button>
-            </div>
-          ) : null,
-      },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
@@ -409,28 +316,8 @@ const OrderPage = () => {
     setInputValue(value);
   };
   return (
-    <RequireAuthPage rolePage={2}>
-      {loading ? <Loading /> : null}
-      <p className="">
-        Vui lòng lấy key tương ứng với thiết bị của bạn và dán vào phần mềm theo
-        hướng dẫn{" "}
-        <Link to={""} className="text-primary underline decoration-primary">
-          hướng dẫn
-        </Link>
-        :
-      </p>
-      <p className="flex items-center gap-2">
-        <span>
-          <IosXML />
-        </span>
-        : Link kết nối cho iphone
-      </p>
-      <p className="mb-5 flex items-center gap-2">
-        <span>
-          <AndroidXML />
-        </span>
-        : Link kết nối cho các thiết bị khác (Android, Windows, MACOS, Linux)
-      </p>
+    <div>
+      <Heading className="mb-4">Danh sách key đã mua</Heading>
       <div className="flex items-center gap-5 pb-5">
         <div className="relative flex-1">
           <input
@@ -478,82 +365,11 @@ const OrderPage = () => {
           dataSource={listGistFilter}
           columns={columns}
           loading={loadingTable}
-          scroll={{ x: 1500 }}
+        //   scroll={{ x: 1500 }}
         />
       </div>
-
-      <Modal
-        width={900}
-        open={isModalOpen}
-        onCancel={() => {
-          handleCancel();
-          setSelectRow(undefined);
-        }}
-        footer={[]}
-      >
-        <Heading className="font-primary">Danh sách gói cước mở rộng</Heading>
-        <div className="py-3 grid grid-cols-3 gap-5">
-          {listExtendPlan.map((item) => (
-            <div
-              key={uuidv4()}
-              className="p-5 shadow-xl rounded-lg font-primary space-y-3 flex flex-col justify-between"
-            >
-              <p className="font-semibold text-base text-center mb-5">
-                {item.name}
-              </p>
-              <p className="text-center font-medium text-xl">
-                {item.bandWidth}GB - {VND.format(item.price)}VND
-              </p>
-              <button
-                className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-sm"
-                onClick={() =>
-                  selectRow &&
-                  handleUpgradeBrandWidth(item._id, selectRow, item.bandWidth)
-                }
-              >
-                Mua ngay
-              </button>
-            </div>
-          ))}
-        </div>
-        <div className="mt-5 flex justify-end">
-          <button
-            className="px-4 py-2 rounded-lg bg-error font-medium text-white font-primary"
-            onClick={() => {
-              handleCancel();
-              setSelectRow(undefined);
-            }}
-          >
-            Thoát
-          </button>
-        </div>
-      </Modal>
-    </RequireAuthPage>
+    </div>
   );
 };
 
-export const IosXML = () => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 448 512"
-      className="w-4 h-4"
-    >
-      <path d="M400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zM127 384.5c-5.5 9.6-17.8 12.8-27.3 7.3-9.6-5.5-12.8-17.8-7.3-27.3l14.3-24.7c16.1-4.9 29.3-1.1 39.6 11.4L127 384.5zm138.9-53.9H84c-11 0-20-9-20-20s9-20 20-20h51l65.4-113.2-20.5-35.4c-5.5-9.6-2.2-21.8 7.3-27.3 9.6-5.5 21.8-2.2 27.3 7.3l8.9 15.4 8.9-15.4c5.5-9.6 17.8-12.8 27.3-7.3 9.6 5.5 12.8 17.8 7.3 27.3l-85.8 148.6h62.1c20.2 0 31.5 23.7 22.7 40zm98.1 0h-29l19.6 33.9c5.5 9.6 2.2 21.8-7.3 27.3-9.6 5.5-21.8 2.2-27.3-7.3-32.9-56.9-57.5-99.7-74-128.1-16.7-29-4.8-58 7.1-67.8 13.1 22.7 32.7 56.7 58.9 102h52c11 0 20 9 20 20 0 11.1-9 20-20 20z" />
-    </svg>
-  );
-};
-
-export const AndroidXML = () => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 576 512"
-      className="w-4 h-4"
-    >
-      <path d="M420.6 301.9a24 24 0 1 1 24-24 24 24 0 0 1 -24 24m-265.1 0a24 24 0 1 1 24-24 24 24 0 0 1 -24 24m273.7-144.5 47.9-83a10 10 0 1 0 -17.3-10h0l-48.5 84.1a301.3 301.3 0 0 0 -246.6 0L116.2 64.5a10 10 0 1 0 -17.3 10h0l47.9 83C64.5 202.2 8.2 285.6 0 384H576c-8.2-98.5-64.5-181.8-146.9-226.6" />
-    </svg>
-  );
-};
-
-export default OrderPage;
+export default AccountDetailPage;

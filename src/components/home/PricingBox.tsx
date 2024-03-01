@@ -87,7 +87,7 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
             if (_id) {
               try {
                 const { isConfirmed } = await Swal.fire({
-                  title: `Bạn có muốn mua gói ${name}`,
+                  title: `<p class="leading-tight">Bạn có muốn mua gói ${name}</p>`,
                   text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
                   icon: "success",
                   showCancelButton: true,
@@ -110,6 +110,14 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
                 if (axios.isAxiosError(error)) {
                   console.log("error message: ", error);
                   toast.error(error.response?.data.message);
+                  if (
+                    error.response?.data.message ===
+                      "Bạn không đủ tiền để đăng kí dịch vụ này" &&
+                    error.response.status === 400
+                  ) {
+                    toast.warn("Nạp thêm tiền để sử dụng dịch vụ");
+                    navigation("/user/dashboard");
+                  }
                 } else {
                   console.log("unexpected error: ", error);
                   return "An unexpected error occurred";

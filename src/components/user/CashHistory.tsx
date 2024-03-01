@@ -7,61 +7,63 @@ import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 
 const CashHistory = ({ userCashHistory }: { userCashHistory: CashType[] }) => {
-  return (
-    <div className="space-y-4">
-      <Heading>Lịch sử nạp</Heading>
-      <div className="">
-        {userCashHistory.length === 0 ? (
-          <p>Chưa có giao dịch nạp nào được thực hiện</p>
-        ) : (
-          <div className="">
-            {userCashHistory.slice(0, 5).map((item, index) => (
-              <div
-                key={uuidv4()}
-                className={classNames(
-                  index === userCashHistory.length - 1
-                    ? "mb-5 space-y-1 pl-10 relative after:absolute after:w-3 after:h-3 after:bg-white after:border-2 after:border-primary after:rounded-full after:left-0 after:top-1/2 after:-translate-y-1/2"
-                    : "mb-5 space-y-1 pl-10 relative after:absolute after:w-3 after:h-3 after:bg-white after:border-2 after:border-primary after:rounded-full after:left-0 after:top-1/2 after:-translate-y-1/2 before:absolute before:h-[calc(100%+1.5rem)] before:w-[2px] before:bg-primary before:left-[5px] before:top-1/2"
-                )}
-              >
-                <div className="p-3 shadow-xl rounded-lg">
-                  {item.status === 0 ? (
-                    <p className="text-sm">
-                      <span className="text-error">Bạn bị từ chối nạp </span>
-                      <span className="font-semibold">
-                        {VND.format(item.money)}VND
-                      </span>{" "}
-                      vào ngày{" "}
-                      {dayjs(item.updatedAt).format("DD/MM/YYYY HH:MM")} với lý
-                      do{" "}
-                      <span className="text-error">"{item.description}"</span>
-                    </p>
-                  ) : (
-                    <p className="text-sm">
-                      Bạn đã nạp{" "}
-                      <span className="font-semibold">
-                        {VND.format(item.money)}VND
-                      </span>{" "}
-                      vào ngày{" "}
-                      {dayjs(item.updatedAt).format("DD/MM/YYYY HH:MM")}
-                    </p>
+  if (userCashHistory.length > 0)
+    return (
+      <div className="space-y-4">
+        <Heading>Lịch sử nạp</Heading>
+        <div className="">
+          {userCashHistory.length === 0 ? (
+            <p>Chưa có giao dịch nạp nào được thực hiện</p>
+          ) : (
+            <div className="">
+              {userCashHistory.slice(0, 5).map((item, index) => (
+                <div
+                  key={uuidv4()}
+                  className={classNames(
+                    index === userCashHistory.length - 1
+                      ? "mb-5 space-y-1 pl-10 relative after:absolute after:w-3 after:h-3 after:bg-white after:border-2 after:border-primary after:rounded-full after:left-0 after:top-1/2 after:-translate-y-1/2"
+                      : "mb-5 space-y-1 pl-10 relative after:absolute after:w-3 after:h-3 after:bg-white after:border-2 after:border-primary after:rounded-full after:left-0 after:top-1/2 after:-translate-y-1/2 before:absolute before:h-[calc(100%+1.5rem)] before:w-[2px] before:bg-primary before:left-[5px] before:top-1/2"
                   )}
+                >
+                  <div className="p-3 shadow-xl rounded-lg">
+                    {item.status === 0 ? (
+                      <p className="text-sm">
+                        <span className="text-error">Bạn bị từ chối nạp </span>
+                        <span className="font-semibold">
+                          {VND.format(item.money)}VND
+                        </span>{" "}
+                        vào ngày{" "}
+                        {dayjs(item.updatedAt).format("DD/MM/YYYY HH:MM")} với
+                        lý do{" "}
+                        <span className="text-error">"{item.description}"</span>
+                      </p>
+                    ) : (
+                      <p className="text-sm">
+                        Bạn đã nạp{" "}
+                        <span className="font-semibold">
+                          {VND.format(item.money)}VND
+                        </span>{" "}
+                        vào ngày{" "}
+                        {dayjs(item.updatedAt).format("DD/MM/YYYY HH:MM")}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
-            {userCashHistory.length > 5 ? (
-              <Link
-                to={"/user/cash"}
-                className="text-primary underline decoration-primary text-center block"
-              >
-                Xem tất cả
-              </Link>
-            ) : null}
-          </div>
-        )}
+              ))}
+              {userCashHistory.length > 5 ? (
+                <Link
+                  to={"/user/cash"}
+                  className="text-primary underline decoration-primary text-center block"
+                >
+                  Xem tất cả
+                </Link>
+              ) : null}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  return;
 };
 
 export default CashHistory;
