@@ -268,21 +268,21 @@ const CashAdminPage = () => {
             ) : null}
           </div>
         ),
-        filters: [
-          {
-            text: "Đã hủy",
-            value: 0,
-          },
-          {
-            text: "Đã hoàn thành",
-            value: 1,
-          },
-          {
-            text: "Chờ phê duyệt",
-            value: 2,
-          },
-        ],
-        onFilter: (value: number, record: CashType) => record.status === value,
+        // filters: [
+        //   {
+        //     text: "Đã hủy",
+        //     value: 0,
+        //   },
+        //   {
+        //     text: "Đã hoàn thành",
+        //     value: 1,
+        //   },
+        //   {
+        //     text: "Chờ phê duyệt",
+        //     value: 2,
+        //   },
+        // ],
+        // onFilter: (value: number, record: CashType) => record.status === value,
         fixed: "right",
       },
       {

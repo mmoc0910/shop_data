@@ -215,7 +215,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
         dataIndex: "status",
         key: "status",
         width: 130,
-        render: (_: string, record: GistType) => (
+        render: (_: number, record: GistType) => (
           <div className="font-primary text-sm">
             {record.status ? (
               <Tag color="green">
@@ -228,18 +228,18 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
             )}
           </div>
         ),
-        filters: [
-          {
-            text: "Còn hạn",
-            value: "1",
-          },
-          {
-            text: "Hết hạn",
-            value: "0",
-          },
-        ],
-        onFilter: (value: string, record: GistType) =>
-          record.status === Number(value),
+        // filters: [
+        //   {
+        //     text: "Còn hạn",
+        //     value: "1",
+        //   },
+        //   {
+        //     text: "Hết hạn",
+        //     value: "0",
+        //   },
+        // ],
+        // onFilter: (value: number, record: GistType) =>
+        //   record.status === Number(value) ? true : false,
       },
       {
         title: <p className="font-primary font-semibold">Key</p>,

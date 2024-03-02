@@ -285,18 +285,18 @@ const OrderPage = () => {
             )}
           </div>
         ),
-        filters: [
-          {
-            text: "Còn hạn",
-            value: "1",
-          },
-          {
-            text: "Hết hạn",
-            value: "0",
-          },
-        ],
-        onFilter: (value: string, record: GistType) =>
-          record.status === Number(value),
+        // filters: [
+        //   {
+        //     text: "Còn hạn",
+        //     value: "1",
+        //   },
+        //   {
+        //     text: "Hết hạn",
+        //     value: "0",
+        //   },
+        // ],
+        // onFilter: (value: string, record: GistType) =>
+        //   record.status === Number(value),
       },
       {
         title: <p className="font-primary font-semibold">Key</p>,

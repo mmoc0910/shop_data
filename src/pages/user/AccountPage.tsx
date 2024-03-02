@@ -161,7 +161,7 @@ Chiết khấu [${collab.level1}%] cho mỗi đơn hàng mới ||
 Đại lý Cấp 2: 
 Chiết khấu [${collab.level2}%] cho mỗi đơn hàng mới ||
 Đại lý Cấp 3: 
-Chiết khấu [${collab.level3}%] cho mỗi đơn hàng mới
+Chiết khấu [${collab.level3}%] cho mỗi đơn hàng mới || Để được nâng cấp lên làm đại lý vui lòng lien hệ trực tiếp admin
 `}
             >
               <span className="cursor-pointer">
