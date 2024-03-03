@@ -603,7 +603,7 @@ const ExtendPlanItem = ({
   onSubmit: () => void;
 }) => {
   const period =
-    selectRow?.endDate && dayjs(selectRow.endDate).diff(dayjs(), "month");
+    selectRow?.endDate && dayjs(selectRow.endDate).diff(dayjs(), "month") + 1;
   const [month, setMonth] = useState<number>(1);
   const navigation = useNavigate();
   const handleUpgradeBrandWidth = async (
@@ -660,7 +660,7 @@ const ExtendPlanItem = ({
       <p className="text-center font-medium text-xl">
         {extendPlan.bandWidth}GB - {VND.format(extendPlan.price)}VND
       </p>
-      <div>
+      <div className="flex items-center gap-5">
         <Radio checked={month === 1} onClick={() => setMonth(1)}>
           1 tháng
         </Radio>
