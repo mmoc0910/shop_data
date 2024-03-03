@@ -17,7 +17,7 @@ import IconEdit from "../../icons/IconEdit";
 import Swal from "sweetalert2";
 import axios from "axios";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
-import { Modal } from "antd";
+import { Modal, Tag } from "antd";
 import Loading from "../../components/common/Loading";
 
 const ServerDetailAdminPage = () => {
@@ -112,33 +112,33 @@ const ServerDetailAdminPage = () => {
       setLoading(false);
     }
   };
-  const handleRemoveKey = async (
-    keyId: number,
-    apiUrl: string,
-    fingerPrint: string
-  ) => {
-    try {
-      const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn xóa key này</p>`,
-        icon: "success",
-        showCancelButton: true,
-        confirmButtonColor: "#1DC071",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Thoát",
-        confirmButtonText: "Xóa",
-      });
-      if (isConfirmed) {
-        await api.delete(`/servers/remove-key/${keyId}`, {
-          data: { apiUrl, fingerPrint },
-        });
-        // handleSync(apiUrl, fingerPrint);
-        toast.success("Xóa thành công");
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error(messages.error);
-    }
-  };
+  // const handleRemoveKey = async (
+  //   keyId: number,
+  //   apiUrl: string,
+  //   fingerPrint: string
+  // ) => {
+  //   try {
+  //     const { isConfirmed } = await Swal.fire({
+  //       title: `<p class="leading-tight">Bạn có muốn xóa key này</p>`,
+  //       icon: "success",
+  //       showCancelButton: true,
+  //       confirmButtonColor: "#1DC071",
+  //       cancelButtonColor: "#d33",
+  //       cancelButtonText: "Thoát",
+  //       confirmButtonText: "Xóa",
+  //     });
+  //     if (isConfirmed) {
+  //       await api.delete(`/servers/remove-key/${keyId}`, {
+  //         data: { apiUrl, fingerPrint },
+  //       });
+  //       // handleSync(apiUrl, fingerPrint);
+  //       toast.success("Xóa thành công");
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error(messages.error);
+  //   }
+  // };
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -267,7 +267,10 @@ const ServerDetailAdminPage = () => {
                   </div>
                   <div className="col-span-1 pb-3 flex">
                     <div className="flex-1 px-4 font-semibold">Limit</div>
-                    <div className="px-4 font-semibold">Actions</div>
+                    <div className="flex-1 px-4 font-semibold">Status</div>
+                    <div className="px-4 font-semibold flex-1 justify-end">
+                      Actions
+                    </div>
                   </div>
                   {listKey.length > 0 &&
                     listKey.map((item) => (
@@ -315,53 +318,68 @@ const ServerDetailAdminPage = () => {
                             }
                           /> */}
                           </div>
-                          <div className="px-4 flex items-center gap-4">
+                          <div className="flex-1 px-4">
                             {item.status ? (
-                              <button
-                                className="bg-secondary20 text-white rounded-lg p-3 font-semibold"
-                                onClick={() => {
-                                  setSelectRow(item._id);
-                                  showModal();
-                                }}
-                              >
-                                Migrate key
-                              </button>
+                              <Tag color="green">Active</Tag>
+                            ) : (
+                              <Tag color="red">Inactive</Tag>
+                            )}
+                          </div>
+                          <div className="px-4 flex items-center gap-4 flex-1">
+                            {item.status ? (
+                              <>
+                                {" "}
+                                <button
+                                  className="bg-secondary20 text-white rounded-lg p-3 font-semibold"
+                                  onClick={() => {
+                                    setSelectRow(item._id);
+                                    showModal();
+                                  }}
+                                >
+                                  Migrate key
+                                </button>
+                                <button
+                                  className="bg-secondary20 text-white rounded-lg p-3 font-semibold"
+                                  onClick={async () => {
+                                    try {
+                                      const { isConfirmed } = await Swal.fire({
+                                        title: `<p class="leading-tight">Bạn có nâng cấp key này</p>`,
+                                        icon: "success",
+                                        showCancelButton: true,
+                                        confirmButtonColor: "#1DC071",
+                                        cancelButtonColor: "#d33",
+                                        cancelButtonText: "Thoát",
+                                        confirmButtonText: "Có, nâng cấp ngay",
+                                      });
+                                      if (isConfirmed) {
+                                        await api.patch(
+                                          `/keys/upgrade/${item._id}`
+                                        );
+                                        handleFetchServerDetail();
+                                        toast.success("Thành công");
+                                      }
+                                    } catch (error) {
+                                      if (axios.isAxiosError(error)) {
+                                        console.log("error message: ", error);
+                                        toast.error(
+                                          error.response?.data.message
+                                        );
+                                      } else {
+                                        console.log(
+                                          "unexpected error: ",
+                                          error
+                                        );
+                                        return "An unexpected error occurred";
+                                      }
+                                    }
+                                  }}
+                                >
+                                  Gia hạn
+                                </button>
+                              </>
                             ) : null}
 
-                            <button
-                              className="bg-secondary20 text-white rounded-lg p-3 font-semibold"
-                              onClick={async () => {
-                                try {
-                                  const { isConfirmed } = await Swal.fire({
-                                    title: `<p class="leading-tight">Bạn có nâng cấp key này</p>`,
-                                    icon: "success",
-                                    showCancelButton: true,
-                                    confirmButtonColor: "#1DC071",
-                                    cancelButtonColor: "#d33",
-                                    cancelButtonText: "Thoát",
-                                    confirmButtonText: "Có, nâng cấp ngay",
-                                  });
-                                  if (isConfirmed) {
-                                    await api.patch(
-                                      `/keys/upgrade/${item._id}`
-                                    );
-                                    handleFetchServerDetail();
-                                    toast.success("Thành công");
-                                  }
-                                } catch (error) {
-                                  if (axios.isAxiosError(error)) {
-                                    console.log("error message: ", error);
-                                    toast.error(error.response?.data.message);
-                                  } else {
-                                    console.log("unexpected error: ", error);
-                                    return "An unexpected error occurred";
-                                  }
-                                }
-                              }}
-                            >
-                              Gia hạn
-                            </button>
-                            <button
+                            {/* <button
                               className="bg-error text-white rounded-lg p-3"
                               onClick={() =>
                                 handleRemoveKey(
@@ -385,7 +403,7 @@ const ServerDetailAdminPage = () => {
                                   d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
                                 />
                               </svg>
-                            </button>
+                            </button> */}
                           </div>
                         </div>
                       </div>

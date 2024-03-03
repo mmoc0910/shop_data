@@ -279,7 +279,8 @@ const OrderPage = () => {
         width: 120,
         render: (_: string, record: GistType) => (
           <p className="font-primary text-sm">
-            {record.keyId?.endExpandDate && DAY_FORMAT(record.keyId.endExpandDate)}
+            {record.keyId?.endExpandDate &&
+              DAY_FORMAT(record.keyId.endExpandDate)}
           </p>
         ),
       },
@@ -403,19 +404,23 @@ const OrderPage = () => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         render: (_: string, record: GistType) =>
           record.status ? (
-            <div className="flex gap-4">
-              <button
-                className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-xs"
-                onClick={() => {
-                  setSelectRow({
-                    id: record._id,
-                    endDate: record.keyId.endDate,
-                  });
-                  showModal();
-                }}
-              >
-                Mua thêm data
-              </button>
+            <div className="flex gap-4 justify-end">
+              {!record.keyId.endExpandDate ||
+              (record.keyId.endExpandDate &&
+                dayjs().isAfter(record.keyId.endExpandDate, "day")) ? (
+                <button
+                  className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-xs"
+                  onClick={() => {
+                    setSelectRow({
+                      id: record._id,
+                      endDate: record.keyId.endDate,
+                    });
+                    showModal();
+                  }}
+                >
+                  Mua thêm data
+                </button>
+              ) : null}
               <button
                 className="px-4 py-2 rounded-lg bg-primary font-medium text-white font-primary text-xs"
                 onClick={() =>

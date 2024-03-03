@@ -19,6 +19,7 @@ import { setCollab } from "../store/collab/collabSlice";
 
 const menu = [
   { to: "/user/dashboard", title: "Dashboard" },
+  { to: "/user/recharge", title: "Nạp tiền" },
   { to: "/user/plan", title: "Mua gói cước" },
   { to: "/user/order", title: "Đơn hàng của tôi" },
   { to: "/user/transaction", title: "Lịch sử giao dịch" },

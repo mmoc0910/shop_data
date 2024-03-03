@@ -6,6 +6,7 @@ import { Route, Routes } from "react-router-dom";
 import LayoutUser from "./layouts/LayoutUser";
 import LayoutAdmin from "./layouts/LayoutAdmin";
 import './i18n';
+const RechargePage = lazy(() => import("./pages/user/RechargePage"));
 const AccountDetailPage = lazy(() => import("./pages/admin/AccountDetailPage"));
 const CashPage = lazy(() => import("./pages/user/CashPage"));
 const FogotPassword = lazy(() => import("./pages/FogotPassword"));
@@ -76,6 +77,7 @@ function App() {
             <Route path="user/invite" element={<InvitePage />} />
             <Route path="user/transaction" element={<TransactionPage />} />
             <Route path="user/cash" element={<CashPage />} />
+            <Route path="user/recharge" element={<RechargePage />} />
           </Route>
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />

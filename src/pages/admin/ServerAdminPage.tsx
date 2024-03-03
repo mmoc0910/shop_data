@@ -104,7 +104,7 @@ const ServerAdminPage = () => {
         confirmButtonText: "Xóa",
       });
       if (isConfirmed) {
-        const result = await api.get<KeySeverType[]>(`/keys?serverId=${_id}`);
+        const result = await api.get<KeySeverType[]>(`/keys?serverId=${_id}&status=1`);
         if (result.data.length > 0) {
           toast.warn(
             "Bạn phải migrate key sang server khác trước khi muốn xóa"
