@@ -34,8 +34,20 @@ export type ServerType = {
   status: number;
   createdAt: Date;
   updatedAt: Date;
+  defaultBandWidth: number;
+  totalBandWidth: number;
   __v: 0;
   listKeys?: KeySeverType[];
+};
+
+type AWSType = {
+  _id: string;
+  awsId: string;
+  fileName: string;
+  status: number;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: 0;
 };
 
 export type KeySeverType = {
@@ -50,17 +62,21 @@ export type KeySeverType = {
   dataLimit: number;
   dataUsage: number;
   serverId: ServerType;
+  awsId: AWSType;
   userId: AuthState;
   account: string;
   startDate: Date;
   endDate: Date;
   status: 1 | 0;
+  dataExpand: number;
+  endExpandDate: Date;
   createdAt: Date;
   updatedAt: Date;
   __v: 0;
 };
 
 export type PlanType = {
+  key: string;
   _id: string;
   name: string;
   price: number;
@@ -70,6 +86,8 @@ export type PlanType = {
   bandWidth: number;
   createdAt: Date;
   updatedAt: Date;
+  display: 0 | 1;
+  status: 0 | 1;
 };
 
 export type CashType = {
@@ -133,6 +151,9 @@ export type ExtendPlanType = {
   name: string;
   price: number;
   bandWidth: number;
+  level1: number;
+  level2: number;
+  level3: number;
   createdAt: Date;
   updatedAt: Date;
   __v: 0;

@@ -10,8 +10,8 @@ const PlanPage = () => {
   useEffect(() => {
     (async () => {
       try {
-        const result = await api.get("/plans");
-        setPlans(result.data);
+        const result = await api.get<PlanType[]>("/plans");
+        setPlans(result.data.filter((item) => item.status === 1));
       } catch (error) {
         console.log("error - ", error);
       }

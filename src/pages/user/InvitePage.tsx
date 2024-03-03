@@ -25,6 +25,7 @@ import RequireAuthPage from "../../components/common/RequireAuthPage";
 import Heading from "../../components/common/Heading";
 
 const InvitePage = () => {
+  const collab = useSelector((state: RootState) => state.collab);
   const { _id } = useSelector((state: RootState) => state.auth);
   const [satisfy, setSatisfy] = useState<SatisfyType>();
   const [user, setUser] = useState<AuthState>();
@@ -187,10 +188,18 @@ const InvitePage = () => {
       <div className="space-y-10">
         <div className="flex items-start rounded-xl border-2 border-[#eeeeed]">
           <div className="flex-1 px-5 py-7 flex flex-col items-center rounded-xl space-y-4">
-            <p className="font-medium text-4xl">{user?.level || 0}</p>
+            <p className="font-medium text-4xl">{user?.level === 0 ? "Cộng tác viên" : `Đại lý cấp${user?.level}`}</p>
             <div className="flex items-center gap-1">
               <p className="text-lg">Cấp độ</p>
-              <Tooltip title="Cấp 1: Nạp Đơn Giá Trị 1.000.000 ₫ , Mua Gói Hoặc Giới Thiệu Khách Nạp Số Dư Sẽ Được Hưởng 10% || Cấp 2: Nạp Đơn Giá Trị 3.000.000 ₫ , Mua Gói Hoặc Giới Thiệu Khách Nạp Số Dư Sẽ Được Hưởng 20% || Cấp 3: Nạp Đơn Giá Trị 10.000.000 ₫ , Mua Gói Hoặc Giới Thiệu Khách Nạp Số Dư Sẽ Được Hưởng 50%">
+              <Tooltip  title={`User/CTV: 
+Nhận được ${commision}% hoa hồng cho mỗi đơn hàng của người được giới thiệu || 
+Đại lý Cấp 1: 
+Chiết khấu [${collab.level1}%] cho mỗi đơn hàng mới ||
+Đại lý Cấp 2: 
+Chiết khấu [${collab.level2}%] cho mỗi đơn hàng mới ||
+Đại lý Cấp 3: 
+Chiết khấu [${collab.level3}%] cho mỗi đơn hàng mới || Để được nâng cấp lên làm đại lý vui lòng lien hệ trực tiếp admin
+`}>
                 <span>
                   <IconQuesionMarkCircle />
                 </span>

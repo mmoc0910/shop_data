@@ -7,7 +7,7 @@ import { IconCheck } from "../checkbox/Checkbox";
 import { api } from "../../api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -18,8 +18,8 @@ const PricingBox = () => {
   useEffect(() => {
     (async () => {
       try {
-        const result = await api.get("/plans");
-        setPlans(result.data);
+        const result = await api.get<PlanType[]>("/plans");
+        setPlans(result.data.filter((item) => item.status === 1));
       } catch (error) {
         console.log("error - ", error);
       }
@@ -45,10 +45,22 @@ const PricingBox = () => {
             </div>
           </div> */}
           <div className="mt-16 lg:mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10 lg:gap-y-16 w-full">
-            {plans.map((plan) => (
-              <PricingItem key={uuidv4()} plan={plan} />
-            ))}
+            {plans.map((plan) =>
+              plan.display === 1 ? (
+                <PricingItem key={uuidv4()} plan={plan} />
+              ) : null
+            )}
           </div>
+          {plans.length > 3 ? (
+            <Link
+              to={"/user/plan"}
+              className="my-9 lg:my-14 py-2 px-9 bg-[#f2f4f7] rounded-full"
+            >
+              <div className="font-medium text-white bg-primary px-6 py-3 rounded-full">
+                Xem thêm
+              </div>
+            </Link>
+          ) : null}
         </Container>
       </div>
     );

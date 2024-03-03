@@ -117,9 +117,7 @@ const PlanDashborad = () => {
         dataIndex: "price",
         key: "price",
         render: (text: number) => (
-          <p className="font-primary text-sm">
-            {VND.format(text)}VND
-          </p>
+          <p className="font-primary text-sm">{VND.format(text)}VND</p>
         ),
       },
       {
@@ -141,31 +139,33 @@ const PlanDashborad = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
-  return (
-    <>
-      {loading && <Loading />}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <Heading>Gói cước</Heading>
-          {plans.length > 5 ? (
-            <Link
-              to={"/user/plan"}
-              className="text-primary font-medium underline decoration-primary"
-            >
-              Xem tất cả
-            </Link>
-          ) : null}
-        </div>{" "}
-        <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
-          <Table
-            dataSource={plans.slice(0, 5)}
-            columns={columns}
-            pagination={false}
-          />
+  if (plans.length > 0)
+    return (
+      <>
+        {loading && <Loading />}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Heading>Gói cước</Heading>
+            {plans.length > 5 ? (
+              <Link
+                to={"/user/plan"}
+                className="text-primary font-medium underline decoration-primary"
+              >
+                Xem tất cả
+              </Link>
+            ) : null}
+          </div>{" "}
+          <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
+            <Table
+              dataSource={plans.slice(0, 5)}
+              columns={columns}
+              pagination={false}
+            />
+          </div>
         </div>
-      </div>
-    </>
-  );
+      </>
+    );
+  return;
 };
 
 export default PlanDashborad;

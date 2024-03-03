@@ -63,7 +63,7 @@ const DashboardUserPage = () => {
   }, []);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   // const [satisfy, setSatisfy] = useState<SatisfyType>();
-  const { handleSubmit, control } = useForm({
+  const { handleSubmit, control, reset } = useForm({
     resolver: yupResolver(schema),
     mode: "onSubmit",
   });
@@ -83,7 +83,9 @@ const DashboardUserPage = () => {
   const onSubmit = async (data: { money: number }) => {
     try {
       Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn nạp ${VND.format(data.money)}VND</p>`,
+        title: `<p class="leading-tight">Bạn có muốn nạp ${VND.format(
+          data.money
+        )}VND</p>`,
         // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
         icon: "success",
         showCancelButton: true,
@@ -96,8 +98,11 @@ const DashboardUserPage = () => {
           console.log("data - ", data);
           await api.post("/cashs", { ...data, userId: _id });
           handleOk();
-          Swal.fire("<p class='leading-tight'>Bạn vừa yêu cầu nạp tiền thành công. Vui lòng gửi ảnh hóa đơn cho admin qua wechat/zalo để được phê duyệt.</p>");
+          Swal.fire(
+            "<p class='leading-tight'>Bạn vừa yêu cầu nạp tiền thành công. Vui lòng gửi ảnh hóa đơn cho admin qua wechat/zalo để được phê duyệt.</p>"
+          );
           // toast.success("Nạp tiền thành công. Vui lòng chờ admin phê duyệt");
+          reset();
         }
       });
     } catch (error) {

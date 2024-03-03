@@ -5,6 +5,7 @@ import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 import LayoutUser from "./layouts/LayoutUser";
 import LayoutAdmin from "./layouts/LayoutAdmin";
+import './i18n';
 const AccountDetailPage = lazy(() => import("./pages/admin/AccountDetailPage"));
 const CashPage = lazy(() => import("./pages/user/CashPage"));
 const FogotPassword = lazy(() => import("./pages/FogotPassword"));

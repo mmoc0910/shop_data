@@ -14,9 +14,11 @@ import dayjs from "dayjs";
 
 const PackPage = () => {
   const [plans, setPlans] = useState<PlanType[]>([]);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([
-    "65dc5dcfb97c526c37096df2",
-  ]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [initialSelectedRowKeys, setInitialSelectedRowKeys] = useState<
+    React.Key[]
+  >([]);
+  console.log("initial select row key - ", initialSelectedRowKeys);
   const [inputValue, setInputValue] = useState<string>("");
   const listPlanFilter = inputValue
     ? plans.filter(
@@ -31,7 +33,21 @@ const PackPage = () => {
   const handleFetchPlans = async () => {
     try {
       const result = await api.get<PlanType[]>("/plans");
-      setPlans(result.data.map((item) => ({ key: item._id, ...item })));
+      setPlans(
+        result.data
+          .filter((item) => item.status === 1)
+          .map((item) => ({ ...item, key: item._id }))
+      );
+      setSelectedRowKeys(
+        result.data
+          .filter((item) => item.status === 1 && item.display === 1)
+          .map((item) => item._id)
+      );
+      setInitialSelectedRowKeys(
+        result.data
+          .filter((item) => item.status === 1 && item.display === 1)
+          .map((item) => item._id)
+      );
     } catch (error) {
       console.log("error - ", error);
     }
@@ -41,10 +57,15 @@ const PackPage = () => {
       if (selectedRowKeys.length > 3) {
         toast.warn("Không được chọn quá 3 gói để hiện thị");
       } else {
+        initialSelectedRowKeys.forEach(async (item) => {
+          !selectedRowKeys.some((i) => i === item) &&
+            (await api.patch(`/plans/${item}`, { display: 0 }));
+        });
         selectedRowKeys.forEach(async (item) => {
           await api.patch(`/plans/${item}`, { display: 1 });
         });
-        toast.success("Thành công")
+        setInitialSelectedRowKeys(selectedRowKeys);
+        toast.success("Thành công");
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {

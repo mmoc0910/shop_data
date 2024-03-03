@@ -11,6 +11,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ExtendPlanType, GistType } from "../../type";
 import { toast } from "react-toastify";
 import {
+  DAY_FORMAT,
   isSameOrAfter,
   isSameOrBefore,
   linkGist,
@@ -30,12 +31,15 @@ import Loading from "../../components/common/Loading";
 import axios from "axios";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import { Link, useNavigate } from "react-router-dom";
+import Radio from "../../components/radio/Radio";
 
 const OrderPage = () => {
   const navigation = useNavigate();
   const [loadingTable, setLoadingTable] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectRow, setSelectRow] = useState<string | undefined>();
+  const [selectRow, setSelectRow] = useState<
+    { id: string; endDate: Date } | undefined
+  >();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [listExtendPlan, setListExtendPlan] = useState<ExtendPlanType[]>([]);
   const { _id } = useSelector((state: RootState) => state.auth);
@@ -92,49 +96,49 @@ const OrderPage = () => {
       }
     })();
   }, []);
-  const handleUpgradeBrandWidth = async (
-    extendPlanId: string,
-    gistId: string,
-    bandWidth: number
-  ) => {
-    try {
-      const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn mua thêm ${bandWidth}GB băng thông</p>`,
-        // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
-        icon: "success",
-        showCancelButton: true,
-        confirmButtonColor: "#1DC071",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Thoát",
-        confirmButtonText: "Có, mua ngay",
-      });
-      if (isConfirmed) {
-        setLoading(true);
-        await api.post("/upgrades/band-width", { gistId, extendPlanId });
-        handleOk();
-        handleFetchData();
-        toast.success("Mua thêm băng thông thành công");
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log("error message: ", error);
-        toast.error(error.response?.data.message);
-        if (
-          error.response?.data.message ===
-            "Bạn không đủ tiền để đăng kí dịch vụ này" &&
-          error.response.status === 400
-        ) {
-          toast.warn("Nạp thêm tiền để sử dụng dịch vụ");
-          navigation("/user/dashboard");
-        }
-      } else {
-        console.log("unexpected error: ", error);
-        return "An unexpected error occurred";
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const handleUpgradeBrandWidth = async (
+  //   extendPlanId: string,
+  //   gistId: string,
+  //   bandWidth: number
+  // ) => {
+  //   try {
+  //     const { isConfirmed } = await Swal.fire({
+  //       title: `<p class="leading-tight">Bạn có muốn mua thêm ${bandWidth}GB băng thông</p>`,
+  //       // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
+  //       icon: "success",
+  //       showCancelButton: true,
+  //       confirmButtonColor: "#1DC071",
+  //       cancelButtonColor: "#d33",
+  //       cancelButtonText: "Thoát",
+  //       confirmButtonText: "Có, mua ngay",
+  //     });
+  //     if (isConfirmed) {
+  //       setLoading(true);
+  //       await api.post("/upgrades/band-width", { gistId, extendPlanId });
+  //       handleOk();
+  //       handleFetchData();
+  //       toast.success("Mua thêm băng thông thành công");
+  //     }
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       console.log("error message: ", error);
+  //       toast.error(error.response?.data.message);
+  //       if (
+  //         error.response?.data.message ===
+  //           "Bạn không đủ tiền để đăng kí dịch vụ này" &&
+  //         error.response.status === 400
+  //       ) {
+  //         toast.warn("Nạp thêm tiền để sử dụng dịch vụ");
+  //         navigation("/user/dashboard");
+  //       }
+  //     } else {
+  //       console.log("unexpected error: ", error);
+  //       return "An unexpected error occurred";
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const handleUpgradPlan = async (
     gistId: string,
     name: string,
@@ -220,7 +224,7 @@ const OrderPage = () => {
         title: <p className="font-primary font-semibold">Tên gói</p>,
         dataIndex: "name",
         key: "name",
-        width: 150,
+        width: 100,
         render: (_: string, record: GistType) => (
           <p className="font-primary text-sm">{record.planId?.name}</p>
         ),
@@ -229,11 +233,11 @@ const OrderPage = () => {
         title: <p className="font-primary font-semibold">Thời gian</p>,
         dataIndex: "day",
         key: "day",
-        width: 120,
+        width: 170,
         render: (_: string, record: GistType) => (
           <p className="font-primary text-sm">
-            {dayjs(record.keyId.startDate).format("DD/MM/YYYY")} <br />-{" "}
-            {dayjs(record.keyId.endDate).format("DD/MM/YYYY")}
+            {DAY_FORMAT(record.keyId.startDate)} <br />-{" "}
+            {DAY_FORMAT(record.keyId.endDate)}
           </p>
         ),
       },
@@ -245,6 +249,40 @@ const OrderPage = () => {
         render: (_: string, record: GistType) => (
           <p className="font-primary text-sm">
             {record.keyId.dataLimit / 1000 / 1000 / 1000}GB
+          </p>
+        ),
+        sorter: {
+          compare: (a, b) => a.keyId.dataLimit - b.keyId.dataLimit,
+          multiple: 1,
+        },
+      },
+      {
+        title: <p className="font-primary font-semibold">Data Expand</p>,
+        dataIndex: "dataExtend",
+        key: "dataExtend",
+        width: 120,
+        render: (_: string, record: GistType) => (
+          <p className="font-primary text-sm">
+            {(record.keyId.dataExpand - record.keyId.dataLimit) /
+              1000 /
+              1000 /
+              1000}
+            GB
+          </p>
+        ),
+        sorter: {
+          compare: (a, b) => a.keyId.dataLimit - b.keyId.dataLimit,
+          multiple: 1,
+        },
+      },
+      {
+        title: <p className="font-primary font-semibold">endExpand Date</p>,
+        dataIndex: "dataExtend",
+        key: "dataExtend",
+        width: 120,
+        render: (_: string, record: GistType) => (
+          <p className="font-primary text-sm">
+            {DAY_FORMAT(record.keyId.endExpandDate)}
           </p>
         ),
         sorter: {
@@ -268,10 +306,57 @@ const OrderPage = () => {
         },
       },
       {
+        title: <p className="font-primary font-semibold">Key</p>,
+        dataIndex: "key",
+        key: "key",
+        fixed: "right",
+        render: (_: string, record: GistType) => {
+          const key = `${linkGist}/${record.gistId}/raw/${record.fileName}#`;
+          return (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Tooltip title="copy for Iphone">
+                  <button
+                    onClick={() =>
+                      copyToClipboard(
+                        `${record.keyId.awsId.fileName.replace(
+                          /https/g,
+                          "ssconf"
+                        )}#${record.extension}`
+                      )
+                    }
+                  >
+                    <IosXML />
+                  </button>
+                </Tooltip>
+                <p className="font-primary text-sm w-[350px] line-clamp-1">
+                  {record.keyId.awsId.fileName.replace(/https/g, "ssconf")}#
+                  {record.extension}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Tooltip title="copy for Android, Windows, MacOS, Linux">
+                  <button
+                    onClick={() => copyToClipboard(`${key}${record.extension}`)}
+                  >
+                    <AndroidXML />
+                  </button>
+                </Tooltip>
+                <p className="font-primary text-sm w-[350px] line-clamp-1">
+                  {key}
+                  {record.extension}
+                </p>
+              </div>
+            </div>
+          );
+        },
+      },
+      {
         title: <p className="font-primary font-semibold">Trạng thái</p>,
         dataIndex: "status",
         key: "status",
         width: 130,
+        fixed: "right",
         render: (_: string, record: GistType) => (
           <div className="font-primary text-sm">
             {record.status ? (
@@ -297,44 +382,6 @@ const OrderPage = () => {
         // ],
         // onFilter: (value: string, record: GistType) =>
         //   record.status === Number(value),
-      },
-      {
-        title: <p className="font-primary font-semibold">Key</p>,
-        dataIndex: "key",
-        key: "key",
-        render: (_: string, record: GistType) => {
-          const key = `${linkGist}/${record.gistId}/raw/${record.fileName}#`;
-          return (
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Tooltip title="copy for Iphone">
-                  <button
-                    onClick={() => copyToClipboard(`${key}${record.extension}`)}
-                  >
-                    <IosXML />
-                  </button>
-                </Tooltip>
-                <p className="font-primary text-sm w-[350px] line-clamp-1">
-                  {key}
-                  {record.extension}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Tooltip title="copy for Android, Windows, MacOS, Linux">
-                  <button
-                    onClick={() => copyToClipboard(`${key}${record.extension}`)}
-                  >
-                    <AndroidXML />
-                  </button>
-                </Tooltip>
-                <p className="font-primary text-sm w-[350px] line-clamp-1">
-                  {key}
-                  {record.extension}
-                </p>
-              </div>
-            </div>
-          );
-        },
       },
       {
         title: <p className="font-primary font-semibold">Đặt tên key</p>,
@@ -367,7 +414,10 @@ const OrderPage = () => {
               <button
                 className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-xs"
                 onClick={() => {
-                  setSelectRow(record._id);
+                  setSelectRow({
+                    id: record._id,
+                    endDate: record.keyId.endDate,
+                  });
                   showModal();
                 }}
               >
@@ -478,10 +528,9 @@ const OrderPage = () => {
           dataSource={listGistFilter}
           columns={columns}
           loading={loadingTable}
-          scroll={{ x: 1500 }}
+          scroll={{ x: 1600 }}
         />
       </div>
-
       <Modal
         width={900}
         open={isModalOpen}
@@ -494,26 +543,36 @@ const OrderPage = () => {
         <Heading className="font-primary">Danh sách gói cước mở rộng</Heading>
         <div className="py-3 grid grid-cols-3 gap-5">
           {listExtendPlan.map((item) => (
-            <div
+            <ExtendPlanItem
               key={uuidv4()}
-              className="p-5 shadow-xl rounded-lg font-primary space-y-3 flex flex-col justify-between"
-            >
-              <p className="font-semibold text-base text-center mb-5">
-                {item.name}
-              </p>
-              <p className="text-center font-medium text-xl">
-                {item.bandWidth}GB - {VND.format(item.price)}VND
-              </p>
-              <button
-                className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-sm"
-                onClick={() =>
-                  selectRow &&
-                  handleUpgradeBrandWidth(item._id, selectRow, item.bandWidth)
-                }
-              >
-                Mua ngay
-              </button>
-            </div>
+              extendPlan={item}
+              onSubmit={() => {
+                handleOk();
+                handleFetchData();
+              }}
+              selectRow={selectRow}
+              setLoading={(value: boolean) => setLoading(value)}
+            />
+            // <div
+            //   key={uuidv4()}
+            //   className="p-5 shadow-xl rounded-lg font-primary space-y-3 flex flex-col justify-between"
+            // >
+            //   <p className="font-semibold text-base text-center mb-5">
+            //     {item.name}
+            //   </p>
+            //   <p className="text-center font-medium text-xl">
+            //     {item.bandWidth}GB - {VND.format(item.price)}VND
+            //   </p>
+            //   <button
+            //     className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-sm"
+            //     onClick={() =>
+            //       selectRow &&
+            //       handleUpgradeBrandWidth(item._id, selectRow, item.bandWidth)
+            //     }
+            //   >
+            //     Mua ngay
+            //   </button>
+            // </div>
           ))}
         </div>
         <div className="mt-5 flex justify-end">
@@ -529,6 +588,105 @@ const OrderPage = () => {
         </div>
       </Modal>
     </RequireAuthPage>
+  );
+};
+
+const ExtendPlanItem = ({
+  selectRow,
+  extendPlan,
+  setLoading,
+  onSubmit,
+}: {
+  selectRow?: { id: string; endDate: Date };
+  extendPlan: ExtendPlanType;
+  setLoading: (value: boolean) => void;
+  onSubmit: () => void;
+}) => {
+  const period =
+    selectRow?.endDate && dayjs(selectRow.endDate).diff(dayjs(), "month");
+  const [month, setMonth] = useState<number>(1);
+  const navigation = useNavigate();
+  const handleUpgradeBrandWidth = async (
+    extendPlanId: string,
+    gistId: string,
+    bandWidth: number,
+    month: number
+  ) => {
+    try {
+      const { isConfirmed } = await Swal.fire({
+        title: `<p class="leading-tight">Bạn có muốn mua thêm ${bandWidth}GB băng thông</p>`,
+        // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
+        icon: "success",
+        showCancelButton: true,
+        confirmButtonColor: "#1DC071",
+        cancelButtonColor: "#d33",
+        cancelButtonText: "Thoát",
+        confirmButtonText: "Có, mua ngay",
+      });
+      if (isConfirmed) {
+        setLoading(true);
+        await api.post("/upgrades/band-width", { gistId, extendPlanId, month });
+        onSubmit();
+        // handleOk();
+        // handleFetchData();
+        toast.success("Mua thêm băng thông thành công");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log("error message: ", error);
+        toast.error(error.response?.data.message);
+        if (
+          error.response?.data.message ===
+            "Bạn không đủ tiền để đăng kí dịch vụ này" &&
+          error.response.status === 400
+        ) {
+          toast.warn("Nạp thêm tiền để sử dụng dịch vụ");
+          navigation("/user/dashboard");
+        }
+      } else {
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  return (
+    <div
+      key={uuidv4()}
+      className="p-5 shadow-xl rounded-lg font-primary space-y-3 flex flex-col justify-between"
+    >
+      <p className="font-semibold text-base text-center">{extendPlan.name}</p>
+      <p className="text-center font-medium text-xl">
+        {extendPlan.bandWidth}GB - {VND.format(extendPlan.price)}VND
+      </p>
+      <div>
+        <Radio checked={month === 1} onClick={() => setMonth(1)}>
+          1 tháng
+        </Radio>
+        {period && period > 1 ? (
+          <Radio checked={month === period} onClick={() => setMonth(period)}>
+            {period} tháng
+          </Radio>
+        ) : null}
+        {/* {!month && <p className="text-error">Bạn chưa chọn thời gian</p>} */}
+      </div>
+      <button
+        className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-sm"
+        onClick={() =>
+          selectRow &&
+          month &&
+          handleUpgradeBrandWidth(
+            extendPlan._id,
+            selectRow.id,
+            extendPlan.bandWidth,
+            month
+          )
+        }
+      >
+        Mua ngay
+      </button>
+    </div>
   );
 };
 

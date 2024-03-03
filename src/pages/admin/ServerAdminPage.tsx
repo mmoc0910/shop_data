@@ -19,8 +19,10 @@ const schema = yup
   .object({
     apiUrl: yup.string().required("This field is required"),
     fingerPrint: yup.string().required("This field is required"),
-    numberRecomendKey: yup.number().required("This field is required"),
+    // numberRecomendKey: yup.number().required("This field is required"),
     location: yup.string().required("This field is required"),
+    defaultBandWidth: yup.number().required("This field is required"),
+    totalBandWidth: yup.number().required("This field is required"),
   })
   .required();
 
@@ -59,7 +61,9 @@ const ServerAdminPage = () => {
     apiUrl: string;
     fingerPrint: string;
     location: string;
-    numberRecomendKey: number;
+    // numberRecomendKey: number;
+    defaultBandWidth: number;
+    totalBandWidth: number;
   }) => {
     try {
       try {
@@ -122,14 +126,14 @@ const ServerAdminPage = () => {
         title: () => (
           <p className="font-primary text-base font-semibold">Server Name</p>
         ),
-        dataIndex: "email",
-        key: "email",
-        render: (_: string, record: ServerType) => (
+        dataIndex: "name",
+        key: "name",
+        render: (text: string, record: ServerType) => (
           <Link
             to={`/admin/server/${record._id}`}
             className="font-primary text-sm text-primary"
           >
-            {record.name}
+            {text}
           </Link>
         ),
       },
@@ -139,20 +143,32 @@ const ServerAdminPage = () => {
         ),
         dataIndex: "location",
         key: "location",
-        render: (_: string, record: ServerType) => (
-          <p className="font-primary text-sm">{record.location}</p>
+        render: (text: string) => (
+          <p className="font-primary text-sm">{text}</p>
         ),
       },
       {
         title: () => (
           <p className="font-primary text-base font-semibold">
-            Số key giới hạn
+            Default BandWidth
           </p>
         ),
-        dataIndex: "numberRecomendKey",
-        key: "numberRecomendKey",
-        render: (_: string, record: ServerType) => (
-          <p className="font-primary text-sm">{record.numberRecomendKey}</p>
+        dataIndex: "defaultBandWidth",
+        key: "defaultBandWidth",
+        render: (text: number) => (
+          <p className="font-primary text-sm">{text / 1000 / 1000 / 1000}GB</p>
+        ),
+      },
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">
+            Total BandWidth
+          </p>
+        ),
+        dataIndex: "totalBandWidth",
+        key: "totalBandWidth",
+        render: (text: number) => (
+          <p className="font-primary text-sm">{text / 1000 / 1000 / 1000}GB</p>
         ),
       },
       {
@@ -224,18 +240,6 @@ const ServerAdminPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">
-            Số key giới hạn
-          </p>
-        ),
-        dataIndex: "numberRecomendKey",
-        key: "numberRecomendKey",
-        render: (_: string, record: ServerType) => (
-          <p className="font-primary text-sm">{record.numberRecomendKey}</p>
-        ),
-      },
-      {
-        title: () => (
           <p className="font-primary text-base font-semibold">Trạng thái</p>
         ),
         dataIndex: "status",
@@ -278,12 +282,12 @@ const ServerAdminPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
-  const totalKey =
-    servers.length > 0
-      ? servers
-          .map((item) => item.numberRecomendKey)
-          .reduce((prev, cur) => (prev += cur), 0)
-      : 0;
+  // const totalKey =
+  //   servers.length > 0
+  //     ? servers
+  //         .map((item) => item.numberRecomendKey)
+  //         .reduce((prev, cur) => (prev += cur), 0)
+  //     : 0;
   return (
     <RequireAuthPage rolePage={1}>
       <div className="space-y-10">
@@ -292,20 +296,20 @@ const ServerAdminPage = () => {
             <p className="text-gray-500 text-lg">Tổng số máy chủ</p>
             <p className="font-medium text-2xl">{servers.length}</p>
           </div>
-          <div className="p-5 flex-1 space-y-3">
+          {/* <div className="p-5 flex-1 space-y-3">
             <p className="text-gray-500 text-lg">Tổng số key</p>
             <p className="font-medium text-2xl">{totalKey}</p>
-          </div>
+          </div> */}
           <div className="p-5 flex-1 space-y-3">
             <p className="text-gray-500 text-lg">Tổng key đang sử dụng</p>
             <p className="font-medium text-2xl">{TotalKeyUsage({})}</p>
           </div>
-          <div className="p-5 flex-1 space-y-3">
+          {/* <div className="p-5 flex-1 space-y-3">
             <p className="text-gray-500 text-lg">Số key có thể cấp</p>
             <p className="font-medium text-2xl">
               {totalKey - TotalKeyUsage({})}
             </p>
-          </div>
+          </div> */}
         </div>
         <div className="space-y-5">
           <Heading>Thêm máy chủ</Heading>
@@ -322,9 +326,17 @@ const ServerAdminPage = () => {
             </div>
             <div className="flex-1">
               <Input
-                name="numberRecomendKey"
+                name="defaultBandWidth"
                 type="number"
-                placeholder={"Tổng key giới hạn"}
+                placeholder={"Default BandWidth"}
+                control={control}
+              />
+            </div>
+            <div className="flex-1">
+              <Input
+                name="totalBandWidth"
+                type="number"
+                placeholder={"Total BandWidth"}
                 control={control}
               />
             </div>
