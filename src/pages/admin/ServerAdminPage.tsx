@@ -10,10 +10,12 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Input } from "../../components/input";
 import Button from "../../components/button/Button";
-import { Table, TableColumnsType, Tag } from "antd";
+import { Modal, Table, TableColumnsType, Tag } from "antd";
 import Swal from "sweetalert2";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import axios from "axios";
+import Radio from "../../components/radio/Radio";
+import Loading from "../../components/common/Loading";
 
 const schema = yup
   .object({
@@ -27,8 +29,14 @@ const schema = yup
   .required();
 
 const ServerAdminPage = () => {
+  const [loading, setLoading] = useState<boolean>(false);
   const [servers, setServers] = useState<ServerType[]>([]);
   const [listServerHistory, setListServerHistory] = useState<ServerType[]>([]);
+  const [selectRow, setSelectRow] = useState<string | undefined>();
+  const [selectServer, setSelectServer] = useState<string | undefined>(
+    undefined
+  );
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { handleSubmit, control, reset } = useForm({
     resolver: yupResolver(schema),
     mode: "onSubmit",
@@ -86,7 +94,7 @@ const ServerAdminPage = () => {
   };
   const handleRemoveServer = async (_id: string) => {
     try {
-      Swal.fire({
+      const { isConfirmed } = await Swal.fire({
         title: `<p class="leading-tight">Bạn có muốn xóa máy chủ này</p>`,
         icon: "success",
         showCancelButton: true,
@@ -94,13 +102,19 @@ const ServerAdminPage = () => {
         cancelButtonColor: "#d33",
         cancelButtonText: "Thoát",
         confirmButtonText: "Xóa",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
+      });
+      if (isConfirmed) {
+        const result = await api.get<KeySeverType[]>(`/keys?serverId=${_id}`);
+        if (result.data.length > 0) {
+          toast.warn(
+            "Bạn phải migrate key sang server khác trước khi muốn xóa"
+          );
+        } else {
           await api.delete(`/servers/${_id}`);
           handleFetchData();
           toast.success("Xóa thành công");
         }
-      });
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log("error message: ", error);
@@ -109,6 +123,39 @@ const ServerAdminPage = () => {
         console.log("unexpected error: ", error);
         return "An unexpected error occurred";
       }
+    }
+  };
+  const handleMigrateServer = async (_oldId: string, _newId: string) => {
+    try {
+      const { isConfirmed } = await Swal.fire({
+        title: `<p class="leading-tight">Bạn có muốn migate key máy chủ này</p>`,
+        icon: "success",
+        showCancelButton: true,
+        confirmButtonColor: "#1DC071",
+        cancelButtonColor: "#d33",
+        cancelButtonText: "Thoát",
+        confirmButtonText: "Đồng ý",
+      });
+      if (isConfirmed) {
+        setLoading(true);
+        await api.post(`/servers/migrate`, {
+          oldServerId: _oldId,
+          newServerId: _newId,
+        });
+        handleFetchData();
+        handleCancel();
+        toast.success("Migrate server thành công");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log("error message: ", error);
+        toast.error(error.response?.data.message);
+      } else {
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
+      }
+    } finally {
+      setLoading(false);
     }
   };
   const columns: TableColumnsType<ServerType> = useMemo(
@@ -190,12 +237,23 @@ const ServerAdminPage = () => {
         dataIndex: "action",
         key: "action",
         render: (_: string, record: ServerType) => (
-          <button
-            className="px-4 py-2 rounded-lg bg-error font-medium text-white font-primary text-sm"
-            onClick={() => handleRemoveServer(record._id)}
-          >
-            Xóa máy chủ
-          </button>
+          <div className="flex items-center gap-5">
+            <button
+              className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-sm"
+              onClick={() => {
+                setSelectRow(record._id);
+                showModal();
+              }}
+            >
+              Migrate server
+            </button>
+            <button
+              className="px-4 py-2 rounded-lg bg-error font-medium text-white font-primary text-sm"
+              onClick={() => handleRemoveServer(record._id)}
+            >
+              Xóa máy chủ
+            </button>
+          </div>
         ),
       },
     ],
@@ -288,8 +346,20 @@ const ServerAdminPage = () => {
   //         .map((item) => item.numberRecomendKey)
   //         .reduce((prev, cur) => (prev += cur), 0)
   //     : 0;
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    if (selectRow) {
+      setSelectRow(undefined);
+      setSelectServer(undefined);
+    }
+    setIsModalOpen(false);
+  };
   return (
     <RequireAuthPage rolePage={1}>
+      {loading && <Loading />}
       <div className="space-y-10">
         <div className="flex items-start rounded-xl border-2 border-[#eeeeed]">
           <div className="p-5 flex-1 space-y-3">
@@ -361,6 +431,57 @@ const ServerAdminPage = () => {
         <Heading>Lịch sử máy chủ</Heading>
         <Table dataSource={listServerHistory} columns={columnsHistory} />
       </div>
+      <Modal
+        title="Chọn máy chủ"
+        open={isModalOpen}
+        onCancel={() => {
+          handleCancel();
+        }}
+        footer={[]}
+      >
+        <div className="mb-5">
+          <p className="font-primary">Chọn máy chủ để migrate key</p>
+          {selectRow &&
+            servers.filter((item) => item._id !== selectRow).length === 0 && (
+              <p className="text-error font-primary">
+                Bạn cần thêm server mới để migrate key sang
+              </p>
+            )}
+        </div>
+        <div>
+          {selectRow &&
+            servers.map((item) =>
+              item._id !== selectRow ? (
+                <Radio
+                  checked={item._id === selectServer}
+                  onClick={() => setSelectServer(item._id)}
+                >
+                  <span className="font-primary block">{item.name}</span>
+                </Radio>
+              ) : null
+            )}
+        </div>
+        <div className="flex items-center justify-end gap-5">
+          <button
+            className="px-4 py-2 rounded-lg bg-error font-medium text-white font-primary text-sm"
+            onClick={() => handleCancel()}
+          >
+            Thoát
+          </button>
+          <button
+            className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-sm"
+            onClick={() => {
+              if (selectRow && selectServer) {
+                handleMigrateServer(selectRow, selectServer);
+              } else {
+                toast.warn("bạn chưa chọn server để migrate key sang");
+              }
+            }}
+          >
+            Migrate key
+          </button>
+        </div>
+      </Modal>
     </RequireAuthPage>
   );
 };

@@ -17,11 +17,38 @@ import IconEdit from "../../icons/IconEdit";
 import Swal from "sweetalert2";
 import axios from "axios";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
+import { Modal } from "antd";
+import Loading from "../../components/common/Loading";
 
 const ServerDetailAdminPage = () => {
   const { serverId } = useParams();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [servers, setServers] = useState<ServerType[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [serverDetail, setServerDetail] = useState<ServerType>();
   const [listKey, setListKey] = useState<KeySeverType[]>([]);
+  const [selectRow, setSelectRow] = useState<string | undefined>();
+  const [selectServer, setSelectServer] = useState<string | undefined>(
+    undefined
+  );
+  useEffect(() => {
+    handleFetchData();
+  }, []);
+  const handleFetchData = async () => {
+    try {
+      const resultServer = await api.get("/servers?status=1");
+      console.log(resultServer.data);
+      setServers(resultServer.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log("error message: ", error);
+        toast.error(error.response?.data.message);
+      } else {
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
+      }
+    }
+  };
   useEffect(() => {
     handleFetchServerDetail();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,13 +79,46 @@ const ServerDetailAdminPage = () => {
   //   }
   // };
 
+  const handleMigratekey = async (keyId: string, serverId: string) => {
+    try {
+      const { isConfirmed } = await Swal.fire({
+        title: `<p class="leading-tight">Bạn có muốn migate key này</p>`,
+        icon: "success",
+        showCancelButton: true,
+        confirmButtonColor: "#1DC071",
+        cancelButtonColor: "#d33",
+        cancelButtonText: "Thoát",
+        confirmButtonText: "Đồng ý",
+      });
+      if (isConfirmed) {
+        setLoading(true);
+        await api.post(`/keys`, {
+          keyId,
+          serverId,
+        });
+        handleFetchServerDetail();
+        handleCancel();
+        toast.success("Migrate key thành công");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log("error message: ", error);
+        toast.error(error.response?.data.message);
+      } else {
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleRemoveKey = async (
     keyId: number,
     apiUrl: string,
     fingerPrint: string
   ) => {
     try {
-      Swal.fire({
+      const { isConfirmed } = await Swal.fire({
         title: `<p class="leading-tight">Bạn có muốn xóa key này</p>`,
         icon: "success",
         showCancelButton: true,
@@ -66,19 +126,29 @@ const ServerDetailAdminPage = () => {
         cancelButtonColor: "#d33",
         cancelButtonText: "Thoát",
         confirmButtonText: "Xóa",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          await api.delete(`/servers/remove-key/${keyId}`, {
-            data: { apiUrl, fingerPrint },
-          });
-          // handleSync(apiUrl, fingerPrint);
-          toast.success("Xóa thành công");
-        }
       });
+      if (isConfirmed) {
+        await api.delete(`/servers/remove-key/${keyId}`, {
+          data: { apiUrl, fingerPrint },
+        });
+        // handleSync(apiUrl, fingerPrint);
+        toast.success("Xóa thành công");
+      }
     } catch (error) {
       console.log(error);
       toast.error(messages.error);
     }
+  };
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    if (selectRow) {
+      setSelectRow(undefined);
+      setSelectServer(undefined);
+    }
+    setIsModalOpen(false);
   };
   return (
     <RequireAuthPage rolePage={1}>
@@ -246,6 +316,18 @@ const ServerDetailAdminPage = () => {
                           /> */}
                           </div>
                           <div className="px-4 flex items-center gap-4">
+                            {item.status ? (
+                              <button
+                                className="bg-secondary20 text-white rounded-lg p-3 font-semibold"
+                                onClick={() => {
+                                  setSelectRow(item._id);
+                                  showModal();
+                                }}
+                              >
+                                Migrate key
+                              </button>
+                            ) : null}
+
                             <button
                               className="bg-secondary20 text-white rounded-lg p-3 font-semibold"
                               onClick={async () => {
@@ -314,6 +396,58 @@ const ServerDetailAdminPage = () => {
           </>
         )}
       </div>
+      {loading && <Loading />}
+      <Modal
+        title="Chọn máy chủ"
+        open={isModalOpen}
+        onCancel={() => {
+          handleCancel();
+        }}
+        footer={[]}
+      >
+        <div className="mb-5">
+          <p className="font-primary">Chọn máy chủ để migrate key</p>
+          {selectRow &&
+            servers.filter((item) => item._id !== serverId).length === 0 && (
+              <p className="text-error font-primary">
+                Bạn cần thêm server mới để migrate key sang
+              </p>
+            )}
+        </div>
+        <div>
+          {selectRow &&
+            servers.map((item) =>
+              item._id !== serverId ? (
+                <Radio
+                  checked={item._id === selectServer}
+                  onClick={() => setSelectServer(item._id)}
+                >
+                  <span className="font-primary block">{item.name}</span>
+                </Radio>
+              ) : null
+            )}
+        </div>
+        <div className="flex items-center justify-end gap-5">
+          <button
+            className="px-4 py-2 rounded-lg bg-error font-medium text-white font-primary text-sm"
+            onClick={() => handleCancel()}
+          >
+            Thoát
+          </button>
+          <button
+            className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-sm"
+            onClick={() => {
+              if (selectRow && selectServer) {
+                handleMigratekey(selectRow, selectServer);
+              } else {
+                toast.warn("bạn chưa chọn server để migrate key sang");
+              }
+            }}
+          >
+            Migrate key
+          </button>
+        </div>
+      </Modal>
     </RequireAuthPage>
   );
 };

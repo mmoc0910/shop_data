@@ -77,7 +77,7 @@ const OrderPage = () => {
   }, []);
   const handleFetchData = async () => {
     try {
-      const result = await api.get<GistType[]>(`/gists?userId=${_id}`);
+      const result = await api.get<GistType[]>(`/gists?userId=${_id}&status=1`);
       console.log("data - ", result.data);
       setListGist(result.data);
     } catch (error) {
@@ -263,10 +263,7 @@ const OrderPage = () => {
         width: 120,
         render: (_: string, record: GistType) => (
           <p className="font-primary text-sm">
-            {(record.keyId.dataExpand - record.keyId.dataLimit) /
-              1000 /
-              1000 /
-              1000}
+            {record.keyId.dataExpand / 1000 / 1000 / 1000}
             GB
           </p>
         ),
@@ -277,18 +274,14 @@ const OrderPage = () => {
       },
       {
         title: <p className="font-primary font-semibold">endExpand Date</p>,
-        dataIndex: "dataExtend",
-        key: "dataExtend",
+        dataIndex: "endExpandDate",
+        key: "endExpandDate",
         width: 120,
         render: (_: string, record: GistType) => (
           <p className="font-primary text-sm">
-            {DAY_FORMAT(record.keyId.endExpandDate)}
+            {record.keyId?.endExpandDate && DAY_FORMAT(record.keyId.endExpandDate)}
           </p>
         ),
-        sorter: {
-          compare: (a, b) => a.keyId.dataLimit - b.keyId.dataLimit,
-          multiple: 1,
-        },
       },
       {
         title: <p className="font-primary font-semibold">Usage</p>,
@@ -311,7 +304,7 @@ const OrderPage = () => {
         key: "key",
         fixed: "right",
         render: (_: string, record: GistType) => {
-          const key = `${linkGist}/${record.gistId}/raw/${record.fileName}#`;
+          const key = `${linkGist}/${record.gistId}/raw/${record?.fileName}#`;
           return (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
@@ -319,7 +312,7 @@ const OrderPage = () => {
                   <button
                     onClick={() =>
                       copyToClipboard(
-                        `${record.keyId.awsId.fileName.replace(
+                        `${record.keyId.awsId?.fileName.replace(
                           /https/g,
                           "ssconf"
                         )}#${record.extension}`
@@ -330,7 +323,7 @@ const OrderPage = () => {
                   </button>
                 </Tooltip>
                 <p className="font-primary text-sm w-[350px] line-clamp-1">
-                  {record.keyId.awsId.fileName.replace(/https/g, "ssconf")}#
+                  {record.keyId.awsId?.fileName.replace(/https/g, "ssconf")}#
                   {record.extension}
                 </p>
               </div>
@@ -666,7 +659,7 @@ const ExtendPlanItem = ({
         </Radio>
         {period && period > 1 ? (
           <Radio checked={month === period} onClick={() => setMonth(period)}>
-            {period} tháng
+            {period} tháng còn lại
           </Radio>
         ) : null}
         {/* {!month && <p className="text-error">Bạn chưa chọn thời gian</p>} */}
