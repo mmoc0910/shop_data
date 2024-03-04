@@ -23,7 +23,7 @@ const CreateNewKeyForm = ({
   });
   const onSubmit = (data: unknown) => {
     try {
-      console.log("data sign in - ", data);
+      console.log("data sign in - ", data)
       handleAddNewKey();
     } catch (error) {
       console.log(error);

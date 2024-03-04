@@ -51,7 +51,6 @@ const ServerAdminPage = () => {
         api.get("/servers?status=1"),
         api.get("/servers"),
       ]);
-      console.log(resultServer.data);
       setServers(resultServer.data);
       setListServerHistory(resultHistory.data);
     } catch (error) {

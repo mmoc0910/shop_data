@@ -195,7 +195,7 @@ const CashAdminPage = () => {
         dataIndex: "email",
         key: "email",
         render: (_: string, record: CashType) => (
-          <p className="font-primary text-sm">{record.userId.email}</p>
+          <p className="font-primary text-sm">{record.userId?.email}</p>
         ),
       },
       {
@@ -205,7 +205,7 @@ const CashAdminPage = () => {
         dataIndex: "phone",
         key: "phone",
         render: (_: string, record: CashType) => (
-          <p className="font-primary text-sm">{record.userId.phone}</p>
+          <p className="font-primary text-sm">{record.userId?.phone}</p>
         ),
       },
       {
@@ -328,12 +328,10 @@ const CashAdminPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
-  const onChangeStartDate: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
+  const onChangeStartDate: DatePickerProps["onChange"] = (date) => {
     setStartDate(date);
   };
-  const onChangeEndDate: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
+  const onChangeEndDate: DatePickerProps["onChange"] = (date) => {
     setEndDate(date);
   };
 
@@ -341,7 +339,6 @@ const CashAdminPage = () => {
     const value = event.target.value;
     setInputValue(value);
   };
-  console.log("list cash - ", listCash);
   return (
     <RequireAuthPage rolePage={1}>
       <div className="space-y-6">

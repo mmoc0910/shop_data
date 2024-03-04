@@ -65,7 +65,6 @@ const ExtendPlanPage = () => {
     level3: number;
   }) => {
     try {
-      console.log("data - ", data);
       if (selectRow) {
         await api.patch(`/extend-plans/${selectRow._id}`, data);
         toast.success("Sửa thành công");

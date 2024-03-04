@@ -1,5 +1,5 @@
-import { Tooltip } from "antd";
-import { copyToClipboard } from "../../utils/copyToClipboard";
+// import { Tooltip } from "antd";
+// import { copyToClipboard } from "../../utils/copyToClipboard";
 import wechat from "../../assets/contact/wechat1.png";
 import alipay from "../../assets/contact/alipay.png";
 import { useForm } from "react-hook-form";
@@ -28,41 +28,44 @@ const RechargePage = () => {
     mode: "onSubmit",
   });
   const onSubmit = async (data: { money: number }) => {
-    try {
-      Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn nạp ${VND.format(
-          data.money
-        )}VND</p>`,
-        // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
-        icon: "success",
-        showCancelButton: true,
-        confirmButtonColor: "#1DC071",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Thoát",
-        confirmButtonText: "Đồng ý",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          console.log("data - ", data);
-          await api.post("/cashs", { ...data, userId: _id });
-          setValue("money", 0);
-          Swal.fire(
-            "<p class='leading-tight'>Bạn vừa yêu cầu nạp tiền thành công. Vui lòng gửi ảnh hóa đơn cho admin qua wechat/zalo để được phê duyệt.</p>"
-          );
+    if (data.money > 0) {
+      try {
+        Swal.fire({
+          title: `<p class="leading-tight">Bạn có muốn nạp ${VND.format(
+            data.money
+          )}VND</p>`,
+          // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
+          icon: "success",
+          showCancelButton: true,
+          confirmButtonColor: "#1DC071",
+          cancelButtonColor: "#d33",
+          cancelButtonText: "Thoát",
+          confirmButtonText: "Đồng ý",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            await api.post("/cashs", { ...data, userId: _id });
+            setValue("money", 0);
+            Swal.fire(
+              "<p class='leading-tight'>Bạn vừa yêu cầu nạp tiền thành công. Vui lòng gửi ảnh hóa đơn cho admin qua wechat/zalo để được phê duyệt.</p>"
+            );
+          }
+        });
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.log("error message: ", error);
+          toast.error(error.response?.data.message);
+        } else {
+          console.log("unexpected error: ", error);
+          return "An unexpected error occurred";
         }
-      });
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log("error message: ", error);
-        toast.error(error.response?.data.message);
-      } else {
-        console.log("unexpected error: ", error);
-        return "An unexpected error occurred";
       }
+    } else {
+      toast.warn("Bạn nhập số tiền không hợp lệ");
     }
   };
   return (
-    <div className="grid grid-cols-5 gap-20">
-      <div className="px-5 py-10 rounded-xl shadow-2xl col-span-2">
+    <div className="grid grid-cols-1 md:grid-cols-6 xl:grid-cols-5 gap-20">
+      {/* <div className="px-5 py-10 rounded-xl shadow-2xl col-span-1 md:col-span-3 lg:col-span-2">
         <p className="font-semibold text-xl text-center mb-7">
           Nạp tiền tự động VNbanking
         </p>
@@ -110,8 +113,8 @@ const RechargePage = () => {
             Lưu ý: Quý khách vui lòng nhập đúng nội dung chuyển khoản.
           </p>
         </div>
-      </div>
-      <div className="px-5 py-10 rounded-xl shadow-2xl col-span-2">
+      </div> */}
+      <div className="px-5 py-10 rounded-xl shadow-2xl col-span-1 md:col-span-3 xl:col-span-2">
         <p className="font-semibold text-xl text-center mb-3">
           Nạp tiền thủ công
         </p>
@@ -144,7 +147,7 @@ const RechargePage = () => {
         <form className="mt-5" onSubmit={handleSubmit(onSubmit)}>
           <Input
             name="money"
-            placeholder={""}
+            placeholder={"Nhập số tiền cần nạp"}
             control={control}
             containerclass="flex-1"
           />

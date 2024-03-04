@@ -33,7 +33,6 @@ const schema = yup
 const ActionPackPage = () => {
   const { packId } = useParams();
   const navigation = useNavigate();
-  console.log("pack id - ", packId);
   const [plan, setPlan] = useState<PlanType>();
   const { handleSubmit, control, setValue } = useForm({
     resolver: yupResolver(schema),
@@ -76,8 +75,6 @@ const ActionPackPage = () => {
     try {
       if (plan) {
         const { name, type, day, description, price, bandWidth } = data;
-        console.log("data sign in - ", data);
-        console.log("description", description.split("\n"));
         await api.patch(`/plans/${packId}`, {
           name,
           price,
@@ -90,8 +87,6 @@ const ActionPackPage = () => {
         navigation("/admin/pack");
       } else {
         const { name, type, day, description, price, bandWidth } = data;
-        console.log("data sign in - ", data);
-        console.log("description", description.split("\n"));
         await api.post("/plans", {
           name,
           price,

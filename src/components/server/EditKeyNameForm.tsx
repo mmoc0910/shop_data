@@ -24,7 +24,6 @@ const EditKeyNameForm = ({
   });
   const onSubmit = (data: { name?: string }) => {
     try {
-      console.log("data sign in - ", data);
       data.name && handleRenameKey(data.name);
     } catch (error) {
       console.log(error);

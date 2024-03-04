@@ -19,18 +19,11 @@ const KeyAdminPage = () => {
     try {
       setLoading(true);
       const result = await api.get<ServerType[]>("/servers");
-      console.log(result.data);
       setKeys(
         result.data
           .map((item) => (item.listKeys ? [...item.listKeys] : []))
           .reduce((prev, cur) => [...prev, ...cur], [])
       );
-      // console.log(
-      //   "keys - ",
-      //   result.data
-      //     .map((item) => item.listKeys)
-      //     .reduce((prev, cur) => [...prev, ...cur], [])
-      // );
       setLoading(false);
     } catch (error) {
       console.log("err - ", error);

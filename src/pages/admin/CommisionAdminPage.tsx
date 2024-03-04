@@ -34,7 +34,6 @@ const CommisionAdminPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
-    console.log(commision);
     commision && setValue("value", commision);
   }, [commision, setValue]);
   const onSubmit = async (data: { value: number }) => {
@@ -161,7 +160,6 @@ const Collab = () => {
     level3: number;
   }) => {
     try {
-      console.log("data - ", data);
       await api.post("/collab", data);
       fetchData();
       toast.success("Thành công");

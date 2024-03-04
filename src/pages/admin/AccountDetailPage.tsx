@@ -29,12 +29,10 @@ import { AndroidXML, IosXML } from "../user/OrderPage";
 const AccountDetailPage = () => {
   const { accountId } = useParams();
   const [user, setUser] = useState<UserState>();
-  console.log("account id - ", accountId);
   useEffect(() => {
     (async () => {
       try {
         const resultUser = await api.get<UserState>(`/users/${accountId}`);
-        console.log("result - ", resultUser.data);
         setUser(resultUser.data);
       } catch (error) {
         console.log("error - ", error);
@@ -131,7 +129,6 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
   const handleFetchData = async () => {
     try {
       const result = await api.get<GistType[]>(`/gists?userId=${accountId}`);
-      console.log("data - ", result.data);
       setListGist(result.data);
     } catch (error) {
       console.log("error - ", error);
@@ -302,12 +299,10 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
     []
   );
 
-  const onChangeStartDate: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
+  const onChangeStartDate: DatePickerProps["onChange"] = (date) => {
     setStartDate(date);
   };
-  const onChangeEndDate: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
+  const onChangeEndDate: DatePickerProps["onChange"] = (date) => {
     setEndDate(date);
   };
 

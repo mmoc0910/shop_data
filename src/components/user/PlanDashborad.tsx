@@ -160,6 +160,7 @@ const PlanDashborad = () => {
               dataSource={plans.slice(0, 5)}
               columns={columns}
               pagination={false}
+              scroll={{x: 700}}
             />
           </div>
         </div>

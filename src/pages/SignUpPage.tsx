@@ -73,7 +73,6 @@ const SignUpPage = () => {
   }, [email, navigation, role]);
   const country = watch("country");
   const purpose = watch("purpose");
-  console.log("country - ", country);
   const onSubmit = async (data: {
     username: string;
     email: string;
@@ -85,7 +84,6 @@ const SignUpPage = () => {
     rePassword: string;
   }) => {
     try {
-      console.log("data sign in - ", data);
       const {
         username,
         email,
@@ -96,11 +94,10 @@ const SignUpPage = () => {
         rePassword,
         introduceCode,
       } = data;
-      console.log("data sign in - ", data);
       if (password === rePassword) {
         if (introduceCode) {
           if (introduceCode.length === 7) {
-            const result = await api.post<{ data: AuthState }>("/users", {
+            await api.post<{ data: AuthState }>("/users", {
               username,
               email,
               password,
@@ -109,7 +106,6 @@ const SignUpPage = () => {
               purpose,
               introduceCode,
             });
-            console.log("result - ", result.data);
             navigation("/sign-in");
             toast.success("Đăng ký tài khoản thành công");
           } else {
@@ -118,7 +114,7 @@ const SignUpPage = () => {
             });
           }
         } else {
-          const result = await api.post<{ data: AuthState }>("/users", {
+        await api.post<{ data: AuthState }>("/users", {
             username,
             email,
             password,
@@ -126,7 +122,6 @@ const SignUpPage = () => {
             phone,
             purpose,
           });
-          console.log("result - ", result.data);
           navigation("/sign-in")
           toast.success("Đăng ký tài khoản thành công");
         }

@@ -35,7 +35,6 @@ const ResetPassword = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const token = searchParams.get("token");
-  console.log("token - ", token);
   const { email, role } = useSelector((state: RootState) => state.auth);
   const navigation = useNavigate();
   const { handleSubmit, control, setError } = useForm({
@@ -56,7 +55,6 @@ const ResetPassword = () => {
     const { newPassword, reNewPassword } = data;
     try {
       if (newPassword === reNewPassword) {
-        console.log("data sign in - ", data);
         await api.patch(`/users/reset-password`, { token, newPassword });
         toast.success("Đặt lại mật khẩu thành công vui lòng đăng nhập lại");
         navigation("/sign-in");

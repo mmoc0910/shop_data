@@ -37,7 +37,6 @@ const ServerDetailAdminPage = () => {
   const handleFetchData = async () => {
     try {
       const resultServer = await api.get("/servers?status=1");
-      console.log(resultServer.data);
       setServers(resultServer.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -59,7 +58,6 @@ const ServerDetailAdminPage = () => {
         api.get<ServerType>(`/servers/${serverId}`),
         api.get<KeySeverType[]>(`/keys?serverId=${serverId}`),
       ]);
-      console.log("result - ", resultServer.data);
       setServerDetail(resultServer.data);
       setListKey(resultKey.data);
     } catch (error) {
@@ -165,7 +163,6 @@ const ServerDetailAdminPage = () => {
                       placeholder={serverDetail.name}
                       handleEdit={async (value: string) => {
                         try {
-                          console.log("abc - ");
                           await api.patch(
                             `/servers/name-server/${serverDetail._id}`,
                             { name: value }
@@ -186,7 +183,6 @@ const ServerDetailAdminPage = () => {
                       placeholder={serverDetail.location}
                       handleEdit={async (value: string) => {
                         try {
-                          console.log("abc - ");
                           await api.patch(
                             `/servers/location/${serverDetail._id}`,
                             { location: value }
@@ -488,7 +484,6 @@ const EditServerForm = ({
   });
   const onSubmit = (data: { value?: string }) => {
     try {
-      console.log("data sign in - ", data);
       data.value && handleEdit(data.value);
     } catch (error) {
       console.log(error);

@@ -27,9 +27,7 @@ const InviteDashboard = () => {
   }, [_id]);
   const columns: TableColumnsType<RoseType> = [
     {
-      title: () => (
-        <p className="font-primary text-base font-semibold">STT</p>
-      ),
+      title: () => <p className="font-primary text-base font-semibold">STT</p>,
       dataIndex: "index",
       render: (_text: string, _record: RoseType, index: number) => (
         <p className="font-primary text-sm">{index + 1}</p>
@@ -97,6 +95,7 @@ const InviteDashboard = () => {
             dataSource={roseHistory.slice(0, 5)}
             columns={columns}
             pagination={false}
+            scroll={{ x: 700 }}
           />
         </div>
       </div>

@@ -20,7 +20,7 @@ const PlanPage = () => {
   if (plans.length > 0)
     return (
       <RequireAuthPage rolePage={2}>
-        <div className="grid grid-cols-3 gap-9 w-full px-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-9 w-full px-5">
           {plans.map((plan) => (
             <PricingItem key={uuidv4()} plan={plan} />
           ))}

@@ -14,7 +14,6 @@ import Heading from "../../components/common/Heading";
 import { DatePicker, DatePickerProps, Table, TableColumnsType } from "antd";
 import { VND } from "../../utils/formatPrice";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
-import { debounce } from "lodash";
 import dayjs from "dayjs";
 
 const TransactionPage = () => {
@@ -54,7 +53,6 @@ const TransactionPage = () => {
                 .includes(inputValue.toLowerCase())
         )
       : transactions;
-  console.log("list trấnction - ", listTransactions);
   const fetchUserCashHistory = async () => {
     try {
       setLoading(true);
@@ -148,22 +146,15 @@ const TransactionPage = () => {
     []
   );
 
-  const handleInputChange = debounce((value: string) => {
-    console.log(value); // Xử lý giá trị input ở đây
-  }, 1000);
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setInputValue(value);
-    handleInputChange(value);
   };
 
-  const onChangeStartDate: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
+  const onChangeStartDate: DatePickerProps["onChange"] = (date) => {
     setStartDate(date);
   };
-  const onChangeEndDate: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
+  const onChangeEndDate: DatePickerProps["onChange"] = (date) => {
     setEndDate(date);
   };
   return (
@@ -181,7 +172,7 @@ const TransactionPage = () => {
             VND
           </span>
         </p>
-        <div className="flex items-center gap-5">
+        <div className="block md:flex space-y-3 md:space-y-0 items-center gap-5">
           <div className="relative flex-1">
             <input
               type="text"
@@ -228,6 +219,7 @@ const TransactionPage = () => {
             dataSource={listTransactions}
             columns={columns}
             loading={loading}
+            scroll={{ x: 1180 }}
           />
         </div>
       </div>

@@ -65,12 +65,10 @@ const AccountPage = () => {
     handleSubmit,
     control,
     setError,
-    formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
     mode: "onSubmit",
   });
-  console.log("roor - ", errors);
   const onSubmit = async (data: {
     oldPassword: string;
     newPassword: string;
@@ -78,7 +76,6 @@ const AccountPage = () => {
   }) => {
     const { newPassword, oldPassword, reNewPassword } = data;
     try {
-      console.log("data sign in - ", data);
       if (newPassword === reNewPassword) {
         await api.patch(`/users/change-password/${_id}`, {
           oldPassword,
@@ -103,7 +100,7 @@ const AccountPage = () => {
     }
   };
   return (
-    <div className="gap-16 grid grid-cols-10">
+    <div className="gap-16 grid grid-cols-5 md:grid-cols-10">
       <div className="space-y-4 col-span-5">
         <Heading>Thông Tin Tài Khoản</Heading>
         <div className="space-y-4">
@@ -121,7 +118,9 @@ const AccountPage = () => {
               <Tooltip title="copy">
                 <button
                   className="-translate-y-[2px]"
-                  onClick={() => introduceCode && copyToClipboard(introduceCode)}
+                  onClick={() =>
+                    introduceCode && copyToClipboard(introduceCode)
+                  }
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -242,7 +241,9 @@ const schemaProfile = yup
   .required();
 
 const ChangeProfile = () => {
-  const { _id, email } = useSelector((state: RootState) => state.auth);
+  const { _id, email, username } = useSelector(
+    (state: RootState) => state.auth
+  );
   const [user, setUser] = useState<AuthState>();
   const dispatch = useDispatch();
   const { handleSubmit, control, setValue, watch } = useForm({
@@ -256,7 +257,6 @@ const ChangeProfile = () => {
   const fetchData = async () => {
     try {
       const resultUser = await api.get<AuthState>(`/users/${_id}`);
-      console.log("result - ", resultUser.data);
       setUser(resultUser.data);
     } catch (error) {
       console.log("error - ", error);
@@ -276,8 +276,7 @@ const ChangeProfile = () => {
     // username: string;
   }) => {
     try {
-      console.log("data sign in - ", data);
-      await api.patch(`/users/${_id}`, { ...data, email });
+      await api.patch(`/users/${_id}`, { ...data, email, username });
       const resultUser = await api.get<AuthState>(`/users/${_id}`);
       dispatch(setAuth(resultUser.data));
       toast.success("Chỉnh sửa thành công");

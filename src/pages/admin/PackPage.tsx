@@ -18,7 +18,6 @@ const PackPage = () => {
   const [initialSelectedRowKeys, setInitialSelectedRowKeys] = useState<
     React.Key[]
   >([]);
-  console.log("initial select row key - ", initialSelectedRowKeys);
   const [inputValue, setInputValue] = useState<string>("");
   const listPlanFilter = inputValue
     ? plans.filter(
@@ -194,7 +193,6 @@ const PackPage = () => {
   );
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 

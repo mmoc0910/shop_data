@@ -95,7 +95,6 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
         <button
           className="flex items-center justify-center bg-primary w-full py-4 flex-col gap-2"
           onClick={async () => {
-            console.log("abvdhsdv");
             if (_id) {
               try {
                 const { isConfirmed } = await Swal.fire({
@@ -110,17 +109,15 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
                 });
                 if (isConfirmed) {
                   setLoading(true);
-                  const result = await api.post("/gists", {
+                 await api.post("/gists", {
                     userId: _id,
                     planId: plan._id,
                   });
-                  console.log("result - ", result.data);
                   toast.success("Mua thành công");
                   navigation("/user/order");
                 }
               } catch (error) {
                 if (axios.isAxiosError(error)) {
-                  console.log("error message: ", error);
                   toast.error(error.response?.data.message);
                   if (
                     error.response?.data.message ===

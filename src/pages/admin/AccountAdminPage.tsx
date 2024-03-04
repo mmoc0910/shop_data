@@ -36,7 +36,6 @@ const AccountAdminPage = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const level = searchParams.get("level");
-  console.log("level - ", level);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [listUser, setListUser] = useState<UserState[]>([]);
@@ -55,7 +54,6 @@ const AccountAdminPage = () => {
     mode: "onSubmit",
   });
   const levelWatch = watch("level");
-  console.log(levelWatch, selectRow);
   useEffect(() => {
     if (selectRow) {
       selectRow.level && setValue("level", selectRow.level);
@@ -67,7 +65,6 @@ const AccountAdminPage = () => {
   const onSubmit = async (data: { level: number }) => {
     try {
       if (selectRow) {
-        console.log("data - ", data);
         await api.patch(`/users/${selectRow?._id}`, {
           ...data,
           username: selectRow.username,

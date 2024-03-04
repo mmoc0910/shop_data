@@ -78,7 +78,6 @@ const OrderPage = () => {
   const handleFetchData = async () => {
     try {
       const result = await api.get<GistType[]>(`/gists?userId=${_id}&status=1`);
-      console.log("data - ", result.data);
       setListGist(result.data);
     } catch (error) {
       console.log("error - ", error);
@@ -350,7 +349,7 @@ const OrderPage = () => {
         dataIndex: "status",
         key: "status",
         width: 130,
-        fixed: "right",
+        // fixed: "right",
         render: (_: string, record: GistType) => (
           <div className="font-primary text-sm">
             {record.status ? (
@@ -443,12 +442,10 @@ const OrderPage = () => {
     []
   );
 
-  const onChangeStartDate: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
+  const onChangeStartDate: DatePickerProps["onChange"] = (date) => {
     setStartDate(date);
   };
-  const onChangeEndDate: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
+  const onChangeEndDate: DatePickerProps["onChange"] = (date) => {
     setEndDate(date);
   };
 

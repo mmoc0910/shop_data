@@ -85,7 +85,6 @@ const InvitePage = () => {
           api.get<CommisionType>("/commisions"),
           api.get<RoseType[]>(`/roses?reciveRoseId=${_id}`),
         ]);
-      console.log("result - ", resultSatify.data);
       setSatisfy(resultSatify.data);
       setUser(resultUser.data);
       setCommision(resultCommision.data);
@@ -170,12 +169,10 @@ const InvitePage = () => {
     ],
     []
   );
-  const onChangeStartDate: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
+  const onChangeStartDate: DatePickerProps["onChange"] = (date) => {
     setStartDate(date);
   };
-  const onChangeEndDate: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
+  const onChangeEndDate: DatePickerProps["onChange"] = (date) => {
     setEndDate(date);
   };
 
@@ -183,43 +180,46 @@ const InvitePage = () => {
     const value = event.target.value;
     setInputValue(value);
   };
+  const tolltip = `User/CTV: 
+  Nhận được ${commision}% hoa hồng cho mỗi đơn hàng của người được giới thiệu || 
+  Đại lý Cấp 1: 
+  Chiết khấu [${collab.level1}%] cho mỗi đơn hàng mới ||
+  Đại lý Cấp 2: 
+  Chiết khấu [${collab.level2}%] cho mỗi đơn hàng mới ||
+  Đại lý Cấp 3: 
+  Chiết khấu [${collab.level3}%] cho mỗi đơn hàng mới || Để được nâng cấp lên làm đại lý vui lòng lien hệ trực tiếp admin
+  `;
   return (
     <RequireAuthPage rolePage={2}>
       <div className="space-y-10">
-        <div className="flex items-start rounded-xl border-2 border-[#eeeeed]">
-          <div className="flex-1 px-5 py-7 flex flex-col items-center rounded-xl space-y-4">
-            <p className="font-medium text-4xl">{user?.level === 0 ? "Cộng tác viên" : `Đại lý cấp${user?.level}`}</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 items-start rounded-xl border-2 border-[#eeeeed]">
+          <div className="flex-1 px-5 py-5 md:py-7 flex flex-col items-center rounded-xl space-y-2 md:space-y-4">
+            <p className="font-medium text-xl lg:text-2xl xl:text-4xl">
+              {user?.level === 0 ? "Cộng tác viên" : `Đại lý cấp${user?.level}`}
+            </p>
             <div className="flex items-center gap-1">
               <p className="text-lg">Cấp độ</p>
-              <Tooltip  title={`User/CTV: 
-Nhận được ${commision}% hoa hồng cho mỗi đơn hàng của người được giới thiệu || 
-Đại lý Cấp 1: 
-Chiết khấu [${collab.level1}%] cho mỗi đơn hàng mới ||
-Đại lý Cấp 2: 
-Chiết khấu [${collab.level2}%] cho mỗi đơn hàng mới ||
-Đại lý Cấp 3: 
-Chiết khấu [${collab.level3}%] cho mỗi đơn hàng mới || Để được nâng cấp lên làm đại lý vui lòng lien hệ trực tiếp admin
-`}>
+              <Tooltip title={tolltip}>
                 <span>
                   <IconQuesionMarkCircle />
                 </span>
               </Tooltip>
             </div>
           </div>
-          <div className="flex-1 px-5 py-7 flex flex-col items-center rounded-xl space-y-4">
-            <p className="font-medium text-4xl">
+          <div className="flex-1 px-5 py-5 md:py-7 flex flex-col items-center rounded-xl space-y-2 md:space-y-4">
+            <p className="font-medium text-xl lg:text-2xl xl:text-4xl">
               {satisfy?.numberIntoduce || 0}
             </p>
             <div className="flex items-center gap-1">
               <p className="text-lg">Đã mời</p>
             </div>
           </div>
-          <div className="flex-1 px-5 py-7 flex flex-col items-center rounded-xl space-y-4">
-            <p className="font-medium text-4xl">
+          <div className="flex-1 px-5 py-5 md:py-7 flex flex-col items-center rounded-xl space-y-2 md:space-y-4">
+            <p className="font-medium text-xl lg:text-2xl xl:text-4xl">
               {commision ? commision.value : 0}%
             </p>
             <div className="flex items-center gap-1">
-              <p className="text-lg">Phần trăm hoa hồng</p>
+              <p className="text-lg">% hoa hồng</p>
               {/* <Tooltip title="Cấp 1: Nạp Đơn Giá Trị 1.000.000 ₫ , Mua Gói Hoặc Giới Thiệu Khách Nạp Số Dư Sẽ Được Hưởng 10% || Cấp 2: Nạp Đơn Giá Trị 3.000.000 ₫ , Mua Gói Hoặc Giới Thiệu Khách Nạp Số Dư Sẽ Được Hưởng 20% || Cấp 3: Nạp Đơn Giá Trị 10.000.000 ₫ , Mua Gói Hoặc Giới Thiệu Khách Nạp Số Dư Sẽ Được Hưởng 50%">
                 <span>
                   <IconQuesionMarkCircle />
@@ -227,8 +227,8 @@ Chiết khấu [${collab.level3}%] cho mỗi đơn hàng mới || Để được
               </Tooltip> */}
             </div>
           </div>
-          <div className="flex-1 px-5 py-7 flex flex-col items-center rounded-xl space-y-4">
-            <p className="font-medium text-4xl">
+          <div className="flex-1 px-5 py-5 md:py-7 flex flex-col items-center rounded-xl space-y-2 md:space-y-4">
+            <p className="font-medium text-xl lg:text-2xl xl:text-4xl">
               {satisfy && satisfy.rose.length > 0
                 ? VND.format(satisfy.rose[0].money)
                 : 0}
@@ -247,7 +247,7 @@ Chiết khấu [${collab.level3}%] cho mỗi đơn hàng mới || Để được
         </div>
         <div className="space-y-4">
           <Heading>Lịch sử nhận hoa hồng</Heading>
-          <div className="flex items-center gap-5 mb-5">
+          <div className="block md:flex space-y-3 md:space-y-0 items-center gap-5 mb-5">
             <div className="relative flex-1">
               <input
                 type="text"
@@ -290,7 +290,7 @@ Chiết khấu [${collab.level3}%] cho mỗi đơn hàng mới || Để được
             </div>
           </div>
           <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
-            <Table dataSource={listRoseHistoryFilter} columns={columns} />
+            <Table dataSource={listRoseHistoryFilter} columns={columns} scroll={{x: 1180}} />
           </div>
         </div>
       </div>

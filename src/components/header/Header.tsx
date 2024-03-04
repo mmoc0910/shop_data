@@ -52,7 +52,7 @@ const Header = () => {
               <div className="flex items-stretch gap-3">
                 <Link
                   to={"/sign-in"}
-                  className="font-medium text-sm xl:text-base text-primary underline decoration-primary xl:pl-5"
+                  className="font-medium text-sm xl:text-base text-primary underline decoration-primary xl:pl-5 hidden md:block"
                 >
                   Đăng nhập
                 </Link>
@@ -83,7 +83,7 @@ const Header = () => {
                   </svg>
                 </div>
                 <div className="hidden md:block">
-                  <p>Xin chào</p>
+                  {/* <p>Xin chào</p> */}
                   <p className="font-medium">{username || email}</p>
                 </div>
               </Link>

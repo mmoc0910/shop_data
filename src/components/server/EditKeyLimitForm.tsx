@@ -24,7 +24,6 @@ const EditKeyLimitForm = ({
   });
   const onSubmit = (data: { name?: string }) => {
     try {
-      console.log("data sign in - ", data);
       data.name && handleAddLimitData(Number(data.name));
     } catch (error) {
       console.log(error);
