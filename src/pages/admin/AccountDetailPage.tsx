@@ -291,7 +291,8 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
         render: (_: string, record: GistType) => {
           return (
             <UpdateExtension
-              placeholder={record.extension}
+              initialValue={record.extension}
+              // placeholder={record.extension}
               onSubmit={(value: string) => {
                 handleUpdateExtension(record._id, value);
                 handleFetchData();
