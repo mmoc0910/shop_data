@@ -7,14 +7,17 @@ import { IconCheck } from "../checkbox/Checkbox";
 import { api } from "../../api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Loading from "../common/Loading";
 
 const PricingBox = () => {
+  const { _id } = useSelector((state: RootState) => state.auth);
+  const navigation = useNavigate();
   const [plans, setPlans] = useState<PlanType[]>([]);
+  
   useEffect(() => {
     (async () => {
       try {
@@ -52,14 +55,20 @@ const PricingBox = () => {
             )}
           </div>
           {plans.length > 3 ? (
-            <Link
-              to={"/user/plan"}
+            <div
+              onClick={() => {
+                if (_id) {
+                  navigation("/user/plan");
+                } else {
+                  navigation("/sign-in");
+                }
+              }}
               className="my-9 lg:my-14 py-2 px-9 bg-[#f2f4f7] rounded-full"
             >
               <div className="font-medium text-white bg-primary px-6 py-3 rounded-full">
                 Xem thêm
               </div>
-            </Link>
+            </div>
           ) : null}
         </Container>
       </div>
@@ -109,7 +118,7 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
                 });
                 if (isConfirmed) {
                   setLoading(true);
-                 await api.post("/gists", {
+                  await api.post("/gists", {
                     userId: _id,
                     planId: plan._id,
                   });

@@ -5,14 +5,21 @@ import classNames from "../../utils/classNames";
 import { v4 as uuidv4 } from "uuid";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
+import { useTranslation } from "react-i18next";
+import { useMemo } from "react";
 
-const menu = [
-  { title: "Trang chủ", to: "#home" },
-  { title: "Bảng giá", to: "#pricing" },
-];
 const Header = () => {
+  const { t, i18n } = useTranslation();
   const { email, username, role } = useSelector(
     (state: RootState) => state.auth
+  );
+  const menu = useMemo(
+    () => [
+      { title: t("header.home"), to: "#home" },
+      { title: t("header.pricing"), to: "#pricing" },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.language]
   );
   return (
     <div className="fixed top-0 left-0 right-0 bg-white z-20 shadow-sm">
@@ -54,13 +61,13 @@ const Header = () => {
                   to={"/sign-in"}
                   className="font-medium text-sm xl:text-base text-primary underline decoration-primary xl:pl-5 hidden md:block"
                 >
-                  Đăng nhập
+                  {t("authen.sign_in")}
                 </Link>
                 <Link
                   to={"/sign-up"}
                   className="font-medium text-sm xl:text-base text-secondary underline decoration-secondary"
                 >
-                  Đăng ký
+                  {t("authen.sign_up")}
                 </Link>
               </div>
             ) : (

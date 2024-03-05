@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/configureStore";
 import { setAuth } from "../store/auth/authSlice";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { api } from "../api";
 import { CollabType, SatisfyType } from "../type";
 import { setSatify } from "../store/satisfy/satisfySlice";
@@ -17,37 +17,24 @@ import { Tooltip } from "antd";
 import { copyToClipboard } from "../utils/copyToClipboard";
 import { setCollab } from "../store/collab/collabSlice";
 import useOnClickOutside from "../hooks/useOnClickOutside";
-
-const menu = [
-  { to: "/user/dashboard", title: "Dashboard" },
-  { to: "/user/recharge", title: "Nạp tiền" },
-  { to: "/user/plan", title: "Mua gói cước" },
-  { to: "/user/order", title: "Đơn hàng của tôi" },
-  { to: "/user/transaction", title: "Lịch sử giao dịch" },
-  { to: "user/cash", title: "Lịch sử nạp" },
-  { to: "/user/invite", title: "Cộng tác viên" },
-  { to: "/user/account", title: "Thông tin người dùng" },
-];
-// const menu = [
-//   { to: "/user/dashboard", title: "Dashboard" },
-//   {
-//     to: "",
-//     title: "Người dùng",
-//     children: [{ to: "/user/account", title: "Thông tin người dùng" }],
-//   },
-//   {
-//     to: "",
-//     title: "Mua hàng",
-//     children: [
-//       { to: "/user/plan", title: "Mua gói cước" },
-//       { to: "/user/order", title: "Đơn hàng của tôi" },
-//       { to: "/user/transaction", title: "Lịch sử giao dịch" },
-//       { to: "/user/invite", title: "Cộng tác viên" },
-//     ],
-//   },
-// ];
+import { useTranslation } from "react-i18next";
 
 const LayoutUser = () => {
+  const { t, i18n } = useTranslation();
+  const menu = useMemo(
+    () => [
+      { to: "/user/dashboard", title: t("menu_user.dashboard") },
+      { to: "/user/recharge", title: t("menu_user.recharge") },
+      { to: "/user/plan", title: t("menu_user.pack_of_data") },
+      { to: "/user/order", title: t("menu_user.my_order") },
+      { to: "/user/transaction", title: t("menu_user.transaction_history") },
+      { to: "user/cash", title: t("menu_user.deposit_history") },
+      { to: "/user/invite", title: t("menu_user.collaborators") },
+      { to: "/user/account", title: t("menu_user.user_information") },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.language]
+  );
   const [isOpen, setIsopen] = useState<boolean>(false);
   const navigation = useNavigate();
   const dispatch = useDispatch();
@@ -132,7 +119,7 @@ const LayoutUser = () => {
                 "hover:bg-[#403f3f] px-4 py-3 rounded-lg transition-all duration-200 text-icon-color block xl:hidden"
               )}
             >
-              Đăng xuất
+              {t("authen.sign_out")}
             </div>
           </div>
         </div>
@@ -211,7 +198,7 @@ const LayoutUser = () => {
               <span className="-translate-y-[2px]">
                 <IconLogout />
               </span>
-              <p>Đăng xuất</p>
+              <p> {t("authen.sign_out")}</p>
             </div>
           </div>
         </div>
@@ -222,52 +209,4 @@ const LayoutUser = () => {
     </div>
   );
 };
-{
-  /* {menu.map((item) => {
-              if (item.children) {
-                return (
-                  <div className="space-y-3" key={uuidv4()}>
-                    <p className="text-gray-100 font-medium flex items-center justify-between">
-                      {item.title}{" "}
-                      <span>
-                        <IconChevronDown />
-                      </span>
-                    </p>
-                    <div className="flex flex-col gap-3">
-                      {item.children.map((i) => (
-                        <NavLink
-                          to={i.to}
-                          className={({ isActive }) =>
-                            classNames(
-                              "pl-5",
-                              isActive
-                                ? "text-primary font-medium"
-                                : "text-white"
-                            )
-                          }
-                          key={uuidv4()}
-                        >
-                          {i.title}
-                        </NavLink>
-                      ))}
-                    </div>
-                  </div>
-                );
-              }
-              return (
-                <NavLink
-                  to={item.to}
-                  className={({ isActive }) =>
-                    classNames(
-                      "",
-                      isActive ? "text-primary font-medium" : "text-white"
-                    )
-                  }
-                  key={uuidv4()}
-                >
-                  {item.title}
-                </NavLink>
-              );
-            })} */
-}
 export default LayoutUser;

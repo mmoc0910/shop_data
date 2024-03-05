@@ -79,6 +79,7 @@ const OrderPage = () => {
     try {
       const result = await api.get<GistType[]>(`/gists?userId=${_id}&status=1`);
       setListGist(result.data);
+      console.log("abc");
     } catch (error) {
       console.log("error - ", error);
       toast.error(messages.error);
@@ -95,49 +96,6 @@ const OrderPage = () => {
       }
     })();
   }, []);
-  // const handleUpgradeBrandWidth = async (
-  //   extendPlanId: string,
-  //   gistId: string,
-  //   bandWidth: number
-  // ) => {
-  //   try {
-  //     const { isConfirmed } = await Swal.fire({
-  //       title: `<p class="leading-tight">Bạn có muốn mua thêm ${bandWidth}GB băng thông</p>`,
-  //       // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
-  //       icon: "success",
-  //       showCancelButton: true,
-  //       confirmButtonColor: "#1DC071",
-  //       cancelButtonColor: "#d33",
-  //       cancelButtonText: "Thoát",
-  //       confirmButtonText: "Có, mua ngay",
-  //     });
-  //     if (isConfirmed) {
-  //       setLoading(true);
-  //       await api.post("/upgrades/band-width", { gistId, extendPlanId });
-  //       handleOk();
-  //       handleFetchData();
-  //       toast.success("Mua thêm băng thông thành công");
-  //     }
-  //   } catch (error) {
-  //     if (axios.isAxiosError(error)) {
-  //       console.log("error message: ", error);
-  //       toast.error(error.response?.data.message);
-  //       if (
-  //         error.response?.data.message ===
-  //           "Bạn không đủ tiền để đăng kí dịch vụ này" &&
-  //         error.response.status === 400
-  //       ) {
-  //         toast.warn("Nạp thêm tiền để sử dụng dịch vụ");
-  //         navigation("/user/dashboard");
-  //       }
-  //     } else {
-  //       console.log("unexpected error: ", error);
-  //       return "An unexpected error occurred";
-  //     }
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const handleUpgradPlan = async (
     gistId: string,
     name: string,
@@ -210,11 +168,10 @@ const OrderPage = () => {
   const columns: TableColumnsType<GistType> = useMemo(
     () => [
       {
-        title: () => (
-          <p className="font-primary text-base font-semibold">STT</p>
-        ),
+        title: () => <p className="font-primary text-base font-semibold"></p>,
         dataIndex: "index",
-        width: 70,
+        width: 40,
+        fixed: "left",
         render: (_text: string, _record: GistType, index: number) => (
           <p className="font-primary text-sm">{index + 1}</p>
         ),
@@ -241,10 +198,25 @@ const OrderPage = () => {
         ),
       },
       {
+        title: <p className="font-primary font-semibold">Usage</p>,
+        dataIndex: "dataUsage",
+        key: "dataUsage",
+        width: 100,
+        render: (_: string, record: GistType) => (
+          <p className="font-primary text-sm">
+            {(record.keyId.dataUsage / 1000 / 1000 / 1000).toFixed(2)}GB
+          </p>
+        ),
+        sorter: {
+          compare: (a, b) => a.keyId.dataUsage - b.keyId.dataUsage,
+          multiple: 2,
+        },
+      },
+      {
         title: <p className="font-primary font-semibold">Data limit</p>,
         dataIndex: "bandWidth",
         key: "bandWidth",
-        width: 120,
+        width: 100,
         render: (_: string, record: GistType) => (
           <p className="font-primary text-sm">
             {record.keyId.dataLimit / 1000 / 1000 / 1000}GB
@@ -284,31 +256,16 @@ const OrderPage = () => {
         ),
       },
       {
-        title: <p className="font-primary font-semibold">Usage</p>,
-        dataIndex: "dataUsage",
-        key: "dataUsage",
-        width: 100,
-        render: (_: string, record: GistType) => (
-          <p className="font-primary text-sm">
-            {(record.keyId.dataUsage / 1000 / 1000 / 1000).toFixed(2)}GB
-          </p>
-        ),
-        sorter: {
-          compare: (a, b) => a.keyId.dataUsage - b.keyId.dataUsage,
-          multiple: 2,
-        },
-      },
-      {
         title: <p className="font-primary font-semibold">Key</p>,
         dataIndex: "key",
         key: "key",
-        fixed: "right",
+        // fixed: "right",
         render: (_: string, record: GistType) => {
           const key = `${linkGist}/${record.gistId}/raw/${record?.fileName}#`;
           return (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Tooltip title="copy for Iphone">
+                <Tooltip title="copy for Android, Windows, MacOS, Linux">
                   <button
                     onClick={() =>
                       copyToClipboard(
@@ -319,7 +276,7 @@ const OrderPage = () => {
                       )
                     }
                   >
-                    <IosXML />
+                    <AndroidXML />
                   </button>
                 </Tooltip>
                 <p className="font-primary text-sm w-[350px] line-clamp-1">
@@ -328,11 +285,11 @@ const OrderPage = () => {
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <Tooltip title="copy for Android, Windows, MacOS, Linux">
+                <Tooltip title="copy for Iphone">
                   <button
                     onClick={() => copyToClipboard(`${key}${record.extension}`)}
                   >
-                    <AndroidXML />
+                    <IosXML />
                   </button>
                 </Tooltip>
                 <p className="font-primary text-sm w-[350px] line-clamp-1">
@@ -348,7 +305,7 @@ const OrderPage = () => {
         title: <p className="font-primary font-semibold">Trạng thái</p>,
         dataIndex: "status",
         key: "status",
-        width: 130,
+        width: 100,
         // fixed: "right",
         render: (_: string, record: GistType) => (
           <div className="font-primary text-sm">
@@ -380,11 +337,12 @@ const OrderPage = () => {
         title: <p className="font-primary font-semibold">Đặt tên key</p>,
         dataIndex: "extension",
         key: "extension",
-        width: 150,
+        // width: 150,
         render: (_: string, record: GistType) => {
           return (
             <UpdateExtension
-              placeholder={record.extension}
+              initialValue={record.extension}
+              // placeholder={record.extension}
               onSubmit={(value: string) => {
                 handleUpdateExtension(record._id, value);
                 handleFetchData();
@@ -398,12 +356,11 @@ const OrderPage = () => {
         title: <p className="font-primary font-semibold"></p>,
         dataIndex: "action",
         key: "action",
-        fixed: "right",
-        width: 250,
+        // width: 250,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         render: (_: string, record: GistType) =>
           record.status ? (
-            <div className="flex gap-4 justify-end">
+            <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 justify-end w-[100px] lg:w-[250px] px-5">
               {!record.keyId.endExpandDate ||
               (record.keyId.endExpandDate &&
                 dayjs().isAfter(record.keyId.endExpandDate, "day")) ? (
@@ -417,7 +374,7 @@ const OrderPage = () => {
                     showModal();
                   }}
                 >
-                  Mua thêm data
+                  Mua data
                 </button>
               ) : null}
               <button
@@ -527,7 +484,7 @@ const OrderPage = () => {
         />
       </div>
       <Modal
-        width={900}
+        width={1000}
         open={isModalOpen}
         onCancel={() => {
           handleCancel();
@@ -548,26 +505,6 @@ const OrderPage = () => {
               selectRow={selectRow}
               setLoading={(value: boolean) => setLoading(value)}
             />
-            // <div
-            //   key={uuidv4()}
-            //   className="p-5 shadow-xl rounded-lg font-primary space-y-3 flex flex-col justify-between"
-            // >
-            //   <p className="font-semibold text-base text-center mb-5">
-            //     {item.name}
-            //   </p>
-            //   <p className="text-center font-medium text-xl">
-            //     {item.bandWidth}GB - {VND.format(item.price)}VND
-            //   </p>
-            //   <button
-            //     className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-sm"
-            //     onClick={() =>
-            //       selectRow &&
-            //       handleUpgradeBrandWidth(item._id, selectRow, item.bandWidth)
-            //     }
-            //   >
-            //     Mua ngay
-            //   </button>
-            // </div>
           ))}
         </div>
         <div className="mt-5 flex justify-end">
@@ -600,6 +537,14 @@ const ExtendPlanItem = ({
   const period =
     selectRow?.endDate && dayjs(selectRow.endDate).diff(dayjs(), "month") + 1;
   const [month, setMonth] = useState<number>(1);
+  const discountPercent =
+    month <= 4
+      ? extendPlan.level1
+      : month > 4 && month <= 8
+      ? extendPlan.level2
+      : extendPlan.level3;
+  const priceDiscount =
+    extendPlan.price * month * ((100 - discountPercent) / 100);
   const navigation = useNavigate();
   const handleUpgradeBrandWidth = async (
     extendPlanId: string,
@@ -653,7 +598,8 @@ const ExtendPlanItem = ({
     >
       <p className="font-semibold text-base text-center">{extendPlan.name}</p>
       <p className="text-center font-medium text-xl">
-        {extendPlan.bandWidth}GB - {VND.format(extendPlan.price)}VND
+        {extendPlan.bandWidth}GB/tháng - {VND.format(priceDiscount)}VND
+        {/* {VND.format(extendPlan.price)} */}
       </p>
       <div className="flex items-center gap-5">
         <Radio checked={month === 1} onClick={() => setMonth(1)}>

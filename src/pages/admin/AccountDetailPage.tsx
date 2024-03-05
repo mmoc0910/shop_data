@@ -243,9 +243,29 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
         dataIndex: "key",
         key: "key",
         render: (_: string, record: GistType) => {
-          const key = `${linkGist}/${record.gistId}/raw/${record.fileName}#`;
+          const key = `${linkGist}/${record.gistId}/raw/${record?.fileName}#`;
           return (
             <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Tooltip title="copy for Android, Windows, MacOS, Linux">
+                  <button
+                    onClick={() =>
+                      copyToClipboard(
+                        `${record.keyId.awsId?.fileName.replace(
+                          /https/g,
+                          "ssconf"
+                        )}#${record.extension}`
+                      )
+                    }
+                  >
+                    <AndroidXML />
+                  </button>
+                </Tooltip>
+                <p className="font-primary text-sm w-[100px] md:w-[350px] line-clamp-1">
+                  {record.keyId.awsId?.fileName.replace(/https/g, "ssconf")}#
+                  {record.extension}
+                </p>
+              </div>
               <div className="flex items-center gap-2">
                 <Tooltip title="copy for Iphone">
                   <button
@@ -254,20 +274,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
                     <IosXML />
                   </button>
                 </Tooltip>
-                <p className="font-primary text-sm w-[350px] line-clamp-1">
-                  {key}
-                  {record.extension}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Tooltip title="copy for Android, Windows, MacOS, Linux">
-                  <button
-                    onClick={() => copyToClipboard(`${key}${record.extension}`)}
-                  >
-                    <AndroidXML />
-                  </button>
-                </Tooltip>
-                <p className="font-primary text-sm w-[350px] line-clamp-1">
+                <p className="font-primary text-sm w-[100px] md:w-[350px] line-clamp-1">
                   {key}
                   {record.extension}
                 </p>
@@ -360,7 +367,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
           dataSource={listGistFilter}
           columns={columns}
           loading={loadingTable}
-        //   scroll={{ x: 1500 }}
+          //   scroll={{ x: 1500 }}
         />
       </div>
     </div>

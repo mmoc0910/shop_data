@@ -13,46 +13,49 @@ import { api } from "../api";
 import { AuthState } from "../store/auth/authSlice";
 import { toast } from "react-toastify";
 import { countries, purposes } from "../constants";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/configureStore";
 import axios from "axios";
 import { DropdownWithComponents } from "../components/dropdown";
 import { v4 as uuidv4 } from "uuid";
-
-
-
-const schema = yup
-  .object({
-    username: yup.string().required("This field is required"),
-    email: yup
-      .string()
-      .required("This field is required")
-      .email("Incorrect email format"),
-    password: yup
-      .string()
-      .required("This field is required")
-      .min(8, "Minimum of 8 characters"),
-    rePassword: yup
-      .string()
-      .required("This field is required")
-      .min(8, "Minimum of 8 characters"),
-    phone: yup.string().required(),
-    // address: yup.string().required(),
-    country: yup.string().required(),
-    purpose: yup.number().required(),
-    introduceCode: yup.string(),
-    // job: yup.string().required(),
-  })
-  .required();
+import { useTranslation } from "react-i18next";
 
 const SignUpPage = () => {
+  const { t, i18n } = useTranslation();
   const { email, role } = useSelector((state: RootState) => state.auth);
   const navigation = useNavigate();
   const { value: tooglePassword, handleToogleValue: handleTooglePassword } =
     useToogleValue();
   const { value: toogleRePassword, handleToogleValue: handleToogleRePassword } =
     useToogleValue();
+  const schema = useMemo(
+    () =>
+      yup
+        .object({
+          username: yup.string().required(t("form.username.error.required")),
+          email: yup
+            .string()
+            .required(t("form.email.error.required"))
+            .email(t("form.email.error.email")),
+          password: yup
+            .string()
+            .required(t("form.password.error.required"))
+            .min(8, "Minimum of 8 characters"),
+          rePassword: yup
+            .string()
+            .required(t("form.re_password.error.required"))
+            .min(8, "Minimum of 8 characters"),
+          phone: yup.string().required(t("form.phone.error.required")),
+          country: yup.string().required(t("form.country.error.required")),
+          purpose: yup.number().required(t("form.purpose.error.required")),
+          introduceCode: yup.string(),
+        })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        .required(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.language]
+  );
   const {
     handleSubmit,
     control,
@@ -114,7 +117,7 @@ const SignUpPage = () => {
             });
           }
         } else {
-        await api.post<{ data: AuthState }>("/users", {
+          await api.post<{ data: AuthState }>("/users", {
             username,
             email,
             password,
@@ -122,7 +125,7 @@ const SignUpPage = () => {
             phone,
             purpose,
           });
-          navigation("/sign-in")
+          navigation("/sign-in");
           toast.success("Đăng ký tài khoản thành công");
         }
       } else {
@@ -139,14 +142,14 @@ const SignUpPage = () => {
     }
   };
   return (
-    <LayoutAuthentication heading="Sign Up">
+    <LayoutAuthentication heading={t("authen.sign_up")}>
       <p className="mb-[25px] md:mb-[30px] text-xs font-normal text-center md:text-sm md:font-medium text-text3">
-        Already have an account?{" "}
+        {t("login.have_account")}{" "}
         <Link
           to={"/sign-in"}
           className="inline font-medium underline text-primary"
         >
-          Sign in
+          {t("authen.sign_in")}
         </Link>
       </p>
       <form
@@ -154,11 +157,15 @@ const SignUpPage = () => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <FormGroup>
-          <Label htmlFor="username">Username*</Label>
-          <Input name="username" placeholder={""} control={control} />
+          <Label htmlFor="username">{t("form.username.label")}</Label>
+          <Input
+            name="username"
+            placeholder={t("form.username.placeholder")}
+            control={control}
+          />
         </FormGroup>
         <FormGroup>
-          <Label htmlFor="email">Email*</Label>
+          <Label htmlFor="email">{t("form.email.label")}</Label>
           <Input
             name="email"
             placeholder={"example@gmail.com"}
@@ -166,15 +173,25 @@ const SignUpPage = () => {
           />
         </FormGroup>
         <FormGroup>
-          <Label htmlFor="phone">Phone*</Label>
-          <Input name="phone" placeholder={"0123456789"} control={control} />
+          <Label htmlFor="phone">{t("form.phone.label")}</Label>
+          <Input
+            name="phone"
+            placeholder={t("form.phone.placeholder")}
+            control={control}
+          />
         </FormGroup>
         <FormGroup>
-          <Label htmlFor="introduceCode">Introduce Code</Label>
-          <Input name="introduceCode" placeholder={""} control={control} />
+          <Label htmlFor="introduceCode">
+            {t("form.introduce_code.label")}
+          </Label>
+          <Input
+            name="introduceCode"
+            placeholder={t("form.introduce_code.placeholder")}
+            control={control}
+          />
         </FormGroup>
         <FormGroup>
-          <Label>Select country*</Label>
+          <Label>{t("form.country.label")}</Label>
           <DropdownWithComponents>
             <DropdownWithComponents.Select
               placeholder={
@@ -183,7 +200,9 @@ const SignUpPage = () => {
                     {countries.find((i) => i.key === country)?.title}
                   </span>
                 ) : (
-                  <span className="text-text4">Select one</span>
+                  <span className="text-text4">
+                    {t("form.country.placeholder")}
+                  </span>
                 )
               }
             ></DropdownWithComponents.Select>
@@ -206,7 +225,7 @@ const SignUpPage = () => {
           ) : null}
         </FormGroup>
         <FormGroup>
-          <Label>Purpose using VPN*</Label>
+          <Label>{t("form.purpose.label")}</Label>
           <DropdownWithComponents>
             <DropdownWithComponents.Select
               placeholder={
@@ -215,7 +234,9 @@ const SignUpPage = () => {
                     {purposes.find((i) => i.id === purpose)?.title}
                   </span>
                 ) : (
-                  <span className="text-text4">Select one</span>
+                  <span className="text-text4">
+                    {t("form.purpose.placeholder")}
+                  </span>
                 )
               }
             ></DropdownWithComponents.Select>
@@ -238,11 +259,11 @@ const SignUpPage = () => {
           ) : null}
         </FormGroup>
         <FormGroup>
-          <Label htmlFor="password">Password*</Label>
+          <Label htmlFor="password">{t("form.password.label")}</Label>
           <Input
             type={tooglePassword ? "text" : "password"}
             name="password"
-            placeholder={"Create a password"}
+            placeholder={t("form.password.placeholder")}
             control={control}
           >
             <IconEyeToogle
@@ -253,11 +274,11 @@ const SignUpPage = () => {
           </Input>
         </FormGroup>
         <FormGroup>
-          <Label htmlFor="password">Re-type Password*</Label>
+          <Label htmlFor="password">{t("form.re_password.label")}</Label>
           <Input
             type={toogleRePassword ? "text" : "password"}
             name="rePassword"
-            placeholder={"Create a password"}
+            placeholder={t("form.re_password.placeholder")}
             control={control}
           >
             <IconEyeToogle
@@ -268,7 +289,7 @@ const SignUpPage = () => {
           </Input>
         </FormGroup>
         <Button type="submit" className="w-full text-white bg-primary">
-          Create my account
+          {t("authen.sign_up")}
         </Button>
       </form>
     </LayoutAuthentication>

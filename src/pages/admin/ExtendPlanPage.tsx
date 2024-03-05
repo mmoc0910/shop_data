@@ -163,7 +163,7 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">{`<`}6 tháng</p>
+          <p className="font-primary text-base font-semibold">{`<=`}4 tháng</p>
         ),
         dataIndex: "level1",
         key: "level1",
@@ -177,7 +177,7 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">{`>`}6 tháng</p>
+          <p className="font-primary text-base font-semibold">5-8 tháng</p>
         ),
         dataIndex: "level2",
         key: "level2",
@@ -191,7 +191,7 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">{`>`}12 tháng</p>
+          <p className="font-primary text-base font-semibold">{`>=`}9 tháng</p>
         ),
         dataIndex: "level3",
         key: "level3",
@@ -336,7 +336,7 @@ const ExtendPlanPage = () => {
             <Input name="name" placeholder={""} control={control} />
           </FormGroup>
           <FormGroup>
-            <Label htmlFor="bandWidth">Băng thông*</Label>
+            <Label htmlFor="bandWidth">Băng thông(GB)*</Label>
             <Input
               name="bandWidth"
               placeholder={""}
@@ -347,7 +347,7 @@ const ExtendPlanPage = () => {
           </FormGroup>
           <div className="grid grid-cols-3 gap-5">
             <FormGroup>
-              <Label htmlFor="price">{`<`}6 tháng*</Label>
+              <Label htmlFor="price">{`<=`}4 tháng(%)*</Label>
               <Input
                 name="level1"
                 placeholder={""}
@@ -357,7 +357,7 @@ const ExtendPlanPage = () => {
               />
             </FormGroup>
             <FormGroup>
-              <Label htmlFor="price">{`>`}6 tháng*</Label>
+              <Label htmlFor="price">5-8 tháng(%)*</Label>
               <Input
                 name="level2"
                 placeholder={""}
@@ -367,7 +367,7 @@ const ExtendPlanPage = () => {
               />
             </FormGroup>
             <FormGroup>
-              <Label htmlFor="price">{`>`}12 tháng*</Label>
+              <Label htmlFor="price">{`>=`}9 tháng(%)*</Label>
               <Input
                 name="level3"
                 placeholder={""}
@@ -378,7 +378,7 @@ const ExtendPlanPage = () => {
             </FormGroup>
           </div>
           <FormGroup>
-            <Label htmlFor="price">Giá*</Label>
+            <Label htmlFor="price">Giá(/tháng)*</Label>
             <Input
               name="price"
               placeholder={""}

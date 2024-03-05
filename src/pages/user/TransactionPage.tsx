@@ -98,10 +98,14 @@ const TransactionPage = () => {
         dataIndex: "price",
         key: "price",
         render: (_: string, record: TransactionType) => (
-          <p className="font-primary text-sm">{VND.format(record.money)}VND</p>
+          <p className="font-primary text-sm">
+            {VND.format(record.money / ((100 - record.discount) / 100))}VND
+          </p>
         ),
         sorter: {
-          compare: (a, b) => a.money - b.money,
+          compare: (a, b) =>
+            a.money / ((100 - a.discount) / 100) -
+            b.money / ((100 - b.discount) / 100),
           multiple: 3,
         },
       },
@@ -119,17 +123,13 @@ const TransactionPage = () => {
       },
       {
         title: <p className="font-primary font-semibold">Giá mua</p>,
-        dataIndex: "priceDiscount",
-        key: "priceDiscount",
+        dataIndex: "money",
+        key: "money",
         render: (_: string, record: TransactionType) => (
-          <p className="font-primary text-sm">
-            {VND.format(record.money * ((100 - record.discount) / 100))}VND
-          </p>
+          <p className="font-primary text-sm">{VND.format(record.money)}VND</p>
         ),
         sorter: {
-          compare: (a, b) =>
-            a.money * ((100 - a.discount) / 100) -
-            b.money * ((100 - b.discount) / 100),
+          compare: (a, b) => a.money - b.money,
           multiple: 1,
         },
       },

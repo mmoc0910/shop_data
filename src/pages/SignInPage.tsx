@@ -13,22 +13,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { api } from "../api";
 import { AuthState, setAuth } from "../store/auth/authSlice";
 import { RootState } from "../store/configureStore";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-
-const schema = yup
-  .object({
-    account: yup
-      .string()
-      .required("This field is required"),
-      // .email("Incorrect email format"),
-    password: yup.string().required("This field is required"),
-    // .min(8, "Minimum of 8 characters"),
-  })
-  .required();
+import { useTranslation } from "react-i18next";
 
 const SignInPage = () => {
+  const { t, i18n } = useTranslation();
+  const schema = useMemo(() => yup
+  .object({
+    account: yup.string().required(t("form.account.error.required")),
+    password: yup.string().required(t("form.password.error.required")),
+    // .min(8, "Minimum of 8 characters"),
+  })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  .required(),[i18n.language, t])
   const { email, role } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
   const navigation = useNavigate();
@@ -67,14 +66,14 @@ const SignInPage = () => {
     }
   };
   return (
-    <LayoutAuthentication heading="Welcome Back!">
+    <LayoutAuthentication heading={t("login.welcome_back")}>
       <p className="mb-[25px] md:mb-[30px] text-xs font-normal text-center md:text-sm md:font-medium text-text3">
-        Dont have an account?{" "}
+        {t("login.dont_have_account")}{" "}
         <Link
           to={"/sign-up"}
           className="inline font-medium underline text-primary"
         >
-          Sign up
+          {t("authen.sign_up")}
         </Link>
       </p>
       <form
@@ -82,19 +81,19 @@ const SignInPage = () => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <FormGroup>
-          <Label htmlFor="account">Username or Email*</Label>
+          <Label htmlFor="account">{t("form.account.label")}</Label>
           <Input
             name="account"
-            // placeholder={"example@gmail.com"}
+            placeholder={t("form.account.placeholder")}
             control={control}
           />
         </FormGroup>
         <FormGroup>
-          <Label htmlFor="password">password*</Label>
+          <Label htmlFor="password">{t("form.password.label")}</Label>
           <Input
             type={tooglePassword ? "text" : "password"}
             name="password"
-            placeholder={"Enter Password"}
+            placeholder={t("form.password.placeholder")}
             control={control}
           >
             <IconEyeToogle
@@ -105,12 +104,15 @@ const SignInPage = () => {
           </Input>
         </FormGroup>
         <div className="flex justify-end">
-          <Link to={'/forgot-password'} className="text-sm font-medium cursor-pointer select-none text-primary">
-            Forgot password
+          <Link
+            to={"/forgot-password"}
+            className="text-sm font-medium cursor-pointer select-none text-primary"
+          >
+           {t("login.forgot_pass")}
           </Link>
         </div>
         <Button type="submit" className="w-full text-white bg-primary">
-          Sign in
+        {t("authen.sign_in")}
         </Button>
       </form>
     </LayoutAuthentication>
