@@ -31,9 +31,9 @@ const RechargePage = () => {
     if (data.money > 0) {
       try {
         Swal.fire({
-          title: `<p class="leading-tight">Bạn có muốn nạp ${VND.format(
+          title: `<p class="leading-tight">Bạn có muốn nạp <span class="text-secondary">${VND.format(
             data.money
-          )}VND</p>`,
+          )}VND</span></p>`,
           // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
           icon: "success",
           showCancelButton: true,

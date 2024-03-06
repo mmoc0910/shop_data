@@ -82,9 +82,9 @@ const CashAdminPage = () => {
     } = cash;
     try {
       const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn nạp cho người dùng ${
+        title: `<p class="leading-tight">Bạn có muốn nạp cho người dùng <span class="text-secondary">${
           username || email
-        } số tiền ${VND.format(money)}VND</p>`,
+        }</span> số tiền <span class="text-secondary">${VND.format(money)}VND</span></p>`,
         icon: "success",
         showCancelButton: true,
         confirmButtonColor: "#1DC071",
@@ -110,9 +110,9 @@ const CashAdminPage = () => {
     } = cash;
     try {
       const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn từ chối nạp cho người dùng ${
+        title: `<p class="leading-tight">Bạn từ chối nạp cho người dùng <span class="text-secondary">${
           username || email
-        } số tiền ${VND.format(money)}VND</p>`,
+        }</span> số tiền <span class="text-secondary">${VND.format(money)}VND</span></p>`,
         icon: "success",
         showCancelButton: true,
         confirmButtonColor: "#1DC071",
@@ -136,9 +136,9 @@ const CashAdminPage = () => {
         if (value) {
           try {
             const { isConfirmed } = await Swal.fire(
-              `<p class="leading-tight">Bạn từ chối nạp cho ${username} số tiền ${VND.format(
+              `<p class="leading-tight">Bạn từ chối nạp cho <span class="text-secondary">${username} số tiền ${VND.format(
                 money
-              )}NVD với lý do ${value}</p>`
+              )}NVD</span> với lý do <span class="text-secondary">${value}</span></p>`
             );
             if (isConfirmed) {
               await api.post(`/cashs/reject/${_id}`, { description: value });

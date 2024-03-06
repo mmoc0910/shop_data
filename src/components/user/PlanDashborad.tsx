@@ -31,7 +31,7 @@ const PlanDashborad = () => {
   const handleChoosePlan = async (plan: PlanType) => {
     try {
       const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn mua gói cước ${plan.name} ${plan.bandWidth}GB</p>`,
+        title: `<p class="leading-tight">Bạn có muốn mua gói cước <span class="text-secondary">${plan.name} ${plan.bandWidth}GB</span></p>`,
         html: `<div>
             <p class="text-2xl font-semibold">${VND.format(plan.price)}VND/${
           plan.type

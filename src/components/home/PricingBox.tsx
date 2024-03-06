@@ -108,7 +108,7 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
             if (_id) {
               try {
                 const { isConfirmed } = await Swal.fire({
-                  title: `<p class="leading-tight">Bạn có muốn mua gói ${name}</p>`,
+                  title: `<p class="leading-tight">Bạn có muốn mua gói <span class="text-secondary20">${name}</span></p>`,
                   text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
                   icon: "success",
                   showCancelButton: true,

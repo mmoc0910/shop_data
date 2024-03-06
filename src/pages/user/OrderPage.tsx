@@ -105,9 +105,9 @@ const OrderPage = () => {
   ) => {
     try {
       const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn gia hạn gói ${name}(${VND.format(
+        title: `<p class="leading-tight">Bạn có muốn gia hạn gói <span class="text-secondary">${name}(${VND.format(
           price
-        )}VND) ${bandWidth}GB/${type}</p>`,
+        )}VND) ${bandWidth}GB/${type}</span></p>`,
         // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
         icon: "success",
         showCancelButton: true,
@@ -555,7 +555,7 @@ const ExtendPlanItem = ({
   ) => {
     try {
       const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn mua thêm ${bandWidth}GB băng thông</p>`,
+        title: `<p class="leading-tight">Bạn có muốn mua thêm <span class="text-secondary">${bandWidth}GB</span> băng thông</p>`,
         // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
         icon: "success",
         showCancelButton: true,
