@@ -356,11 +356,9 @@ const OrderPage = () => {
         title: <p className="font-primary font-semibold"></p>,
         dataIndex: "action",
         key: "action",
-        // width: 250,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         render: (_: string, record: GistType) =>
           record.status ? (
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 justify-end w-[100px] lg:w-[250px] px-5">
+            <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 justify-end w-[150px] lg:w-[250px] px-5">
               {!record.keyId.endExpandDate ||
               (record.keyId.endExpandDate &&
                 dayjs().isAfter(record.keyId.endExpandDate, "day")) ? (
@@ -433,7 +431,7 @@ const OrderPage = () => {
         </span>
         : Link kết nối cho các thiết bị khác (Android, Windows, MACOS, Linux)
       </p>
-      <div className="flex items-center gap-5 pb-5">
+      <div className="block md:flex space-y-3 md:space-y-0 items-center gap-5 pb-5">
         <div className="relative flex-1">
           <input
             type="text"
@@ -493,7 +491,7 @@ const OrderPage = () => {
         footer={[]}
       >
         <Heading className="font-primary">Danh sách gói cước mở rộng</Heading>
-        <div className="py-3 grid grid-cols-3 gap-5">
+        <div className="py-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {listExtendPlan.map((item) => (
             <ExtendPlanItem
               key={uuidv4()}

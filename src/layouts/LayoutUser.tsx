@@ -94,20 +94,22 @@ const LayoutUser = () => {
           <div className="flex flex-col gap-2 pt-28">
             {menu.map((item) => {
               return (
-                <NavLink
-                  to={item.to}
-                  className={({ isActive }) =>
-                    classNames(
-                      "hover:bg-[#403f3f] px-4 py-3 rounded-lg transition-all duration-200",
-                      isActive
-                        ? "text-white font-medium bg-[#403f3f]"
-                        : "text-icon-color"
-                    )
-                  }
-                  key={uuidv4()}
-                >
-                  {item.title}
-                </NavLink>
+                <div onClick={() => setIsopen(false)}>
+                  <NavLink
+                    to={item.to}
+                    className={({ isActive }) =>
+                      classNames(
+                        "hover:bg-[#403f3f] px-4 py-3 rounded-lg transition-all duration-200 block",
+                        isActive
+                          ? "text-white font-medium bg-[#403f3f]"
+                          : "text-icon-color"
+                      )
+                    }
+                    key={uuidv4()}
+                  >
+                    {item.title}
+                  </NavLink>
+                </div>
               );
             })}
             <div

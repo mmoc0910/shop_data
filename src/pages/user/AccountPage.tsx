@@ -61,11 +61,7 @@ const AccountPage = () => {
     value: toogleReNewPassword,
     handleToogleValue: handleToogleReNewPassword,
   } = useToogleValue();
-  const {
-    handleSubmit,
-    control,
-    setError,
-  } = useForm({
+  const { handleSubmit, control, setError } = useForm({
     resolver: yupResolver(schema),
     mode: "onSubmit",
   });
@@ -99,6 +95,15 @@ const AccountPage = () => {
       }
     }
   };
+  const tooltip = `User/CTV: 
+  Nhận được ${commision}% hoa hồng cho mỗi đơn hàng của người được giới thiệu || 
+  Đại lý Cấp 1: 
+  Chiết khấu [${collab.level1}%] cho mỗi đơn hàng mới ||
+  Đại lý Cấp 2: 
+  Chiết khấu [${collab.level2}%] cho mỗi đơn hàng mới ||
+  Đại lý Cấp 3: 
+  Chiết khấu [${collab.level3}%] cho mỗi đơn hàng mới || Để được nâng cấp lên làm đại lý vui lòng lien hệ trực tiếp admin
+  `;
   return (
     <div className="gap-16 grid grid-cols-5 md:grid-cols-10">
       <div className="space-y-4 col-span-5">
@@ -111,13 +116,14 @@ const AccountPage = () => {
               >
                 <p className="">
                   <span className="font-medium">Mã CTV:</span>{" "}
-                  {introduceCode || ""}
+                  <span className="text-[#3d6dae] font-semibold">
+                    {introduceCode || ""}
+                  </span>
                 </p>
               </Tooltip>
-
               <Tooltip title="copy">
                 <button
-                  className="-translate-y-[2px]"
+                  className="-translate-y-[2px] text-[#3d6dae]"
                   onClick={() =>
                     introduceCode && copyToClipboard(introduceCode)
                   }
@@ -142,31 +148,30 @@ const AccountPage = () => {
           )}
 
           <p className="">
-            <span className="font-medium">Email:</span> {email}
+            <span className="font-medium">Email:</span>{" "}
+            <span className="text-[#3d6dae] font-semibold">{email}</span>
           </p>
           <p className="">
-            <span className="font-medium">Tên đăng nhập:</span> {username}
+            <span className="font-medium">Tên đăng nhập:</span>{" "}
+            <span className="text-[#3d6dae] font-semibold">{username}</span>
           </p>
-          <div className="flex items-center gap-2">
-            <p className="">
-              <span className="font-medium">Loại người dùng:</span>{" "}
-              {level === 0 ? "Công tác  viên" : `Đại lý cấp ${level}`}
+          <div className="">
+            <div className="flex items-center gap-2">
+              <p className="">
+                <span className="font-medium">Loại người dùng:</span>{" "}
+                <span className="text-[#3d6dae] font-semibold">
+                  {level === 0 ? "Công tác  viên" : `Đại lý cấp ${level}`}
+                </span>
+              </p>
+              <Tooltip title={tooltip}>
+                <span className="cursor-pointer text-[#3d6dae]">
+                  <IconQuesionMarkCircle />
+                </span>
+              </Tooltip>
+            </div>
+            <p className="text-secondary20">
+              Để được nâng cấp lên làm đại lý vui lòng liên hệ trực tiếp admin
             </p>
-            <Tooltip
-              title={`User/CTV: 
-Nhận được ${commision}% hoa hồng cho mỗi đơn hàng của người được giới thiệu || 
-Đại lý Cấp 1: 
-Chiết khấu [${collab.level1}%] cho mỗi đơn hàng mới ||
-Đại lý Cấp 2: 
-Chiết khấu [${collab.level2}%] cho mỗi đơn hàng mới ||
-Đại lý Cấp 3: 
-Chiết khấu [${collab.level3}%] cho mỗi đơn hàng mới || Để được nâng cấp lên làm đại lý vui lòng lien hệ trực tiếp admin
-`}
-            >
-              <span className="cursor-pointer">
-                <IconQuesionMarkCircle />
-              </span>
-            </Tooltip>
           </div>
         </div>
         <ChangeProfile />

@@ -315,7 +315,7 @@ const ExtendPlanPage = () => {
           </div>
         </div>
         <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
-          <Table dataSource={listExtendPlanFilter} columns={columns} />
+          <Table dataSource={listExtendPlanFilter} columns={columns} scroll={{x: 1120}} />
         </div>
       </div>
       <Modal

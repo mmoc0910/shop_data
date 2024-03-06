@@ -249,7 +249,7 @@ const AccountAdminPage = () => {
             }
             columns={columns}
             loading={loading}
-            scroll={{ y: 420 }}
+            scroll={{ y: 420, x: 1120 }}
           />
         </div>
       </div>{" "}

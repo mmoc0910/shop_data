@@ -368,7 +368,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
           dataSource={listGistFilter}
           columns={columns}
           loading={loadingTable}
-          //   scroll={{ x: 1500 }}
+            scroll={{ x: 1120 }}
         />
       </div>
     </div>

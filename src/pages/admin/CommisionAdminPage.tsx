@@ -56,8 +56,8 @@ const CommisionAdminPage = () => {
     }
   };
   return (
-    <div className="grid grid-cols-2 gap-20">
-      <div className="space-y-6">
+    <div className="grid grid-cols-2 gap-10 lg:gap-20">
+      <div className="space-y-6 col-span-2 md:col-span-1">
         <Heading>Chính sách CTV</Heading>
         <div className="">
           <p className="mb-5">
@@ -93,7 +93,7 @@ const CommisionAdminPage = () => {
           </form>
         </div>
       </div>
-      <div className="space-y-6">
+      <div className="space-y-6 col-span-2 md:col-span-1">
         <Heading>Chính sách Đại lý</Heading> <Collab />
       </div>
     </div>

@@ -188,16 +188,16 @@ const CashAdminPage = () => {
           <p className="font-primary text-sm">{record.userId?.username}</p>
         ),
       },
-      {
-        title: () => (
-          <p className="font-primary text-sm font-semibold">Email</p>
-        ),
-        dataIndex: "email",
-        key: "email",
-        render: (_: string, record: CashType) => (
-          <p className="font-primary text-sm">{record.userId?.email}</p>
-        ),
-      },
+      // {
+      //   title: () => (
+      //     <p className="font-primary text-sm font-semibold">Email</p>
+      //   ),
+      //   dataIndex: "email",
+      //   key: "email",
+      //   render: (_: string, record: CashType) => (
+      //     <p className="font-primary text-sm">{record.userId?.email}</p>
+      //   ),
+      // },
       {
         title: () => (
           <p className="font-primary text-sm font-semibold">Số điện thoại</p>
@@ -283,7 +283,7 @@ const CashAdminPage = () => {
         //   },
         // ],
         // onFilter: (value: number, record: CashType) => record.status === value,
-        fixed: "right",
+        // fixed: "right",
       },
       {
         title: () => (
@@ -301,7 +301,7 @@ const CashAdminPage = () => {
         ),
         dataIndex: "action",
         key: "action",
-        fixed: "right",
+        // fixed: "right",
         width: 200,
         render: (_: string, record: CashType) => (
           <div className="font-primary text-xs flex gap-2">
@@ -343,7 +343,7 @@ const CashAdminPage = () => {
     <RequireAuthPage rolePage={1}>
       <div className="space-y-6">
         <Heading>Danh sách yêu cầu nạp</Heading>
-        <div className="flex items-center gap-5">
+        <div className="block md:flex space-y-3 md:space-y-0 items-center gap-5">
           <div className="relative flex-1">
             <input
               type="text"

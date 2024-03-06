@@ -257,6 +257,7 @@ const PackPage = () => {
               dataSource={listPlanFilter}
               columns={columns}
               rowSelection={rowSelection}
+              scroll={{ x: 1120 }}
             />
           </div>
         </div>

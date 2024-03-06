@@ -383,17 +383,17 @@ const ServerAdminPage = () => {
         <div className="space-y-5">
           <Heading>Thêm máy chủ</Heading>
           <form
-            className="flex items-center gap-5"
+            className="flex flex-col lg:flex-row items-center gap-5"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <div className="flex-1">
+            <div className="w-full lg:flex-1">
               <Input
                 name="location"
                 placeholder={"Location"}
                 control={control}
               />
             </div>
-            <div className="flex-1">
+            <div className="w-full lg:flex-1">
               <Input
                 name="defaultBandWidth"
                 type="number"
@@ -401,7 +401,7 @@ const ServerAdminPage = () => {
                 control={control}
               />
             </div>
-            <div className="flex-1">
+            <div className="w-full lg:flex-1">
               <Input
                 name="totalBandWidth"
                 type="number"
@@ -409,26 +409,26 @@ const ServerAdminPage = () => {
                 control={control}
               />
             </div>
-            <div className="flex-1">
+            <div className="w-full lg:flex-1">
               <Input name="apiUrl" placeholder={"apiUrl"} control={control} />
             </div>
-            <div className="flex-1">
+            <div className="w-full lg:flex-1">
               <Input
                 name="fingerPrint"
                 placeholder={"fingerPrint"}
                 control={control}
               />
             </div>
-            <Button className="text-white bg-secondary20 px-5" type="submit">
+            <Button className="text-white bg-secondary20 px-5 w-full lg:w-fit" type="submit">
               Thêm máy chủ
             </Button>
           </form>
         </div>
 
         <Heading>Danh sách máy chủ({servers.length})</Heading>
-        <Table dataSource={servers} columns={columns} />
+        <Table dataSource={servers} columns={columns} scroll={{x: 1120}} />
         <Heading>Lịch sử máy chủ</Heading>
-        <Table dataSource={listServerHistory} columns={columnsHistory} />
+        <Table dataSource={listServerHistory} columns={columnsHistory} scroll={{x: 1120}} />
       </div>
       <Modal
         title="Chọn máy chủ"

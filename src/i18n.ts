@@ -92,7 +92,7 @@ i18n.use(LanguageDetector).use(initReactI18next),
           authen: {
             sign_in: "Đăng nhập",
             sign_up: "Đăng ký",
-            Sign_out: "Đăng xuất",
+            sign_out: "Đăng xuất",
           },
           header: {
             home: "Trang chủ",
