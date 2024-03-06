@@ -219,30 +219,33 @@ const OrderPage = () => {
         width: 100,
         render: (_: string, record: GistType) => (
           <p className="font-primary text-sm">
-            {record.keyId.dataLimit / 1000 / 1000 / 1000}GB
+            {record.keyId.dataExpand / 1000 / 1000 / 1000}GB
           </p>
         ),
         sorter: {
-          compare: (a, b) => a.keyId.dataLimit - b.keyId.dataLimit,
+          compare: (a, b) => a.keyId.dataExpand - b.keyId.dataExpand,
           multiple: 1,
         },
       },
-      {
-        title: <p className="font-primary font-semibold">Data Expand</p>,
-        dataIndex: "dataExtend",
-        key: "dataExtend",
-        width: 120,
-        render: (_: string, record: GistType) => (
-          <p className="font-primary text-sm">
-            {(record.keyId.dataExpand - record.keyId.dataLimit) / 1000 / 1000 / 1000}
-            GB
-          </p>
-        ),
-        sorter: {
-          compare: (a, b) => a.keyId.dataLimit - b.keyId.dataLimit,
-          multiple: 1,
-        },
-      },
+      // {
+      //   title: <p className="font-primary font-semibold">Data Expand</p>,
+      //   dataIndex: "dataExtend",
+      //   key: "dataExtend",
+      //   width: 120,
+      //   render: (_: string, record: GistType) => (
+      //     <p className="font-primary text-sm">
+      //       {(record.keyId.dataExpand - record.keyId.dataLimit) /
+      //         1000 /
+      //         1000 /
+      //         1000}
+      //       GB
+      //     </p>
+      //   ),
+      //   sorter: {
+      //     compare: (a, b) => a.keyId.dataLimit - b.keyId.dataLimit,
+      //     multiple: 1,
+      //   },
+      // },
       {
         title: <p className="font-primary font-semibold"> eDate Expand</p>,
         dataIndex: "endExpandDate",
@@ -265,8 +268,9 @@ const OrderPage = () => {
           return (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Tooltip title="copy for Android, Windows, MacOS, Linux">
+                <Tooltip title="copy">
                   <button
+                    className="text-secondary20"
                     onClick={() =>
                       copyToClipboard(
                         `${record.keyId.awsId?.fileName.replace(
@@ -285,11 +289,11 @@ const OrderPage = () => {
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <Tooltip title="copy for Iphone">
+                <Tooltip title="copy">
                   <button
                     onClick={() => copyToClipboard(`${key}${record.extension}`)}
                   >
-                    <IosXML />
+                    <AndroidXML />
                   </button>
                 </Tooltip>
                 <p className="font-primary text-sm w-[350px] line-clamp-1">
@@ -412,24 +416,23 @@ const OrderPage = () => {
     <RequireAuthPage rolePage={2}>
       {loading ? <Loading /> : null}
       <p className="">
-        Vui lòng lấy key tương ứng với thiết bị của bạn và dán vào phần mềm theo
-        hướng dẫn{" "}
+        Vui lòng lấy key bên dưới của bạn và dán vào phần mềm theo hướng dẫn{" "}
         <Link to={""} className="text-primary underline decoration-primary">
           hướng dẫn
         </Link>
         :
       </p>
       <p className="flex items-center gap-2">
-        <span>
-          <IosXML />
+        <span className="text-secondary20">
+          <AndroidXML />
         </span>
-        : Link kết nối cho iphone
+        : Link kết nối chính
       </p>
       <p className="mb-5 flex items-center gap-2">
         <span>
           <AndroidXML />
         </span>
-        : Link kết nối cho các thiết bị khác (Android, Windows, MACOS, Linux)
+        : Link kết nối phụ khi link chính bị chết
       </p>
       <div className="block md:flex space-y-3 md:space-y-0 items-center gap-5 pb-5">
         <div className="relative flex-1">
@@ -633,10 +636,10 @@ export const IosXML = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 448 512"
+      viewBox="0 0 576 512"
       className="w-4 h-4"
     >
-      <path d="M400 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zM127 384.5c-5.5 9.6-17.8 12.8-27.3 7.3-9.6-5.5-12.8-17.8-7.3-27.3l14.3-24.7c16.1-4.9 29.3-1.1 39.6 11.4L127 384.5zm138.9-53.9H84c-11 0-20-9-20-20s9-20 20-20h51l65.4-113.2-20.5-35.4c-5.5-9.6-2.2-21.8 7.3-27.3 9.6-5.5 21.8-2.2 27.3 7.3l8.9 15.4 8.9-15.4c5.5-9.6 17.8-12.8 27.3-7.3 9.6 5.5 12.8 17.8 7.3 27.3l-85.8 148.6h62.1c20.2 0 31.5 23.7 22.7 40zm98.1 0h-29l19.6 33.9c5.5 9.6 2.2 21.8-7.3 27.3-9.6 5.5-21.8 2.2-27.3-7.3-32.9-56.9-57.5-99.7-74-128.1-16.7-29-4.8-58 7.1-67.8 13.1 22.7 32.7 56.7 58.9 102h52c11 0 20 9 20 20 0 11.1-9 20-20 20z" />
+      <path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z" />
     </svg>
   );
 };
@@ -645,10 +648,10 @@ export const AndroidXML = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 576 512"
-      className="w-4 h-4"
+      viewBox="0 0 448 512"
+      className="w-4 h-4 fill-current"
     >
-      <path d="M420.6 301.9a24 24 0 1 1 24-24 24 24 0 0 1 -24 24m-265.1 0a24 24 0 1 1 24-24 24 24 0 0 1 -24 24m273.7-144.5 47.9-83a10 10 0 1 0 -17.3-10h0l-48.5 84.1a301.3 301.3 0 0 0 -246.6 0L116.2 64.5a10 10 0 1 0 -17.3 10h0l47.9 83C64.5 202.2 8.2 285.6 0 384H576c-8.2-98.5-64.5-181.8-146.9-226.6" />
+      <path d="M384 336H192c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16l140.1 0L400 115.9V320c0 8.8-7.2 16-16 16zM192 384H384c35.3 0 64-28.7 64-64V115.9c0-12.7-5.1-24.9-14.1-33.9L366.1 14.1c-9-9-21.2-14.1-33.9-14.1H192c-35.3 0-64 28.7-64 64V320c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H256c35.3 0 64-28.7 64-64V416H272v32c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192c0-8.8 7.2-16 16-16H96V128H64z" />
     </svg>
   );
 };

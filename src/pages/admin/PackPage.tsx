@@ -11,6 +11,9 @@ import Swal from "sweetalert2";
 import Heading from "../../components/common/Heading";
 import { DAY_FORMAT } from "../../constants";
 import dayjs from "dayjs";
+import { Check } from "../../components/home/PricingBox";
+import { v4 as uuidv4 } from "uuid";
+import { VND } from "../../utils/formatPrice";
 
 const PackPage = () => {
   const [plans, setPlans] = useState<PlanType[]>([]);
@@ -161,6 +164,22 @@ const PackPage = () => {
         ),
         sorter: (a, b) => a.bandWidth - b.bandWidth,
       },
+      // {
+      //   title: () => (
+      //     <p className="font-primary text-base font-semibold">Trạng thái</p>
+      //   ),
+      //   dataIndex: "status",
+      //   key: "status",
+      //   render: (status: 0 | 1) => (
+      //     <div className="font-primary text-sm">
+      //       {status === 1 ? (
+      //         <Tag color="green">Hoạt động</Tag>
+      //       ) : (
+      //         <Tag color="red">Ngừng hoạt động</Tag>
+      //       )}
+      //     </div>
+      //   ),
+      // },
       {
         title: () => (
           <p className="font-primary text-base font-semibold">Ngày tạo</p>
@@ -178,12 +197,14 @@ const PackPage = () => {
         key: "action",
         render: (_: string, record: PlanType) => (
           <div className="flex gap-4">
-            <button
-              className="px-4 py-2 rounded-lg bg-error font-medium text-white font-primary text-xs"
-              onClick={() => handleRemovePlan(record._id)}
-            >
-              Xóa
-            </button>
+            {record.status === 1 ? (
+              <button
+                className="px-4 py-2 rounded-lg bg-error font-medium text-white font-primary text-xs"
+                onClick={() => handleRemovePlan(record._id)}
+              >
+                Xóa
+              </button>
+            ) : null}
           </div>
         ),
       },
@@ -215,7 +236,7 @@ const PackPage = () => {
             Thêm gói cước
           </Button>
         </div>
-        <div className="space-y-6">
+        <div className="space-y-4">
           <Heading>Danh sách gói cước</Heading>{" "}
           <div className="flex items-center gap-5 pb-5">
             <div className="relative flex-1">
@@ -261,8 +282,48 @@ const PackPage = () => {
             />
           </div>
         </div>
+        <div className="space-y-6 mt-10">
+          <Heading>Gói cước hiển thị trang chủ</Heading>
+          <div className="grid grid-cols-3 gap-10">
+            {plans.map((item) =>
+              item.display === 1 ? (
+                <PricingItem key={uuidv4()} plan={item} />
+              ) : null
+            )}
+          </div>
+        </div>
       </div>
     </RequireAuthPage>
+  );
+};
+
+export const PricingItem = ({ plan }: { plan: PlanType }) => {
+  const { name, price, description, type, bandWidth } = plan;
+  return (
+    <>
+      <div className="col-span-1 shadow-xl flex flex-col items-center rounded-2xl overflow-hidden">
+        <h4 className="font-medium text-primary bg-primary bg-opacity-5 px-3 py-2 rounded-br-lg rounded-bl-lg">
+          {name}
+        </h4>
+        <div className="pb-10 pt-10">
+          <p className="text-primary text-4xl font-medium mb-2">
+            {VND.format(price)}
+            <span className="text-xl">VND/{type}</span>
+          </p>
+          <p className="font-semibold text-center text-primary text-3xl mt-3">
+            {bandWidth}GB
+          </p>
+        </div>
+        <div className="w-[80%] mx-auto space-y-5 pb-16 mb-auto">
+          {description.map((desc) => (
+            <Check content={desc} key={uuidv4()} />
+          ))}
+        </div>
+        <button className="flex items-center justify-center bg-primary w-full py-4 flex-col gap-2">
+          <p className="font-medium text-white text-xl">Đăng ký mua</p>
+        </button>
+      </div>
+    </>
   );
 };
 

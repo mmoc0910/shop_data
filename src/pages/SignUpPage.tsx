@@ -12,7 +12,7 @@ import { Input } from "../components/input";
 import { api } from "../api";
 import { AuthState } from "../store/auth/authSlice";
 import { toast } from "react-toastify";
-import { countries, purposes } from "../constants";
+import { countries, purposes, regexUserName } from "../constants";
 import { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/configureStore";
@@ -33,7 +33,7 @@ const SignUpPage = () => {
     () =>
       yup
         .object({
-          username: yup.string().required(t("form.username.error.required")),
+          username: yup.string().required(t("form.username.error.required")).matches(regexUserName, t("form.username.error.reg")),
           email: yup
             .string()
             .required(t("form.email.error.required"))

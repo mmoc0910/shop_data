@@ -87,7 +87,7 @@ const ExtendPlanPage = () => {
   }, []);
   const fetchData = async () => {
     try {
-      const result = await api.get<ExtendPlanType[]>("/extend-plans");
+      const result = await api.get<ExtendPlanType[]>("/extend-plans?status=1");
       setListExtendPlan(result.data);
     } catch (error) {
       console.log("error - ", error);

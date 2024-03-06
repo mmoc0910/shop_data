@@ -181,7 +181,7 @@ const InvitePage = () => {
     setInputValue(value);
   };
   const tolltip = `User/CTV: 
-  Nhận được ${commision}% hoa hồng cho mỗi đơn hàng của người được giới thiệu || 
+  Nhận được ${commision?.value}% hoa hồng cho mỗi đơn hàng của người được giới thiệu || 
   Đại lý Cấp 1: 
   Chiết khấu [${collab.level1}%] cho mỗi đơn hàng mới ||
   Đại lý Cấp 2: 
@@ -191,7 +191,7 @@ const InvitePage = () => {
   `;
   return (
     <RequireAuthPage rolePage={2}>
-      <div className="space-y-10">
+      <div className="space-y-8">
         <div className="grid grid-cols-2 md:grid-cols-4 items-start rounded-xl border-2 border-[#eeeeed]">
           <div className="flex-1 px-5 py-5 md:py-7 flex flex-col items-center rounded-xl space-y-2 md:space-y-4">
             <p className="font-medium text-xl lg:text-2xl xl:text-4xl">
@@ -245,6 +245,23 @@ const InvitePage = () => {
             </div>
           </div>
         </div>
+        <div className="font-medium">
+          <p>
+            User/CTV: Nhận được {commision?.value}% hoa hồng cho mỗi đơn hàng của người được giới thiệu
+          </p>
+          <p>
+            Đại lý Cấp 1: Chiết khấu [{collab.level1}%] cho mỗi đơn hàng mới
+          </p>
+          <p>
+            Đại lý Cấp 2: Chiết khấu [{collab.level2}%] cho mỗi đơn hàng mới
+          </p>
+          <p>
+            Đại lý Cấp 3: Chiết khấu [{collab.level3}%] cho mỗi đơn hàng mới
+          </p>
+          <p>
+            Để được nâng cấp lên làm đại lý vui lòng lien hệ trực tiếp admin
+          </p>
+        </div>
         <div className="space-y-4">
           <Heading>Lịch sử nhận hoa hồng</Heading>
           <div className="block md:flex space-y-3 md:space-y-0 items-center gap-5 mb-5">
@@ -290,7 +307,11 @@ const InvitePage = () => {
             </div>
           </div>
           <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
-            <Table dataSource={listRoseHistoryFilter} columns={columns} scroll={{x: 1180}} />
+            <Table
+              dataSource={listRoseHistoryFilter}
+              columns={columns}
+              scroll={{ x: 1180 }}
+            />
           </div>
         </div>
       </div>

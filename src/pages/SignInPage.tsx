@@ -17,12 +17,13 @@ import { useEffect, useMemo } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+import { regexUserName } from "../constants";
 
 const SignInPage = () => {
   const { t, i18n } = useTranslation();
   const schema = useMemo(() => yup
   .object({
-    account: yup.string().required(t("form.account.error.required")),
+    account: yup.string().required(t("form.account.error.required")).matches(regexUserName, t("form.username.error.reg")),
     password: yup.string().required(t("form.password.error.required")),
     // .min(8, "Minimum of 8 characters"),
   })

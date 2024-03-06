@@ -44,7 +44,10 @@ i18n.use(LanguageDetector).use(initReactI18next),
             username: {
               label: "UserName*",
               placeholder: "Enter your username",
-              error: { required: "This field is required" },
+              error: {
+                required: "This field is required",
+                reg: "Username is consecutive letters, without accents",
+              },
             },
             email: {
               label: "Email*",
@@ -123,7 +126,10 @@ i18n.use(LanguageDetector).use(initReactI18next),
             username: {
               label: "Tên đăng nhập*",
               placeholder: "NHập tên đăng nhập của bạn",
-              error: { required: "Tên đăng nhập không được để trống" },
+              error: {
+                required: "Tên đăng nhập không được để trống",
+                reg: "Ký tự liền nhau, không dấu",
+              },
             },
             email: {
               label: "Email*",
@@ -153,7 +159,8 @@ i18n.use(LanguageDetector).use(initReactI18next),
               placeholder: "Chọn mục đích sử dụng",
               error: { required: "Mục đích sử dụng không được để trống" },
             },
-          },menu_user: {
+          },
+          menu_user: {
             dashboard: "Dashboard",
             recharge: "Nạp tiền",
             pack_of_data: "Gói cước",

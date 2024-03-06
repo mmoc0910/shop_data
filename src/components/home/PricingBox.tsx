@@ -33,9 +33,10 @@ const PricingBox = () => {
       <div className="py-10 lg:py-20" id="pricing">
         <Container className="flex flex-col items-center">
           <div className="w-full md:w-3/5 space-y-5">
-            <h2 className="font-medium text-2xl text-center">
+            <h2 className="font-medium text-3xl text-center">
               Trải nghiệm tuyệt vời, giá bất ngờ
             </h2>
+            <p className="text-center text-secondary20 font-medium text-xl">Đăng ký để nhận gói FREE TRIAL 03 DAYS</p>
             <p className="text-center text-gray-400">
               Đừng lãng phí thời gian quý báu của bạn để chờ đợi. Mở ngay dịch
               vụ chuyển tiếp mạng toàn cầu và truy cập Internet toàn cầu mọi

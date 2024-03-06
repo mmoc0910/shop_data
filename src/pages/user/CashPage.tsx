@@ -42,7 +42,7 @@ const CashPage = () => {
   const fetchData = async () => {
     try {
       const result = await api.get<CashType[]>(`/cashs?userId=${_id}`);
-      setListCash(result.data.filter((item) => item.status !== 2));
+      setListCash(result.data);
     } catch (error) {
       console.log("error - ", error);
       toast.error(messages.error);
@@ -192,7 +192,16 @@ const CashPage = () => {
   return (
     <RequireAuthPage rolePage={2}>
       <div className="space-y-4 md:space-y-6">
-        <Heading>Lịch sử nạp</Heading>
+        <Heading>
+          Lịch sử nạp:{" "}
+          {VND.format(
+            listCash
+              .filter((item) => item.status === 1)
+              .map((item) => item.money)
+              .reduce((prev, cur) => (prev += cur), 0)
+          )}
+          VND
+        </Heading>
         <div className="flex items-center justify-end gap-5">
           <div className="flex items-center gap-5">
             <DatePicker
@@ -211,7 +220,7 @@ const CashPage = () => {
           <Table
             dataSource={listCashFilter}
             columns={columns}
-            scroll={{ x: 1180 }}
+            scroll={{ x: 1300 }}
           />
         </div>
       </div>

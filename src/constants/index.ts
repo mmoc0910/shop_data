@@ -16,6 +16,8 @@ export const purposes = [
   { id: 4, title: "Others" },
 ];
 
+export const regexUserName = /^[^\s]+$/
+
 export const linkGist = import.meta.env.VITE_LINK_GIST;
 
 export const DAY_FORMAT = (date: Date) => dayjs(date).format('DD-MM-YYYY HH:mm')
