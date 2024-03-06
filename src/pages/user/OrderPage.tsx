@@ -234,7 +234,7 @@ const OrderPage = () => {
         width: 120,
         render: (_: string, record: GistType) => (
           <p className="font-primary text-sm">
-            {record.keyId.dataExpand / 1000 / 1000 / 1000}
+            {(record.keyId.dataExpand - record.keyId.dataLimit) / 1000 / 1000 / 1000}
             GB
           </p>
         ),
@@ -244,7 +244,7 @@ const OrderPage = () => {
         },
       },
       {
-        title: <p className="font-primary font-semibold">endExpand Date</p>,
+        title: <p className="font-primary font-semibold"> eDate Expand</p>,
         dataIndex: "endExpandDate",
         key: "endExpandDate",
         width: 120,
