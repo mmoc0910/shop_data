@@ -103,7 +103,7 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
           ))}
         </div>
         <button
-          className="flex items-center justify-center bg-primary w-full py-4 flex-col gap-2"
+          className="items-center justify-center bg-primary w-full py-4 flex-col gap-2 hidden"
           onClick={async () => {
             if (_id) {
               try {
@@ -150,10 +150,6 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
           }}
         >
           <p className="font-medium text-white text-xl">Đăng ký mua</p>
-          {/* <p className="text-3xl font-medium text-white">
-          {VND.format(price)}
-          <span className="text-xl">VND/{type}</span>
-        </p> */}
         </button>
       </div>
       {loading ? <Loading /> : null}
