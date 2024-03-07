@@ -75,7 +75,7 @@ const Header = () => {
                 to={role === 2 ? "/user/dashboard" : "admin/dashboard"}
                 className="flex gap-3 items-center"
               >
-                <div className="text-icon-color">
+                <div className="text-primary">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -91,7 +91,7 @@ const Header = () => {
                 </div>
                 <div className="hidden md:block">
                   {/* <p>Xin chào</p> */}
-                  <p className="font-medium">{username || email}</p>
+                  <p className="font-medium text-primary">{username || email}</p>
                 </div>
               </Link>
             )}

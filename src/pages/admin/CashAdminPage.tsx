@@ -22,6 +22,7 @@ import RequireAuthPage from "../../components/common/RequireAuthPage";
 import Swal from "sweetalert2";
 import axios from "axios";
 import dayjs from "dayjs";
+import { Link } from "react-router-dom";
 
 const CashAdminPage = () => {
   const [listCash, setListCash] = useState<CashType[]>([]);
@@ -185,27 +186,7 @@ const CashAdminPage = () => {
         dataIndex: "username",
         key: "username",
         render: (_: string, record: CashType) => (
-          <p className="font-primary text-sm">{record.userId?.username}</p>
-        ),
-      },
-      // {
-      //   title: () => (
-      //     <p className="font-primary text-sm font-semibold">Email</p>
-      //   ),
-      //   dataIndex: "email",
-      //   key: "email",
-      //   render: (_: string, record: CashType) => (
-      //     <p className="font-primary text-sm">{record.userId?.email}</p>
-      //   ),
-      // },
-      {
-        title: () => (
-          <p className="font-primary text-sm font-semibold">Số điện thoại</p>
-        ),
-        dataIndex: "phone",
-        key: "phone",
-        render: (_: string, record: CashType) => (
-          <p className="font-primary text-sm">{record.userId?.phone}</p>
+          <Link to={`/admin/account/${record.userId._id}`} className="font-primary text-sm text-primary font-medium">{record.userId?.username}</Link>
         ),
       },
       {

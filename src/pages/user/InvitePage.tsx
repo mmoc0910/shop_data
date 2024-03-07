@@ -247,19 +247,19 @@ const InvitePage = () => {
         </div>
         <div className="font-medium">
           <p>
-            User/CTV: Nhận được {commision?.value}% hoa hồng cho mỗi đơn hàng của người được giới thiệu
+            User/CTV: Nhận được <span className="text-secondary20 font-medium">[{commision?.value}%]</span> hoa hồng cho mỗi đơn hàng của người được giới thiệu.
           </p>
           <p>
-            Đại lý Cấp 1: Chiết khấu [{collab.level1}%] cho mỗi đơn hàng mới
+            Đại lý Cấp 1: Chiết khấu <span className="text-secondary20 font-medium">[{collab.level1}%]</span> cho mỗi đơn hàng mới.
           </p>
           <p>
-            Đại lý Cấp 2: Chiết khấu [{collab.level2}%] cho mỗi đơn hàng mới
+            Đại lý Cấp 2: Chiết khấu <span className="text-secondary20 font-medium">[{collab.level2}%]</span> cho mỗi đơn hàng mới.
           </p>
           <p>
-            Đại lý Cấp 3: Chiết khấu [{collab.level3}%] cho mỗi đơn hàng mới
+            Đại lý Cấp 3: Chiết khấu <span className="text-secondary20 font-medium">[{collab.level3}%]</span> cho mỗi đơn hàng mới.
           </p>
-          <p>
-            Để được nâng cấp lên làm đại lý vui lòng lien hệ trực tiếp admin
+          <p className="text-secondary20 text-lg font-medium">
+            Để được nâng cấp lên làm đại lý vui lòng lien hệ trực tiếp admin.
           </p>
         </div>
         <div className="space-y-4">

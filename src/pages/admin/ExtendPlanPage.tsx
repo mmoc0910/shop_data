@@ -31,6 +31,9 @@ const schema = yup
 const ExtendPlanPage = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [listExtendPlan, setListExtendPlan] = useState<ExtendPlanType[]>([]);
+  const [listExtendPlanDelete, setListExtendPlanDelete] = useState<
+    ExtendPlanType[]
+  >([]);
   const [selectRow, setSelectRow] = useState<ExtendPlanType | undefined>();
   const [inputValue, setInputValue] = useState<string>("");
   const listExtendPlanFilter = inputValue
@@ -87,8 +90,9 @@ const ExtendPlanPage = () => {
   }, []);
   const fetchData = async () => {
     try {
-      const result = await api.get<ExtendPlanType[]>("/extend-plans?status=1");
-      setListExtendPlan(result.data);
+      const result = await api.get<ExtendPlanType[]>("/extend-plans");
+      setListExtendPlan(result.data.filter((item) => item.status === 1));
+      setListExtendPlanDelete(result.data.filter((item) => item.status === 0));
     } catch (error) {
       console.log("error - ", error);
       toast.error(messages.error);
@@ -146,6 +150,14 @@ const ExtendPlanPage = () => {
         render: (text: string) => (
           <p className="font-primary text-sm">{text}</p>
         ),
+      },
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">Lượt mua</p>
+        ),
+        dataIndex: "name",
+        key: "name",
+        render: () => <p className="font-primary text-sm">{1}</p>,
       },
       {
         title: () => (
@@ -267,6 +279,131 @@ const ExtendPlanPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
+  const columnDelete: TableColumnsType<ExtendPlanType> = useMemo(
+    () => [
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">STT</p>
+        ),
+        dataIndex: "index",
+        render: (_text: string, _record: ExtendPlanType, index: number) => (
+          <p className="font-primary text-sm">{index + 1}</p>
+        ),
+      },
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">Tên gói</p>
+        ),
+        dataIndex: "name",
+        key: "name",
+        render: (text: string) => (
+          <p className="font-primary text-sm">{text}</p>
+        ),
+      },
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">Lượt mua</p>
+        ),
+        dataIndex: "name",
+        key: "name",
+        render: () => <p className="font-primary text-sm">{1}</p>,
+      },
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">Giá</p>
+        ),
+        dataIndex: "price",
+        key: "price",
+        render: (text: number) => (
+          <p className="font-primary text-sm">{VND.format(text)}VND</p>
+        ),
+        sorter: {
+          compare: (a, b) => a.price - b.price,
+          multiple: 1,
+        },
+      },
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">{`<=`}4 tháng</p>
+        ),
+        dataIndex: "level1",
+        key: "level1",
+        render: (text: number) => (
+          <p className="font-primary text-sm">{text}%</p>
+        ),
+        sorter: {
+          compare: (a, b) => a.level1 - b.level1,
+          multiple: 1,
+        },
+      },
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">5-8 tháng</p>
+        ),
+        dataIndex: "level2",
+        key: "level2",
+        render: (text: number) => (
+          <p className="font-primary text-sm">{text}%</p>
+        ),
+        sorter: {
+          compare: (a, b) => a.level2 - b.level2,
+          multiple: 1,
+        },
+      },
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">{`>=`}9 tháng</p>
+        ),
+        dataIndex: "level3",
+        key: "level3",
+        render: (text: number) => (
+          <p className="font-primary text-sm">{text}%</p>
+        ),
+        sorter: {
+          compare: (a, b) => a.level3 - b.level3,
+          multiple: 1,
+        },
+      },
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">Băng thông</p>
+        ),
+        dataIndex: "bandWidth",
+        key: "bandWidth",
+        render: (text: string) => (
+          <p className="font-primary text-sm">{text}GB</p>
+        ),
+        sorter: {
+          compare: (a, b) => a.bandWidth - b.bandWidth,
+          multiple: 2,
+        },
+      },
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">Ngày tạo</p>
+        ),
+        dataIndex: "createdAt",
+        key: "createdAt",
+        render: (text: Date) => (
+          <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+        ),
+        sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
+      },
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">Ngày xóa</p>
+        ),
+        dataIndex: "updatedAt",
+        key: "updatedAt",
+        render: (text: Date) => (
+          <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+        ),
+        sorter: (a, b) => dayjs(a.updatedAt).unix() - dayjs(b.updatedAt).unix(),
+      },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -276,46 +413,62 @@ const ExtendPlanPage = () => {
   return (
     <RequireAuthPage rolePage={1}>
       <div className="space-y-6">
-        <div className="flex justify-between">
-          <Heading>Danh sách gói mở rộng</Heading>
-          <div onClick={showModal}>
-            <Button className="bg-primary text-white font-semibold px-5">
-              Thêm mới
-            </Button>
+        <div className="space-y-6">
+          <div className="flex justify-between">
+            <Heading>Danh sách gói mở rộng</Heading>
+            <div onClick={showModal}>
+              <Button className="bg-primary text-white font-semibold px-5">
+                Thêm mới
+              </Button>
+            </div>
           </div>
-        </div>
-        <div className="flex items-center gap-5">
-          <div className="relative flex-1">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={handleChange}
-              className="focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock"
-              placeholder="Tìm kiếm"
-            />
-            {inputValue.length > 0 ? (
-              <span
-                className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2"
-                onClick={() => setInputValue("")}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="w-5 h-5 text-icon-color"
+          <div className="flex items-center gap-5">
+            <div className="relative flex-1">
+              <input
+                type="text"
+                value={inputValue}
+                onChange={handleChange}
+                className="focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock"
+                placeholder="Tìm kiếm"
+              />
+              {inputValue.length > 0 ? (
+                <span
+                  className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2"
+                  onClick={() => setInputValue("")}
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </span>
-            ) : null}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="w-5 h-5 text-icon-color"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </span>
+              ) : null}
+            </div>
+          </div>
+          <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
+            <Table
+              dataSource={listExtendPlanFilter}
+              columns={columns}
+              scroll={{ x: 1120 }}
+            />
           </div>
         </div>
-        <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
-          <Table dataSource={listExtendPlanFilter} columns={columns} scroll={{x: 1120}} />
+        <div className="space-y-6">
+          <Heading>Lịch sử gói mở rộng</Heading>
+          <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
+            <Table
+              dataSource={listExtendPlanDelete}
+              columns={columnDelete}
+              scroll={{ x: 1120 }}
+            />
+          </div>
         </div>
       </div>
       <Modal

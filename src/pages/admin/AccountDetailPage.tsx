@@ -45,7 +45,7 @@ const AccountDetailPage = () => {
       <div className="space-y-4">
         <Heading>Chi tiết người dùng</Heading>
         {user ? (
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             <p>
               Tên người dùng:{" "}
               <span className="font-medium">{user.username}</span>
@@ -321,7 +321,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
   return (
     <div>
       <Heading className="mb-4">Danh sách key đã mua</Heading>
-      <div className="flex items-center gap-5 pb-5">
+      <div className="block md:flex space-y-3 md:space-y-0 items-center gap-5 mb-5">
         <div className="relative flex-1">
           <input
             type="text"

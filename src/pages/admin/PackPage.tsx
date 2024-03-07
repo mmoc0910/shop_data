@@ -17,6 +17,7 @@ import { VND } from "../../utils/formatPrice";
 
 const PackPage = () => {
   const [plans, setPlans] = useState<PlanType[]>([]);
+  const [listPlanHistory, setListPlanHistory] = useState<PlanType[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [initialSelectedRowKeys, setInitialSelectedRowKeys] = useState<
     React.Key[]
@@ -40,6 +41,7 @@ const PackPage = () => {
           .filter((item) => item.status === 1)
           .map((item) => ({ ...item, key: item._id }))
       );
+      setListPlanHistory(result.data.filter((item) => item.status === 0));
       setSelectedRowKeys(
         result.data
           .filter((item) => item.status === 1 && item.display === 1)
@@ -134,6 +136,14 @@ const PackPage = () => {
       },
       {
         title: () => (
+          <p className="font-primary text-base font-semibold">Lượt mua</p>
+        ),
+        dataIndex: "name",
+        key: "name",
+        render: () => <p className="font-primary text-sm">{1}</p>,
+      },
+      {
+        title: () => (
           <p className="font-primary text-base font-semibold">Chu kỳ</p>
         ),
         dataIndex: "type",
@@ -212,6 +222,99 @@ const PackPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
+  const columnHistory: TableColumnsType<PlanType> = useMemo(
+    () => [
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">STT</p>
+        ),
+        dataIndex: "index",
+        render: (_text: string, _record: PlanType, index: number) => (
+          <p className="font-primary text-sm">{index + 1}</p>
+        ),
+      },
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">Tên gói</p>
+        ),
+        dataIndex: "name",
+        key: "name",
+        render: (text: string, record: PlanType) => (
+          <Link
+            to={`/admin/pack/edit/${record._id}`}
+            className="font-primary text-sm text-primary font-medium"
+          >
+            {text}
+          </Link>
+        ),
+      },
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">Lượt mua</p>
+        ),
+        dataIndex: "name",
+        key: "name",
+        render: () => <p className="font-primary text-sm">{1}</p>,
+      },
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">Chu kỳ</p>
+        ),
+        dataIndex: "type",
+        key: "type",
+        render: (text: string) => (
+          <p className="font-primary text-sm">{text}</p>
+        ),
+      },
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">Ngày</p>
+        ),
+        dataIndex: "day",
+        key: "day",
+        render: (text: string) => (
+          <p className="font-primary text-sm">{text} ngày</p>
+        ),
+        sorter: (a, b) => a.day - b.day,
+      },
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">Bandwidth</p>
+        ),
+        dataIndex: "bandWidth",
+        key: "bandWidth",
+        render: (text: string) => (
+          <p className="font-primary text-sm">{text}GB</p>
+        ),
+        sorter: (a, b) => a.bandWidth - b.bandWidth,
+      },
+      {
+        title: () => (
+          <p className="font-primary text-base font-semibold">Ngày tạo</p>
+        ),
+        dataIndex: "createdAt",
+        key: "createdAt",
+        render: (text: Date) => (
+          <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+        ),
+        sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
+      },{
+        title: () => (
+          <p className="font-primary text-base font-semibold">Ngày xóa</p>
+        ),
+        dataIndex: "updatedAt",
+        key: "updatedAt",
+        render: (text: Date, record: PlanType) =>
+          record.status === 0 ? (
+            <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+          ) : null,
+        sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
+      },
+      
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     setSelectedRowKeys(newSelectedRowKeys);
@@ -228,7 +331,17 @@ const PackPage = () => {
   return (
     <RequireAuthPage rolePage={1}>
       <div className="pb-10">
-        <div className="mb-10 flex gap-10 justify-end">
+        <div className="space-y-6 mt-10 hidden lg:block">
+          <Heading>Gói cước hiển thị trang chủ</Heading>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {plans.map((item) =>
+              item.display === 1 ? (
+                <PricingItem key={uuidv4()} plan={item} />
+              ) : null
+            )}
+          </div>
+        </div>
+        <div className="my-10 flex gap-10 justify-end">
           <Button
             className="px-5 text-white bg-secondary"
             href="/admin/pack/add"
@@ -282,14 +395,14 @@ const PackPage = () => {
             />
           </div>
         </div>
-        <div className="space-y-6 mt-10">
-          <Heading>Gói cước hiển thị trang chủ</Heading>
-          <div className="grid grid-cols-3 gap-10">
-            {plans.map((item) =>
-              item.display === 1 ? (
-                <PricingItem key={uuidv4()} plan={item} />
-              ) : null
-            )}
+        <div className="space-y-4 mt-10">
+          <Heading>Lịch sử gói cước</Heading>{" "}
+          <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
+            <Table
+              dataSource={listPlanHistory}
+              columns={columnHistory}
+              scroll={{ x: 1120 }}
+            />
           </div>
         </div>
       </div>

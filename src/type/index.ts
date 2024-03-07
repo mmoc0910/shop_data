@@ -156,6 +156,7 @@ export type ExtendPlanType = {
   level3: number;
   createdAt: Date;
   updatedAt: Date;
+  status: 0 | 1;
   __v: 0;
 };
 

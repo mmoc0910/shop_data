@@ -7,7 +7,7 @@ export default {
         primary: ["Epilogue", "sans-serif;"],
       },
       colors: {
-        primary: "#1DC071",
+        primary: "#4d79d8",
         primary20: "#4ACD8D",
         primary40: "#77D9AA",
         primary60: "#A5E6C6",

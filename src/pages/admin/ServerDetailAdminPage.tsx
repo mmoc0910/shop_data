@@ -155,7 +155,7 @@ const ServerDetailAdminPage = () => {
           <>
             <div className="space-y-7">
               <Heading>Server</Heading>
-              <div className="grid grid-cols-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 <div className="col-span-1 border border-gray-200 rounded-lg p-3 space-y-1">
                   <div className="font-medium text-gray-500">Server name</div>
                   <div>
@@ -248,16 +248,16 @@ const ServerDetailAdminPage = () => {
             </div>
             <div className="space-y-7">
               <Heading>Keys</Heading>
-              <div className="space-y-5">
+              <div className="space-y-5 w-full overflow-x-scroll">
                 {/* <CreateNewKeyForm
                 handleAddNewKey={() =>
                   handleAddNewKey(serverDetail.apiUrl, serverDetail.fingerPrint)
                 }
               /> */}
-                <div className="grid grid-cols-2">
+                <div className="grid grid-cols-2 w-[1180px] lg:w-full">
                   <div className="col-span-1 pb-3 flex">
                     <div className="px-4 font-semibold">#</div>
-                    <div className="flex-1 px-4 font-semibold">Name</div>
+                    <div className="flex-1 px-4 font-semibold">OrderID</div>
                     <div className="flex-1 px-4 font-semibold">Email</div>
                     <div className="px-4 font-semibold">Usage</div>
                   </div>
@@ -321,12 +321,12 @@ const ServerDetailAdminPage = () => {
                               <Tag color="red">Inactive</Tag>
                             )}
                           </div>
-                          <div className="px-4 flex items-center gap-4 flex-1">
+                          <div className="px-4 flex items-center gap-2 flex-1">
                             {item.status ? (
                               <>
                                 {" "}
                                 <button
-                                  className="bg-secondary20 text-white rounded-lg p-3 font-semibold"
+                                  className="bg-secondary20 text-white rounded-lg p-2 font-medium text-xs"
                                   onClick={() => {
                                     setSelectRow(item._id);
                                     showModal();
@@ -335,7 +335,7 @@ const ServerDetailAdminPage = () => {
                                   Migrate key
                                 </button>
                                 <button
-                                  className="bg-secondary20 text-white rounded-lg p-3 font-semibold"
+                                  className="bg-secondary20 text-white rounded-lg p-2 font-medium text-xs"
                                   onClick={async () => {
                                     try {
                                       const { isConfirmed } = await Swal.fire({

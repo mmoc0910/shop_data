@@ -5,9 +5,9 @@ const Logo = ({ className = "" }: { className?: string }) => {
   return (
     <Link
       to={"/"}
-      className={classNames("font-semibold text-lg xl:text-2xl text-primary", className)}
+      className={classNames("font-semibold text-lg xl:text-2xl text-primary uppercase", className)}
     >
-      Logo
+      vpncn2
     </Link>
   );
 };

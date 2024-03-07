@@ -137,7 +137,6 @@ const LayoutAdmin = () => {
             </div>
           </div>
         </div>
-
         <div className="py-14">
           <Outlet></Outlet>
         </div>
