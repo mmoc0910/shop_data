@@ -24,7 +24,7 @@ import dayjs from "dayjs";
 import Heading from "../../components/common/Heading";
 import UpdateExtension from "../../components/user/UpdateExtension";
 import { copyToClipboard } from "../../utils/copyToClipboard";
-import { AndroidXML, IosXML } from "../user/OrderPage";
+import { AndroidXML } from "../user/OrderPage";
 
 const AccountDetailPage = () => {
   const { accountId } = useParams();
@@ -242,13 +242,15 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
         title: <p className="font-primary font-semibold">Key</p>,
         dataIndex: "key",
         key: "key",
+        // fixed: "right",
         render: (_: string, record: GistType) => {
           const key = `${linkGist}/${record.gistId}/raw/${record?.fileName}#`;
           return (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Tooltip title="copy for Android, Windows, MacOS, Linux">
+                <Tooltip title="copy">
                   <button
+                    className="text-secondary20"
                     onClick={() =>
                       copyToClipboard(
                         `${record.keyId.awsId?.fileName.replace(
@@ -261,20 +263,20 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
                     <AndroidXML />
                   </button>
                 </Tooltip>
-                <p className="font-primary text-sm w-[100px] md:w-[350px] line-clamp-1">
+                <p className="font-primary text-sm w-[350px] line-clamp-1">
                   {record.keyId.awsId?.fileName.replace(/https/g, "ssconf")}#
                   {record.extension}
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <Tooltip title="copy for Iphone">
+                <Tooltip title="copy">
                   <button
                     onClick={() => copyToClipboard(`${key}${record.extension}`)}
                   >
-                    <IosXML />
+                    <AndroidXML />
                   </button>
                 </Tooltip>
-                <p className="font-primary text-sm w-[100px] md:w-[350px] line-clamp-1">
+                <p className="font-primary text-sm w-[350px] line-clamp-1">
                   {key}
                   {record.extension}
                 </p>
@@ -292,7 +294,6 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
           return (
             <UpdateExtension
               initialValue={record.extension}
-              // placeholder={record.extension}
               onSubmit={(value: string) => {
                 handleUpdateExtension(record._id, value);
                 handleFetchData();
@@ -368,7 +369,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
           dataSource={listGistFilter}
           columns={columns}
           loading={loadingTable}
-            scroll={{ x: 1120 }}
+          scroll={{ x: 1120 }}
         />
       </div>
     </div>

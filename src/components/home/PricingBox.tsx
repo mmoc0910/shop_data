@@ -8,10 +8,10 @@ import { api } from "../../api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
 import { useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
-// import axios from "axios";
-// import Swal from "sweetalert2";
-// import Loading from "../common/Loading";
+import { toast } from "react-toastify";
+import axios from "axios";
+import Swal from "sweetalert2";
+import Loading from "../common/Loading";
 
 const PricingBox = () => {
   const { _id } = useSelector((state: RootState) => state.auth);
@@ -78,9 +78,9 @@ const PricingBox = () => {
 };
 
 export const PricingItem = ({ plan }: { plan: PlanType }) => {
-  // const [loading, setLoading] = useState<boolean>(false);
-  // const { _id } = useSelector((state: RootState) => state.auth);
-  // const navigation = useNavigate();
+  const [loading, setLoading] = useState<boolean>(false);
+  const { _id } = useSelector((state: RootState) => state.auth);
+  const navigation = useNavigate();
   const { name, price, description, type, bandWidth } = plan;
   return (
     <>
@@ -102,7 +102,7 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
             <Check content={desc} key={uuidv4()} />
           ))}
         </div>
-        {/* <button
+         <button
           className="flex items-center justify-center bg-primary w-full py-4 flex-col gap-2"
           onClick={async () => {
             if (_id) {
@@ -150,9 +150,9 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
           }}
         >
           <p className="font-medium text-white text-xl">Đăng ký mua</p>
-        </button> */}
+        </button>
       </div>
-      {/* {loading ? <Loading /> : null} */}
+      {loading ? <Loading /> : null}
     </>
   );
 };

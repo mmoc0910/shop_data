@@ -127,7 +127,7 @@ const PlanDashborad = () => {
         render: (_: string, record: PlanType) => (
           <div className="flex gap-4">
             <button
-              className="px-4 py-2 rounded-lg bg-error font-medium text-white font-primary text-sm hidden"
+              className="px-4 py-2 rounded-lg bg-error font-medium text-white font-primary text-sm"
               onClick={() => handleChoosePlan(record)}
             >
               Mua ngay
