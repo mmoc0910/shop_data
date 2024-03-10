@@ -85,7 +85,9 @@ const CashAdminPage = () => {
       const { isConfirmed } = await Swal.fire({
         title: `<p class="leading-tight">Bạn có muốn nạp cho người dùng <span class="text-secondary">${
           username || email
-        }</span> số tiền <span class="text-secondary">${VND.format(money)}VND</span></p>`,
+        }</span> số tiền <span class="text-secondary">${VND.format(
+          money
+        )}VND</span></p>`,
         icon: "success",
         showCancelButton: true,
         confirmButtonColor: "#1DC071",
@@ -113,7 +115,9 @@ const CashAdminPage = () => {
       const { isConfirmed } = await Swal.fire({
         title: `<p class="leading-tight">Bạn từ chối nạp cho người dùng <span class="text-secondary">${
           username || email
-        }</span> số tiền <span class="text-secondary">${VND.format(money)}VND</span></p>`,
+        }</span> số tiền <span class="text-secondary">${VND.format(
+          money
+        )}VND</span></p>`,
         icon: "success",
         showCancelButton: true,
         confirmButtonColor: "#1DC071",
@@ -171,54 +175,68 @@ const CashAdminPage = () => {
     () => [
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">STT</p>
+          <p className="text-base font-semibold font-primary">STT</p>
         ),
         dataIndex: "index",
+        key: "index",
         width: 70,
-        render: (_text: string, _record: CashType, index: number) => (
-          <p className="font-primary text-sm">{index + 1}</p>
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text + 1}</p>
+        ),
+      },
+      {
+        title: <p className="font-semibold font-primary">Mã giao dịch</p>,
+        dataIndex: "code",
+        key: "code",
+        render: (text: string) => (
+          <p className="text-sm font-primary">{text}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Username</p>
+          <p className="text-sm font-semibold font-primary">Username</p>
         ),
         dataIndex: "username",
         key: "username",
         render: (_: string, record: CashType) => (
-          <Link to={`/admin/account/${record.userId._id}`} className="font-primary text-sm text-primary font-medium">{record.userId?.username}</Link>
+          <Link
+            to={`/admin/account/${record.userId._id}`}
+            className="text-sm font-medium font-primary text-primary"
+          >
+            {record.userId?.username}
+          </Link>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Số tiền nạp</p>
+          <p className="text-sm font-semibold font-primary">Số tiền nạp</p>
         ),
         dataIndex: "money",
         key: "money",
         render: (_: string, record: CashType) => (
-          <p className="font-primary text-sm">{VND.format(record.money)}VND</p>
+          <p className="text-sm font-primary">{VND.format(record.money)}VND</p>
         ),
         sorter: (a, b) => a.money - b.money,
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Ngày nạp</p>
+          <p className="text-sm font-semibold font-primary">Ngày nạp</p>
         ),
         dataIndex: "createdAt",
         key: "createdAt",
         render: (text: Date) => (
-          <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+          <p className="text-sm font-primary">{DAY_FORMAT(text)}</p>
         ),
         sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Ngày duyệt</p>
+          <p className="text-sm font-semibold font-primary">Ngày duyệt</p>
         ),
         dataIndex: "updated",
         key: "updated",
         render: (text: Date, record: CashType) => (
-          <p className="font-primary text-sm">
+          <p className="text-sm font-primary">
             {record.status === 1 ? DAY_FORMAT(text) : null}
           </p>
         ),
@@ -226,12 +244,12 @@ const CashAdminPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Trạng thái</p>
+          <p className="text-sm font-semibold font-primary">Trạng thái</p>
         ),
         dataIndex: "status",
         key: "status",
         render: (_: string, record: CashType) => (
-          <div className="font-primary text-sm">
+          <div className="text-sm font-primary">
             {record.status === 0 ? (
               <Tag color="red">
                 <span className="font-primary">Đã hủy</span>
@@ -268,34 +286,34 @@ const CashAdminPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Lý do hủy</p>
+          <p className="text-sm font-semibold font-primary">Lý do hủy</p>
         ),
         dataIndex: "description",
         key: "description",
         render: (text: string) => (
-          <p className="font-primary text-sm text-error">{text}</p>
+          <p className="text-sm font-primary text-error">{text}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Action</p>
+          <p className="text-sm font-semibold font-primary">Action</p>
         ),
         dataIndex: "action",
         key: "action",
         // fixed: "right",
         width: 200,
         render: (_: string, record: CashType) => (
-          <div className="font-primary text-xs flex gap-2">
+          <div className="flex gap-2 text-xs font-primary">
             {record.status !== 2 ? null : (
               <>
                 <button
-                  className="px-4 py-2 rounded-lg bg-primary font-medium text-white"
+                  className="px-4 py-2 font-medium text-white rounded-lg bg-primary"
                   onClick={() => handleApproveCash(record)}
                 >
                   Approve
                 </button>
                 <button
-                  className="px-4 py-2 rounded-lg bg-error font-medium text-white"
+                  className="px-4 py-2 font-medium text-white rounded-lg bg-error"
                   onClick={() => handleCancelCash(record)}
                 >
                   Cancel
@@ -324,7 +342,7 @@ const CashAdminPage = () => {
     <RequireAuthPage rolePage={1}>
       <div className="space-y-6">
         <Heading>Danh sách yêu cầu nạp</Heading>
-        <div className="block md:flex space-y-3 md:space-y-0 items-center gap-5">
+        <div className="items-center block gap-5 space-y-3 md:flex md:space-y-0">
           <div className="relative flex-1">
             <input
               type="text"
@@ -368,7 +386,10 @@ const CashAdminPage = () => {
         </div>
         <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
           <Table
-            dataSource={listCashFilter}
+            dataSource={listCashFilter.map((item, index) => ({
+              index,
+              ...item,
+            }))}
             columns={columns}
             scroll={{ x: 1500, y: 400 }}
           />

@@ -27,50 +27,51 @@ const InviteDashboard = () => {
   }, [_id]);
   const columns: TableColumnsType<RoseType> = [
     {
-      title: () => <p className="font-primary text-base font-semibold">STT</p>,
+      title: () => <p className="text-base font-semibold font-primary">STT</p>,
       dataIndex: "index",
-      render: (_text: string, _record: RoseType, index: number) => (
-        <p className="font-primary text-sm">{index + 1}</p>
+      key: "index",
+      render: (text: number) => (
+        <p className="text-sm font-primary">{text + 1}</p>
       ),
     },
     {
-      title: <p className="font-primary font-semibold">Tên gói</p>,
+      title: <p className="font-semibold font-primary">Tên gói</p>,
       dataIndex: "namePlan",
       key: "namePlan",
       render: (_: string, record: RoseType) => (
-        <p className="font-primary text-sm">{record.plan}</p>
+        <p className="text-sm font-primary">{record.plan}</p>
       ),
     },
     {
-      title: <p className="font-primary font-semibold">% hoa hồng</p>,
+      title: <p className="font-semibold font-primary">% hoa hồng</p>,
       dataIndex: "percent",
       key: "percent",
       render: (_: string, record: RoseType) => (
-        <p className="font-primary text-sm">{record.percent}%</p>
+        <p className="text-sm font-primary">{record.percent}%</p>
       ),
     },
     {
-      title: <p className="font-primary font-semibold">Tiền hoa hồng</p>,
+      title: <p className="font-semibold font-primary">Tiền hoa hồng</p>,
       dataIndex: "moneyPercent",
       key: "moneyPercent",
       render: (_: string, record: RoseType) => (
-        <p className="font-primary text-sm">{VND.format(record.recive)}VND</p>
+        <p className="text-sm font-primary">{VND.format(record.recive)}VND</p>
       ),
     },
     {
-      title: <p className="font-primary font-semibold">Người mua</p>,
+      title: <p className="font-semibold font-primary">Người mua</p>,
       dataIndex: "moneyPercent",
       key: "moneyPercent",
       render: (_: string, record: RoseType) => (
-        <p className="font-primary text-sm">{record.reciveRoseId.email}</p>
+        <p className="text-sm font-primary">{record.reciveRoseId.email}</p>
       ),
     },
     {
-      title: <p className="font-primary font-semibold">Ngày nhận</p>,
+      title: <p className="font-semibold font-primary">Ngày nhận</p>,
       dataIndex: "moneyPercent",
       key: "moneyPercent",
       render: (_: string, record: RoseType) => (
-        <p className="font-primary text-sm">
+        <p className="text-sm font-primary">
           {dayjs(record.createdAt).format("DD-MM-YYYY")}
         </p>
       ),
@@ -84,7 +85,7 @@ const InviteDashboard = () => {
           {roseHistory.length > 5 ? (
             <Link
               to={"/user/invite"}
-              className="text-primary font-medium underline decoration-primary"
+              className="font-medium underline text-primary decoration-primary"
             >
               Xem tất cả
             </Link>
@@ -92,7 +93,9 @@ const InviteDashboard = () => {
         </div>
         <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
           <Table
-            dataSource={roseHistory.slice(0, 5)}
+            dataSource={roseHistory
+              .slice(0, 5)
+              .map((item, index) => ({ index, ...item }))}
             columns={columns}
             pagination={false}
             scroll={{ x: 700 }}

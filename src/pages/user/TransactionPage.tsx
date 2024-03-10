@@ -74,19 +74,31 @@ const TransactionPage = () => {
     () => [
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">STT</p>
+          <p className="text-base font-semibold font-primary">STT</p>
         ),
         dataIndex: "index",
-        render: (_text: string, _record: TransactionType, index: number) => (
-          <p className="font-primary text-sm">{index + 1}</p>
+        key: "index",
+        width: 70,
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text + 1}</p>
         ),
       },
       {
-        title: <p className="font-primary font-semibold">Tên gói</p>,
+        title: () => (
+          <p className="text-base font-semibold font-primary">Mã giao dich</p>
+        ),
+        dataIndex: "code",
+        key: "code",
+        render: (text: string) => (
+          <p className="text-sm font-primary">{text}</p>
+        ),
+      },
+      {
+        title: <p className="font-semibold font-primary">Tên gói</p>,
         dataIndex: "name",
         key: "name",
         render: (_: string, record: TransactionType) => (
-          <p className="font-primary text-sm">
+          <p className="text-sm font-primary">
             {record.extendPlanId
               ? record.extendPlanId.name
               : record.planId?.name}
@@ -94,11 +106,11 @@ const TransactionPage = () => {
         ),
       },
       {
-        title: <p className="font-primary font-semibold">Giá gói</p>,
+        title: <p className="font-semibold font-primary">Giá gói</p>,
         dataIndex: "price",
         key: "price",
         render: (_: string, record: TransactionType) => (
-          <p className="font-primary text-sm">
+          <p className="text-sm font-primary">
             {VND.format(record.money / ((100 - record.discount) / 100))}VND
           </p>
         ),
@@ -110,11 +122,11 @@ const TransactionPage = () => {
         },
       },
       {
-        title: <p className="font-primary font-semibold">Chiết khấu</p>,
+        title: <p className="font-semibold font-primary">Chiết khấu</p>,
         dataIndex: "discount",
         key: "discount",
         render: (_: string, record: TransactionType) => (
-          <p className="font-primary text-sm">{record.discount}%</p>
+          <p className="text-sm font-primary">{record.discount}%</p>
         ),
         sorter: {
           compare: (a, b) => a.discount - b.discount,
@@ -122,11 +134,11 @@ const TransactionPage = () => {
         },
       },
       {
-        title: <p className="font-primary font-semibold">Giá mua</p>,
+        title: <p className="font-semibold font-primary">Giá mua</p>,
         dataIndex: "money",
         key: "money",
         render: (_: string, record: TransactionType) => (
-          <p className="font-primary text-sm">{VND.format(record.money)}VND</p>
+          <p className="text-sm font-primary">{VND.format(record.money)}VND</p>
         ),
         sorter: {
           compare: (a, b) => a.money - b.money,
@@ -134,11 +146,11 @@ const TransactionPage = () => {
         },
       },
       {
-        title: <p className="font-primary font-semibold">Ngày tạo</p>,
+        title: <p className="font-semibold font-primary">Ngày tạo</p>,
         dataIndex: "createdAt",
         key: "createdAt",
         render: (text: Date) => (
-          <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+          <p className="text-sm font-primary">{DAY_FORMAT(text)}</p>
         ),
         sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
       },
@@ -172,7 +184,7 @@ const TransactionPage = () => {
             VND
           </span>
         </p>
-        <div className="block md:flex space-y-3 md:space-y-0 items-center gap-5">
+        <div className="items-center block gap-5 space-y-3 md:flex md:space-y-0">
           <div className="relative flex-1">
             <input
               type="text"
@@ -216,7 +228,10 @@ const TransactionPage = () => {
         </div>
         <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
           <Table
-            dataSource={listTransactions}
+            dataSource={listTransactions.map((item, index) => ({
+              index,
+              ...item,
+            }))}
             columns={columns}
             loading={loading}
             scroll={{ x: 1180 }}

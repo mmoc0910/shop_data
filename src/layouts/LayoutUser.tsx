@@ -18,13 +18,15 @@ import { copyToClipboard } from "../utils/copyToClipboard";
 import { setCollab } from "../store/collab/collabSlice";
 import useOnClickOutside from "../hooks/useOnClickOutside";
 import { useTranslation } from "react-i18next";
+import { VND } from "../utils/formatPrice";
 
 const LayoutUser = () => {
+  const satisfy = useSelector((state: RootState) => state.satisfy);
   const { t, i18n } = useTranslation();
   const menu = useMemo(
     () => [
       { to: "/user/dashboard", title: t("menu_user.dashboard") },
-      { to: "/user/recharge", title: t("menu_user.recharge") },
+      // { to: "/user/recharge", title: t("menu_user.recharge") },
       { to: "/user/plan", title: t("menu_user.pack_of_data") },
       { to: "/user/order", title: t("menu_user.my_order") },
       { to: "/user/transaction", title: t("menu_user.transaction_history") },
@@ -89,7 +91,7 @@ const LayoutUser = () => {
         )}
       >
         <div className="absolute inset-0 bg-black xl:bg-opacity-50" />
-        <div className="absolute w-full z-5 h-full py-10 px-5 ">
+        <div className="absolute w-full h-full px-5 py-10 z-5 ">
           <Logo className="text-4xl text-white" />
           <div className="flex flex-col gap-2 pt-28">
             {menu.map((item) => {
@@ -126,7 +128,7 @@ const LayoutUser = () => {
           </div>
         </div>
       </div>
-      <div className="col-span-12 xl:col-span-10 h-full overflow-y-scroll py-10 px-5 lg:px-10 bg-white xl:rounded-3xl">
+      <div className="h-full col-span-12 px-5 py-10 overflow-y-scroll bg-white xl:col-span-10 lg:px-10 xl:rounded-3xl">
         <div className="flex items-start justify-between">
           <div className="block mr-6 xl:hidden" onClick={() => setIsopen(true)}>
             <svg
@@ -149,7 +151,7 @@ const LayoutUser = () => {
               <div className="flex items-center gap-2">
                 <p className="">
                   <span className="font-medium">Mã CTV:</span>{" "}
-                  <span className="text-lg text-secondary20 font-medium">
+                  <span className="text-lg font-medium text-secondary20">
                     {introduceCode || ""}
                   </span>
                 </p>
@@ -184,18 +186,19 @@ const LayoutUser = () => {
               </p>
             </div>
           )}
-          <div className="flex gap-5 items-center ml-auto">
+          <div className="flex items-center gap-5 ml-auto">
             <Link
               to={"/user/account"}
-              className="hidden md:flex gap-1 items-center text-white bg-primary px-4 py-2 rounded-xl"
+              className="items-center hidden gap-1 px-4 py-2 text-white md:flex bg-primary rounded-xl"
             >
               <span>
                 <IconProfile />
               </span>
               <p>{username || email}</p>
+              <p> - {VND.format(satisfy.cash)}VND</p>
             </Link>
             <div
-              className="hidden md:flex gap-2 items-center text-white bg-primary px-4 py-2 rounded-xl cursor-pointer"
+              className="items-center hidden gap-2 px-4 py-2 text-white cursor-pointer md:flex bg-primary rounded-xl"
               onClick={() => {
                 dispatch(setAuth({}));
                 navigation("/");

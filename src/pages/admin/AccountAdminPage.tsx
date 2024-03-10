@@ -108,23 +108,26 @@ const AccountAdminPage = () => {
   const columns: TableColumnsType<UserState> = useMemo(
     () => [
       {
-        title: () => <p className="font-primary text-sm font-semibold">STT</p>,
-        dataIndex: "index",
-        render: (_text: string, _record: UserState, index: number) => (
-          <p className="font-primary text-sm">{index + 1}</p>
+        title: () => (
+          <p className="text-base font-semibold font-primary">STT</p>
         ),
+        dataIndex: "index",
+        key: "index",
         width: 70,
+        render: (text: string) => (
+          <p className="text-sm font-primary">{text + 1}</p>
+        ),
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Username</p>
+          <p className="text-sm font-semibold font-primary">Username</p>
         ),
         dataIndex: "username",
         key: "username",
         render: (text: string, record: UserState) => (
           <Link
             to={`/admin/account/${record._id}`}
-            className="font-primary text-sm text-primary"
+            className="text-sm font-primary text-primary"
           >
             {text}
           </Link>
@@ -132,22 +135,22 @@ const AccountAdminPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Mã giới thiệu</p>
+          <p className="text-sm font-semibold font-primary">Mã giới thiệu</p>
         ),
         dataIndex: "introduceCode",
         key: "introduceCode",
         render: (text: string) => (
-          <p className="font-primary text-sm">{text}</p>
+          <p className="text-sm font-primary">{text}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Số dư</p>
+          <p className="text-sm font-semibold font-primary">Số dư</p>
         ),
         dataIndex: "money",
         key: "money",
         render: (text: number) => (
-          <p className="font-primary text-sm">{VND.format(text)}VND</p>
+          <p className="text-sm font-primary">{VND.format(text)}VND</p>
         ),
         sorter: {
           compare: (a, b) => a.money - b.money,
@@ -156,12 +159,12 @@ const AccountAdminPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Số gói đã mua</p>
+          <p className="text-sm font-semibold font-primary">Số gói đã mua</p>
         ),
         dataIndex: "transaction",
         key: "transaction",
         render: (_: string, record: UserState) => (
-          <p className="font-primary text-sm">{record.transaction}</p>
+          <p className="text-sm font-primary">{record.transaction}</p>
         ),
         sorter: {
           compare: (a, b) => a.transaction - b.transaction,
@@ -170,13 +173,13 @@ const AccountAdminPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Đại lý</p>
+          <p className="text-sm font-semibold font-primary">Đại lý</p>
         ),
         dataIndex: "country",
         key: "country",
         render: (_: string, record: UserState) => (
           <p
-            className="font-primary text-sm text-primary cursor-pointer"
+            className="text-sm cursor-pointer font-primary text-primary"
             onClick={() => {
               setSelectRow(record);
               showModal();
@@ -190,12 +193,12 @@ const AccountAdminPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Ngày tạo</p>
+          <p className="text-sm font-semibold font-primary">Ngày tạo</p>
         ),
         dataIndex: "createdAt",
         key: "createdAt",
         render: (text: Date) => (
-          <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+          <p className="text-sm font-primary">{DAY_FORMAT(text)}</p>
         ),
         sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
       },
@@ -244,8 +247,10 @@ const AccountAdminPage = () => {
           <Table
             dataSource={
               level
-                ? listUserFilter.filter((item) => item.level === Number(level))
-                : listUserFilter
+                ? listUserFilter
+                    .filter((item) => item.level === Number(level))
+                    .map((item, index) => ({ index, ...item }))
+                : listUserFilter.map((item, index) => ({ index, ...item }))
             }
             columns={columns}
             loading={loading}

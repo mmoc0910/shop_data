@@ -134,39 +134,41 @@ const ExtendPlanPage = () => {
     () => [
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">STT</p>
+          <p className="text-base font-semibold font-primary">STT</p>
         ),
         dataIndex: "index",
-        render: (_text: string, _record: ExtendPlanType, index: number) => (
-          <p className="font-primary text-sm">{index + 1}</p>
+        key: "index",
+        width: 70,
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text + 1}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Tên gói</p>
+          <p className="text-base font-semibold font-primary">Tên gói</p>
         ),
         dataIndex: "name",
         key: "name",
         render: (text: string) => (
-          <p className="font-primary text-sm">{text}</p>
+          <p className="text-sm font-primary">{text}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Lượt mua</p>
+          <p className="text-base font-semibold font-primary">Lượt mua</p>
         ),
         dataIndex: "name",
         key: "name",
-        render: () => <p className="font-primary text-sm">{1}</p>,
+        render: () => <p className="text-sm font-primary">{1}</p>,
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Giá</p>
+          <p className="text-base font-semibold font-primary">Giá</p>
         ),
         dataIndex: "price",
         key: "price",
         render: (text: number) => (
-          <p className="font-primary text-sm">{VND.format(text)}VND</p>
+          <p className="text-sm font-primary">{VND.format(text)}VND</p>
         ),
         sorter: {
           compare: (a, b) => a.price - b.price,
@@ -175,12 +177,12 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">{`<=`}4 tháng</p>
+          <p className="text-base font-semibold font-primary">{`<=`}4 tháng</p>
         ),
         dataIndex: "level1",
         key: "level1",
         render: (text: number) => (
-          <p className="font-primary text-sm">{text}%</p>
+          <p className="text-sm font-primary">{text}%</p>
         ),
         sorter: {
           compare: (a, b) => a.level1 - b.level1,
@@ -189,12 +191,12 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">5-8 tháng</p>
+          <p className="text-base font-semibold font-primary">5-8 tháng</p>
         ),
         dataIndex: "level2",
         key: "level2",
         render: (text: number) => (
-          <p className="font-primary text-sm">{text}%</p>
+          <p className="text-sm font-primary">{text}%</p>
         ),
         sorter: {
           compare: (a, b) => a.level2 - b.level2,
@@ -203,12 +205,12 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">{`>=`}9 tháng</p>
+          <p className="text-base font-semibold font-primary">{`>=`}9 tháng</p>
         ),
         dataIndex: "level3",
         key: "level3",
         render: (text: number) => (
-          <p className="font-primary text-sm">{text}%</p>
+          <p className="text-sm font-primary">{text}%</p>
         ),
         sorter: {
           compare: (a, b) => a.level3 - b.level3,
@@ -217,12 +219,12 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Băng thông</p>
+          <p className="text-base font-semibold font-primary">Băng thông</p>
         ),
         dataIndex: "bandWidth",
         key: "bandWidth",
         render: (text: string) => (
-          <p className="font-primary text-sm">{text}GB</p>
+          <p className="text-sm font-primary">{text}GB</p>
         ),
         sorter: {
           compare: (a, b) => a.bandWidth - b.bandWidth,
@@ -231,23 +233,23 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Ngày tạo</p>
+          <p className="text-base font-semibold font-primary">Ngày tạo</p>
         ),
         dataIndex: "createdAt",
         key: "createdAt",
         render: (text: Date) => (
-          <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+          <p className="text-sm font-primary">{DAY_FORMAT(text)}</p>
         ),
         sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
       },
       // {
       //   title: () => (
-      //     <p className="font-primary text-base font-semibold">Ngày chỉnh sửa</p>
+      //     <p className="text-base font-semibold font-primary">Ngày chỉnh sửa</p>
       //   ),
       //   dataIndex: "updatedAt",
       //   key: "updatedAt",
       //   render: (text: Date) => (
-      //     <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+      //     <p className="text-sm font-primary">{DAY_FORMAT(text)}</p>
       //   ),
       //   sorter: (a, b) => dayjs(a.updatedAt).unix() - dayjs(b.updatedAt).unix(),
       // },
@@ -258,13 +260,13 @@ const ExtendPlanPage = () => {
         render: (_: string, record: ExtendPlanType) => (
           <div className="flex gap-4">
             <button
-              className="px-4 py-2 rounded-lg bg-error font-medium text-white font-primary text-sm"
+              className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-error font-primary"
               onClick={() => handleDeleteExtendPlan(record._id)}
             >
               Xóa
             </button>
             <button
-              className="px-4 py-2 rounded-lg bg-primary font-medium text-white font-primary text-sm"
+              className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary font-primary"
               onClick={() => {
                 setSelectRow(record);
                 showModal();
@@ -283,39 +285,41 @@ const ExtendPlanPage = () => {
     () => [
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">STT</p>
+          <p className="text-base font-semibold font-primary">STT</p>
         ),
         dataIndex: "index",
-        render: (_text: string, _record: ExtendPlanType, index: number) => (
-          <p className="font-primary text-sm">{index + 1}</p>
+        key: "index",
+        width: 70,
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text + 1}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Tên gói</p>
+          <p className="text-base font-semibold font-primary">Tên gói</p>
         ),
         dataIndex: "name",
         key: "name",
         render: (text: string) => (
-          <p className="font-primary text-sm">{text}</p>
+          <p className="text-sm font-primary">{text}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Lượt mua</p>
+          <p className="text-base font-semibold font-primary">Lượt mua</p>
         ),
         dataIndex: "name",
         key: "name",
-        render: () => <p className="font-primary text-sm">{1}</p>,
+        render: () => <p className="text-sm font-primary">{1}</p>,
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Giá</p>
+          <p className="text-base font-semibold font-primary">Giá</p>
         ),
         dataIndex: "price",
         key: "price",
         render: (text: number) => (
-          <p className="font-primary text-sm">{VND.format(text)}VND</p>
+          <p className="text-sm font-primary">{VND.format(text)}VND</p>
         ),
         sorter: {
           compare: (a, b) => a.price - b.price,
@@ -324,12 +328,12 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">{`<=`}4 tháng</p>
+          <p className="text-base font-semibold font-primary">{`<=`}4 tháng</p>
         ),
         dataIndex: "level1",
         key: "level1",
         render: (text: number) => (
-          <p className="font-primary text-sm">{text}%</p>
+          <p className="text-sm font-primary">{text}%</p>
         ),
         sorter: {
           compare: (a, b) => a.level1 - b.level1,
@@ -338,12 +342,12 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">5-8 tháng</p>
+          <p className="text-base font-semibold font-primary">5-8 tháng</p>
         ),
         dataIndex: "level2",
         key: "level2",
         render: (text: number) => (
-          <p className="font-primary text-sm">{text}%</p>
+          <p className="text-sm font-primary">{text}%</p>
         ),
         sorter: {
           compare: (a, b) => a.level2 - b.level2,
@@ -352,12 +356,12 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">{`>=`}9 tháng</p>
+          <p className="text-base font-semibold font-primary">{`>=`}9 tháng</p>
         ),
         dataIndex: "level3",
         key: "level3",
         render: (text: number) => (
-          <p className="font-primary text-sm">{text}%</p>
+          <p className="text-sm font-primary">{text}%</p>
         ),
         sorter: {
           compare: (a, b) => a.level3 - b.level3,
@@ -366,12 +370,12 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Băng thông</p>
+          <p className="text-base font-semibold font-primary">Băng thông</p>
         ),
         dataIndex: "bandWidth",
         key: "bandWidth",
         render: (text: string) => (
-          <p className="font-primary text-sm">{text}GB</p>
+          <p className="text-sm font-primary">{text}GB</p>
         ),
         sorter: {
           compare: (a, b) => a.bandWidth - b.bandWidth,
@@ -380,23 +384,23 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Ngày tạo</p>
+          <p className="text-base font-semibold font-primary">Ngày tạo</p>
         ),
         dataIndex: "createdAt",
         key: "createdAt",
         render: (text: Date) => (
-          <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+          <p className="text-sm font-primary">{DAY_FORMAT(text)}</p>
         ),
         sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Ngày xóa</p>
+          <p className="text-base font-semibold font-primary">Ngày xóa</p>
         ),
         dataIndex: "updatedAt",
         key: "updatedAt",
         render: (text: Date) => (
-          <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+          <p className="text-sm font-primary">{DAY_FORMAT(text)}</p>
         ),
         sorter: (a, b) => dayjs(a.updatedAt).unix() - dayjs(b.updatedAt).unix(),
       },
@@ -417,7 +421,7 @@ const ExtendPlanPage = () => {
           <div className="flex justify-between">
             <Heading>Danh sách gói mở rộng</Heading>
             <div onClick={showModal}>
-              <Button className="bg-primary text-white font-semibold px-5">
+              <Button className="px-5 font-semibold text-white bg-primary">
                 Thêm mới
               </Button>
             </div>
@@ -454,7 +458,10 @@ const ExtendPlanPage = () => {
           </div>
           <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
             <Table
-              dataSource={listExtendPlanFilter}
+              dataSource={listExtendPlanFilter.map((item, index) => ({
+                index,
+                ...item,
+              }))}
               columns={columns}
               scroll={{ x: 1120 }}
             />
@@ -464,7 +471,10 @@ const ExtendPlanPage = () => {
           <Heading>Lịch sử gói mở rộng</Heading>
           <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
             <Table
-              dataSource={listExtendPlanDelete}
+              dataSource={listExtendPlanDelete.map((item, index) => ({
+                index,
+                ...item,
+              }))}
               columns={columnDelete}
               scroll={{ x: 1120 }}
             />

@@ -14,7 +14,7 @@ import {
   DAY_FORMAT,
   isSameOrAfter,
   isSameOrBefore,
-  linkGist,
+  // linkGist,
   messages,
 } from "../../constants";
 import { api } from "../../api";
@@ -88,7 +88,9 @@ const OrderPage = () => {
   useEffect(() => {
     (async () => {
       try {
-        const result = await api.get<ExtendPlanType[]>("/extend-plans?status=1");
+        const result = await api.get<ExtendPlanType[]>(
+          "/extend-plans?status=1"
+        );
         setListExtendPlan(result.data);
       } catch (error) {
         console.log("error - ", error);
@@ -168,43 +170,54 @@ const OrderPage = () => {
   const columns: TableColumnsType<GistType> = useMemo(
     () => [
       {
-        title: () => <p className="font-primary text-base font-semibold"></p>,
+        title: () => <p className="text-base font-semibold font-primary"></p>,
         dataIndex: "index",
-        width: 40,
+        key: "index",
+        width: 50,
         fixed: "left",
-        render: (_text: string, _record: GistType, index: number) => (
-          <p className="font-primary text-sm">{index + 1}</p>
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text + 1}</p>
         ),
       },
       {
-        title: <p className="font-primary font-semibold">Tên gói</p>,
+        title: <p className="font-semibold font-primary">Mã giao dịch</p>,
+        dataIndex: "code",
+        key: "code",
+        render: (text: string) => (
+          <p className="text-sm font-primary">{text}</p>
+        ),
+      },
+      {
+        title: <p className="font-semibold font-primary">Tên gói</p>,
         dataIndex: "name",
         key: "name",
         width: 100,
         render: (_: string, record: GistType) => (
-          <p className="font-primary text-sm">{record.planId?.name}</p>
+          <p className="text-sm font-primary">{record.planId?.name}</p>
         ),
       },
       {
-        title: <p className="font-primary font-semibold">Thời gian</p>,
+        title: <p className="font-semibold font-primary">Thời gian</p>,
         dataIndex: "day",
         key: "day",
         width: 170,
         render: (_: string, record: GistType) => (
-          <p className="font-primary text-sm">
+          <p className="text-sm font-primary">
             {DAY_FORMAT(record.keyId.startDate)} <br />-{" "}
             {DAY_FORMAT(record.keyId.endDate)}
           </p>
         ),
       },
       {
-        title: <p className="font-primary font-semibold">Usage</p>,
+        title: <p className="font-semibold font-primary">Usage</p>,
         dataIndex: "dataUsage",
         key: "dataUsage",
         width: 100,
         render: (_: string, record: GistType) => (
-          <p className="font-primary text-sm">
-            {(record.keyId.dataUsage / 1000 / 1000 / 1000).toFixed(2)}GB
+          <p className="text-sm font-primary">
+            {record.keyId.dataUsage
+              ? `${(record.keyId.dataUsage / 1000 / 1000 / 1000).toFixed(2)}GB`
+              : "0GB"}
           </p>
         ),
         sorter: {
@@ -213,12 +226,12 @@ const OrderPage = () => {
         },
       },
       {
-        title: <p className="font-primary font-semibold">Data limit</p>,
+        title: <p className="font-semibold font-primary">Data limit</p>,
         dataIndex: "bandWidth",
         key: "bandWidth",
         width: 100,
         render: (_: string, record: GistType) => (
-          <p className="font-primary text-sm">
+          <p className="text-sm font-primary">
             {record.keyId.dataExpand / 1000 / 1000 / 1000}GB
           </p>
         ),
@@ -228,12 +241,12 @@ const OrderPage = () => {
         },
       },
       // {
-      //   title: <p className="font-primary font-semibold">Data Expand</p>,
+      //   title: <p className="font-semibold font-primary">Data Expand</p>,
       //   dataIndex: "dataExtend",
       //   key: "dataExtend",
       //   width: 120,
       //   render: (_: string, record: GistType) => (
-      //     <p className="font-primary text-sm">
+      //     <p className="text-sm font-primary">
       //       {(record.keyId.dataExpand - record.keyId.dataLimit) /
       //         1000 /
       //         1000 /
@@ -247,24 +260,24 @@ const OrderPage = () => {
       //   },
       // },
       {
-        title: <p className="font-primary font-semibold"> eDate Expand</p>,
+        title: <p className="font-semibold font-primary"> eDate Expand</p>,
         dataIndex: "endExpandDate",
         key: "endExpandDate",
         width: 120,
         render: (_: string, record: GistType) => (
-          <p className="font-primary text-sm">
+          <p className="text-sm font-primary">
             {record.keyId?.endExpandDate &&
               DAY_FORMAT(record.keyId.endExpandDate)}
           </p>
         ),
       },
       {
-        title: <p className="font-primary font-semibold">Key</p>,
+        title: <p className="font-semibold font-primary">Key</p>,
         dataIndex: "key",
         key: "key",
         // fixed: "right",
         render: (_: string, record: GistType) => {
-          const key = `${linkGist}/${record.gistId}/raw/${record?.fileName}#`;
+          // const key = `${linkGist}/${record.gistId}/raw/${record?.fileName}#`;
           return (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
@@ -288,7 +301,7 @@ const OrderPage = () => {
                   {record.extension}
                 </p>
               </div>
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <Tooltip title="copy">
                   <button
                     onClick={() => copyToClipboard(`${key}${record.extension}`)}
@@ -300,19 +313,19 @@ const OrderPage = () => {
                   {key}
                   {record.extension}
                 </p>
-              </div>
+              </div> */}
             </div>
           );
         },
       },
       {
-        title: <p className="font-primary font-semibold">Trạng thái</p>,
+        title: <p className="font-semibold font-primary">Trạng thái</p>,
         dataIndex: "status",
         key: "status",
         width: 100,
         // fixed: "right",
         render: (_: string, record: GistType) => (
-          <div className="font-primary text-sm">
+          <div className="text-sm font-primary">
             {record.status ? (
               <Tag color="green">
                 <span className="font-primary">Còn hạn</span>
@@ -338,7 +351,7 @@ const OrderPage = () => {
         //   record.status === Number(value),
       },
       {
-        title: <p className="font-primary font-semibold">Đặt tên key</p>,
+        title: <p className="font-semibold font-primary">Đặt tên key</p>,
         dataIndex: "extension",
         key: "extension",
         // width: 150,
@@ -357,7 +370,7 @@ const OrderPage = () => {
         },
       },
       {
-        title: <p className="font-primary font-semibold"></p>,
+        title: <p className="font-semibold font-primary"></p>,
         dataIndex: "action",
         key: "action",
         render: (_: string, record: GistType) =>
@@ -367,7 +380,7 @@ const OrderPage = () => {
               (record.keyId.endExpandDate &&
                 dayjs().isAfter(record.keyId.endExpandDate, "day")) ? (
                 <button
-                  className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-xs"
+                  className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary"
                   onClick={() => {
                     setSelectRow({
                       id: record._id,
@@ -380,7 +393,7 @@ const OrderPage = () => {
                 </button>
               ) : null}
               <button
-                className="px-4 py-2 rounded-lg bg-primary font-medium text-white font-primary text-xs"
+                className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-primary font-primary"
                 onClick={() =>
                   handleUpgradPlan(
                     record._id,
@@ -417,7 +430,7 @@ const OrderPage = () => {
       {loading ? <Loading /> : null}
       <p className="">
         Vui lòng lấy key bên dưới của bạn và dán vào phần mềm theo hướng dẫn{" "}
-        <Link to={""} className="text-primary underline decoration-primary">
+        <Link to={""} className="underline text-primary decoration-primary">
           hướng dẫn
         </Link>
         :
@@ -426,15 +439,15 @@ const OrderPage = () => {
         <span className="text-secondary20">
           <AndroidXML />
         </span>
-        : Link kết nối chính
+        : nhấn để copy Link kết nối
       </p>
-      <p className="mb-5 flex items-center gap-2">
+      {/* <p className="flex items-center gap-2 mb-5">
         <span>
           <AndroidXML />
         </span>
         : Link kết nối phụ khi link chính bị chết
-      </p>
-      <div className="block md:flex space-y-3 md:space-y-0 items-center gap-5 pb-5">
+      </p> */}
+      <div className="items-center block gap-5 pb-5 space-y-3 md:flex md:space-y-0">
         <div className="relative flex-1">
           <input
             type="text"
@@ -478,7 +491,7 @@ const OrderPage = () => {
       </div>
       <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
         <Table
-          dataSource={listGistFilter}
+          dataSource={listGistFilter.map((item, index) => ({ index, ...item }))}
           columns={columns}
           loading={loadingTable}
           scroll={{ x: 1600 }}
@@ -494,7 +507,7 @@ const OrderPage = () => {
         footer={[]}
       >
         <Heading className="font-primary">Danh sách gói cước mở rộng</Heading>
-        <div className="py-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-5 py-3 md:grid-cols-2 lg:grid-cols-3">
           {listExtendPlan.map((item) => (
             <ExtendPlanItem
               key={uuidv4()}
@@ -508,9 +521,9 @@ const OrderPage = () => {
             />
           ))}
         </div>
-        <div className="mt-5 flex justify-end">
+        <div className="flex justify-end mt-5">
           <button
-            className="px-4 py-2 rounded-lg bg-error font-medium text-white font-primary"
+            className="px-4 py-2 font-medium text-white rounded-lg bg-error font-primary"
             onClick={() => {
               handleCancel();
               setSelectRow(undefined);
@@ -595,10 +608,10 @@ const ExtendPlanItem = ({
   return (
     <div
       key={uuidv4()}
-      className="p-5 shadow-xl rounded-lg font-primary space-y-3 flex flex-col justify-between"
+      className="flex flex-col justify-between p-5 space-y-3 rounded-lg shadow-xl font-primary"
     >
-      <p className="font-semibold text-base text-center">{extendPlan.name}</p>
-      <p className="text-center font-medium text-xl">
+      <p className="text-base font-semibold text-center">{extendPlan.name}</p>
+      <p className="text-xl font-medium text-center">
         {extendPlan.bandWidth}GB/tháng - {VND.format(priceDiscount)}VND
         {/* {VND.format(extendPlan.price)} */}
       </p>
@@ -614,7 +627,7 @@ const ExtendPlanItem = ({
         {/* {!month && <p className="text-error">Bạn chưa chọn thời gian</p>} */}
       </div>
       <button
-        className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-sm"
+        className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-secondary40 font-primary"
         onClick={() =>
           selectRow &&
           month &&

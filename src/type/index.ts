@@ -67,7 +67,7 @@ export type KeySeverType = {
   account: string;
   startDate: Date;
   endDate: Date;
-  status: 1 | 0;
+  status: 1 | 0 | 2;
   dataExpand: number;
   endExpandDate: Date;
   createdAt: Date;
@@ -105,6 +105,7 @@ export type CashType = {
 
 export type GistType = {
   _id: string;
+  code: string;
   gistId: string;
   userId: AuthState;
   planId: PlanType;
@@ -120,6 +121,7 @@ export type GistType = {
 
 export type TransactionType = {
   _id: string;
+  code: string;
   userId: AuthState;
   gistId: GistType;
   planId?: PlanType;

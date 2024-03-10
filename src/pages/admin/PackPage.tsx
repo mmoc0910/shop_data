@@ -112,23 +112,25 @@ const PackPage = () => {
     () => [
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">STT</p>
+          <p className="text-base font-semibold font-primary">STT</p>
         ),
         dataIndex: "index",
-        render: (_text: string, _record: PlanType, index: number) => (
-          <p className="font-primary text-sm">{index + 1}</p>
+        key: "index",
+        width: 70,
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text + 1}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Tên gói</p>
+          <p className="text-base font-semibold font-primary">Tên gói</p>
         ),
         dataIndex: "name",
         key: "name",
         render: (text: string, record: PlanType) => (
           <Link
             to={`/admin/pack/edit/${record._id}`}
-            className="font-primary text-sm text-primary font-medium"
+            className="text-sm font-medium font-primary text-primary"
           >
             {text}
           </Link>
@@ -136,52 +138,52 @@ const PackPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Lượt mua</p>
+          <p className="text-base font-semibold font-primary">Lượt mua</p>
         ),
         dataIndex: "name",
         key: "name",
-        render: () => <p className="font-primary text-sm">{1}</p>,
+        render: () => <p className="text-sm font-primary">{1}</p>,
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Chu kỳ</p>
+          <p className="text-base font-semibold font-primary">Chu kỳ</p>
         ),
         dataIndex: "type",
         key: "type",
         render: (text: string) => (
-          <p className="font-primary text-sm">{text}</p>
+          <p className="text-sm font-primary">{text}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Ngày</p>
+          <p className="text-base font-semibold font-primary">Ngày</p>
         ),
         dataIndex: "day",
         key: "day",
         render: (text: string) => (
-          <p className="font-primary text-sm">{text} ngày</p>
+          <p className="text-sm font-primary">{text} ngày</p>
         ),
         sorter: (a, b) => a.day - b.day,
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Bandwidth</p>
+          <p className="text-base font-semibold font-primary">Bandwidth</p>
         ),
         dataIndex: "bandWidth",
         key: "bandWidth",
         render: (text: string) => (
-          <p className="font-primary text-sm">{text}GB</p>
+          <p className="text-sm font-primary">{text}GB</p>
         ),
         sorter: (a, b) => a.bandWidth - b.bandWidth,
       },
       // {
       //   title: () => (
-      //     <p className="font-primary text-base font-semibold">Trạng thái</p>
+      //     <p className="text-base font-semibold font-primary">Trạng thái</p>
       //   ),
       //   dataIndex: "status",
       //   key: "status",
       //   render: (status: 0 | 1) => (
-      //     <div className="font-primary text-sm">
+      //     <div className="text-sm font-primary">
       //       {status === 1 ? (
       //         <Tag color="green">Hoạt động</Tag>
       //       ) : (
@@ -192,24 +194,24 @@ const PackPage = () => {
       // },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Ngày tạo</p>
+          <p className="text-base font-semibold font-primary">Ngày tạo</p>
         ),
         dataIndex: "createdAt",
         key: "createdAt",
         render: (text: Date) => (
-          <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+          <p className="text-sm font-primary">{DAY_FORMAT(text)}</p>
         ),
         sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
       },
       {
-        title: () => <p className="font-primary text-base font-semibold"></p>,
+        title: () => <p className="text-base font-semibold font-primary"></p>,
         // dataIndex: "createdAt",
         key: "action",
         render: (_: string, record: PlanType) => (
           <div className="flex gap-4">
             {record.status === 1 ? (
               <button
-                className="px-4 py-2 rounded-lg bg-error font-medium text-white font-primary text-xs"
+                className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-error font-primary"
                 onClick={() => handleRemovePlan(record._id)}
               >
                 Xóa
@@ -226,23 +228,25 @@ const PackPage = () => {
     () => [
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">STT</p>
+          <p className="text-base font-semibold font-primary">STT</p>
         ),
         dataIndex: "index",
-        render: (_text: string, _record: PlanType, index: number) => (
-          <p className="font-primary text-sm">{index + 1}</p>
+        key: "index",
+        width: 70,
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text + 1}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Tên gói</p>
+          <p className="text-base font-semibold font-primary">Tên gói</p>
         ),
         dataIndex: "name",
         key: "name",
         render: (text: string, record: PlanType) => (
           <Link
             to={`/admin/pack/edit/${record._id}`}
-            className="font-primary text-sm text-primary font-medium"
+            className="text-sm font-medium font-primary text-primary"
           >
             {text}
           </Link>
@@ -250,67 +254,67 @@ const PackPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Lượt mua</p>
+          <p className="text-base font-semibold font-primary">Lượt mua</p>
         ),
         dataIndex: "name",
         key: "name",
-        render: () => <p className="font-primary text-sm">{1}</p>,
+        render: () => <p className="text-sm font-primary">{1}</p>,
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Chu kỳ</p>
+          <p className="text-base font-semibold font-primary">Chu kỳ</p>
         ),
         dataIndex: "type",
         key: "type",
         render: (text: string) => (
-          <p className="font-primary text-sm">{text}</p>
+          <p className="text-sm font-primary">{text}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Ngày</p>
+          <p className="text-base font-semibold font-primary">Ngày</p>
         ),
         dataIndex: "day",
         key: "day",
         render: (text: string) => (
-          <p className="font-primary text-sm">{text} ngày</p>
+          <p className="text-sm font-primary">{text} ngày</p>
         ),
         sorter: (a, b) => a.day - b.day,
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Bandwidth</p>
+          <p className="text-base font-semibold font-primary">Bandwidth</p>
         ),
         dataIndex: "bandWidth",
         key: "bandWidth",
         render: (text: string) => (
-          <p className="font-primary text-sm">{text}GB</p>
+          <p className="text-sm font-primary">{text}GB</p>
         ),
         sorter: (a, b) => a.bandWidth - b.bandWidth,
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Ngày tạo</p>
+          <p className="text-base font-semibold font-primary">Ngày tạo</p>
         ),
         dataIndex: "createdAt",
         key: "createdAt",
         render: (text: Date) => (
-          <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+          <p className="text-sm font-primary">{DAY_FORMAT(text)}</p>
         ),
         sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
-      },{
+      },
+      {
         title: () => (
-          <p className="font-primary text-base font-semibold">Ngày xóa</p>
+          <p className="text-base font-semibold font-primary">Ngày xóa</p>
         ),
         dataIndex: "updatedAt",
         key: "updatedAt",
         render: (text: Date, record: PlanType) =>
           record.status === 0 ? (
-            <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+            <p className="text-sm font-primary">{DAY_FORMAT(text)}</p>
           ) : null,
         sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
       },
-      
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
@@ -331,9 +335,9 @@ const PackPage = () => {
   return (
     <RequireAuthPage rolePage={1}>
       <div className="pb-10">
-        <div className="space-y-6 mt-10 hidden lg:block">
+        <div className="hidden mt-10 space-y-6 lg:block">
           <Heading>Gói cước hiển thị trang chủ</Heading>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
             {plans.map((item) =>
               item.display === 1 ? (
                 <PricingItem key={uuidv4()} plan={item} />
@@ -341,7 +345,7 @@ const PackPage = () => {
             )}
           </div>
         </div>
-        <div className="my-10 flex gap-10 justify-end">
+        <div className="flex justify-end gap-10 my-10">
           <Button
             className="px-5 text-white bg-secondary"
             href="/admin/pack/add"
@@ -388,18 +392,24 @@ const PackPage = () => {
           </div>
           <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
             <Table
-              dataSource={listPlanFilter}
+              dataSource={listPlanFilter.map((item, index) => ({
+                index,
+                ...item,
+              }))}
               columns={columns}
               rowSelection={rowSelection}
               scroll={{ x: 1120 }}
             />
           </div>
         </div>
-        <div className="space-y-4 mt-10">
+        <div className="mt-10 space-y-4">
           <Heading>Lịch sử gói cước</Heading>{" "}
           <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
             <Table
-              dataSource={listPlanHistory}
+              dataSource={listPlanHistory.map((item, index) => ({
+                index,
+                ...item,
+              }))}
               columns={columnHistory}
               scroll={{ x: 1120 }}
             />
@@ -414,16 +424,16 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
   const { name, price, description, type, bandWidth } = plan;
   return (
     <>
-      <div className="col-span-1 shadow-xl flex flex-col items-center rounded-2xl overflow-hidden">
-        <h4 className="font-medium text-primary bg-primary bg-opacity-5 px-3 py-2 rounded-br-lg rounded-bl-lg">
+      <div className="flex flex-col items-center col-span-1 overflow-hidden shadow-xl rounded-2xl">
+        <h4 className="px-3 py-2 font-medium rounded-bl-lg rounded-br-lg text-primary bg-primary bg-opacity-5">
           {name}
         </h4>
-        <div className="pb-10 pt-10">
-          <p className="text-primary text-4xl font-medium mb-2">
+        <div className="pt-10 pb-10">
+          <p className="mb-2 text-4xl font-medium text-primary">
             {VND.format(price)}
             <span className="text-xl">VND/{type}</span>
           </p>
-          <p className="font-semibold text-center text-primary text-3xl mt-3">
+          <p className="mt-3 text-3xl font-semibold text-center text-primary">
             {bandWidth}GB
           </p>
         </div>
@@ -432,8 +442,8 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
             <Check content={desc} key={uuidv4()} />
           ))}
         </div>
-        <button className="flex items-center justify-center bg-primary w-full py-4 flex-col gap-2">
-          <p className="font-medium text-white text-xl">Đăng ký mua</p>
+        <button className="flex flex-col items-center justify-center w-full gap-2 py-4 bg-primary">
+          <p className="text-xl font-medium text-white">Đăng ký mua</p>
         </button>
       </div>
     </>

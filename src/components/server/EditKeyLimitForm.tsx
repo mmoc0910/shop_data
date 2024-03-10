@@ -32,9 +32,14 @@ const EditKeyLimitForm = ({
   return (
     <form className="flex items-center" onSubmit={handleSubmit(onSubmit)}>
       <div className="w-full">
-        <Input name="name" placeholder={placeholder} control={control} />
+        <Input
+          name="name"
+          placeholder={placeholder}
+          control={control}
+          className="w-[100px] h-[40px]"
+        />
       </div>
-      <Button type="submit" className="text-gray-500 px-4">
+      <Button type="submit" className="px-4 text-gray-500">
         <IconEdit />
       </Button>
     </form>

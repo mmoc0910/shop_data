@@ -87,23 +87,26 @@ const CommisionAdminPage = () => {
   const columns: TableColumnsType<UserState> = useMemo(
     () => [
       {
-        title: () => <p className="font-primary text-sm font-semibold">STT</p>,
-        dataIndex: "index",
-        render: (_text: string, _record: UserState, index: number) => (
-          <p className="font-primary text-sm">{index + 1}</p>
+        title: () => (
+          <p className="text-base font-semibold font-primary">STT</p>
         ),
+        dataIndex: "index",
+        key: "index",
         width: 70,
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text + 1}</p>
+        ),
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Username</p>
+          <p className="text-sm font-semibold font-primary">Username</p>
         ),
         dataIndex: "username",
         key: "username",
         render: (text: string, record: UserState) => (
           <Link
             to={`/admin/account/${record._id}`}
-            className="font-primary text-sm text-primary"
+            className="text-sm font-primary text-primary"
           >
             {text}
           </Link>
@@ -111,22 +114,22 @@ const CommisionAdminPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Mã giới thiệu</p>
+          <p className="text-sm font-semibold font-primary">Mã giới thiệu</p>
         ),
         dataIndex: "introduceCode",
         key: "introduceCode",
         render: (text: string) => (
-          <p className="font-primary text-sm">{text}</p>
+          <p className="text-sm font-primary">{text}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Số dư</p>
+          <p className="text-sm font-semibold font-primary">Số dư</p>
         ),
         dataIndex: "money",
         key: "money",
         render: (text: number) => (
-          <p className="font-primary text-sm">{VND.format(text)}VND</p>
+          <p className="text-sm font-primary">{VND.format(text)}VND</p>
         ),
         sorter: {
           compare: (a, b) => a.money - b.money,
@@ -136,12 +139,12 @@ const CommisionAdminPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Số gói đã mua</p>
+          <p className="text-sm font-semibold font-primary">Số gói đã mua</p>
         ),
         dataIndex: "transaction",
         key: "transaction",
         render: (_: string, record: UserState) => (
-          <p className="font-primary text-sm">{record.transaction}</p>
+          <p className="text-sm font-primary">{record.transaction}</p>
         ),
         sorter: {
           compare: (a, b) => a.transaction - b.transaction,
@@ -150,12 +153,12 @@ const CommisionAdminPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Đại lý</p>
+          <p className="text-sm font-semibold font-primary">Đại lý</p>
         ),
         dataIndex: "level",
         key: "level",
         render: (_: string, record: UserState) => (
-          <p className="font-primary text-sm text-primary cursor-pointer">
+          <p className="text-sm cursor-pointer font-primary text-primary">
             {record.level === 0
               ? "Cộng tác viên"
               : `Đại lý cấp ${record.level}`}
@@ -164,12 +167,12 @@ const CommisionAdminPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Ngày tạo</p>
+          <p className="text-sm font-semibold font-primary">Ngày tạo</p>
         ),
         dataIndex: "createdAt",
         key: "createdAt",
         render: (text: Date) => (
-          <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+          <p className="text-sm font-primary">{DAY_FORMAT(text)}</p>
         ),
         sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
       },
@@ -183,7 +186,7 @@ const CommisionAdminPage = () => {
   };
   return (
     <div className="grid grid-cols-2 gap-10 lg:gap-20">
-      <div className="space-y-6 col-span-2 md:col-span-1">
+      <div className="col-span-2 space-y-6 md:col-span-1">
         <div className="space-y-6">
           <Heading>Chính sách CTV</Heading>
           <div className="">
@@ -209,7 +212,7 @@ const CommisionAdminPage = () => {
                     control={control}
                     containerclass="flex-1"
                   >
-                    <span className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2 font-semibold text-icon-color">
+                    <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
                       %
                     </span>
                   </Input>
@@ -225,13 +228,13 @@ const CommisionAdminPage = () => {
           <CTVBox />
         </div>
       </div>
-      <div className="space-y-6 col-span-2 md:col-span-1">
+      <div className="col-span-2 space-y-6 md:col-span-1">
         <Heading>Chính sách Đại lý</Heading> <Collab />
       </div>
       <div className="col-span-2 space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between">
+        <div className="flex flex-col justify-between md:flex-row md:items-center">
           <Heading>Danh sách đại lý</Heading>
-          <p className="font-semibold text-lg">
+          <p className="text-lg font-semibold">
             Tổng doanh thu đại lý:{" "}
             <span className="text-secondary20">
               {VND.format(1000000000)}VND
@@ -271,7 +274,10 @@ const CommisionAdminPage = () => {
         </div>
         <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
           <Table
-            dataSource={listUserFilter}
+            dataSource={listUserFilter.map((item, index) => ({
+              index,
+              ...item,
+            }))}
             columns={columns}
             loading={loading}
             scroll={{ y: 420, x: 1120 }}
@@ -365,7 +371,7 @@ const Collab = () => {
             {listUser.filter((item) => item.level === 1).length} đại lý.{" "}
             <Link
               to={"/admin/account?level=1"}
-              className="text-primary font-medium underline decoration-primary"
+              className="font-medium underline text-primary decoration-primary"
             >
               Chi tiết
             </Link>
@@ -379,7 +385,7 @@ const Collab = () => {
             control={control}
             containerclass="flex-1"
           >
-            <span className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2 font-semibold text-icon-color">
+            <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
               %
             </span>
           </Input>
@@ -390,7 +396,7 @@ const Collab = () => {
             {listUser.filter((item) => item.level === 2).length} đại lý.{" "}
             <Link
               to={"/admin/account?level=2"}
-              className="text-primary font-medium underline decoration-primary"
+              className="font-medium underline text-primary decoration-primary"
             >
               Chi tiết
             </Link>
@@ -404,7 +410,7 @@ const Collab = () => {
             control={control}
             containerclass="flex-1"
           >
-            <span className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2 font-semibold text-icon-color">
+            <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
               %
             </span>
           </Input>
@@ -415,7 +421,7 @@ const Collab = () => {
             {listUser.filter((item) => item.level === 3).length} đại lý.{" "}
             <Link
               to={"/admin/account?level=3"}
-              className="text-primary font-medium underline decoration-primary"
+              className="font-medium underline text-primary decoration-primary"
             >
               Chi tiết
             </Link>
@@ -429,7 +435,7 @@ const Collab = () => {
             control={control}
             containerclass="flex-1"
           >
-            <span className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2 font-semibold text-icon-color">
+            <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
               %
             </span>
           </Input>
@@ -475,7 +481,7 @@ const CTVBox = () => {
             control={control}
             containerclass="flex-1"
           >
-            <span className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2 font-semibold text-icon-color">
+            <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
               VND
             </span>
           </Input>

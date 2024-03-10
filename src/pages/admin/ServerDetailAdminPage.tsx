@@ -19,6 +19,7 @@ import axios from "axios";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import { Modal, Tag } from "antd";
 import Loading from "../../components/common/Loading";
+import EditKeyLimitForm from "../../components/server/EditKeyLimitForm";
 
 const ServerDetailAdminPage = () => {
   const { serverId } = useParams();
@@ -59,7 +60,7 @@ const ServerDetailAdminPage = () => {
         api.get<KeySeverType[]>(`/keys?serverId=${serverId}`),
       ]);
       setServerDetail(resultServer.data);
-      setListKey(resultKey.data);
+      setListKey(resultKey.data.filter((item) => item.status !== 0));
     } catch (error) {
       console.log(error);
       toast.error(messages.error);
@@ -90,7 +91,7 @@ const ServerDetailAdminPage = () => {
       });
       if (isConfirmed) {
         setLoading(true);
-        await api.post(`/keys`, {
+        await api.post(`/keys/migrate`, {
           keyId,
           serverId,
         });
@@ -110,33 +111,84 @@ const ServerDetailAdminPage = () => {
       setLoading(false);
     }
   };
-  // const handleRemoveKey = async (
-  //   keyId: number,
-  //   apiUrl: string,
-  //   fingerPrint: string
-  // ) => {
-  //   try {
-  //     const { isConfirmed } = await Swal.fire({
-  //       title: `<p class="leading-tight">Bạn có muốn xóa key này</p>`,
-  //       icon: "success",
-  //       showCancelButton: true,
-  //       confirmButtonColor: "#1DC071",
-  //       cancelButtonColor: "#d33",
-  //       cancelButtonText: "Thoát",
-  //       confirmButtonText: "Xóa",
-  //     });
-  //     if (isConfirmed) {
-  //       await api.delete(`/servers/remove-key/${keyId}`, {
-  //         data: { apiUrl, fingerPrint },
-  //       });
-  //       // handleSync(apiUrl, fingerPrint);
-  //       toast.success("Xóa thành công");
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //     toast.error(messages.error);
-  //   }
-  // };
+  const handleDisableKey = async (keyId: string) => {
+    try {
+      const { isConfirmed } = await Swal.fire({
+        title: `<p class="leading-tight">Bạn có muốn disable key này</p>`,
+        icon: "success",
+        showCancelButton: true,
+        confirmButtonColor: "#1DC071",
+        cancelButtonColor: "#d33",
+        cancelButtonText: "Thoát",
+        confirmButtonText: "Đồng ý",
+      });
+      if (isConfirmed) {
+        await api.get(`/keys/disable/${keyId}`);
+        handleFetchServerDetail();
+        toast.success("Disable thành công");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log("error message: ", error);
+        toast.error(error.response?.data.message);
+      } else {
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
+      }
+    }
+  };
+  const handleEnableKey = async (keyId: string) => {
+    try {
+      const { isConfirmed } = await Swal.fire({
+        title: `<p class="leading-tight">Bạn có muốn enable key này</p>`,
+        icon: "success",
+        showCancelButton: true,
+        confirmButtonColor: "#1DC071",
+        cancelButtonColor: "#d33",
+        cancelButtonText: "Thoát",
+        confirmButtonText: "Đồng ý",
+      });
+      if (isConfirmed) {
+        await api.get(`/keys/enable/${keyId}`);
+        handleFetchServerDetail();
+        toast.success("Enable thành công");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log("error message: ", error);
+        toast.error(error.response?.data.message);
+      } else {
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
+      }
+    }
+  };
+  const handleAddLimitData = async (keyId: string, data: number) => {
+    try {
+      const { isConfirmed } = await Swal.fire({
+        title: `<p class="leading-tight">Bạn có muốn sửa data limit key này</p>`,
+        icon: "success",
+        showCancelButton: true,
+        confirmButtonColor: "#1DC071",
+        cancelButtonColor: "#d33",
+        cancelButtonText: "Thoát",
+        confirmButtonText: "Đồng ý",
+      });
+      if (isConfirmed) {
+        await api.patch(`/keys/add-data-limit/${keyId}`, { data });
+        handleFetchServerDetail();
+        toast.success("Thành công");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log("error message: ", error);
+        toast.error(error.response?.data.message);
+      } else {
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
+      }
+    }
+  };
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -156,7 +208,7 @@ const ServerDetailAdminPage = () => {
             <div className="space-y-7">
               <Heading>Server</Heading>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                <div className="col-span-1 border border-gray-200 rounded-lg p-3 space-y-1">
+                <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg">
                   <div className="font-medium text-gray-500">Server name</div>
                   <div>
                     <EditServerForm
@@ -176,7 +228,7 @@ const ServerDetailAdminPage = () => {
                     />
                   </div>
                 </div>
-                <div className="col-span-1 border border-gray-200 rounded-lg p-3 space-y-1">
+                <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg">
                   <div className="font-medium text-gray-500">Location</div>
                   <div>
                     <EditServerForm
@@ -196,33 +248,33 @@ const ServerDetailAdminPage = () => {
                     />
                   </div>
                 </div>
-                <div className="col-span-1 border border-gray-200 rounded-lg p-3 space-y-1">
+                <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg">
                   <div className="font-medium text-gray-500">Hostname</div>
                   <div>{serverDetail.hostnameForAccessKeys}</div>
                 </div>
-                <div className="col-span-1 border border-gray-200 rounded-lg p-3 space-y-1">
+                <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg">
                   <div className="font-medium text-gray-500">
                     Port for new access key
                   </div>
                   <div>{serverDetail.portForNewAccessKeys}</div>
                 </div>
-                {/* <div className="col-span-1 border border-gray-200 rounded-lg p-3 space-y-1">
+                {/* <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg">
                 <div className="font-medium text-gray-500">
                   Data transferred / last 30 days
                 </div>
                 <div>{serverDetail.name}</div>
               </div> */}
-                <div className="col-span-1 border border-gray-200 rounded-lg p-3 space-y-1">
+                <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg">
                   <div className="font-medium text-gray-500">Created</div>
                   <div>
                     {dayjs(serverDetail.createdAt).format("YYYY-MM-DD HH:MM")}
                   </div>
                 </div>
-                <div className="col-span-1 border border-gray-200 rounded-lg p-3 space-y-1">
+                <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg">
                   <div className="font-medium text-gray-500">Server ID</div>
                   <div>{serverDetail.serverId}</div>
                 </div>
-                <div className="col-span-1 border border-gray-200 rounded-lg p-3 space-y-1">
+                <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg">
                   <div className="font-medium text-gray-500">
                     Share anonymous metrics
                   </div>
@@ -233,12 +285,12 @@ const ServerDetailAdminPage = () => {
                     <Radio checked={serverDetail.metricsEnabled ? false : true}>
                       Disabled
                     </Radio>
-                    {/* <button className="bg-primary text-white px-4 rounded-md py-2">
+                    {/* <button className="px-4 py-2 text-white rounded-md bg-primary">
                     Apply
                   </button> */}
                   </div>
                 </div>
-                <div className="col-span-1 border border-gray-200 rounded-lg p-3 space-y-1">
+                <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg">
                   <div className="font-medium text-gray-500">
                     Server version
                   </div>
@@ -248,94 +300,90 @@ const ServerDetailAdminPage = () => {
             </div>
             <div className="space-y-7">
               <Heading>Keys</Heading>
-              <div className="space-y-5 w-full overflow-x-scroll">
+              <div className="w-full space-y-5 overflow-x-scroll">
                 {/* <CreateNewKeyForm
                 handleAddNewKey={() =>
                   handleAddNewKey(serverDetail.apiUrl, serverDetail.fingerPrint)
                 }
               /> */}
-                <div className="grid grid-cols-2 w-[1180px] lg:w-full">
-                  <div className="col-span-1 pb-3 flex">
+                <div className="grid grid-cols-5 w-[1180px] lg:w-full">
+                  <div className="flex col-span-2 pb-3">
                     <div className="px-4 font-semibold">#</div>
                     <div className="flex-1 px-4 font-semibold">OrderID</div>
                     <div className="flex-1 px-4 font-semibold">Email</div>
                     <div className="px-4 font-semibold">Usage</div>
                   </div>
-                  <div className="col-span-1 pb-3 flex">
-                    <div className="flex-1 px-4 font-semibold">Limit</div>
-                    <div className="flex-1 px-4 font-semibold">Status</div>
-                    <div className="px-4 font-semibold flex-1 justify-end">
+                  <div className="flex col-span-3 pb-3">
+                    <div className="px-4 font-semibold">Limit</div>
+                    <div className="px-4 font-semibold">Status</div>
+                    <div className="justify-end flex-1 px-4 font-semibold">
                       Actions
                     </div>
                   </div>
                   {listKey.length > 0 &&
                     listKey.map((item) => (
                       <div
-                        className="col-span-2 border border-gray-200 rounded-xl grid grid-cols-2 py-5"
+                        className="grid grid-cols-5 col-span-5 py-5 border border-gray-200 rounded-xl"
                         key={uuidv4()}
                       >
-                        <div className="flex items-center">
+                        <div className="flex items-center col-span-2">
                           <div className="px-4">{item.keyId}</div>
-                          <div className="flex-1 px-4">
-                            no name
-                            {/* {item.name} */}
-                            {/* <EditKeyNameForm
-                            placeholder={item.name}
-                            handleRenameKey={(name: string) =>
-                              handleRenameKey(
-                                Number(item.keyId),
-                                name,
-                                serverDetail.apiUrl,
-                                serverDetail.fingerPrint
-                              )
-                            }
-                          /> */}
-                          </div>
+                          <div className="flex-1 px-4">no name</div>
                           <div className="flex-1 px-4">{item.account}</div>
                           <div className="px-4">
-                            {(item.dataUsage / 1000 / 1000 / 1000).toFixed(2)}{" "}
-                            GB
+                            {item.dataUsage
+                              ? `${(
+                                  item.dataUsage /
+                                  1000 /
+                                  1000 /
+                                  1000
+                                ).toFixed(2)} GB`
+                              : "0 GB"}
                           </div>
                         </div>
-                        <div className="flex items-center">
-                          <div className="flex-1 px-4">
+                        <div className="flex items-center col-span-3">
+                          <div className="px-4">
                             {item.dataLimit / 1000 / 1000 / 1000}GB
-                            {/* <EditKeyLimitForm
-                            placeholder={`${
-                              item.dataLimit / 1000 / 1000 / 1000
-                            } GB`}
-                            handleAddLimitData={(bytes: number) =>
-                              handleAddLimitData(
-                                Number(item.keyId),
-                                bytes,
-                                serverDetail.apiUrl,
-                                serverDetail.fingerPrint
-                              )
-                            }
-                          /> */}
                           </div>
-                          <div className="flex-1 px-4">
-                            {item.status ? (
-                              <Tag color="green">Active</Tag>
-                            ) : (
+                          <div className="px-4">
+                            {item?.status === 0 && (
                               <Tag color="red">Inactive</Tag>
                             )}
+                            {item?.status === 1 && (
+                              <Tag color="green">Active</Tag>
+                            )}
+                            {item?.status === 2 && (
+                              <Tag color="blue">Migrate</Tag>
+                            )}
                           </div>
-                          <div className="px-4 flex items-center gap-2 flex-1">
-                            {item.status ? (
+                          <div className="flex items-center justify-end flex-1 gap-2 px-4">
+                            {item.status === 1 && item.enable ? (
                               <>
-                                {" "}
+                                <EditKeyLimitForm
+                                  placeholder={`${
+                                    item.dataLimit / 1000 / 1000 / 1000
+                                  } GB`}
+                                  handleAddLimitData={(bytes: number) =>
+                                    handleAddLimitData(item.keyId, bytes)
+                                  }
+                                />
                                 <button
-                                  className="bg-secondary20 text-white rounded-lg p-2 font-medium text-xs"
+                                  className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
                                   onClick={() => {
                                     setSelectRow(item._id);
                                     showModal();
                                   }}
                                 >
-                                  Migrate key
+                                  Migrate
                                 </button>
                                 <button
-                                  className="bg-secondary20 text-white rounded-lg p-2 font-medium text-xs"
+                                  className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
+                                  onClick={() => handleDisableKey(item._id)}
+                                >
+                                  Disable
+                                </button>
+                                <button
+                                  className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
                                   onClick={async () => {
                                     try {
                                       const { isConfirmed } = await Swal.fire({
@@ -374,32 +422,14 @@ const ServerDetailAdminPage = () => {
                                 </button>
                               </>
                             ) : null}
-
-                            {/* <button
-                              className="bg-error text-white rounded-lg p-3"
-                              onClick={() =>
-                                handleRemoveKey(
-                                  Number(item.keyId),
-                                  serverDetail.apiUrl,
-                                  serverDetail.fingerPrint
-                                )
-                              }
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="1.5"
-                                stroke="currentColor"
-                                className="w-5 h-5"
+                            {item.status === 1 && !item.enable && (
+                              <button
+                                className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
+                                onClick={() => handleEnableKey(item._id)}
                               >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                                />
-                              </svg>
-                            </button> */}
+                                Enable
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -436,20 +466,20 @@ const ServerDetailAdminPage = () => {
                   checked={item._id === selectServer}
                   onClick={() => setSelectServer(item._id)}
                 >
-                  <span className="font-primary block">{item.name}</span>
+                  <span className="block font-primary">{item.name}</span>
                 </Radio>
               ) : null
             )}
         </div>
         <div className="flex items-center justify-end gap-5">
           <button
-            className="px-4 py-2 rounded-lg bg-error font-medium text-white font-primary text-sm"
+            className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-error font-primary"
             onClick={() => handleCancel()}
           >
             Thoát
           </button>
           <button
-            className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-sm"
+            className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-secondary40 font-primary"
             onClick={() => {
               if (selectRow && selectServer) {
                 handleMigratekey(selectRow, selectServer);
@@ -499,7 +529,7 @@ const EditServerForm = ({
           className="placeholder:text-gray-500"
         />
       </div>
-      <Button type="submit" className="text-gray-500 px-4">
+      <Button type="submit" className="px-4 text-gray-500">
         <IconEdit />
       </Button>
     </form>

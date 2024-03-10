@@ -21,6 +21,7 @@ import { VND } from "../../utils/formatPrice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
 import dayjs from "dayjs";
+import RechargePage from "./RechargePage";
 
 const CashPage = () => {
   const { _id } = useSelector((state: RootState) => state.auth);
@@ -52,74 +53,85 @@ const CashPage = () => {
     () => [
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">STT</p>
+          <p className="text-base font-semibold font-primary">STT</p>
         ),
         dataIndex: "index",
+        key: "index",
         width: 70,
-        render: (_text: string, _record: CashType, index: number) => (
-          <p className="font-primary text-sm">{index + 1}</p>
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text + 1}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Username</p>
+          <p className="text-base font-semibold font-primary">Mã giao dịch</p>
+        ),
+        dataIndex: "code",
+        key: "code",
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text}</p>
+        ),
+      },
+      {
+        title: () => (
+          <p className="text-sm font-semibold font-primary">Username</p>
         ),
         dataIndex: "username",
         key: "username",
         render: (_: string, record: CashType) => (
-          <p className="font-primary text-sm">{record.userId?.username}</p>
+          <p className="text-sm font-primary">{record.userId?.username}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Email</p>
+          <p className="text-sm font-semibold font-primary">Email</p>
         ),
         dataIndex: "email",
         key: "email",
         render: (_: string, record: CashType) => (
-          <p className="font-primary text-sm">{record.userId.email}</p>
+          <p className="text-sm font-primary">{record.userId.email}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Số điện thoại</p>
+          <p className="text-sm font-semibold font-primary">Số điện thoại</p>
         ),
         dataIndex: "phone",
         key: "phone",
         render: (_: string, record: CashType) => (
-          <p className="font-primary text-sm">{record.userId.phone}</p>
+          <p className="text-sm font-primary">{record.userId.phone}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Số tiền nạp</p>
+          <p className="text-sm font-semibold font-primary">Số tiền nạp</p>
         ),
         dataIndex: "money",
         key: "money",
         render: (text: number) => (
-          <p className="font-primary text-sm">{VND.format(text)}VND</p>
+          <p className="text-sm font-primary">{VND.format(text)}VND</p>
         ),
         sorter: (a, b) => a.money - b.money,
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Ngày nạp</p>
+          <p className="text-sm font-semibold font-primary">Ngày nạp</p>
         ),
         dataIndex: "createdAt",
         key: "createdAt",
         render: (text: Date) => (
-          <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+          <p className="text-sm font-primary">{DAY_FORMAT(text)}</p>
         ),
         sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Ngày duyệt</p>
+          <p className="text-sm font-semibold font-primary">Ngày duyệt</p>
         ),
         dataIndex: "updatedAt",
         key: "updatedAt",
         render: (text: Date, record: CashType) => (
-          <p className="font-primary text-sm">
+          <p className="text-sm font-primary">
             {record.status === 1 ? DAY_FORMAT(text) : null}
           </p>
         ),
@@ -127,12 +139,12 @@ const CashPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Trạng thái</p>
+          <p className="text-sm font-semibold font-primary">Trạng thái</p>
         ),
         dataIndex: "status",
         key: "status",
         render: (_: number, record: CashType) => (
-          <div className="font-primary text-sm">
+          <div className="text-sm font-primary">
             {record.status === 0 ? (
               <Tag color="red">
                 <span className="font-primary">Đã hủy</span>
@@ -168,12 +180,12 @@ const CashPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-sm font-semibold">Lý do hủy</p>
+          <p className="text-sm font-semibold font-primary">Lý do hủy</p>
         ),
         dataIndex: "description",
         key: "description",
         render: (text: string) => (
-          <p className="font-primary text-sm text-error">{text}</p>
+          <p className="text-sm font-primary text-error">{text}</p>
         ),
       },
     ],
@@ -191,7 +203,8 @@ const CashPage = () => {
 
   return (
     <RequireAuthPage rolePage={2}>
-      <div className="space-y-4 md:space-y-6">
+      <RechargePage />
+      <div className="mt-10 space-y-4 md:space-y-6">
         <Heading>
           Lịch sử nạp:{" "}
           {VND.format(
@@ -218,7 +231,10 @@ const CashPage = () => {
         </div>
         <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
           <Table
-            dataSource={listCashFilter}
+            dataSource={listCashFilter.map((item, index) => ({
+              index,
+              ...item,
+            }))}
             columns={columns}
             scroll={{ x: 1300 }}
           />

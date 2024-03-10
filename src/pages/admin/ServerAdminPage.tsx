@@ -23,7 +23,7 @@ const schema = yup
     fingerPrint: yup.string().required("This field is required"),
     // numberRecomendKey: yup.number().required("This field is required"),
     location: yup.string().required("This field is required"),
-    defaultBandWidth: yup.number().required("This field is required"),
+    // defaultBandWidth: yup.number().required("This field is required"),
     totalBandWidth: yup.number().required("This field is required"),
   })
   .required();
@@ -69,7 +69,7 @@ const ServerAdminPage = () => {
     fingerPrint: string;
     location: string;
     // numberRecomendKey: number;
-    defaultBandWidth: number;
+    // defaultBandWidth: number;
     totalBandWidth: number;
   }) => {
     try {
@@ -103,7 +103,9 @@ const ServerAdminPage = () => {
         confirmButtonText: "Xóa",
       });
       if (isConfirmed) {
-        const result = await api.get<KeySeverType[]>(`/keys?serverId=${_id}&status=1`);
+        const result = await api.get<KeySeverType[]>(
+          `/keys?serverId=${_id}&status=1`
+        );
         if (result.data.length > 0) {
           toast.warn(
             "Bạn phải migrate key sang server khác trước khi muốn xóa"
@@ -161,23 +163,25 @@ const ServerAdminPage = () => {
     () => [
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">STT</p>
+          <p className="text-base font-semibold font-primary">STT</p>
         ),
         dataIndex: "index",
-        render: (_text: string, _record: ServerType, index: number) => (
-          <p className="font-primary text-sm">{index + 1}</p>
+        key: "index",
+        width: 70,
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text + 1}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Server Name</p>
+          <p className="text-base font-semibold font-primary">Server Name</p>
         ),
         dataIndex: "name",
         key: "name",
         render: (text: string, record: ServerType) => (
           <Link
             to={`/admin/server/${record._id}`}
-            className="font-primary text-sm text-primary"
+            className="text-sm font-primary text-primary"
           >
             {text}
           </Link>
@@ -185,60 +189,48 @@ const ServerAdminPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Location</p>
+          <p className="text-base font-semibold font-primary">Location</p>
         ),
         dataIndex: "location",
         key: "location",
         render: (text: string) => (
-          <p className="font-primary text-sm">{text}</p>
+          <p className="text-sm font-primary">{text}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">
-            Default BandWidth
-          </p>
-        ),
-        dataIndex: "defaultBandWidth",
-        key: "defaultBandWidth",
-        render: (text: number) => (
-          <p className="font-primary text-sm">{text / 1000 / 1000 / 1000}GB</p>
-        ),
-      },
-      {
-        title: () => (
-          <p className="font-primary text-base font-semibold">
+          <p className="text-base font-semibold font-primary">
             Total BandWidth
           </p>
         ),
         dataIndex: "totalBandWidth",
         key: "totalBandWidth",
         render: (text: number) => (
-          <p className="font-primary text-sm">{text / 1000 / 1000 / 1000}GB</p>
+          <p className="text-sm font-primary">{text / 1000 / 1000 / 1000}GB</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">
+          <p className="text-base font-semibold font-primary">
             Tổng key đã sử dụng
           </p>
         ),
         dataIndex: "usedkey",
         key: "usedkey",
         render: (_: string, record: ServerType) => (
-          <p className="font-primary text-sm">
+          <p className="text-sm font-primary">
             <TotalKeyUsage serverId={record._id} />
           </p>
         ),
       },
       {
-        title: () => <p className="font-primary text-base font-semibold"></p>,
+        title: () => <p className="text-base font-semibold font-primary"></p>,
         dataIndex: "action",
         key: "action",
         render: (_: string, record: ServerType) => (
           <div className="flex items-center gap-5">
             <button
-              className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-sm"
+              className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-secondary40 font-primary"
               onClick={() => {
                 setSelectRow(record._id);
                 showModal();
@@ -247,7 +239,7 @@ const ServerAdminPage = () => {
               Migrate server
             </button>
             <button
-              className="px-4 py-2 rounded-lg bg-error font-medium text-white font-primary text-sm"
+              className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-error font-primary"
               onClick={() => handleRemoveServer(record._id)}
             >
               Xóa máy chủ
@@ -263,23 +255,25 @@ const ServerAdminPage = () => {
     () => [
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">STT</p>
+          <p className="text-base font-semibold font-primary">STT</p>
         ),
         dataIndex: "index",
-        render: (_text: string, _record: ServerType, index: number) => (
-          <p className="font-primary text-sm">{index + 1}</p>
+        key: "index",
+        width: 70,
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text + 1}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Server Name</p>
+          <p className="text-base font-semibold font-primary">Server Name</p>
         ),
         dataIndex: "email",
         key: "email",
         render: (_: string, record: ServerType) => (
           <Link
             to={`/admin/server/${record._id}`}
-            className="font-primary text-sm text-primary"
+            className="text-sm font-primary text-primary"
           >
             {record.name}
           </Link>
@@ -287,22 +281,22 @@ const ServerAdminPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Location</p>
+          <p className="text-base font-semibold font-primary">Location</p>
         ),
         dataIndex: "location",
         key: "location",
         render: (_: string, record: ServerType) => (
-          <p className="font-primary text-sm">{record.location}</p>
+          <p className="text-sm font-primary">{record.location}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Trạng thái</p>
+          <p className="text-base font-semibold font-primary">Trạng thái</p>
         ),
         dataIndex: "status",
         key: "status",
         render: (status: 0 | 1) => (
-          <p className="font-primary text-sm">
+          <p className="text-sm font-primary">
             {status ? (
               <Tag color="green">
                 <span className="font-primary">Đang hoạt động</span>
@@ -317,22 +311,22 @@ const ServerAdminPage = () => {
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Ngày tạo</p>
+          <p className="text-base font-semibold font-primary">Ngày tạo</p>
         ),
         dataIndex: "createdAt",
         key: "createdAt",
         render: (date: Date) => (
-          <p className="font-primary text-sm">{DAY_FORMAT(date)}</p>
+          <p className="text-sm font-primary">{DAY_FORMAT(date)}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Ngày cập nhật</p>
+          <p className="text-base font-semibold font-primary">Ngày cập nhật</p>
         ),
         dataIndex: "updatedAt",
         key: "updatedAt",
         render: (date: Date) => (
-          <p className="font-primary text-sm">{DAY_FORMAT(date)}</p>
+          <p className="text-sm font-primary">{DAY_FORMAT(date)}</p>
         ),
       },
     ],
@@ -361,21 +355,21 @@ const ServerAdminPage = () => {
       {loading && <Loading />}
       <div className="space-y-10">
         <div className="flex items-start rounded-xl border-2 border-[#eeeeed]">
-          <div className="p-5 flex-1 space-y-3">
-            <p className="text-gray-500 text-lg">Tổng số máy chủ</p>
-            <p className="font-medium text-2xl">{servers.length}</p>
+          <div className="flex-1 p-5 space-y-3">
+            <p className="text-lg text-gray-500">Tổng số máy chủ</p>
+            <p className="text-2xl font-medium">{servers.length}</p>
           </div>
-          {/* <div className="p-5 flex-1 space-y-3">
-            <p className="text-gray-500 text-lg">Tổng số key</p>
-            <p className="font-medium text-2xl">{totalKey}</p>
+          {/* <div className="flex-1 p-5 space-y-3">
+            <p className="text-lg text-gray-500">Tổng số key</p>
+            <p className="text-2xl font-medium">{totalKey}</p>
           </div> */}
-          <div className="p-5 flex-1 space-y-3">
-            <p className="text-gray-500 text-lg">Tổng key đang sử dụng</p>
-            <p className="font-medium text-2xl">{TotalKeyUsage({})}</p>
+          <div className="flex-1 p-5 space-y-3">
+            <p className="text-lg text-gray-500">Tổng key đang sử dụng</p>
+            <p className="text-2xl font-medium">{TotalKeyUsage({})}</p>
           </div>
-          {/* <div className="p-5 flex-1 space-y-3">
-            <p className="text-gray-500 text-lg">Số key có thể cấp</p>
-            <p className="font-medium text-2xl">
+          {/* <div className="flex-1 p-5 space-y-3">
+            <p className="text-lg text-gray-500">Số key có thể cấp</p>
+            <p className="text-2xl font-medium">
               {totalKey - TotalKeyUsage({})}
             </p>
           </div> */}
@@ -383,7 +377,7 @@ const ServerAdminPage = () => {
         <div className="space-y-5">
           <Heading>Thêm máy chủ</Heading>
           <form
-            className="flex flex-col lg:flex-row items-center gap-5"
+            className="flex flex-col items-center gap-5 lg:flex-row"
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className="w-full lg:flex-1">
@@ -393,14 +387,14 @@ const ServerAdminPage = () => {
                 control={control}
               />
             </div>
-            <div className="w-full lg:flex-1">
+            {/* <div className="w-full lg:flex-1">
               <Input
                 name="defaultBandWidth"
                 type="number"
                 placeholder={"Default BandWidth"}
                 control={control}
               />
-            </div>
+            </div> */}
             <div className="w-full lg:flex-1">
               <Input
                 name="totalBandWidth"
@@ -419,16 +413,30 @@ const ServerAdminPage = () => {
                 control={control}
               />
             </div>
-            <Button className="text-white bg-secondary20 px-5 w-full lg:w-fit" type="submit">
+            <Button
+              className="w-full px-5 text-white bg-secondary20 lg:w-fit"
+              type="submit"
+            >
               Thêm máy chủ
             </Button>
           </form>
         </div>
 
         <Heading>Danh sách máy chủ({servers.length})</Heading>
-        <Table dataSource={servers} columns={columns} scroll={{x: 1120}} />
+        <Table
+          dataSource={servers.map((item, index) => ({ index, ...item }))}
+          columns={columns}
+          scroll={{ x: 1120 }}
+        />
         <Heading>Lịch sử máy chủ</Heading>
-        <Table dataSource={listServerHistory} columns={columnsHistory} scroll={{x: 1120}} />
+        <Table
+          dataSource={listServerHistory.map((item, index) => ({
+            index,
+            ...item,
+          }))}
+          columns={columnsHistory}
+          scroll={{ x: 1120 }}
+        />
       </div>
       <Modal
         title="Chọn máy chủ"
@@ -455,20 +463,20 @@ const ServerAdminPage = () => {
                   checked={item._id === selectServer}
                   onClick={() => setSelectServer(item._id)}
                 >
-                  <span className="font-primary block">{item.name}</span>
+                  <span className="block font-primary">{item.name}</span>
                 </Radio>
               ) : null
             )}
         </div>
         <div className="flex items-center justify-end gap-5">
           <button
-            className="px-4 py-2 rounded-lg bg-error font-medium text-white font-primary text-sm"
+            className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-error font-primary"
             onClick={() => handleCancel()}
           >
             Thoát
           </button>
           <button
-            className="px-4 py-2 rounded-lg bg-secondary40 font-medium text-white font-primary text-sm"
+            className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-secondary40 font-primary"
             onClick={() => {
               if (selectRow && selectServer) {
                 handleMigrateServer(selectRow, selectServer);

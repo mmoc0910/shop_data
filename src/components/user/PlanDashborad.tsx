@@ -73,61 +73,62 @@ const PlanDashborad = () => {
     () => [
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">STT</p>
+          <p className="text-base font-semibold font-primary">STT</p>
         ),
         dataIndex: "index",
-        render: (_text: string, _record: PlanType, index: number) => (
-          <p className="font-primary text-sm">{index + 1}</p>
+        key: "index",
+        render: (text: string) => (
+          <p className="text-sm font-primary">{text + 1}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Tên gói</p>
+          <p className="text-base font-semibold font-primary">Tên gói</p>
         ),
         dataIndex: "name",
         key: "name",
         render: (text: string) => (
-          <p className="font-primary text-sm">{text}</p>
+          <p className="text-sm font-primary">{text}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Chu kỳ</p>
+          <p className="text-base font-semibold font-primary">Chu kỳ</p>
         ),
         dataIndex: "type",
         key: "type",
         render: (text: string) => (
-          <p className="font-primary text-sm">{text}</p>
+          <p className="text-sm font-primary">{text}</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Băng thông</p>
+          <p className="text-base font-semibold font-primary">Băng thông</p>
         ),
         dataIndex: "bandWidth",
         key: "bandWidth",
         render: (text: string) => (
-          <p className="font-primary text-sm">{text}GB</p>
+          <p className="text-sm font-primary">{text}GB</p>
         ),
       },
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">Giá</p>
+          <p className="text-base font-semibold font-primary">Giá</p>
         ),
         dataIndex: "price",
         key: "price",
         render: (text: number) => (
-          <p className="font-primary text-sm">{VND.format(text)}VND</p>
+          <p className="text-sm font-primary">{VND.format(text)}VND</p>
         ),
       },
       {
-        title: () => <p className="font-primary text-base font-semibold"></p>,
+        title: () => <p className="text-base font-semibold font-primary"></p>,
         // dataIndex: "createdAt",
         key: "action",
         render: (_: string, record: PlanType) => (
           <div className="flex gap-4">
             <button
-              className="px-4 py-2 rounded-lg bg-error font-medium text-white font-primary text-sm"
+              className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-error font-primary"
               onClick={() => handleChoosePlan(record)}
             >
               Mua ngay
@@ -149,7 +150,7 @@ const PlanDashborad = () => {
             {plans.length > 5 ? (
               <Link
                 to={"/user/plan"}
-                className="text-primary font-medium underline decoration-primary"
+                className="font-medium underline text-primary decoration-primary"
               >
                 Xem tất cả
               </Link>
@@ -157,10 +158,12 @@ const PlanDashborad = () => {
           </div>{" "}
           <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
             <Table
-              dataSource={plans.slice(0, 5)}
+              dataSource={plans
+                .slice(0, 5)
+                .map((item, index) => ({ index, ...item }))}
               columns={columns}
               pagination={false}
-              scroll={{x: 700}}
+              scroll={{ x: 700 }}
             />
           </div>
         </div>

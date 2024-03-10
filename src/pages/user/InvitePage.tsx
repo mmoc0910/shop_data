@@ -98,27 +98,29 @@ const InvitePage = () => {
     () => [
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">STT</p>
+          <p className="text-base font-semibold font-primary">STT</p>
         ),
         dataIndex: "index",
-        render: (_text: string, _record: RoseType, index: number) => (
-          <p className="font-primary text-sm">{index + 1}</p>
+        key: "index",
+        width: 70,
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text + 1}</p>
         ),
       },
       {
-        title: <p className="font-primary font-semibold">Tên gói</p>,
+        title: <p className="font-semibold font-primary">Tên gói</p>,
         dataIndex: "plan",
         key: "plan",
         render: (text: string) => (
-          <p className="font-primary text-sm">{text}</p>
+          <p className="text-sm font-primary">{text}</p>
         ),
       },
       {
-        title: <p className="font-primary font-semibold">% hoa hồng</p>,
+        title: <p className="font-semibold font-primary">% hoa hồng</p>,
         dataIndex: "percent",
         key: "percent",
         render: (text: number) => (
-          <p className="font-primary text-sm">{text}%</p>
+          <p className="text-sm font-primary">{text}%</p>
         ),
         sorter: {
           compare: (a, b) => a.percent - b.percent,
@@ -126,10 +128,10 @@ const InvitePage = () => {
         },
       },
       {
-        title: <p className="font-primary font-semibold">Tiền hoa hồng</p>,
+        title: <p className="font-semibold font-primary">Tiền hoa hồng</p>,
         key: "recive",
         render: (_: string, record: RoseType) => (
-          <p className="font-primary text-sm">{VND.format(record.recive)}VND</p>
+          <p className="text-sm font-primary">{VND.format(record.recive)}VND</p>
         ),
         sorter: {
           compare: (a, b) => a.recive - b.recive,
@@ -137,32 +139,32 @@ const InvitePage = () => {
         },
       },
       {
-        title: <p className="font-primary font-semibold">Người mua</p>,
+        title: <p className="font-semibold font-primary">Người mua</p>,
         key: "username",
         render: (_: string, record: RoseType) => (
-          <p className="font-primary text-sm">{record.reciveRoseId.username}</p>
+          <p className="text-sm font-primary">{record.introducedId.username}</p>
         ),
       },
       {
-        title: <p className="font-primary font-semibold">Email</p>,
+        title: <p className="font-semibold font-primary">Email</p>,
         key: "email",
         render: (_: string, record: RoseType) => (
-          <p className="font-primary text-sm">{record.reciveRoseId.email}</p>
+          <p className="text-sm font-primary">{record.introducedId.email}</p>
         ),
       },
       {
-        title: <p className="font-primary font-semibold">SDT</p>,
+        title: <p className="font-semibold font-primary">SDT</p>,
         key: "email",
         render: (_: string, record: RoseType) => (
-          <p className="font-primary text-sm">{record.reciveRoseId.phone}</p>
+          <p className="text-sm font-primary">{record.introducedId.phone}</p>
         ),
       },
       {
-        title: <p className="font-primary font-semibold">Ngày nhận</p>,
+        title: <p className="font-semibold font-primary">Ngày nhận</p>,
         dataIndex: "createdAt",
         key: "createdAt",
         render: (text: Date) => (
-          <p className="font-primary text-sm">{DAY_FORMAT(text)}</p>
+          <p className="text-sm font-primary">{DAY_FORMAT(text)}</p>
         ),
         sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
       },
@@ -193,8 +195,8 @@ const InvitePage = () => {
     <RequireAuthPage rolePage={2}>
       <div className="space-y-8">
         <div className="grid grid-cols-2 md:grid-cols-4 items-start rounded-xl border-2 border-[#eeeeed]">
-          <div className="flex-1 px-5 py-5 md:py-7 flex flex-col items-center rounded-xl space-y-2 md:space-y-4">
-            <p className="font-medium text-xl lg:text-2xl xl:text-4xl">
+          <div className="flex flex-col items-center flex-1 px-5 py-5 space-y-2 md:py-7 rounded-xl md:space-y-4">
+            <p className="text-xl font-medium lg:text-2xl xl:text-4xl">
               {user?.level === 0 ? "Cộng tác viên" : `Đại lý cấp${user?.level}`}
             </p>
             <div className="flex items-center gap-1">
@@ -206,16 +208,16 @@ const InvitePage = () => {
               </Tooltip>
             </div>
           </div>
-          <div className="flex-1 px-5 py-5 md:py-7 flex flex-col items-center rounded-xl space-y-2 md:space-y-4">
-            <p className="font-medium text-xl lg:text-2xl xl:text-4xl">
+          <div className="flex flex-col items-center flex-1 px-5 py-5 space-y-2 md:py-7 rounded-xl md:space-y-4">
+            <p className="text-xl font-medium lg:text-2xl xl:text-4xl">
               {satisfy?.numberIntoduce || 0}
             </p>
             <div className="flex items-center gap-1">
               <p className="text-lg">Đã mời</p>
             </div>
           </div>
-          <div className="flex-1 px-5 py-5 md:py-7 flex flex-col items-center rounded-xl space-y-2 md:space-y-4">
-            <p className="font-medium text-xl lg:text-2xl xl:text-4xl">
+          <div className="flex flex-col items-center flex-1 px-5 py-5 space-y-2 md:py-7 rounded-xl md:space-y-4">
+            <p className="text-xl font-medium lg:text-2xl xl:text-4xl">
               {commision ? commision.value : 0}%
             </p>
             <div className="flex items-center gap-1">
@@ -227,8 +229,8 @@ const InvitePage = () => {
               </Tooltip> */}
             </div>
           </div>
-          <div className="flex-1 px-5 py-5 md:py-7 flex flex-col items-center rounded-xl space-y-2 md:space-y-4">
-            <p className="font-medium text-xl lg:text-2xl xl:text-4xl">
+          <div className="flex flex-col items-center flex-1 px-5 py-5 space-y-2 md:py-7 rounded-xl md:space-y-4">
+            <p className="text-xl font-medium lg:text-2xl xl:text-4xl">
               {satisfy && satisfy.rose.length > 0
                 ? VND.format(satisfy.rose[0].money)
                 : 0}
@@ -247,24 +249,40 @@ const InvitePage = () => {
         </div>
         <div className="font-medium">
           <p>
-            User/CTV: Nhận được <span className="text-secondary20 font-medium">[{commision?.value}%]</span> hoa hồng cho mỗi đơn hàng của người được giới thiệu.
+            User/CTV: Nhận được{" "}
+            <span className="font-medium text-secondary20">
+              [{commision?.value}%]
+            </span>{" "}
+            hoa hồng cho mỗi đơn hàng của người được giới thiệu.
           </p>
           <p>
-            Đại lý Cấp 1: Chiết khấu <span className="text-secondary20 font-medium">[{collab.level1}%]</span> cho mỗi đơn hàng mới.
+            Đại lý Cấp 1: Chiết khấu{" "}
+            <span className="font-medium text-secondary20">
+              [{collab.level1}%]
+            </span>{" "}
+            cho mỗi đơn hàng mới.
           </p>
           <p>
-            Đại lý Cấp 2: Chiết khấu <span className="text-secondary20 font-medium">[{collab.level2}%]</span> cho mỗi đơn hàng mới.
+            Đại lý Cấp 2: Chiết khấu{" "}
+            <span className="font-medium text-secondary20">
+              [{collab.level2}%]
+            </span>{" "}
+            cho mỗi đơn hàng mới.
           </p>
           <p>
-            Đại lý Cấp 3: Chiết khấu <span className="text-secondary20 font-medium">[{collab.level3}%]</span> cho mỗi đơn hàng mới.
+            Đại lý Cấp 3: Chiết khấu{" "}
+            <span className="font-medium text-secondary20">
+              [{collab.level3}%]
+            </span>{" "}
+            cho mỗi đơn hàng mới.
           </p>
-          <p className="text-secondary20 text-lg font-medium">
+          <p className="text-lg font-medium text-secondary20">
             Để được nâng cấp lên làm đại lý vui lòng lien hệ trực tiếp admin.
           </p>
         </div>
         <div className="space-y-4">
           <Heading>Lịch sử nhận hoa hồng</Heading>
-          <div className="block md:flex space-y-3 md:space-y-0 items-center gap-5 mb-5">
+          <div className="items-center block gap-5 mb-5 space-y-3 md:flex md:space-y-0">
             <div className="relative flex-1">
               <input
                 type="text"
@@ -308,7 +326,10 @@ const InvitePage = () => {
           </div>
           <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
             <Table
-              dataSource={listRoseHistoryFilter}
+              dataSource={listRoseHistoryFilter.map((item, index) => ({
+                index,
+                ...item,
+              }))}
               columns={columns}
               scroll={{ x: 1180 }}
             />

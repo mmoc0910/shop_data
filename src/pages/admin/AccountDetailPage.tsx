@@ -15,7 +15,7 @@ import { toast } from "react-toastify";
 import {
   isSameOrAfter,
   isSameOrBefore,
-  linkGist,
+  // linkGist,
   messages,
 } from "../../constants";
 import { api } from "../../api";
@@ -45,7 +45,7 @@ const AccountDetailPage = () => {
       <div className="space-y-4">
         <Heading>Chi tiết người dùng</Heading>
         {user ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
             <p>
               Tên người dùng:{" "}
               <span className="font-medium">{user.username}</span>
@@ -148,42 +148,51 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
     () => [
       {
         title: () => (
-          <p className="font-primary text-base font-semibold">STT</p>
+          <p className="text-base font-semibold font-primary">STT</p>
         ),
         dataIndex: "index",
+        key: "index",
         width: 70,
-        render: (_text: string, _record: GistType, index: number) => (
-          <p className="font-primary text-sm">{index + 1}</p>
+        render: (text: string) => (
+          <p className="text-sm font-primary">{text + 1}</p>
         ),
       },
       {
-        title: <p className="font-primary font-semibold">Tên gói</p>,
+        title: <p className="font-semibold font-primary">Mã giao dịch</p>,
+        dataIndex: "code",
+        key: "code",
+        render: (text: string) => (
+          <p className="text-sm font-primary">{text}</p>
+        ),
+      },
+      {
+        title: <p className="font-semibold font-primary">Tên gói</p>,
         dataIndex: "name",
         key: "name",
         width: 150,
         render: (_: string, record: GistType) => (
-          <p className="font-primary text-sm">{record.planId?.name}</p>
+          <p className="text-sm font-primary">{record.planId?.name}</p>
         ),
       },
       {
-        title: <p className="font-primary font-semibold">Thời gian</p>,
+        title: <p className="font-semibold font-primary">Thời gian</p>,
         dataIndex: "day",
         key: "day",
         width: 120,
         render: (_: string, record: GistType) => (
-          <p className="font-primary text-sm">
+          <p className="text-sm font-primary">
             {dayjs(record.keyId.startDate).format("DD/MM/YYYY")} <br />-{" "}
             {dayjs(record.keyId.endDate).format("DD/MM/YYYY")}
           </p>
         ),
       },
       {
-        title: <p className="font-primary font-semibold">Data limit</p>,
+        title: <p className="font-semibold font-primary">Data limit</p>,
         dataIndex: "bandWidth",
         key: "bandWidth",
         width: 120,
         render: (_: string, record: GistType) => (
-          <p className="font-primary text-sm">
+          <p className="text-sm font-primary">
             {record.keyId.dataLimit / 1000 / 1000 / 1000}GB
           </p>
         ),
@@ -193,13 +202,15 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
         },
       },
       {
-        title: <p className="font-primary font-semibold">Data Usage</p>,
+        title: <p className="font-semibold font-primary">Data Usage</p>,
         dataIndex: "dataUsage",
         key: "dataUsage",
         width: 150,
         render: (_: string, record: GistType) => (
-          <p className="font-primary text-sm">
-            {(record.keyId.dataUsage / 1000 / 1000 / 1000).toFixed(2)}GB
+          <p className="text-sm font-primary">
+            {record.keyId.dataUsage
+              ? `${(record.keyId.dataUsage / 1000 / 1000 / 1000).toFixed(2)}GB`
+              : "0GB"}
           </p>
         ),
         sorter: {
@@ -208,12 +219,12 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
         },
       },
       {
-        title: <p className="font-primary font-semibold">Trạng thái</p>,
+        title: <p className="font-semibold font-primary">Trạng thái</p>,
         dataIndex: "status",
         key: "status",
         width: 130,
         render: (_: number, record: GistType) => (
-          <div className="font-primary text-sm">
+          <div className="text-sm font-primary">
             {record.status ? (
               <Tag color="green">
                 <span className="font-primary">Còn hạn</span>
@@ -239,12 +250,12 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
         //   record.status === Number(value) ? true : false,
       },
       {
-        title: <p className="font-primary font-semibold">Key</p>,
+        title: <p className="font-semibold font-primary">Key</p>,
         dataIndex: "key",
         key: "key",
         // fixed: "right",
         render: (_: string, record: GistType) => {
-          const key = `${linkGist}/${record.gistId}/raw/${record?.fileName}#`;
+          // const key = `${linkGist}/${record.gistId}/raw/${record?.fileName}#`;
           return (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
@@ -268,7 +279,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
                   {record.extension}
                 </p>
               </div>
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <Tooltip title="copy">
                   <button
                     onClick={() => copyToClipboard(`${key}${record.extension}`)}
@@ -280,13 +291,13 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
                   {key}
                   {record.extension}
                 </p>
-              </div>
+              </div> */}
             </div>
           );
         },
       },
       {
-        title: <p className="font-primary font-semibold">Đặt tên key</p>,
+        title: <p className="font-semibold font-primary">Đặt tên key</p>,
         dataIndex: "extension",
         key: "extension",
         width: 150,
@@ -322,7 +333,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
   return (
     <div>
       <Heading className="mb-4">Danh sách key đã mua</Heading>
-      <div className="block md:flex space-y-3 md:space-y-0 items-center gap-5 mb-5">
+      <div className="items-center block gap-5 mb-5 space-y-3 md:flex md:space-y-0">
         <div className="relative flex-1">
           <input
             type="text"
@@ -366,7 +377,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
       </div>
       <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
         <Table
-          dataSource={listGistFilter}
+          dataSource={listGistFilter.map((item, index) => ({ index, ...item }))}
           columns={columns}
           loading={loadingTable}
           scroll={{ x: 1120 }}
