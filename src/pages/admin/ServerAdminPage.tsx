@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Input } from "../../components/input";
+import { Input, Textarea } from "../../components/input";
 import Button from "../../components/button/Button";
 import { Modal, Table, TableColumnsType, Tag } from "antd";
 import Swal from "sweetalert2";
@@ -16,12 +16,14 @@ import RequireAuthPage from "../../components/common/RequireAuthPage";
 import axios from "axios";
 import Radio from "../../components/radio/Radio";
 import Loading from "../../components/common/Loading";
+import PickLocationForm from "../../components/server/PickLocationForm";
 
 const schema = yup
   .object({
     apiUrl: yup.string().required("This field is required"),
     fingerPrint: yup.string().required("This field is required"),
-    // numberRecomendKey: yup.number().required("This field is required"),
+    remark: yup.string().required("This field is required"),
+    // numberRecomendKey: yup.number(),
     location: yup.string().required("This field is required"),
     // defaultBandWidth: yup.number().required("This field is required"),
     totalBandWidth: yup.number().required("This field is required"),
@@ -37,11 +39,18 @@ const ServerAdminPage = () => {
     undefined
   );
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const { handleSubmit, control, reset } = useForm({
+  const {
+    handleSubmit,
+    control,
+    reset,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(schema),
     mode: "onSubmit",
   });
-
+  const locationWatch = watch("location");
   useEffect(() => {
     handleFetchData();
   }, []);
@@ -67,6 +76,7 @@ const ServerAdminPage = () => {
   const onSubmit = async (data: {
     apiUrl: string;
     fingerPrint: string;
+    remark: string;
     location: string;
     // numberRecomendKey: number;
     // defaultBandWidth: number;
@@ -162,9 +172,7 @@ const ServerAdminPage = () => {
   const columns: TableColumnsType<ServerType> = useMemo(
     () => [
       {
-        title: () => (
-          <p className="text-base font-semibold font-primary">STT</p>
-        ),
+        title: () => <p className="text-sm font-semibold font-primary">STT</p>,
         dataIndex: "index",
         key: "index",
         width: 70,
@@ -174,7 +182,7 @@ const ServerAdminPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Server Name</p>
+          <p className="text-sm font-semibold font-primary">Server Name</p>
         ),
         dataIndex: "name",
         key: "name",
@@ -189,7 +197,7 @@ const ServerAdminPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Location</p>
+          <p className="text-sm font-semibold font-primary">Location</p>
         ),
         dataIndex: "location",
         key: "location",
@@ -198,10 +206,16 @@ const ServerAdminPage = () => {
         ),
       },
       {
+        title: () => <p className="text-sm font-semibold font-primary">IP</p>,
+        dataIndex: "hostnameForAccessKeys",
+        key: "hostnameForAccessKeys",
+        render: (text: string) => (
+          <p className="text-sm font-primary">{text}</p>
+        ),
+      },
+      {
         title: () => (
-          <p className="text-base font-semibold font-primary">
-            Total BandWidth
-          </p>
+          <p className="text-sm font-semibold font-primary">Total BandWidth</p>
         ),
         dataIndex: "totalBandWidth",
         key: "totalBandWidth",
@@ -211,9 +225,7 @@ const ServerAdminPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">
-            Tổng key đã sử dụng
-          </p>
+          <p className="text-sm font-semibold font-primary">Tổng key sử dụng</p>
         ),
         dataIndex: "usedkey",
         key: "usedkey",
@@ -224,13 +236,36 @@ const ServerAdminPage = () => {
         ),
       },
       {
-        title: () => <p className="text-base font-semibold font-primary"></p>,
+        title: () => (
+          <p className="text-sm font-semibold font-primary">Max using</p>
+        ),
+        dataIndex: "maxUsage",
+        key: "maxUsage",
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text / 1000 / 1000 / 1000}GB</p>
+        ),
+      },
+      {
+        title: () => (
+          <p className="text-sm font-semibold font-primary">dataTransfer</p>
+        ),
+        dataIndex: "dataTransfer",
+        key: "dataTransfer",
+        render: (text: number) => (
+          <p className="text-sm font-primary">
+            {(text / 1000 / 1000 / 1000).toFixed(2)}GB
+          </p>
+        ),
+      },
+      {
+        title: () => <p className="text-sm font-semibold font-primary"></p>,
         dataIndex: "action",
         key: "action",
+        width: 170,
         render: (_: string, record: ServerType) => (
-          <div className="flex items-center gap-5">
+          <div className="flex flex-col gap-2">
             <button
-              className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-secondary40 font-primary"
+              className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary"
               onClick={() => {
                 setSelectRow(record._id);
                 showModal();
@@ -239,7 +274,7 @@ const ServerAdminPage = () => {
               Migrate server
             </button>
             <button
-              className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-error font-primary"
+              className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-error font-primary"
               onClick={() => handleRemoveServer(record._id)}
             >
               Xóa máy chủ
@@ -376,49 +411,60 @@ const ServerAdminPage = () => {
         </div>
         <div className="space-y-5">
           <Heading>Thêm máy chủ</Heading>
-          <form
-            className="flex flex-col items-center gap-5 lg:flex-row"
-            onSubmit={handleSubmit(onSubmit)}
-          >
+          <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
             <div className="w-full lg:flex-1">
-              <Input
-                name="location"
-                placeholder={"Location"}
+              <Textarea
+                name="remark"
+                placeholder={"remark"}
                 control={control}
+                className="min-h-[100px]"
               />
             </div>
-            {/* <div className="w-full lg:flex-1">
-              <Input
-                name="defaultBandWidth"
-                type="number"
-                placeholder={"Default BandWidth"}
-                control={control}
-              />
-            </div> */}
-            <div className="w-full lg:flex-1">
-              <Input
-                name="totalBandWidth"
-                type="number"
-                placeholder={"Total BandWidth"}
-                control={control}
-              />
+            <div className="flex flex-col items-center gap-5 lg:flex-row">
+              <div className="w-full lg:flex-1">
+                <PickLocationForm
+                  location={locationWatch}
+                  onSelectLocation={(value) => {
+                    console.log("value - ", value);
+                    setValue("location", value);
+                  }}
+                  error={
+                    errors?.location?.message
+                      ? errors.location.message
+                      : undefined
+                  }
+                />
+                {/* <Input
+                  name="location"
+                  placeholder={"Location"}
+                  control={control}
+                /> */}
+              </div>
+              <div className="w-full lg:flex-1">
+                <Input
+                  name="totalBandWidth"
+                  type="number"
+                  placeholder={"Total BandWidth"}
+                  control={control}
+                />
+              </div>
+              <div className="w-full lg:flex-1">
+                <Input name="apiUrl" placeholder={"apiUrl"} control={control} />
+              </div>
+              <div className="w-full lg:flex-1">
+                <Input
+                  name="fingerPrint"
+                  placeholder={"fingerPrint"}
+                  control={control}
+                />
+              </div>
+              <Button
+                className="w-full px-5 text-white bg-secondary20 lg:w-fit"
+                type="submit"
+              >
+                Thêm máy chủ
+              </Button>
             </div>
-            <div className="w-full lg:flex-1">
-              <Input name="apiUrl" placeholder={"apiUrl"} control={control} />
-            </div>
-            <div className="w-full lg:flex-1">
-              <Input
-                name="fingerPrint"
-                placeholder={"fingerPrint"}
-                control={control}
-              />
-            </div>
-            <Button
-              className="w-full px-5 text-white bg-secondary20 lg:w-fit"
-              type="submit"
-            >
-              Thêm máy chủ
-            </Button>
           </form>
         </div>
 

@@ -44,7 +44,7 @@ const Input: FC<InputType> = ({
           "focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none",
           error
             ? "border-error text-error"
-            : "border-icon-color text-text1",
+            : "border-strock text-text1",
           children ? "pr-16" : "",
           className
         )}

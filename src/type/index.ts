@@ -1,5 +1,12 @@
 import { AuthState } from "../store/auth/authSlice";
 
+export type LocationType = {
+  "_id": string,
+  "name": string,
+  "createdAt": Date,
+  "updatedAt": Date,
+  "__v": 0
+}
 export interface UserState {
   level: number;
   email: string;
@@ -20,6 +27,7 @@ export interface UserState {
 
 export type ServerType = {
   _id: string;
+  remark?: string;
   serverId: string;
   location: string;
   apiUrl: string;
@@ -198,4 +206,29 @@ export type CollabType = {
   _id: string;
   createdAt: Date;
   updatedAt: Date;
+};
+
+export type KeyDetailType = {
+  _id: string;
+  keyId: string;
+  name: string;
+  password: string;
+  port: number;
+  method: string;
+  accessUrl: string;
+  enable: boolean;
+  dataLimit: number;
+  dataUsage: number;
+  dataExpand: number;
+  serverId: ServerType;
+  userId: string;
+  awsId: AWSType;
+  account: string;
+  startDate: Date;
+  endDate: Date;
+  status: 0 | 1 | 2;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: 0;
+  gist: GistType;
 };

@@ -26,7 +26,7 @@ const Textarea: FC<TextareaType> = ({
           "outline-none text-sm focus:border-primary font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer resize-none min-h-[140px]",
           error?.message
             ? "border-error text-error"
-            : "border-icon-color text-text1",
+            : "border-strock text-text1",
           className
         )}
         placeholder={placeholder}

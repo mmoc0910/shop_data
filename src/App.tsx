@@ -36,6 +36,7 @@ const AccountPage = lazy(() => import("./pages/user/AccountPage"));
 const PlanPage = lazy(() => import("./pages/user/PlanPage"));
 const OrderPage = lazy(() => import("./pages/user/OrderPage"));
 const InvitePage = lazy(() => import("./pages/user/InvitePage"));
+const KeyDetailAdminPage = lazy(() => import("./pages/admin/KeyDetailAdminPage"));
 
 function App() {
   return (
@@ -61,6 +62,7 @@ function App() {
             <Route path="/admin/account" element={<AccountAdminPage />} />
             <Route path="/admin/account/:accountId" element={<AccountDetailPage />} />
             <Route path="/admin/server" element={<ServerAdminPage />} />
+            <Route path="/admin/key/:keyId" element={<KeyDetailAdminPage />} />
             <Route
               path="/admin/server/:serverId"
               element={<ServerDetailAdminPage />}

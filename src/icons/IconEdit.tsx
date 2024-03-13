@@ -1,11 +1,19 @@
+import classNames from "../utils/classNames";
 
-
-const IconEdit = () => {
+const IconEdit = ({
+  width = 24,
+  height = 24,
+  className = "",
+}: {
+  width?: number;
+  height?: number;
+  className?: string;
+}) => {
   return (
     <svg
-      className="w-5 h-5"
-      width={24}
-      height={24}
+      className={classNames("w-5 h-5", className)}
+      width={width}
+      height={height}
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

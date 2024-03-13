@@ -2,55 +2,51 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "../button/Button";
-import { Input } from "../input";
+import {  Textarea } from "../input";
 import IconEdit from "../../icons/IconEdit";
-import React from "react";
 
 const schema = yup
   .object({
-    name: yup.string(),
+    value: yup.string(),
   })
   .required();
 
-const EditKeyLimitForm = ({
+const EditRemarkServer = ({
   placeholder,
-  handleAddLimitData,
-  type = "text",
+  initialValue,
+  handleSubmitRemark,
 }: {
   placeholder: string;
-  handleAddLimitData: (bytes: number) => void;
-  type?: React.HTMLInputTypeAttribute;
+  initialValue?: string;
+  handleSubmitRemark: (value: string) => void;
 }) => {
   const { handleSubmit, control } = useForm({
     resolver: yupResolver(schema),
     mode: "onSubmit",
+    defaultValues: { value: initialValue },
   });
-  const onSubmit = (data: { name?: string }) => {
+  const onSubmit = (data: { value?: string }) => {
     try {
-      data.name && handleAddLimitData(Number(data.name));
+      data.value && handleSubmitRemark(data.value);
     } catch (error) {
       console.log(error);
     }
   };
   return (
-    <form
-      className="flex items-center w-[200px]"
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <form className="flex items-end" onSubmit={handleSubmit(onSubmit)}>
       <div className="w-full">
-        <Input
-          type={type}
-          name="name"
+        <Textarea
+          name="value"
           placeholder={placeholder}
           control={control}
-          // className=" h-[40px]"
+          className="min-h-[120px]"
         />
       </div>
-      <Button type="submit" className="px-4 text-gray-500">
+      <Button type="submit" className="text-gray-500 px-4">
         <IconEdit />
       </Button>
     </form>
   );
 };
 
-export default EditKeyLimitForm;
+export default EditRemarkServer;

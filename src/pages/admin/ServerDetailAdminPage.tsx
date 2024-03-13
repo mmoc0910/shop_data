@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Heading from "../../components/common/Heading";
 import { useEffect, useState } from "react";
 import { KeySeverType, ServerType } from "../../type";
@@ -20,6 +20,7 @@ import RequireAuthPage from "../../components/common/RequireAuthPage";
 import { Modal, Tag } from "antd";
 import Loading from "../../components/common/Loading";
 import EditKeyLimitForm from "../../components/server/EditKeyLimitForm";
+import EditRemarkServer from "../../components/server/EditRemarkServer";
 
 const ServerDetailAdminPage = () => {
   const { serverId } = useParams();
@@ -208,6 +209,27 @@ const ServerDetailAdminPage = () => {
             <div className="space-y-7">
               <Heading>Server</Heading>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <div className="col-span-1 md:col-span-2 lg:col-span-3 p-3 space-y-1 border border-gray-200 rounded-lg">
+                  <div className="font-medium text-gray-500">Remark</div>
+                  <div>
+                    <EditRemarkServer
+                      placeholder="Remark"
+                      initialValue={serverDetail.remark}
+                      handleSubmitRemark={async (value: string) => {
+                        try {
+                          await api.patch(
+                            `/servers/remark/${serverDetail._id}`,
+                            { remark: value }
+                          );
+                          handleFetchServerDetail();
+                          toast.success("Thành công");
+                        } catch (error) {
+                          console.log("error - ", error);
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
                 <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg">
                   <div className="font-medium text-gray-500">Server name</div>
                   <div>
@@ -298,145 +320,310 @@ const ServerDetailAdminPage = () => {
                 </div>
               </div>
             </div>
-            <div className="space-y-7">
-              <Heading>Keys</Heading>
-              <div className="w-full space-y-5 overflow-x-scroll">
-                {/* <CreateNewKeyForm
+            {listKey.filter((item) => item.status === 1).length > 0 ? (
+              <div className="space-y-7">
+                <Heading>Keys Active</Heading>
+                <div className="w-full space-y-5 overflow-x-scroll">
+                  {/* <CreateNewKeyForm
                 handleAddNewKey={() =>
                   handleAddNewKey(serverDetail.apiUrl, serverDetail.fingerPrint)
                 }
               /> */}
-                <div className="grid grid-cols-5 w-[1180px] lg:w-full">
-                  <div className="flex col-span-2 pb-3">
-                    <div className="px-4 font-semibold">#</div>
-                    <div className="flex-1 px-4 font-semibold">OrderID</div>
-                    <div className="flex-1 px-4 font-semibold">Email</div>
-                    <div className="px-4 font-semibold">Usage</div>
-                  </div>
-                  <div className="flex col-span-3 pb-3">
-                    <div className="px-4 font-semibold">Limit</div>
-                    <div className="px-4 font-semibold">Status</div>
-                    <div className="justify-end flex-1 px-4 font-semibold">
-                      Actions
+                  <div className="grid grid-cols-5 w-[1180px] lg:w-full">
+                    <div className="flex col-span-2 pb-3">
+                      <div className="px-4 font-semibold">#</div>
+                      <div className="flex-1 px-4 font-semibold">OrderID</div>
+                      <div className="flex-1 px-4 font-semibold">Email</div>
+                      <div className="px-4 font-semibold">Usage</div>
                     </div>
-                  </div>
-                  {listKey.length > 0 &&
-                    listKey.map((item) => (
-                      <div
-                        className="grid grid-cols-5 col-span-5 py-5 border border-gray-200 rounded-xl"
-                        key={uuidv4()}
-                      >
-                        <div className="flex items-center col-span-2">
-                          <div className="px-4">{item.keyId}</div>
-                          <div className="flex-1 px-4">no name</div>
-                          <div className="flex-1 px-4">{item.account}</div>
-                          <div className="px-4">
-                            {item.dataUsage
-                              ? `${(
-                                  item.dataUsage /
-                                  1000 /
-                                  1000 /
-                                  1000
-                                ).toFixed(2)} GB`
-                              : "0 GB"}
-                          </div>
-                        </div>
-                        <div className="flex items-center col-span-3">
-                          <div className="px-4">
-                            {item.dataLimit / 1000 / 1000 / 1000}GB
-                          </div>
-                          <div className="px-4">
-                            {item?.status === 0 && (
-                              <Tag color="red">Inactive</Tag>
-                            )}
-                            {item?.status === 1 && (
-                              <Tag color="green">Active</Tag>
-                            )}
-                            {item?.status === 2 && (
-                              <Tag color="blue">Migrate</Tag>
-                            )}
-                          </div>
-                          <div className="flex items-center justify-end flex-1 gap-2 px-4">
-                            {item.status === 1 && item.enable ? (
-                              <>
-                                <EditKeyLimitForm
-                                  placeholder={`${
-                                    item.dataLimit / 1000 / 1000 / 1000
-                                  } GB`}
-                                  handleAddLimitData={(bytes: number) =>
-                                    handleAddLimitData(item.keyId, bytes)
-                                  }
-                                />
-                                <button
-                                  className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
-                                  onClick={() => {
-                                    setSelectRow(item._id);
-                                    showModal();
-                                  }}
-                                >
-                                  Migrate
-                                </button>
-                                <button
-                                  className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
-                                  onClick={() => handleDisableKey(item._id)}
-                                >
-                                  Disable
-                                </button>
-                                <button
-                                  className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
-                                  onClick={async () => {
-                                    try {
-                                      const { isConfirmed } = await Swal.fire({
-                                        title: `<p class="leading-tight">Bạn có nâng cấp key này</p>`,
-                                        icon: "success",
-                                        showCancelButton: true,
-                                        confirmButtonColor: "#1DC071",
-                                        cancelButtonColor: "#d33",
-                                        cancelButtonText: "Thoát",
-                                        confirmButtonText: "Có, nâng cấp ngay",
-                                      });
-                                      if (isConfirmed) {
-                                        await api.patch(
-                                          `/keys/upgrade/${item._id}`
-                                        );
-                                        handleFetchServerDetail();
-                                        toast.success("Thành công");
-                                      }
-                                    } catch (error) {
-                                      if (axios.isAxiosError(error)) {
-                                        console.log("error message: ", error);
-                                        toast.error(
-                                          error.response?.data.message
-                                        );
-                                      } else {
-                                        console.log(
-                                          "unexpected error: ",
-                                          error
-                                        );
-                                        return "An unexpected error occurred";
-                                      }
-                                    }
-                                  }}
-                                >
-                                  Gia hạn
-                                </button>
-                              </>
-                            ) : null}
-                            {item.status === 1 && !item.enable && (
-                              <button
-                                className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
-                                onClick={() => handleEnableKey(item._id)}
-                              >
-                                Enable
-                              </button>
-                            )}
-                          </div>
-                        </div>
+                    <div className="flex col-span-3 pb-3">
+                      <div className="px-4 font-semibold">Limit</div>
+                      <div className="px-4 font-semibold">Status</div>
+                      <div className="text-end flex-1 px-4 font-semibold">
+                        Actions
                       </div>
-                    ))}
+                    </div>
+                    {listKey.length > 0 &&
+                      listKey.map((item) =>
+                        item.status === 1 ? (
+                          <div
+                            className="grid grid-cols-5 col-span-5 py-5 border border-gray-200 rounded-xl"
+                            key={uuidv4()}
+                          >
+                            <div className="flex items-center col-span-2">
+                              <div className="px-4">{item.keyId}</div>
+                              <Link
+                                to={`/admin/key/${item._id}`}
+                                className="flex-1 px-4 text-primary font-medium hover:underline hover:decoration-primary"
+                              >
+                                {item.name || "no name"}
+                              </Link>
+                              <div className="flex-1 px-4">{item.account}</div>
+                              <div className="px-4 flex-1">
+                                {item.dataUsage
+                                  ? `${(
+                                      item.dataUsage /
+                                      1000 /
+                                      1000 /
+                                      1000
+                                    ).toFixed(2)} GB`
+                                  : "00.00 GB"}
+                              </div>
+                            </div>
+                            <div className="flex items-center col-span-3">
+                              <div className="px-4">
+                                {item.dataLimit / 1000 / 1000 / 1000}GB
+                              </div>
+                              <div className="px-4">
+                                {item?.enable && (
+                                  <Tag color="green">Hoạt động</Tag>
+                                )}
+                                {!item?.enable && (
+                                  <Tag color="red">Ngưng hoạt động</Tag>
+                                )}
+                              </div>
+                              <div className="flex items-center justify-end flex-1 gap-2 px-4">
+                                {item.status === 1 && item.enable ? (
+                                  <>
+                                    <EditKeyLimitForm
+                                      placeholder={`${
+                                        item.dataLimit / 1000 / 1000 / 1000
+                                      } GB`}
+                                      handleAddLimitData={(bytes: number) =>
+                                        handleAddLimitData(item.keyId, bytes)
+                                      }
+                                    />
+                                    <button
+                                      className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
+                                      onClick={() => {
+                                        setSelectRow(item._id);
+                                        showModal();
+                                      }}
+                                    >
+                                      Migrate
+                                    </button>
+                                    <button
+                                      className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
+                                      onClick={() => handleDisableKey(item._id)}
+                                    >
+                                      Disable
+                                    </button>
+                                    <button
+                                      className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
+                                      onClick={async () => {
+                                        try {
+                                          const { isConfirmed } =
+                                            await Swal.fire({
+                                              title: `<p class="leading-tight">Bạn có nâng cấp key này</p>`,
+                                              icon: "success",
+                                              showCancelButton: true,
+                                              confirmButtonColor: "#1DC071",
+                                              cancelButtonColor: "#d33",
+                                              cancelButtonText: "Thoát",
+                                              confirmButtonText:
+                                                "Có, nâng cấp ngay",
+                                            });
+                                          if (isConfirmed) {
+                                            await api.patch(
+                                              `/keys/upgrade/${item._id}`
+                                            );
+                                            handleFetchServerDetail();
+                                            toast.success("Thành công");
+                                          }
+                                        } catch (error) {
+                                          if (axios.isAxiosError(error)) {
+                                            console.log(
+                                              "error message: ",
+                                              error
+                                            );
+                                            toast.error(
+                                              error.response?.data.message
+                                            );
+                                          } else {
+                                            console.log(
+                                              "unexpected error: ",
+                                              error
+                                            );
+                                            return "An unexpected error occurred";
+                                          }
+                                        }
+                                      }}
+                                    >
+                                      Gia hạn
+                                    </button>
+                                  </>
+                                ) : null}
+                                {item.status === 1 && !item.enable && (
+                                  <button
+                                    className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
+                                    onClick={() => handleEnableKey(item._id)}
+                                  >
+                                    Enable
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ) : null
+                      )}
+                    {listKey.length > 0 &&
+                      listKey.map((item) =>
+                        item.status === 0 ? (
+                          <div
+                            className="grid grid-cols-5 col-span-5 py-5 border border-gray-200 rounded-xl"
+                            key={uuidv4()}
+                          >
+                            <div className="flex items-center col-span-2">
+                              <div className="px-4">{item.keyId}</div>
+                              <div className="flex-1 px-4">
+                                {item.name || "no name"}
+                              </div>
+                              <div className="flex-1 px-4">{item.account}</div>
+                              <div className="px-4">
+                                {item.dataUsage
+                                  ? `${(
+                                      item.dataUsage /
+                                      1000 /
+                                      1000 /
+                                      1000
+                                    ).toFixed(2)} GB`
+                                  : "00.00 GB"}
+                              </div>
+                            </div>
+                            <div className="flex items-center col-span-3">
+                              <div className="px-4">
+                                {item.dataLimit / 1000 / 1000 / 1000}GB
+                              </div>
+                              <div className="px-4">
+                                <Tag color="red">Hết hạn</Tag>
+                              </div>
+                            </div>
+                          </div>
+                        ) : null
+                      )}
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : null}
+
+            {listKey.filter((item) => item.status === 0).length > 0 ? (
+              <div className="space-y-7">
+                <Heading>Keys Inactive</Heading>
+                <div className="w-full space-y-5 overflow-x-scroll">
+                  {/* <CreateNewKeyForm
+                handleAddNewKey={() =>
+                  handleAddNewKey(serverDetail.apiUrl, serverDetail.fingerPrint)
+                }
+              /> */}
+                  <div className="grid grid-cols-5 w-[1180px] lg:w-full">
+                    <div className="flex col-span-2 pb-3">
+                      <div className="px-4 font-semibold">#</div>
+                      <div className="flex-1 px-4 font-semibold">OrderID</div>
+                      <div className="flex-1 px-4 font-semibold">Email</div>
+                    </div>
+                    <div className="flex col-span-3 pb-3">
+                      <div className="px-4 font-semibold flex-1">Usage</div>
+                      <div className="px-4 font-semibold flex-1">Limit</div>
+                      <div className="px-4 font-semibold flex-1">Status</div>
+                    </div>
+                    {listKey.length > 0 &&
+                      listKey.map((item) =>
+                        item.status === 0 ? (
+                          <div
+                            className="grid grid-cols-5 col-span-5 py-5 border border-gray-200 rounded-xl"
+                            key={uuidv4()}
+                          >
+                            <div className="flex items-center col-span-2">
+                              <div className="px-4">{item.keyId}</div>
+                              <div className="flex-1 px-4">
+                                {item.name || "no name"}
+                              </div>
+                              <div className="flex-1 px-4">{item.account}</div>
+                            </div>
+                            <div className="flex items-center col-span-3 flex-1">
+                              <div className="px-4">
+                                {item.dataUsage
+                                  ? `${(
+                                      item.dataUsage /
+                                      1000 /
+                                      1000 /
+                                      1000
+                                    ).toFixed(2)} GB`
+                                  : "00.00 GB"}
+                              </div>
+                              <div className="px-4 flex-1">
+                                {item.dataLimit / 1000 / 1000 / 1000}GB
+                              </div>
+                              <div className="px-4 flex-1">
+                                <Tag color="red">Hết hạn</Tag>
+                              </div>
+                            </div>
+                          </div>
+                        ) : null
+                      )}
+                  </div>
+                </div>
+              </div>
+            ) : null}
+            {listKey.filter((item) => item.status === 2).length > 0 ? (
+              <div className="space-y-7">
+                <Heading>Keys Migrate</Heading>
+                <div className="w-full space-y-5 overflow-x-scroll">
+                  {/* <CreateNewKeyForm
+                handleAddNewKey={() =>
+                  handleAddNewKey(serverDetail.apiUrl, serverDetail.fingerPrint)
+                }
+              /> */}
+                  <div className="grid grid-cols-5 w-[1180px] lg:w-full">
+                    <div className="flex col-span-2 pb-3">
+                      <div className="px-4 font-semibold">#</div>
+                      <div className="flex-1 px-4 font-semibold">OrderID</div>
+                      <div className="flex-1 px-4 font-semibold">Email</div>
+                    </div>
+                    <div className="flex col-span-3 pb-3">
+                      <div className="px-4 font-semibold flex-1">Usage</div>
+                      <div className="px-4 font-semibold flex-1">Limit</div>
+                      <div className="px-4 font-semibold flex-1">Status</div>
+                    </div>
+                    {listKey.length > 0 &&
+                      listKey.map((item) =>
+                        item.status === 2 ? (
+                          <div
+                            className="grid grid-cols-5 col-span-5 py-5 border border-gray-200 rounded-xl"
+                            key={uuidv4()}
+                          >
+                            <div className="flex items-center col-span-2">
+                              <div className="px-4">{item.keyId}</div>
+                              <div className="flex-1 px-4">
+                                {item.name || "no name"}
+                              </div>
+                              <div className="flex-1 px-4">{item.account}</div>
+                            </div>
+                            <div className="flex items-center col-span-3">
+                              <div className="px-4 flex-1">
+                                {item.dataUsage
+                                  ? `${(
+                                      item.dataUsage /
+                                      1000 /
+                                      1000 /
+                                      1000
+                                    ).toFixed(2)} GB`
+                                  : "00.00 GB"}
+                              </div>
+                              <div className="px-4 flex-1">
+                                {item.dataLimit / 1000 / 1000 / 1000}GB
+                              </div>
+                              <div className="px-4 flex-1">
+                                <Tag color="blue">Migrate</Tag>
+                              </div>
+                            </div>
+                          </div>
+                        ) : null
+                      )}
+                  </div>
+                </div>
+              </div>
+            ) : null}
           </>
         )}
       </div>
