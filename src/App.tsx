@@ -1,11 +1,14 @@
 import "react-toastify/dist/ReactToastify.css";
 import "swiper/css";
 import { ToastContainer } from "react-toastify";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import LayoutUser from "./layouts/LayoutUser";
 import LayoutAdmin from "./layouts/LayoutAdmin";
-import './i18n';
+import "./i18n";
+import { useSelector } from "react-redux";
+import { RootState } from "./store/configureStore";
+import { useTranslation } from "react-i18next";
 const RechargePage = lazy(() => import("./pages/user/RechargePage"));
 const AccountDetailPage = lazy(() => import("./pages/admin/AccountDetailPage"));
 const CashPage = lazy(() => import("./pages/user/CashPage"));
@@ -36,9 +39,26 @@ const AccountPage = lazy(() => import("./pages/user/AccountPage"));
 const PlanPage = lazy(() => import("./pages/user/PlanPage"));
 const OrderPage = lazy(() => import("./pages/user/OrderPage"));
 const InvitePage = lazy(() => import("./pages/user/InvitePage"));
-const KeyDetailAdminPage = lazy(() => import("./pages/admin/KeyDetailAdminPage"));
+const KeyDetailAdminPage = lazy(
+  () => import("./pages/admin/KeyDetailAdminPage")
+);
 
 function App() {
+  const { country } = useSelector((state: RootState) => state.auth);
+  const { i18n } = useTranslation();
+  useEffect(() => {
+    if (country) {
+      if (country === "ci") {
+        i18n.changeLanguage("ci");
+      }
+      if (country === "vi") {
+        i18n.changeLanguage("vi");
+      }
+      if (country === "ir" || country === "orther") {
+        i18n.changeLanguage("en");
+      }
+    }
+  }, [country, i18n]);
   return (
     <>
       <Suspense
@@ -60,7 +80,10 @@ function App() {
               element={<ActionPackPage />}
             />
             <Route path="/admin/account" element={<AccountAdminPage />} />
-            <Route path="/admin/account/:accountId" element={<AccountDetailPage />} />
+            <Route
+              path="/admin/account/:accountId"
+              element={<AccountDetailPage />}
+            />
             <Route path="/admin/server" element={<ServerAdminPage />} />
             <Route path="/admin/key/:keyId" element={<KeyDetailAdminPage />} />
             <Route

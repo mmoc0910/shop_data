@@ -12,12 +12,14 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Loading from "../common/Loading";
+import { useTranslation } from "react-i18next";
 
 const PricingBox = () => {
+  const { t } = useTranslation();
   const { _id } = useSelector((state: RootState) => state.auth);
   const navigation = useNavigate();
   const [plans, setPlans] = useState<PlanType[]>([]);
-  
+
   useEffect(() => {
     (async () => {
       try {
@@ -34,13 +36,13 @@ const PricingBox = () => {
         <Container className="flex flex-col items-center">
           <div className="w-full md:w-3/5 space-y-5">
             <h2 className="font-medium text-3xl text-center">
-              Trải nghiệm tuyệt vời, giá bất ngờ
+              {t("page.home.pricing.title")}
             </h2>
-            <p className="text-center text-secondary20 font-medium text-xl">Đăng ký để nhận gói FREE TRIAL 03 DAYS</p>
             <p className="text-center text-gray-400">
-              Đừng lãng phí thời gian quý báu của bạn để chờ đợi. Mở ngay dịch
-              vụ chuyển tiếp mạng toàn cầu và truy cập Internet toàn cầu mọi
-              lúc, mọi nơi.
+              {t("page.home.pricing.desc")}
+            </p>
+            <p className="text-center text-secondary20 font-medium text-xl">
+              {t("page.home.pricing.desc2")}
             </p>
           </div>
           {/* <div className="my-9 lg:my-14 py-2 px-7 bg-[#f2f4f7] rounded-full">
@@ -102,7 +104,7 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
             <Check content={desc} key={uuidv4()} />
           ))}
         </div>
-         <button
+        <button
           className="flex items-center justify-center bg-primary w-full py-4 flex-col gap-2"
           onClick={async () => {
             if (_id) {

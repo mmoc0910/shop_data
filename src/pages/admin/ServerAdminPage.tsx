@@ -32,6 +32,7 @@ const schema = yup
 
 const ServerAdminPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingtable, setLoadingTable] = useState<boolean>(false);
   const [servers, setServers] = useState<ServerType[]>([]);
   const [listServerHistory, setListServerHistory] = useState<ServerType[]>([]);
   const [selectRow, setSelectRow] = useState<string | undefined>();
@@ -56,6 +57,7 @@ const ServerAdminPage = () => {
   }, []);
   const handleFetchData = async () => {
     try {
+      setLoadingTable(true);
       const resultServer = await api.get<ServerType[]>("/servers");
       setServers(resultServer.data.filter((item) => item.status === 1));
       setListServerHistory(resultServer.data);
@@ -67,6 +69,8 @@ const ServerAdminPage = () => {
         console.log("unexpected error: ", error);
         return "An unexpected error occurred";
       }
+    } finally {
+      setLoadingTable(false);
     }
   };
 
@@ -416,7 +420,7 @@ const ServerAdminPage = () => {
                 name="remark"
                 placeholder={"remark"}
                 control={control}
-                className="min-h-[100px]"
+                className="!h-[100px]"
               />
             </div>
             <div className="flex flex-col items-center gap-5 lg:flex-row">
@@ -433,11 +437,6 @@ const ServerAdminPage = () => {
                       : undefined
                   }
                 />
-                {/* <Input
-                  name="location"
-                  placeholder={"Location"}
-                  control={control}
-                /> */}
               </div>
               <div className="w-full lg:flex-1">
                 <Input
@@ -469,12 +468,14 @@ const ServerAdminPage = () => {
 
         <Heading>Danh sách máy chủ({servers.length})</Heading>
         <Table
+          loading={loadingtable}
           dataSource={servers.map((item, index) => ({ index, ...item }))}
           columns={columns}
           scroll={{ x: 1120 }}
         />
         <Heading>Lịch sử máy chủ</Heading>
         <Table
+          loading={loadingtable}
           dataSource={listServerHistory.map((item, index) => ({
             index,
             ...item,

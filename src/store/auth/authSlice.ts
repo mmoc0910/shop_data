@@ -6,7 +6,7 @@ export interface AuthState {
   email?: string;
   role?: 1 | 2;
   phone?: string;
-  country?: string;
+  country?: "vi" | "ci" | "ir" | "orther";
   purpose?: number;
   money?: number;
   transaction?: number;

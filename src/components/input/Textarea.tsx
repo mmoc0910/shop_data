@@ -23,7 +23,7 @@ const Textarea: FC<TextareaType> = ({
       <textarea
         autoComplete="off"
         className={classNames(
-          "outline-none text-sm focus:border-primary font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer resize-none min-h-[140px]",
+          "outline-none text-sm focus:border-primary font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer resize-none ",
           error?.message
             ? "border-error text-error"
             : "border-strock text-text1",

@@ -196,57 +196,60 @@ const KeyDetailAdminPage = () => {
         <div className="space-y-10">
           <div className="flex items-center justify-between">
             <Heading>Chi tiết key</Heading>
-            <div className="flex items-center gap-5">
-              <button
-                className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary"
-                onClick={() => {
-                  setSelectRow(key._id);
-                  showModal();
-                }}
-              >
-                Migrate key
-              </button>
-              <button
-                className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-primary20 font-primary"
-                onClick={async () => {
-                  if (keyId) {
-                    try {
-                      const { isConfirmed } = await Swal.fire({
-                        title: `<p class="leading-tight">Bạn có gia hạn key này</p>`,
-                        icon: "success",
-                        showCancelButton: true,
-                        confirmButtonColor: "#1DC071",
-                        cancelButtonColor: "#d33",
-                        cancelButtonText: "Thoát",
-                        confirmButtonText: "Có, nâng cấp ngay",
-                      });
-                      if (isConfirmed) {
-                        await api.patch(`/keys/upgrade/${key._id}`);
-                        fetchData(keyId);
-                        toast.success("Thành công");
-                      }
-                    } catch (error) {
-                      if (axios.isAxiosError(error)) {
-                        console.log("error message: ", error);
-                        toast.error(error.response?.data.message);
-                      } else {
-                        console.log("unexpected error: ", error);
-                        return "An unexpected error occurred";
+            {status === 1 ? (
+              <div className="flex items-center gap-5">
+                <button
+                  className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary"
+                  onClick={() => {
+                    setSelectRow(key._id);
+                    showModal();
+                  }}
+                >
+                  Migrate key
+                </button>
+                <button
+                  className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-primary20 font-primary"
+                  onClick={async () => {
+                    if (keyId) {
+                      try {
+                        const { isConfirmed } = await Swal.fire({
+                          title: `<p class="leading-tight">Bạn có gia hạn key này</p>`,
+                          icon: "success",
+                          showCancelButton: true,
+                          confirmButtonColor: "#1DC071",
+                          cancelButtonColor: "#d33",
+                          cancelButtonText: "Thoát",
+                          confirmButtonText: "Có, nâng cấp ngay",
+                        });
+                        if (isConfirmed) {
+                          await api.patch(`/keys/upgrade/${key._id}`);
+                          fetchData(keyId);
+                          toast.success("Thành công");
+                        }
+                      } catch (error) {
+                        if (axios.isAxiosError(error)) {
+                          console.log("error message: ", error);
+                          toast.error(error.response?.data.message);
+                        } else {
+                          console.log("unexpected error: ", error);
+                          return "An unexpected error occurred";
+                        }
                       }
                     }
-                  }
-                }}
-              >
-                Gia hạn gói
-              </button>
-            </div>
+                  }}
+                >
+                  Gia hạn gói
+                </button>
+              </div>
+            ) : null}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-4 gap-y-10">
             <div className="flex flex-col xl:flex-row xl:items-center col-span-1 md:col-span-2 xl:col-span-3 gap-1">
-              <div className="">Link key:{" "}</div>
+              <div className="">Link key: </div>
               <div className="flex items-baseline gap-2">
                 <p className="font-primary line-clamp-1 font-medium">
-                  {awsId?.fileName.replace(/https/g, "ssconf")}#{gist?.extension}
+                  {awsId?.fileName.replace(/https/g, "ssconf")}#
+                  {gist?.extension}
                 </p>
                 <Tooltip title="copy">
                   <button
@@ -290,7 +293,7 @@ const KeyDetailAdminPage = () => {
               <p>Trạng thái gói:</p>{" "}
               <div className="flex items-center gap-4">
                 <Radio checked={status === 1}>Active</Radio>
-                <Radio checked={status === 2}>Inactive</Radio>
+                <Radio checked={status === 0}>Inactive</Radio>
                 <Radio checked={status === 2}>Migrate</Radio>
               </div>
             </div>
@@ -356,7 +359,8 @@ const KeyDetailAdminPage = () => {
           <div className="mb-5">
             <p className="font-primary">Chọn máy chủ để migrate key</p>
             {selectRow &&
-              servers.filter((item) => item._id !== serverId._id).length === 0 && (
+              servers.filter((item) => item._id !== serverId._id).length ===
+                0 && (
                 <p className="text-error font-primary">
                   Bạn cần thêm server mới để migrate key sang
                 </p>

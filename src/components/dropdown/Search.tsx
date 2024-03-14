@@ -1,5 +1,5 @@
 import { useState } from "react";
-import IconEdit from "../../icons/IconEdit";
+import IconPlus from "../../icons/IconPlus";
 
 const Search = ({
   placeholder,
@@ -10,7 +10,7 @@ const Search = ({
 }) => {
   const [value, setValue] = useState<string>("");
   return (
-    <div className="sticky top-0 z-10 p-2 bg-inherit flex items-center">
+    <div className="sticky top-0 z-10 p-2 bg-inherit flex items-center w-full">
       <input
         type="text"
         placeholder={placeholder}
@@ -25,7 +25,7 @@ const Search = ({
           setValue("");
         }}
       >
-        <IconEdit className="w-[20px] h-[20px] text-icon-color" />
+        <IconPlus className="w-[20px] h-[20px] text-icon-color hover:text-secondary" />
       </span>
     </div>
   );

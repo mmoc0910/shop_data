@@ -11,38 +11,46 @@ import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../api";
 import { AuthState } from "../../store/auth/authSlice";
 import { DropdownWithComponents } from "../dropdown";
-import { countries, purposes } from "../../constants";
+import { countries, purposes, regexUserName } from "../../constants";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
-
-const schema = yup
-  .object({
-    username: yup.string().required("This field is required"),
-    email: yup
-      .string()
-      .required("This field is required")
-      .email("Incorrect email format"),
-    password: yup
-      .string()
-      .required("This field is required")
-      .min(8, "Minimum of 8 characters"),
-    rePassword: yup
-      .string()
-      .required("This field is required")
-      .min(8, "Minimum of 8 characters"),
-    phone: yup.string().required(),
-    // address: yup.string().required(),
-    country: yup.string().required(),
-    purpose: yup.number().required(),
-    introduceCode: yup.string(),
-    // job: yup.string().required(),
-  })
-  .required();
+import { useTranslation } from "react-i18next";
+import { useMemo } from "react";
 
 const RegisterBox = () => {
+  const { t, i18n } = useTranslation();
+  const schema = useMemo(
+    () =>
+      yup
+        .object({
+          username: yup
+            .string()
+            .required(t("form.username.error.required"))
+            .matches(regexUserName, t("form.username.error.reg")),
+          email: yup
+            .string()
+            .required(t("form.email.error.required"))
+            .email(t("form.email.error.email")),
+          password: yup
+            .string()
+            .required(t("form.password.error.required"))
+            .min(8, "Minimum of 8 characters"),
+          rePassword: yup
+            .string()
+            .required(t("form.re_password.error.required"))
+            .min(8, "Minimum of 8 characters"),
+          phone: yup.string().required(t("form.phone.error.required")),
+          country: yup.string().required(t("form.country.error.required")),
+          purpose: yup.number().required(t("form.purpose.error.required")),
+          introduceCode: yup.string(),
+        })
+        .required(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.language]
+  );
   const { _id } = useSelector((state: RootState) => state.auth);
   const navigation = useNavigate();
   const { value: tooglePassword, handleToogleValue: handleTooglePassword } =
@@ -131,15 +139,14 @@ const RegisterBox = () => {
     <Container className="py-10 lg:py-20 space-y-5 lg:space-y-10 xl:w-[1000px] relative z-10">
       <div className="grid grid-cols-5 md:grid-cols-10 gap-5">
         <div className="col-span-5 space-y-5">
-          <p className="font-medium text-2xl lg:text-4xl">Liên hệ</p>
-          <p className="w-full lg:w-3/4">
-            Vui lòng liên hệ với chúng tôi qua số điện thoại, email hoặc fanpage
-            dưới đây
+          <p className="font-medium text-2xl lg:text-4xl">
+            {t("page.home.register.title")}
           </p>
+          <p className="w-full lg:w-3/4">{t("page.home.register.desc")}</p>
           <div className="">
             <div className="mb-7 space-y-1 pl-8 relative after:absolute after:w-3 after:h-3 after:bg-primary after:rounded-full after:left-0 after:top-[8px] before:absolute before:h-[calc(100%+1.75rem)] before:w-[1px] before:bg-primary before:left-[6px] before:top-[8px]">
               <p className="font-medium text-primary text-xl lg:text-2xl tracking-wider">
-                Số điện thoại
+                {t("page.home.register.phone")}
               </p>
               <div className="">
                 <a href="tel:+186 8415 2243" className="block">
@@ -152,7 +159,7 @@ const RegisterBox = () => {
             </div>
             <div className="mb-7 space-y-1 pl-8 relative after:absolute after:w-3 after:h-3 after:bg-primary after:rounded-full after:left-0 after:top-[8px] before:absolute before:h-[calc(100%+1.75rem)] before:w-[1px] before:bg-primary before:left-[6px] before:top-[8px]">
               <p className="font-medium text-primary text-xl lg:text-2xl tracking-wider">
-                Địa chỉ email
+                {t("page.home.register.email")}
               </p>
               <div className="">
                 <a href="mailto:vpncn2.top@gmail.com">vpncn2.top@gmail.com</a>
@@ -160,7 +167,7 @@ const RegisterBox = () => {
             </div>
             <div className="mb-7 space-y-1 pl-8 relative after:absolute after:w-3 after:h-3 after:bg-primary after:rounded-full after:left-0 after:top-[8px] before:absolute before:h-[calc(100%+1.75rem)] before:w-[1px] before:bg-primary before:left-[6px] before:top-[8px]">
               <p className="font-medium text-primary text-xl lg:text-2xl tracking-wider">
-                Địa chỉ Website
+                {t("page.home.register.web")}
               </p>
               <div className="">
                 <Link to={"http://vpncn2.top"} target="_blank">
@@ -170,7 +177,7 @@ const RegisterBox = () => {
             </div>
             <div className="mb-7 space-y-1 pl-8 relative after:absolute after:w-3 after:h-3 after:bg-primary after:rounded-full after:left-0 after:top-[8px]">
               <p className="font-medium text-primary text-xl lg:text-2xl tracking-wider">
-                Fanpage
+                {t("page.home.register.fanpage")}
               </p>
               <div className="">
                 <div className="flex mt-7 gap-4 md:gap-7">
@@ -234,16 +241,16 @@ const RegisterBox = () => {
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
               <div className="flex-1 space-y-[10px]">
-                <Label htmlFor="username">Username*</Label>
+                <Label htmlFor="username">{t("form.username.label")}</Label>
                 <Input
                   name="username"
-                  placeholder={"Username"}
+                  placeholder={t("form.username.placeholder")}
                   control={control}
                   className="border-strock"
                 />
               </div>
               <div className="flex-1 space-y-[10px]">
-                <Label htmlFor="email">Email*</Label>
+                <Label htmlFor="email">{t("form.email.label")}</Label>
                 <Input
                   name="email"
                   placeholder={"example@gmail.com"}
@@ -253,25 +260,28 @@ const RegisterBox = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
               <div className="col-span-1 space-y-[10px]">
-                <Label htmlFor="phone">Phone*</Label>
+                <Label htmlFor="phone">{t("form.phone.label")}</Label>
                 <Input
                   name="phone"
-                  placeholder={"0123456789"}
+                  placeholder={t("form.phone.placeholder")}
                   control={control}
                 />
               </div>
               <div className="col-span-1 space-y-[10px]">
-                <Label htmlFor="introduceCode">Introduce Code</Label>
+                <Label htmlFor="introduceCode">
+                  {" "}
+                  {t("form.introduce_code.label")}
+                </Label>
                 <Input
                   name="introduceCode"
-                  placeholder={""}
+                  placeholder={t("form.introduce_code.placeholder")}
                   control={control}
                 />
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
               <div className="col-span-1 space-y-[10px]">
-                <Label>Select country*</Label>
+                <Label>{t("form.country.label")}</Label>
                 <DropdownWithComponents>
                   <DropdownWithComponents.Select
                     placeholder={
@@ -280,7 +290,10 @@ const RegisterBox = () => {
                           {countries.find((i) => i.key === country)?.title}
                         </span>
                       ) : (
-                        <span className="text-text4">Select one</span>
+                        <span className="text-text4">
+                          {" "}
+                          {t("form.country.placeholder")}
+                        </span>
                       )
                     }
                   ></DropdownWithComponents.Select>
@@ -303,7 +316,7 @@ const RegisterBox = () => {
                 ) : null}
               </div>
               <div className="col-span-1 space-y-[10px]">
-                <Label>Purpose using VPN*</Label>
+                <Label>{t("form.purpose.label")}</Label>
                 <DropdownWithComponents>
                   <DropdownWithComponents.Select
                     placeholder={
@@ -312,7 +325,9 @@ const RegisterBox = () => {
                           {purposes.find((i) => i.id === purpose)?.title}
                         </span>
                       ) : (
-                        <span className="text-text4">Select one</span>
+                        <span className="text-text4">
+                          {t("form.purpose.placeholder")}
+                        </span>
                       )
                     }
                   ></DropdownWithComponents.Select>
@@ -337,11 +352,11 @@ const RegisterBox = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
               <div className="col-span-1 space-y-[10px]">
-                <Label htmlFor="password">Password*</Label>
+                <Label htmlFor="password">{t("form.password.label")}</Label>
                 <Input
                   type={tooglePassword ? "text" : "password"}
                   name="password"
-                  placeholder={"Create a password"}
+                  placeholder={t("form.password.placeholder")}
                   control={control}
                 >
                   <IconEyeToogle
@@ -352,11 +367,11 @@ const RegisterBox = () => {
                 </Input>
               </div>
               <div className="col-span-1 space-y-[10px]">
-                <Label htmlFor="password">Re-type Password*</Label>
+                <Label htmlFor="password">{t("form.re_password.label")}</Label>
                 <Input
                   type={toogleRePassword ? "text" : "password"}
                   name="rePassword"
-                  placeholder={"Create a password"}
+                  placeholder={t("form.re_password.placeholder")}
                   control={control}
                 >
                   <IconEyeToogle
@@ -368,7 +383,7 @@ const RegisterBox = () => {
               </div>
             </div>
             <Button type="submit" className="w-full text-white bg-primary">
-              Create my account
+              {t("authen.sign_up")}
             </Button>
           </form>
         )}

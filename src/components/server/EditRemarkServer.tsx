@@ -39,7 +39,7 @@ const EditRemarkServer = ({
           name="value"
           placeholder={placeholder}
           control={control}
-          className="min-h-[120px]"
+          className="h-[100px]"
         />
       </div>
       <Button type="submit" className="text-gray-500 px-4">
