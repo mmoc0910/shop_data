@@ -56,12 +56,9 @@ const ServerAdminPage = () => {
   }, []);
   const handleFetchData = async () => {
     try {
-      const [resultServer, resultHistory] = await Promise.all([
-        api.get("/servers?status=1"),
-        api.get("/servers"),
-      ]);
-      setServers(resultServer.data);
-      setListServerHistory(resultHistory.data);
+      const resultServer = await api.get<ServerType[]>("/servers");
+      setServers(resultServer.data.filter((item) => item.status === 1));
+      setListServerHistory(resultServer.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log("error message: ", error);
