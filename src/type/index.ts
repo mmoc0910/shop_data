@@ -7,6 +7,17 @@ export type LocationType = {
   "updatedAt": Date,
   "__v": 0
 }
+
+export type RoseExtendType = {
+  "_id": string,
+  "level1": number,
+  "level2": number,
+  "level3": number,
+  "createdAt": Date,
+  "updatedAt": Date,
+  "__v": 0
+}
+
 export interface UserState {
   level: number;
   email: string;
@@ -120,7 +131,7 @@ export type GistType = {
   keyId: KeySeverType;
   fileName: string;
   extension: string;
-  status: number;
+  status: 0 | 1 | 2;
   money: number;
   createdAt: Date;
   updatedAt: Date;

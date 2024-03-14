@@ -246,15 +246,15 @@ const KeyDetailAdminPage = () => {
               <div className="">Link key:{" "}</div>
               <div className="flex items-baseline gap-2">
                 <p className="font-primary line-clamp-1 font-medium">
-                  {awsId.fileName.replace(/https/g, "ssconf")}#{gist.extension}
+                  {awsId?.fileName.replace(/https/g, "ssconf")}#{gist?.extension}
                 </p>
                 <Tooltip title="copy">
                   <button
                     className="text-secondary20"
                     onClick={() =>
                       copyToClipboard(
-                        `${awsId.fileName.replace(/https/g, "ssconf")}#${
-                          gist.extension
+                        `${awsId?.fileName.replace(/https/g, "ssconf")}#${
+                          gist?.extension
                         }`
                       )
                     }

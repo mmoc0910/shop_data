@@ -16,15 +16,13 @@ import { Label } from "../../components/label";
 import { Input } from "../../components/input";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import Swal from "sweetalert2";
+import RoseExtendPlan from "../../components/extendPlan/RoseExtendPlan";
 
 const schema = yup
   .object({
     name: yup.string().required("This field is required"),
     price: yup.number().required("This field is required"),
     bandWidth: yup.number().required("This field is required"),
-    level1: yup.number().required("This field is required"),
-    level2: yup.number().required("This field is required"),
-    level3: yup.number().required("This field is required"),
   })
   .required();
 
@@ -52,9 +50,6 @@ const ExtendPlanPage = () => {
       setValue("name", selectRow.name);
       setValue("price", selectRow.price);
       setValue("bandWidth", selectRow.bandWidth);
-      setValue("level1", selectRow.level1);
-      setValue("level2", selectRow.level2);
-      setValue("level3", selectRow.level3);
     } else {
       reset();
     }
@@ -63,9 +58,6 @@ const ExtendPlanPage = () => {
     name: string;
     price: number;
     bandWidth: number;
-    level1: number;
-    level2: number;
-    level3: number;
   }) => {
     try {
       if (selectRow) {
@@ -172,48 +164,6 @@ const ExtendPlanPage = () => {
         ),
         sorter: {
           compare: (a, b) => a.price - b.price,
-          multiple: 1,
-        },
-      },
-      {
-        title: () => (
-          <p className="text-base font-semibold font-primary">{`<=`}4 tháng</p>
-        ),
-        dataIndex: "level1",
-        key: "level1",
-        render: (text: number) => (
-          <p className="text-sm font-primary">{text}%</p>
-        ),
-        sorter: {
-          compare: (a, b) => a.level1 - b.level1,
-          multiple: 1,
-        },
-      },
-      {
-        title: () => (
-          <p className="text-base font-semibold font-primary">5-8 tháng</p>
-        ),
-        dataIndex: "level2",
-        key: "level2",
-        render: (text: number) => (
-          <p className="text-sm font-primary">{text}%</p>
-        ),
-        sorter: {
-          compare: (a, b) => a.level2 - b.level2,
-          multiple: 1,
-        },
-      },
-      {
-        title: () => (
-          <p className="text-base font-semibold font-primary">{`>=`}9 tháng</p>
-        ),
-        dataIndex: "level3",
-        key: "level3",
-        render: (text: number) => (
-          <p className="text-sm font-primary">{text}%</p>
-        ),
-        sorter: {
-          compare: (a, b) => a.level3 - b.level3,
           multiple: 1,
         },
       },
@@ -328,48 +278,6 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">{`<=`}4 tháng</p>
-        ),
-        dataIndex: "level1",
-        key: "level1",
-        render: (text: number) => (
-          <p className="text-sm font-primary">{text}%</p>
-        ),
-        sorter: {
-          compare: (a, b) => a.level1 - b.level1,
-          multiple: 1,
-        },
-      },
-      {
-        title: () => (
-          <p className="text-base font-semibold font-primary">5-8 tháng</p>
-        ),
-        dataIndex: "level2",
-        key: "level2",
-        render: (text: number) => (
-          <p className="text-sm font-primary">{text}%</p>
-        ),
-        sorter: {
-          compare: (a, b) => a.level2 - b.level2,
-          multiple: 1,
-        },
-      },
-      {
-        title: () => (
-          <p className="text-base font-semibold font-primary">{`>=`}9 tháng</p>
-        ),
-        dataIndex: "level3",
-        key: "level3",
-        render: (text: number) => (
-          <p className="text-sm font-primary">{text}%</p>
-        ),
-        sorter: {
-          compare: (a, b) => a.level3 - b.level3,
-          multiple: 1,
-        },
-      },
-      {
-        title: () => (
           <p className="text-base font-semibold font-primary">Băng thông</p>
         ),
         dataIndex: "bandWidth",
@@ -418,6 +326,7 @@ const ExtendPlanPage = () => {
     <RequireAuthPage rolePage={1}>
       <div className="space-y-6">
         <div className="space-y-6">
+          <RoseExtendPlan />
           <div className="flex justify-between">
             <Heading>Danh sách gói mở rộng</Heading>
             <div onClick={showModal}>
@@ -508,38 +417,6 @@ const ExtendPlanPage = () => {
               min={0}
             />
           </FormGroup>
-          <div className="grid grid-cols-3 gap-5">
-            <FormGroup>
-              <Label htmlFor="price">{`<=`}4 tháng(%)*</Label>
-              <Input
-                name="level1"
-                placeholder={""}
-                control={control}
-                type="number"
-                min={0}
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label htmlFor="price">5-8 tháng(%)*</Label>
-              <Input
-                name="level2"
-                placeholder={""}
-                control={control}
-                type="number"
-                min={0}
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label htmlFor="price">{`>=`}9 tháng(%)*</Label>
-              <Input
-                name="level3"
-                placeholder={""}
-                control={control}
-                type="number"
-                min={0}
-              />
-            </FormGroup>
-          </div>
           <FormGroup>
             <Label htmlFor="price">Giá(/tháng)*</Label>
             <Input

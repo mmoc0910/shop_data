@@ -147,7 +147,7 @@ const LayoutUser = () => {
             </svg>
           </div>
           {cash >= 50000 && (
-            <div className="rounded-xl border-2 border-[#eeeeed] p-5">
+            <div className="rounded-xl border-2 border-[#eeeeed] p-5 w-full md:w-3/4 lg:w-2/4">
               <div className="flex items-center gap-2">
                 <p className="">
                   <span className="font-medium">Mã CTV:</span>{" "}
@@ -179,26 +179,26 @@ const LayoutUser = () => {
                   </button>
                 </Tooltip>
               </div>
-              <p>
+              <p className="">
                 Giới thiệu mã CTV này cho bạn bè bạn sẽ nhận được{" "}
                 <span className="text-secondary20">[{commision}%]</span> hoa
                 hồng cho mỗi giao dịch.
               </p>
             </div>
           )}
-          <div className="flex items-center gap-5 ml-auto">
+          <div className="flex items-center gap-5 pl-auto flex-1 justify-end">
             <Link
               to={"/user/account"}
-              className="items-center hidden gap-1 px-4 py-2 text-white md:flex bg-primary rounded-xl"
+              className="items-center hidden gap-1 px-4 py-2 text-white md:flex bg-primary rounded-xl ml-5 shrink-0"
             >
               <span>
                 <IconProfile />
               </span>
               <p>{username || email}</p>
-              <p> - {VND.format(satisfy.cash)}VND</p>
+              <p className="hidden xl:block"> - {VND.format(satisfy.cash)}VND</p>
             </Link>
             <div
-              className="items-center hidden gap-2 px-4 py-2 text-white cursor-pointer md:flex bg-primary rounded-xl"
+              className="shrink-0 items-center hidden gap-2 px-4 py-2 text-white cursor-pointer xl:flex bg-primary rounded-xl"
               onClick={() => {
                 dispatch(setAuth({}));
                 navigation("/");

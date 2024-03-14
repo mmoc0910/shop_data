@@ -59,15 +59,9 @@ const Header = () => {
               <div className="flex items-stretch gap-3">
                 <Link
                   to={"/sign-in"}
-                  className="font-medium text-sm xl:text-base text-primary underline decoration-primary xl:pl-5 hidden md:block"
+                  className="font-medium text-sm xl:text-base text-primary underline decoration-primary xl:pl-5 "
                 >
                   {t("authen.sign_in")}
-                </Link>
-                <Link
-                  to={"/sign-up"}
-                  className="font-medium text-sm xl:text-base text-secondary underline decoration-secondary"
-                >
-                  {t("authen.sign_up")}
                 </Link>
               </div>
             ) : (
@@ -91,7 +85,9 @@ const Header = () => {
                 </div>
                 <div className="hidden md:block">
                   {/* <p>Xin chào</p> */}
-                  <p className="font-medium text-primary">{username || email}</p>
+                  <p className="font-medium text-primary">
+                    {username || email}
+                  </p>
                 </div>
               </Link>
             )}

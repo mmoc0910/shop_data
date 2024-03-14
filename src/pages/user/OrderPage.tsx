@@ -7,7 +7,7 @@ import {
   Tag,
   Tooltip,
 } from "antd";
-import { useEffect, useMemo, useState } from "react";
+import { Key, useEffect, useMemo, useState } from "react";
 import { ExtendPlanType, GistType } from "../../type";
 import { toast } from "react-toastify";
 import {
@@ -77,8 +77,8 @@ const OrderPage = () => {
   }, []);
   const handleFetchData = async () => {
     try {
-      const result = await api.get<GistType[]>(`/gists?userId=${_id}&status=1`);
-      setListGist(result.data);
+      const result = await api.get<GistType[]>(`/gists?userId=${_id}`);
+      setListGist(result.data.filter((item) => item.status !== 2));
       console.log("abc");
     } catch (error) {
       console.log("error - ", error);
@@ -180,11 +180,17 @@ const OrderPage = () => {
         ),
       },
       {
-        title: <p className="font-semibold font-primary">Mã giao dịch</p>,
+        title: <p className="font-semibold font-primary">Mã GD</p>,
         dataIndex: "code",
         key: "code",
-        render: (text: string) => (
-          <p className="text-sm font-primary">{text}</p>
+        width: 150,
+        render: (text: string, record: GistType) => (
+          <Link
+            to={`/admin/key/${record.keyId._id}`}
+            className="text-sm font-primary text-primary"
+          >
+            {text}
+          </Link>
         ),
       },
       {
@@ -326,29 +332,37 @@ const OrderPage = () => {
         // fixed: "right",
         render: (_: string, record: GistType) => (
           <div className="text-sm font-primary">
-            {record.status ? (
+            {record.status === 1 && (
               <Tag color="green">
                 <span className="font-primary">Còn hạn</span>
               </Tag>
-            ) : (
+            )}
+            {record.status === 0 && (
               <Tag color="red">
                 <span className="font-primary">Hết hạn</span>
               </Tag>
             )}
           </div>
         ),
-        // filters: [
-        //   {
-        //     text: "Còn hạn",
-        //     value: "1",
-        //   },
-        //   {
-        //     text: "Hết hạn",
-        //     value: "0",
-        //   },
-        // ],
-        // onFilter: (value: string, record: GistType) =>
-        //   record.status === Number(value),
+        filters: [
+          {
+            text: "Còn hạn",
+            value: 1,
+          },
+          {
+            text: "Hết hạn",
+            value: 0,
+          },
+        ],
+        onFilter: (value: boolean | Key, record: GistType) => {
+          if (typeof value === "boolean") {
+            // Xử lý trường hợp value là boolean
+            return record.status === (value ? 1 : 0);
+          } else {
+            // Xử lý trường hợp value là Key (đối với trường hợp khi dùng dropdown filter)
+            return record.status === value;
+          }
+        },
       },
       {
         title: <p className="font-semibold font-primary">Đặt tên key</p>,
@@ -378,7 +392,8 @@ const OrderPage = () => {
             <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 justify-end w-[150px] lg:w-[250px] px-5">
               {!record.keyId.endExpandDate ||
               (record.keyId.endExpandDate &&
-                dayjs().isAfter(record.keyId.endExpandDate, "day")) ? (
+                dayjs().isAfter(record.keyId.endExpandDate, "day") &&
+                record.planId.price > 0) ? (
                 <button
                   className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary"
                   onClick={() => {
@@ -435,7 +450,7 @@ const OrderPage = () => {
         </Link>
         :
       </p>
-      <p className="flex items-center gap-2">
+      <p className="flex items-center gap-2 mb-5">
         <span className="text-secondary20">
           <AndroidXML />
         </span>

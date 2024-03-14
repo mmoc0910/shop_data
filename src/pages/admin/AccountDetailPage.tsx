@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { UserState } from "../../type";
 import { countries, purposes } from "../../constants";
 import {
@@ -9,7 +9,7 @@ import {
   Tag,
   Tooltip,
 } from "antd";
-import { useEffect, useMemo, useState } from "react";
+import { Key, useEffect, useMemo, useState } from "react";
 import { GistType } from "../../type";
 import { toast } from "react-toastify";
 import {
@@ -158,11 +158,16 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
         ),
       },
       {
-        title: <p className="font-semibold font-primary">Mã giao dịch</p>,
+        title: <p className="font-semibold font-primary">Order code</p>,
         dataIndex: "code",
         key: "code",
-        render: (text: string) => (
-          <p className="text-sm font-primary">{text}</p>
+        render: (text: string, record: GistType) => (
+          <Link
+            to={`/admin/key/${record.keyId._id}`}
+            className="text-sm font-primary text-primary"
+          >
+            {text}
+          </Link>
         ),
       },
       {
@@ -197,7 +202,8 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
           </p>
         ),
         sorter: {
-          compare: (a, b) => a.keyId.dataLimit - b.keyId.dataLimit,
+          compare: (a: GistType, b: GistType) =>
+            a.keyId.dataLimit - b.keyId.dataLimit,
           multiple: 1,
         },
       },
@@ -225,29 +231,48 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
         width: 130,
         render: (_: number, record: GistType) => (
           <div className="text-sm font-primary">
-            {record.status ? (
+            {record.status === 1 && (
               <Tag color="green">
                 <span className="font-primary">Còn hạn</span>
               </Tag>
-            ) : (
+            )}
+            {record.status === 0 && (
               <Tag color="red">
                 <span className="font-primary">Hết hạn</span>
               </Tag>
             )}
+            {record.status === 2 && (
+              <Tag color="blue">
+                <span className="font-primary">Migrate</span>
+              </Tag>
+            )}
           </div>
         ),
-        // filters: [
-        //   {
-        //     text: "Còn hạn",
-        //     value: "1",
-        //   },
-        //   {
-        //     text: "Hết hạn",
-        //     value: "0",
-        //   },
-        // ],
+        filters: [
+          {
+            text: "Còn hạn",
+            value: 1,
+          },
+          {
+            text: "Hết hạn",
+            value: 0,
+          },
+          {
+            text: "Migrate",
+            value: 2,
+          },
+        ],
+        onFilter: (value: boolean | Key, record: GistType) => {
+          if (typeof value === 'boolean') {
+            // Xử lý trường hợp value là boolean
+            return record.status === (value ? 1 : 0);
+          } else {
+            // Xử lý trường hợp value là Key (đối với trường hợp khi dùng dropdown filter)
+            return record.status === value;
+          }
+        },
         // onFilter: (value: number, record: GistType) =>
-        //   record.status === Number(value) ? true : false,
+        //   record.status === value ? true : false,
       },
       {
         title: <p className="font-semibold font-primary">Key</p>,
@@ -274,7 +299,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
                     <AndroidXML />
                   </button>
                 </Tooltip>
-                <p className="font-primary text-sm w-[350px] line-clamp-1">
+                <p className="font-primary text-sm w-[200px] line-clamp-1">
                   {record.keyId.awsId?.fileName.replace(/https/g, "ssconf")}#
                   {record.extension}
                 </p>

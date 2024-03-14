@@ -241,8 +241,10 @@ const ServerAdminPage = () => {
         ),
         dataIndex: "maxUsage",
         key: "maxUsage",
-        render: (text: number) => (
-          <p className="text-sm font-primary">{text / 1000 / 1000 / 1000}GB</p>
+        render: (text?: number) => (
+          <p className="text-sm font-primary">
+            {text ? text / 1000 / 1000 / 1000 : "00.00"}GB
+          </p>
         ),
       },
       {
@@ -251,9 +253,9 @@ const ServerAdminPage = () => {
         ),
         dataIndex: "dataTransfer",
         key: "dataTransfer",
-        render: (text: number) => (
+        render: (text?: number) => (
           <p className="text-sm font-primary">
-            {(text / 1000 / 1000 / 1000).toFixed(2)}GB
+            {text ? (text / 1000 / 1000 / 1000).toFixed(2) : "00.00"}GB
           </p>
         ),
       },

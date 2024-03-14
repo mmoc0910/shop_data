@@ -21,6 +21,7 @@ import { Modal, Tag } from "antd";
 import Loading from "../../components/common/Loading";
 import EditKeyLimitForm from "../../components/server/EditKeyLimitForm";
 import EditRemarkServer from "../../components/server/EditRemarkServer";
+import EditLocationServerForm from "../../components/server/EditLocationServerForm";
 
 const ServerDetailAdminPage = () => {
   const { serverId } = useParams();
@@ -201,6 +202,19 @@ const ServerDetailAdminPage = () => {
     }
     setIsModalOpen(false);
   };
+  const handleChangeLocation = async (value: string) => {
+    if (serverDetail) {
+      try {
+        await api.patch(`/servers/location/${serverDetail._id}`, {
+          location: value,
+        });
+        handleFetchServerDetail();
+        toast.success("Thành công");
+      } catch (error) {
+        console.log("error - ", error);
+      }
+    }
+  };
   return (
     <RequireAuthPage rolePage={1}>
       <div className="space-y-10">
@@ -253,19 +267,11 @@ const ServerDetailAdminPage = () => {
                 <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg">
                   <div className="font-medium text-gray-500">Location</div>
                   <div>
-                    <EditServerForm
-                      placeholder={serverDetail.location}
-                      handleEdit={async (value: string) => {
-                        try {
-                          await api.patch(
-                            `/servers/location/${serverDetail._id}`,
-                            { location: value }
-                          );
-                          handleFetchServerDetail();
-                          toast.success("Thành công");
-                        } catch (error) {
-                          console.log("error - ", error);
-                        }
+                    <EditLocationServerForm
+                      initialLocation={serverDetail.location}
+                      onSubmit={(value) => {
+                        console.log("value - ", value);
+                        handleChangeLocation(value);
                       }}
                     />
                   </div>

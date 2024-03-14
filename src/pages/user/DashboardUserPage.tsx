@@ -243,8 +243,8 @@ const DashboardUserPage = () => {
               </div>
             </div>
           </div>
-          <PlanDashborad />
           <Policy />
+          <PlanDashborad />
           <InviteDashboard />
           <div className="space-y-4">
             <Heading>Hướng dẫn sử dụng</Heading>
