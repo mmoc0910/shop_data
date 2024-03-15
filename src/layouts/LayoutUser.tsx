@@ -8,20 +8,14 @@ import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/configureStore";
 import { setAuth } from "../store/auth/authSlice";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { api } from "../api";
-import { CollabType, SatisfyType } from "../type";
-import { setSatify } from "../store/satisfy/satisfySlice";
-import { setCommision } from "../store/commision/commisionSlice";
+import { useMemo, useRef, useState } from "react";
 import { Tooltip } from "antd";
 import { copyToClipboard } from "../utils/copyToClipboard";
-import { setCollab } from "../store/collab/collabSlice";
 import useOnClickOutside from "../hooks/useOnClickOutside";
 import { useTranslation } from "react-i18next";
 import { VND } from "../utils/formatPrice";
 
 const LayoutUser = () => {
-  const satisfy = useSelector((state: RootState) => state.satisfy);
   const { t, i18n } = useTranslation();
   const menu = useMemo(
     () => [
@@ -42,45 +36,14 @@ const LayoutUser = () => {
   const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
   useOnClickOutside(ref, () => setIsopen(false));
-  const { email, _id, introduceCode, username } = useSelector(
+  const { email, introduceCode, username } = useSelector(
     (state: RootState) => state.auth
   );
   const commision = useSelector((state: RootState) => state.commision);
-  const { cash } = useSelector((state: RootState) => state.satisfy);
-  useEffect(() => {
-    (async () => {
-      try {
-        const [
-          { data: dataSatify },
-          { data: dataCommision },
-          { data: dataCollab },
-        ] = await Promise.all([
-          api.get<SatisfyType>(`/satisfy/${_id}`),
-          api.get<{ value: number }>("/commisions"),
-          api.get<CollabType>("/collab"),
-        ]);
-        dispatch(
-          setSatify({
-            cash: dataSatify.cash[0]?.money || 0,
-            rose: dataSatify.rose[0]?.money || 0,
-            currentMoney: dataSatify.currentMoney,
-            numberIntoduce: dataSatify.numberIntoduce,
-            transaction: dataSatify.transaction[0]?.money || 0,
-          })
-        );
-        dispatch(setCommision(dataCommision.value));
-        dispatch(
-          setCollab({
-            level1: dataCollab.level1,
-            level2: dataCollab.level2,
-            level3: dataCollab.level3,
-          })
-        );
-      } catch (error) {
-        console.log("error - ", error);
-      }
-    })();
-  }, [_id, dispatch]);
+  const { currentMoney, cash } = useSelector(
+    (state: RootState) => state.satisfy
+  );
+
   return (
     <div className="grid grid-cols-12 w-full h-screen bg-[#191918]">
       <div
@@ -195,7 +158,10 @@ const LayoutUser = () => {
                 <IconProfile />
               </span>
               <p>{username || email}</p>
-              <p className="hidden xl:block"> - {VND.format(satisfy.cash)}VND</p>
+              <p className="hidden xl:block">
+                {" "}
+                - {VND.format(currentMoney)}VND
+              </p>
             </Link>
             <div
               className="shrink-0 items-center hidden gap-2 px-4 py-2 text-white cursor-pointer xl:flex bg-primary rounded-xl"

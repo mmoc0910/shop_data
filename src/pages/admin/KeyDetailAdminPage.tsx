@@ -329,13 +329,21 @@ const KeyDetailAdminPage = () => {
             </div>
             <div className="flex items-center gap-3">
               <p>Data Limit: </p>
-              <EditKeyLimitForm
-                type="number"
-                placeholder={`${dataLimit / 1000 / 1000 / 1000} GB`}
-                handleAddLimitData={(bytes: number) =>
-                  handleAddLimitData(key._id, bytes)
-                }
-              />
+              {status === 1 ? (
+                <EditKeyLimitForm
+                  type="number"
+                  placeholder={`${dataLimit / 1000 / 1000 / 1000} GB`}
+                  handleAddLimitData={(bytes: number) =>
+                    handleAddLimitData(key._id, bytes)
+                  }
+                />
+              ) : (
+                <span className="font-medium">
+                  {dataUsage
+                    ? `${(dataLimit / 1000 / 1000 / 1000).toFixed(2)}GB`
+                    : "00.00GB"}
+                </span>
+              )}
             </div>
             <div className="self-center">
               Data useage:{" "}

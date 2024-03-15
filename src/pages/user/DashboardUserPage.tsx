@@ -8,7 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "../../components/button/Button";
 import { Label } from "../../components/label";
 import { Input } from "../../components/input";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
 import { toast } from "react-toastify";
 import { messages } from "../../constants";
@@ -16,7 +16,7 @@ import { api } from "../../api";
 import CashHistory from "../../components/user/CashHistory";
 import TransactionHistory from "../../components/user/TransactionHistory";
 import RoseHistory from "../../components/user/RoseHistory";
-import { CashType, RoseType, TransactionType } from "../../type";
+import { CashType, CollabType, RoseType, SatisfyType, TransactionType } from "../../type";
 import Swal from "sweetalert2";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import classNames from "../../utils/classNames";
@@ -27,6 +27,9 @@ import wechat from "../../assets/contact/wechat.png";
 import whatapp from "../../assets/contact/whatapp.png";
 import { Link } from "react-router-dom";
 import IconQuesionMarkCircle from "../../icons/IconQuesionMarkCircle";
+import { setSatify } from "../../store/satisfy/satisfySlice";
+import { setCommision } from "../../store/commision/commisionSlice";
+import { setCollab } from "../../store/collab/collabSlice";
 
 const schema = yup
   .object({
@@ -41,6 +44,41 @@ const DashboardUserPage = () => {
   const [roseHistory, setRoseHistory] = useState<RoseType[]>([]);
   const [transactions, setTransactions] = useState<TransactionType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    (async () => {
+      try {
+        const [
+          { data: dataSatify },
+          { data: dataCommision },
+          { data: dataCollab },
+        ] = await Promise.all([
+          api.get<SatisfyType>(`/satisfy/${_id}`),
+          api.get<{ value: number }>("/commisions"),
+          api.get<CollabType>("/collab"),
+        ]);
+        dispatch(
+          setSatify({
+            cash: dataSatify.cash[0]?.money || 0,
+            rose: dataSatify.rose[0]?.money || 0,
+            currentMoney: dataSatify.currentMoney,
+            numberIntoduce: dataSatify.numberIntoduce,
+            transaction: dataSatify.transaction[0]?.money || 0,
+          })
+        );
+        dispatch(setCommision(dataCommision.value));
+        dispatch(
+          setCollab({
+            level1: dataCollab.level1,
+            level2: dataCollab.level2,
+            level3: dataCollab.level3,
+          })
+        );
+      } catch (error) {
+        console.log("error - ", error);
+      }
+    })();
+  }, [_id, dispatch]);
   useEffect(() => {
     (async () => {
       try {

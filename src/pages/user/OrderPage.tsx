@@ -175,8 +175,13 @@ const OrderPage = () => {
         key: "index",
         width: 50,
         fixed: "left",
-        render: (text: number) => (
-          <p className="text-sm font-primary">{text + 1}</p>
+        render: (text: string, record: GistType) => (
+          <Link
+            to={`/admin/key/${record.keyId._id}`}
+            className="text-sm font-primary text-primary"
+          >
+            {text + 1}
+          </Link>
         ),
       },
       {

@@ -159,8 +159,13 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
         dataIndex: "index",
         key: "index",
         width: 70,
-        render: (text: string) => (
-          <p className="text-sm font-primary">{text + 1}</p>
+        render: (text: string, record: GistType) => (
+          <Link
+            to={`/admin/key/${record.keyId._id}`}
+            className="text-sm font-primary text-primary"
+          >
+            {text + 1}
+          </Link>
         ),
       },
       {

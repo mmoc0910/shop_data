@@ -15,10 +15,16 @@ const EditStatusForm: FC<EditStatusFormProps> = ({
   const [value, setValue] = useState<StatusType>(initialValue);
   return (
     <div className="flex items-center gap-4">
-      <Radio checked={value === "enable"} onClick={() => setValue("enable")}>
+      <Radio
+        checked={value === "enable"}
+        onClick={() => enableSubmit && setValue("enable")}
+      >
         Enable
       </Radio>
-      <Radio checked={value === "disable"} onClick={() => setValue("disable")}>
+      <Radio
+        checked={value === "disable"}
+        onClick={() => enableSubmit && setValue("disable")}
+      >
         Disabled
       </Radio>
       {enableSubmit ? (
