@@ -17,6 +17,7 @@ import axios from "axios";
 import Radio from "../../components/radio/Radio";
 import Loading from "../../components/common/Loading";
 import PickLocationForm from "../../components/server/PickLocationForm";
+import EditKeyLimitForm from "../../components/server/EditKeyLimitForm";
 
 const schema = yup
   .object({
@@ -170,6 +171,36 @@ const ServerAdminPage = () => {
       setLoading(false);
     }
   };
+  const handleChangeLimitData = async (_id: string, totalBandwidth: number) => {
+    try {
+      const { isConfirmed } = await Swal.fire({
+        title: `<p class="leading-tight">Bạn có muốn chỉnh sửa total bandwidth máy chủ này</p>`,
+        icon: "success",
+        showCancelButton: true,
+        confirmButtonColor: "#1DC071",
+        cancelButtonColor: "#d33",
+        cancelButtonText: "Thoát",
+        confirmButtonText: "Đồng ý",
+      });
+      if (isConfirmed) {
+        setLoading(true);
+        await api.patch(`/servers/total-bandwidth/${_id}`, {
+          totalBandwidth,
+        });
+        toast.success("Chỉnh sửa thành công");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log("error message: ", error);
+        toast.error(error.response?.data.message);
+      } else {
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
   const columns: TableColumnsType<ServerType> = useMemo(
     () => [
       {
@@ -220,8 +251,15 @@ const ServerAdminPage = () => {
         ),
         dataIndex: "totalBandWidth",
         key: "totalBandWidth",
-        render: (text: number) => (
-          <p className="text-sm font-primary">{text / 1000 / 1000 / 1000}GB</p>
+        render: (text: number, record: ServerType) => (
+          <EditKeyLimitForm
+            type="number"
+            placeholder={`${text / 1000 / 1000 / 1000}GB`}
+            handleAddLimitData={(value) => {
+              handleChangeLimitData(record._id, Number(value));
+            }}
+          />
+          // <p className="text-sm font-primary">{text / 1000 / 1000 / 1000}GB</p>
         ),
       },
       {

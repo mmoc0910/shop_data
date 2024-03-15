@@ -68,6 +68,12 @@ const AccountDetailPage = () => {
                   : `Đại lý cấp ${user.level}`}
               </span>
             </p>
+            {/* <p>
+              Tổng nạp:{" "}
+              <span className="font-medium">
+                {user?.cash ? VND.format(user.cash) : 0}VND
+              </span>
+            </p> */}
             <p>
               Số dư:{" "}
               <span className="font-medium">{VND.format(user.money)}VND</span>
@@ -263,7 +269,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
           },
         ],
         onFilter: (value: boolean | Key, record: GistType) => {
-          if (typeof value === 'boolean') {
+          if (typeof value === "boolean") {
             // Xử lý trường hợp value là boolean
             return record.status === (value ? 1 : 0);
           } else {
@@ -271,8 +277,6 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
             return record.status === value;
           }
         },
-        // onFilter: (value: number, record: GistType) =>
-        //   record.status === value ? true : false,
       },
       {
         title: <p className="font-semibold font-primary">Key</p>,

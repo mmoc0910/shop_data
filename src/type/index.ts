@@ -1,22 +1,22 @@
 import { AuthState } from "../store/auth/authSlice";
 
 export type LocationType = {
-  "_id": string,
-  "name": string,
-  "createdAt": Date,
-  "updatedAt": Date,
-  "__v": 0
-}
+  _id: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: 0;
+};
 
 export type RoseExtendType = {
-  "_id": string,
-  "level1": number,
-  "level2": number,
-  "level3": number,
-  "createdAt": Date,
-  "updatedAt": Date,
-  "__v": 0
-}
+  _id: string;
+  level1: number;
+  level2: number;
+  level3: number;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: 0;
+};
 
 export interface UserState {
   level: number;

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { Key, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { DAY_FORMAT, messages } from "../../constants";
 import { api } from "../../api";
@@ -145,6 +145,22 @@ const AccountAdminPage = () => {
       },
       {
         title: () => (
+          <p className="text-sm font-semibold font-primary">Tổng nạp</p>
+        ),
+        dataIndex: "cash",
+        key: "cash",
+        render: (text: number) => (
+          <p className="text-sm font-primary">
+            {text ? VND.format(text) : 0}VND
+          </p>
+        ),
+        sorter: {
+          compare: (a, b) => a.cash - b.cash,
+          multiple: 1,
+        },
+      },
+      {
+        title: () => (
           <p className="text-sm font-semibold font-primary">Số dư</p>
         ),
         dataIndex: "money",
@@ -175,8 +191,8 @@ const AccountAdminPage = () => {
         title: () => (
           <p className="text-sm font-semibold font-primary">Đại lý</p>
         ),
-        dataIndex: "country",
-        key: "country",
+        dataIndex: "level",
+        key: "level",
         render: (_: string, record: UserState) => (
           <p
             className="text-sm cursor-pointer font-primary text-primary"
@@ -190,6 +206,33 @@ const AccountAdminPage = () => {
               : `Đại lý cấp ${record.level}`}
           </p>
         ),
+        filters: [
+          {
+            text: "Cộng tác viên",
+            value: 0,
+          },
+          {
+            text: "Đại lý cấp 1",
+            value: 1,
+          },
+          {
+            text: "Đại lý cấp 2",
+            value: 2,
+          },
+          {
+            text: "Đại lý cấp 3",
+            value: 3,
+          },
+        ],
+        onFilter: (value: boolean | Key, record: UserState) => {
+          if (typeof value === "boolean") {
+            // Xử lý trường hợp value là boolean
+            return record.level === (value ? 1 : 0);
+          } else {
+            // Xử lý trường hợp value là Key (đối với trường hợp khi dùng dropdown filter)
+            return record.level === value;
+          }
+        },
       },
       {
         title: () => (

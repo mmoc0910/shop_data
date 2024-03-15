@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useMemo, useState } from "react";
+import { Key, useEffect, useMemo, useState } from "react";
 import Heading from "../../components/common/Heading";
 import { CashType } from "../../type";
 import { toast } from "react-toastify";
@@ -267,22 +267,29 @@ const CashAdminPage = () => {
             ) : null}
           </div>
         ),
-        // filters: [
-        //   {
-        //     text: "Đã hủy",
-        //     value: 0,
-        //   },
-        //   {
-        //     text: "Đã hoàn thành",
-        //     value: 1,
-        //   },
-        //   {
-        //     text: "Chờ phê duyệt",
-        //     value: 2,
-        //   },
-        // ],
-        // onFilter: (value: number, record: CashType) => record.status === value,
-        // fixed: "right",
+        filters: [
+          {
+            text: "Đã hủy",
+            value: 0,
+          },
+          {
+            text: "Đã hoàn thành",
+            value: 1,
+          },
+          {
+            text: "Chờ phê duyệt",
+            value: 2,
+          },
+        ],
+        onFilter: (value: boolean | Key, record: CashType) => {
+          if (typeof value === 'boolean') {
+            // Xử lý trường hợp value là boolean
+            return record.status === (value ? 1 : 0);
+          } else {
+            // Xử lý trường hợp value là Key (đối với trường hợp khi dùng dropdown filter)
+            return record.status === value;
+          }
+        },
       },
       {
         title: () => (
