@@ -61,7 +61,7 @@ const ServerAdminPage = () => {
       setLoadingTable(true);
       const resultServer = await api.get<ServerType[]>("/servers");
       setServers(resultServer.data.filter((item) => item.status === 1));
-      setListServerHistory(resultServer.data);
+      setListServerHistory(resultServer.data.filter((item) => item.status === 0));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log("error message: ", error);

@@ -4,7 +4,7 @@ import { KeyDetailType, ServerType } from "../../type";
 import { api } from "../../api";
 import Heading from "../../components/common/Heading";
 import { DAY_FORMAT } from "../../constants";
-import { Modal, Tooltip } from "antd";
+import { Modal, Tag, Tooltip } from "antd";
 import { copyToClipboard } from "../../utils/copyToClipboard";
 import { AndroidXML } from "../user/OrderPage";
 import EditKeyLimitForm from "../../components/server/EditKeyLimitForm";
@@ -304,7 +304,13 @@ const KeyDetailAdminPage = () => {
               </span>
             </div>
             <div className="self-center">
-              Tên key: <span className="font-medium">{gist.extension}</span>
+              Key Id: <span className="font-medium">{key.keyId}</span>
+            </div>
+            <div className="self-center">
+              Tên key: <span className="font-medium">{key.name}</span>
+            </div>
+            <div className="self-center">
+              Extension: <span className="font-medium">{gist.extension}</span>
             </div>
             <div className="flex items-center gap-3">
               <p>Trạng thái key:</p>{" "}
@@ -343,6 +349,33 @@ const KeyDetailAdminPage = () => {
               Data expand:{" "}
               <span className="font-medium">
                 {dataExpand / 1000 / 1000 / 1000}GB
+              </span>
+            </div>
+            <div className="self-center">
+              Server Name: <span className="font-medium">{serverId.name}</span>
+            </div>
+            <div className="self-center">
+              Server Location:{" "}
+              <span className="font-medium">{serverId.location}</span>
+            </div>
+            <div className="self-center">
+              Server IP:{" "}
+              <span className="font-medium">
+                {serverId.hostnameForAccessKeys}
+              </span>
+            </div>
+            <div className="self-center">
+              Server status:{" "}
+              <span className="font-medium">
+                {serverId.status === 1 ? (
+                  <Tag color="green">
+                    <span className="font-primary">Đang hoạt động</span>
+                  </Tag>
+                ) : (
+                  <Tag color="red">
+                    <span className="font-primary">Ngừng hoạt động</span>
+                  </Tag>
+                )}
               </span>
             </div>
           </div>

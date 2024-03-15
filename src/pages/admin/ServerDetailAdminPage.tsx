@@ -481,9 +481,12 @@ const ServerDetailAdminPage = () => {
                           >
                             <div className="flex items-center col-span-2">
                               <div className="px-4">{item.keyId}</div>
-                              <div className="flex-1 px-4">
+                              <Link
+                                to={`/admin/key/${item._id}`}
+                                className="flex-1 px-4 text-primary font-medium hover:underline hover:decoration-primary"
+                              >
                                 {item.name || "no name"}
-                              </div>
+                              </Link>
                               <div className="flex-1 px-4">{item.account}</div>
                               <div className="px-4">
                                 {item.dataUsage
@@ -511,7 +514,6 @@ const ServerDetailAdminPage = () => {
                 </div>
               </div>
             ) : null}
-
             {listKey.filter((item) => item.status === 0).length > 0 ? (
               <div className="space-y-7">
                 <Heading>Keys Inactive</Heading>
@@ -541,9 +543,12 @@ const ServerDetailAdminPage = () => {
                           >
                             <div className="flex items-center col-span-2">
                               <div className="px-4">{item.keyId}</div>
-                              <div className="flex-1 px-4">
+                              <Link
+                                to={`/admin/key/${item._id}`}
+                                className="flex-1 px-4 text-primary font-medium hover:underline hover:decoration-primary"
+                              >
                                 {item.name || "no name"}
-                              </div>
+                              </Link>
                               <div className="flex-1 px-4">{item.account}</div>
                             </div>
                             <div className="flex items-center col-span-3 flex-1">
@@ -600,9 +605,12 @@ const ServerDetailAdminPage = () => {
                           >
                             <div className="flex items-center col-span-2">
                               <div className="px-4">{item.keyId}</div>
-                              <div className="flex-1 px-4">
+                              <Link
+                                to={`/admin/key/${item._id}`}
+                                className="flex-1 px-4 text-primary font-medium hover:underline hover:decoration-primary"
+                              >
                                 {item.name || "no name"}
-                              </div>
+                              </Link>
                               <div className="flex-1 px-4">{item.account}</div>
                             </div>
                             <div className="flex items-center col-span-3">
