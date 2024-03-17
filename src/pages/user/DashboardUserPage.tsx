@@ -16,7 +16,13 @@ import { api } from "../../api";
 import CashHistory from "../../components/user/CashHistory";
 import TransactionHistory from "../../components/user/TransactionHistory";
 import RoseHistory from "../../components/user/RoseHistory";
-import { CashType, CollabType, RoseType, SatisfyType, TransactionType } from "../../type";
+import {
+  CashType,
+  CollabType,
+  RoseType,
+  SatisfyType,
+  TransactionType,
+} from "../../type";
 import Swal from "sweetalert2";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import classNames from "../../utils/classNames";
@@ -30,6 +36,7 @@ import IconQuesionMarkCircle from "../../icons/IconQuesionMarkCircle";
 import { setSatify } from "../../store/satisfy/satisfySlice";
 import { setCommision } from "../../store/commision/commisionSlice";
 import { setCollab } from "../../store/collab/collabSlice";
+import Post from "../../components/user/Post";
 
 const schema = yup
   .object({
@@ -284,35 +291,7 @@ const DashboardUserPage = () => {
           <Policy />
           <PlanDashborad />
           <InviteDashboard />
-          <div className="space-y-4">
-            <Heading>Hướng dẫn sử dụng</Heading>
-            <div className="space-y-6">
-              <div className="overflow-hidden bg-gray-100 border rounded-lg">
-                <p className="px-5 py-3 text-lg font-medium">
-                  Thông tin cần biết
-                </p>
-                <div className="px-5 py-3 bg-white border rounded-lg">
-                  <p className="font-medium">
-                    Thông tin cần biết VPN 4G là gì ? Tại sao lại cần đến ?
-                  </p>
-                  <p className="mt-4 text-sm text-gray-400">
-                    Lần Cập Nhật Cuối Cùng Vào:08/2/2023
-                  </p>
-                </div>
-              </div>
-              <div className="bg-gray-100 border rounded-lg overflow-hidde">
-                <p className="px-5 py-3 text-lg font-medium">
-                  Chương trình CTV
-                </p>
-                <div className="px-5 py-3 bg-white border rounded-lg">
-                  <p className="font-medium">Hưởng hoa hồng 30% trọn đời</p>
-                  <p className="mt-4 text-sm text-gray-400">
-                    Lần Cập Nhật Cuối Cùng Vào:07/11/2022
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <Post />
         </div>
         {userCashHistory.length === 0 &&
         roseHistory.length === 0 &&

@@ -59,6 +59,7 @@ const OrderPage = () => {
           (item) =>
             item?.planId &&
             item.planId.name.toLowerCase().includes(inputValue.toLowerCase()) &&
+            item.extension.toLowerCase().includes(inputValue.toLowerCase()) &&
             dayjs(item.keyId.startDate).isAfter(startDate) &&
             dayjs(item.keyId.endDate).isBefore(endDate)
         )
@@ -66,7 +67,8 @@ const OrderPage = () => {
       ? listGist.filter(
           (item) =>
             item?.planId &&
-            item.planId.name.toLowerCase().includes(inputValue.toLowerCase())
+            item.planId.name.toLowerCase().includes(inputValue.toLowerCase()) &&
+            item.extension.toLowerCase().includes(inputValue.toLowerCase())
         )
       : listGist;
   useEffect(() => {

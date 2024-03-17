@@ -60,10 +60,18 @@ const InviteDashboard = () => {
     },
     {
       title: <p className="font-semibold font-primary">Người mua</p>,
-      dataIndex: "moneyPercent",
-      key: "moneyPercent",
+      dataIndex: "name",
+      key: "name",
       render: (_: string, record: RoseType) => (
-        <p className="text-sm font-primary">{record.reciveRoseId.email}</p>
+        <p className="text-sm font-primary">{record.introducedId.username}</p>
+      ),
+    },
+    {
+      title: <p className="font-semibold font-primary">SDT</p>,
+      dataIndex: "phone",
+      key: "phone",
+      render: (_: string, record: RoseType) => (
+        <p className="text-sm font-primary">{record.introducedId.phone}</p>
       ),
     },
     {

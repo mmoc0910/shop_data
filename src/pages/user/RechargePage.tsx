@@ -1,5 +1,3 @@
-// import { Tooltip } from "antd";
-// import { copyToClipboard } from "../../utils/copyToClipboard";
 import wechat from "../../assets/contact/wechat1.png";
 import alipay from "../../assets/contact/alipay.png";
 import { useForm } from "react-hook-form";
@@ -14,9 +12,18 @@ import axios from "axios";
 import { Input } from "../../components/input";
 import Button from "../../components/button/Button";
 import { VND } from "../../utils/formatPrice";
-// import { Tooltip } from "antd";
-// import { copyToClipboard } from "../../utils/copyToClipboard";
+import { CountdownProps, Statistic, Tooltip } from "antd";
+import { copyToClipboard } from "../../utils/copyToClipboard";
+import {
+  ACCOUNT_NAME,
+  ACCOUNT_NO,
+  APP_SCRIPT_URL,
+  BANK_ID,
+  TEMPLATE,
+} from "../../constants";
+import { useEffect, useState } from "react";
 
+const { Countdown } = Statistic;
 const schema = yup
   .object({
     money: yup.number().required("This field is required"),
@@ -66,8 +73,8 @@ const RechargePage = () => {
     }
   };
   return (
-    <div className="grid grid-cols-1 md:grid-cols-6 xl:grid-cols-5 gap-20">
-      {/* <AutoBanking /> */}
+    <div className="grid grid-cols-1 md:grid-cols-6 xl:grid-cols-4 gap-20 px-10">
+      <AutoBanking />
       <div className="px-5 py-10 rounded-xl shadow-2xl col-span-1 md:col-span-3 xl:col-span-2">
         <p className="font-semibold text-xl text-center mb-3">
           Nạp tiền thủ công
@@ -117,58 +124,173 @@ const RechargePage = () => {
   );
 };
 
-// const AutoBanking = () => {
-//   return (
-//     <div className="px-5 py-10 rounded-xl shadow-2xl col-span-1 md:col-span-3 lg:col-span-2">
-//       <p className="font-semibold text-xl text-center mb-7">
-//         Nạp tiền tự động VNbanking
-//       </p>
-//       <img
-//         src="https://images.unsplash.com/photo-1709314633232-b01d4f45596c?q=80&w=1888&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-//         className="w-4/6 aspect-square object-cover mx-auto mb-10"
-//       />
-//       <div className="space-y-5 mx-5">
-//         <p className="text-lg">
-//           Số tài khoản:{" "}
-//           <span className="font-medium text-primary">0123456789</span>
-//         </p>
-//         <p className="text-lg">
-//           Chủ tài khoản: <span className="font-medium">NGUYEN VAN A</span>
-//         </p>
-//         <div className="text-lg flex items-center gap-2">
-//           <p>
-//             {" "}
-//             Nội dung chuyển khoản:{" "}
-//             <span className="font-medium text-secondary">abcdef</span>
-//           </p>
-//           <Tooltip title="copy">
-//             <button
-//               className="-translate-y-[2px]"
-//               onClick={() => copyToClipboard("abcdef")}
-//             >
-//               <svg
-//                 xmlns="http://www.w3.org/2000/svg"
-//                 fill="none"
-//                 viewBox="0 0 24 24"
-//                 strokeWidth="1.5"
-//                 stroke="currentColor"
-//                 className="w-5 h-5"
-//               >
-//                 <path
-//                   strokeLinecap="round"
-//                   strokeLinejoin="round"
-//                   d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"
-//                 />
-//               </svg>
-//             </button>
-//           </Tooltip>
-//         </div>
-//         <p className="text-lg">
-//           Lưu ý: Quý khách vui lòng nhập đúng nội dung chuyển khoản.
-//         </p>
-//       </div>
-//     </div>
-//   );
+// const onChange: CountdownProps['onChange'] = (val) => {
+//   if (typeof val === 'number' && 4.95 * 1000 < val && val < 5 * 1000) {
+//     console.log('changed!');
+//   }
 // };
+
+const AutoBanking = () => {
+  const { username } = useSelector((state: RootState) => state.auth);
+  const [amount, setAmount] = useState<string>("");
+  const [addInfo, setAddInfo] = useState<string>("");
+  const [showQR, setShowQR] = useState<boolean>(false);
+
+  return (
+    <div className="px-5 py-10 rounded-xl shadow-2xl col-span-1 md:col-span-3 lg:col-span-2 hidden">
+      <p className="font-semibold text-xl text-center mb-7">
+        Nạp tiền tự động VNbanking
+      </p>
+      {!showQR ? (
+        <div className="flex items-center gap-5 mb-5">
+          <input
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="Nhập số tiền cần nạp"
+            type="number"
+            className="focus:border-primary text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock text-text1  "
+          />
+          <button
+            onClick={() => {
+              if (amount && Number(amount) > 0 && username) {
+                setAddInfo(`${username.toLocaleUpperCase()}${Date.now()}`);
+                setShowQR(true);
+              } else {
+                toast.warn("Bạn chưa nhập số tiền cần nạp");
+              }
+            }}
+            type="button"
+            className="font-semibold lg:py-3 rounded-[10px] lg:min-h-[52px] flex items-center justify-center select-none text-sm lg:text-base min-h-[40px] py-2 px-5 text-white bg-primary shrink-0"
+          >
+            Nạp tiền
+          </button>
+        </div>
+      ) : null}
+
+      {showQR ? (
+        <AutoBankingQR
+          amount={Number(amount)}
+          addInfo={addInfo}
+          onSuccess={() => setShowQR(false)}
+        />
+      ) : null}
+    </div>
+  );
+};
+
+const AutoBankingQR = ({
+  amount,
+  addInfo,
+  onSuccess,
+}: {
+  amount: number;
+  addInfo: string;
+  onSuccess: () => void;
+}) => {
+  useEffect(() => {
+    const fetchDataInterval = setInterval(() => {
+      // Gọi hàm fetchData ở đây
+      checkPaid(amount, addInfo);
+    }, 5000); // 10000 miligiây = 10 giây
+
+    // Đảm bảo rằng bạn xóa interval khi component unmount
+    return () => {
+      clearInterval(fetchDataInterval);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const checkPaid = async (amount: number, addInfo: string) => {
+    try {
+      const result = await api.get<{
+        data: {
+          "Mã GD": number;
+          "Mô tả": string;
+          "Giá trị": number;
+          "Ngày diễn ra": Date;
+          "Số tài khoản": string;
+        }[];
+      }>(APP_SCRIPT_URL);
+      console.log("data - ", result.data.data);
+      if (
+        result.data.data.some(
+          (item) => item["Giá trị"] >= amount && item["Mô tả"].includes(addInfo)
+        )
+      ) {
+        onSuccess();
+        Swal.fire({
+          title: `<p class="leading-tight">Giao dịch thành công.</p>`,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const onFinish: CountdownProps["onFinish"] = () => {
+    console.log("finished!");
+    Swal.fire({
+      title: `<p class="leading-tight">Hệ thống chưa kiểm tra ra bạn đã chuyển khoản, nếu bạn đã chuyển khoản nhưng chưa thành công vui lòng liên hệ với Admin để được hỗ trọ.</p>`,
+    });
+    onSuccess();
+  };
+  return (
+    <div>
+      <img
+        src={`https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-${TEMPLATE}.png?amount=${Number(
+          amount
+        )}`}
+        className="w-4/6 h-auto object-cover mx-auto mb-10"
+      />
+
+      <div className="space-y-5 mx-5">
+        <div className="flex items-center gap-5">
+          <div className="w-full h-[7px] relative my-0 mx-auto my before:content-[''] before:absolute before:right-auto before:left-0 before:h-full before:bg-primary  before:rounded-full before:animate-lineloading"></div>
+          <Countdown value={Date.now() + 10 * 60 * 1000} onFinish={onFinish} />
+        </div>
+        <p className="text-lg">
+          Số tài khoản:{" "}
+          <span className="font-medium text-primary">{ACCOUNT_NO}</span>
+        </p>
+        <p className="text-lg">
+          Chủ tài khoản: <span className="font-medium">{ACCOUNT_NAME}</span>
+        </p>
+        <p className="text-lg">
+          Số tiền:{" "}
+          <span className="font-medium">{VND.format(Number(amount))}VND</span>
+        </p>
+        <div className="text-lg flex items-center gap-2">
+          <p>
+            {" "}
+            Nội dung chuyển khoản:{" "}
+            <span className="font-medium text-secondary">{addInfo}</span>
+          </p>
+          <Tooltip title="copy">
+            <button
+              className="-translate-y-[2px]"
+              onClick={() => copyToClipboard(addInfo)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"
+                />
+              </svg>
+            </button>
+          </Tooltip>
+        </div>
+        <p className="text-lg">
+          Lưu ý: Quý khách vui lòng nhập đúng nội dung chuyển khoản.
+        </p>
+      </div>
+    </div>
+  );
+};
 
 export default RechargePage;

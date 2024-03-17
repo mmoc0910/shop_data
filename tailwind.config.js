@@ -36,6 +36,24 @@ export default {
         "dark-strock": "#3A3A43",
         red2: "#422C32",
       },
+      keyframes: {
+        lineloading: {
+          "0%": {
+            right: "100%",
+          },
+          "50%": {
+            right: 0,
+            left: 0,
+          },
+          "100%": {
+            right: 0,
+            left: "100%",
+          },
+        },
+      },
+      animation: {
+        lineloading: "lineloading 2s forwards infinite",
+      },
     },
   },
   plugins: [],

@@ -18,6 +18,7 @@ import Radio from "../../components/radio/Radio";
 import Loading from "../../components/common/Loading";
 import PickLocationForm from "../../components/server/PickLocationForm";
 import EditKeyLimitForm from "../../components/server/EditKeyLimitForm";
+import dayjs from "dayjs";
 
 const schema = yup
   .object({
@@ -58,10 +59,13 @@ const ServerAdminPage = () => {
   }, []);
   const handleFetchData = async () => {
     try {
+      console.log("load server");
       setLoadingTable(true);
       const resultServer = await api.get<ServerType[]>("/servers");
       setServers(resultServer.data.filter((item) => item.status === 1));
-      setListServerHistory(resultServer.data.filter((item) => item.status === 0));
+      setListServerHistory(
+        resultServer.data.filter((item) => item.status === 0)
+      );
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log("error message: ", error);
@@ -354,6 +358,39 @@ const ServerAdminPage = () => {
             {record.name}
           </Link>
         ),
+      },
+      {
+        title: () => <p className="text-sm font-semibold font-primary">IP</p>,
+        dataIndex: "hostnameForAccessKeys",
+        key: "hostnameForAccessKeys",
+        render: (text: string) => (
+          <p className="text-sm font-primary">{text}</p>
+        ),
+      },
+      {
+        title: () => (
+          <p className="text-sm font-semibold font-primary">
+            Tổng ngày hoạt động
+          </p>
+        ),
+        dataIndex: "hostnameForAccessKeys",
+        key: "hostnameForAccessKeys",
+        render: (_text: string, record: ServerType) => {
+          const diff = dayjs(record.updatedAt).diff(
+            dayjs(record.createdAt),
+            "days"
+          );
+          return (
+            <p className="text-sm font-primary">
+              {diff < 1
+                ? `${dayjs(record.updatedAt).diff(
+                    dayjs(record.createdAt),
+                    "hour"
+                  )} giờ`
+                : `${diff} ngày`}
+            </p>
+          );
+        },
       },
       {
         title: () => (

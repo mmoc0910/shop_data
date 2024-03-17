@@ -39,6 +39,7 @@ const AccountPage = lazy(() => import("./pages/user/AccountPage"));
 const PlanPage = lazy(() => import("./pages/user/PlanPage"));
 const OrderPage = lazy(() => import("./pages/user/OrderPage"));
 const InvitePage = lazy(() => import("./pages/user/InvitePage"));
+const PostPage = lazy(() => import("./pages/user/PostPage"));
 const KeyDetailAdminPage = lazy(
   () => import("./pages/admin/KeyDetailAdminPage")
 );
@@ -103,6 +104,7 @@ function App() {
             <Route path="user/transaction" element={<TransactionPage />} />
             <Route path="user/cash" element={<CashPage />} />
             <Route path="user/recharge" element={<RechargePage />} />
+            <Route path="user/dashboard/post/:slug" element={<PostPage />} />
           </Route>
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
