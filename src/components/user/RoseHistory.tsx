@@ -5,12 +5,14 @@ import { VND } from "../../utils/formatPrice";
 import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const RoseHistory = ({ roseHistory }: { roseHistory: RoseType[] }) => {
+  const { t } = useTranslation();
   if (roseHistory.length)
     return (
       <div className="space-y-4">
-        <Heading>Lịch sử nhận hoa hồng</Heading>
+        <Heading>{t("page.dashboard.roseHistory.heading")}</Heading>
         <div className="">
           {roseHistory.length === 0 ? (
             <p>Chưa có giao dịch nạp nào được thực hiện</p>
@@ -27,16 +29,12 @@ const RoseHistory = ({ roseHistory }: { roseHistory: RoseType[] }) => {
                 >
                   <div className="p-3 shadow-xl rounded-lg">
                     <p className="text-sm">
-                      Bạn nhận được{" "}
-                      <span className="font-medium">
-                        {VND.format(item.recive)}VND({item.percent}%)
-                      </span>
-                      tiền hoa hồng từ{" "}
-                      <span className="font-medium">
-                        {item.introducedId.email}
-                      </span>{" "}
-                      khi mua gói{" "}
-                      <span className="font-medium">{item.plan}</span> vào ngày{" "}
+                      {t("page.dashboard.roseHistory.content", {
+                        price: `${VND.format(item.recive)}VND`,
+                        discount: item.percent,
+                        user: item.introducedId.username,
+                        package: item.plan,
+                      })}{" "}
                       {dayjs(item.createdAt).format("DD/MM/YYYY HH:MM")}
                     </p>
                   </div>
@@ -47,7 +45,7 @@ const RoseHistory = ({ roseHistory }: { roseHistory: RoseType[] }) => {
                   to={"/user/invite"}
                   className="text-primary underline decoration-primary text-center block"
                 >
-                  Xem tất cả
+                  {t("page.dashboard.seeAll")}
                 </Link>
               ) : null}
             </div>

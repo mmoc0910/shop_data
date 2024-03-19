@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import Container from "../common/Container";
-import { PlanType } from "../../type";
+import { CoutryType, PlanType } from "../../type";
 import { v4 as uuidv4 } from "uuid";
-import { VND } from "../../utils/formatPrice";
+import { VND, priceFomat } from "../../utils/formatPrice";
 import { IconCheck } from "../checkbox/Checkbox";
 import { api } from "../../api";
 import { useSelector } from "react-redux";
@@ -80,6 +80,7 @@ const PricingBox = () => {
 };
 
 export const PricingItem = ({ plan }: { plan: PlanType }) => {
+  const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState<boolean>(false);
   const { _id } = useSelector((state: RootState) => state.auth);
   const navigation = useNavigate();
@@ -91,9 +92,9 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
           {name}
         </h4>
         <div className="pb-10 pt-10">
-          <p className="text-primary text-4xl font-medium mb-2">
-            {VND.format(price)}
-            <span className="text-xl">VND/{type}</span>
+          <p className="text-primary text-3xl font-medium mb-2">
+            {/* {VND.format(price)} */}
+            {priceFomat(price, i18n.language as CoutryType)}/{type}
           </p>
           <p className="font-semibold text-center text-primary text-3xl mt-3">
             {bandWidth}GB
@@ -110,14 +111,14 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
             if (_id) {
               try {
                 const { isConfirmed } = await Swal.fire({
-                  title: `<p class="leading-tight">Bạn có muốn mua gói <span class="text-secondary20">${name}</span></p>`,
+                  title: `<p class="leading-tight">${t("page.package.swal.title")} <span class="text-secondary20">${name}</span></p>`,
                   text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
                   icon: "success",
                   showCancelButton: true,
                   confirmButtonColor: "#1DC071",
                   cancelButtonColor: "#d33",
-                  cancelButtonText: "Thoát",
-                  confirmButtonText: "Có, mua ngay",
+                  cancelButtonText: t("page.package.swal.cancelButton"),
+                  confirmButtonText: t("page.package.swal.confirmButton"),
                 });
                 if (isConfirmed) {
                   setLoading(true);
@@ -125,7 +126,7 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
                     userId: _id,
                     planId: plan._id,
                   });
-                  toast.success("Mua thành công");
+                  toast.success(t("page.package.swal.success"));
                   navigation("/user/order");
                 }
               } catch (error) {
@@ -136,7 +137,7 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
                       "Bạn không đủ tiền để đăng kí dịch vụ này" &&
                     error.response.status === 400
                   ) {
-                    toast.warn("Nạp thêm tiền để sử dụng dịch vụ");
+                    toast.warn(t("page.package.swal.warn"));
                     navigation("/user/dashboard");
                   }
                 } else {
@@ -151,7 +152,7 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
             }
           }}
         >
-          <p className="font-medium text-white text-xl">Đăng ký mua</p>
+          <p className="font-medium text-white text-xl">{t("page.package.buyNow")}</p>
         </button>
       </div>
       {loading ? <Loading /> : null}

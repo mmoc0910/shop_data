@@ -6,7 +6,8 @@ import { v4 as uuidv4 } from "uuid";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
 import { useTranslation } from "react-i18next";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import IconChevronDown from "../../icons/IconChevronDown";
 
 const Header = () => {
   const { t, i18n } = useTranslation();
@@ -43,26 +44,52 @@ const Header = () => {
               <div className="text-sm xl:text-lg">Download</div>
               <div className="absolute right-0 top-[calc(100%+1rem)] invisible opacity-0 group-hover:visible group-hover:opacity-100 group-hover:top-full transition-all duration-300">
                 <div className="py-4 px-8 mt-3 rounded-lg shadow-xl bg-white space-y-2 flex flex-col text-black">
-                  <Link to={"/ô"} download className="text-sm">
-                    Macos
+                  <Link
+                    to={
+                      "https://play.google.com/store/apps/details?id=org.outline.android.client&pcampaignid=web_share"
+                    }
+                    target="_blank"
+                    className="text-sm hover:text-primary transition-all duration-200"
+                  >
+                    GooglePlay(Android)
                   </Link>
-                  <Link to={""} download className="text-sm">
-                    Window
+                  <Link
+                    to={
+                      "https://apps.apple.com/us/app/outline-secure-internet-access/id1356178125?mt=12"
+                    }
+                    target="_blank"
+                    className="text-sm hover:text-primary transition-all duration-200"
+                  >
+                    AppStore(MacOS)
                   </Link>
-                  <Link to={""} download className="text-sm">
-                    Android
+                  <Link
+                    to={
+                      "https://apps.apple.com/us/app/outline-app/id1356177741"
+                    }
+                    target="_blank"
+                    className="text-sm hover:text-primary transition-all duration-200"
+                  >
+                    AppStore(iOS)
+                  </Link>
+                  <Link
+                    to={"http://woot2.vn/vpncn2/Win-outline-client.zip"}
+                    download
+                    className="text-sm hover:text-primary transition-all duration-200"
+                  >
+                    Windows
                   </Link>
                 </div>
               </div>
             </div>
             {!email ? (
-              <div className="flex items-stretch gap-3">
+              <div className="flex items-end gap-5">
                 <Link
                   to={"/sign-in"}
-                  className="font-medium text-sm xl:text-base text-primary underline decoration-primary xl:pl-5 "
+                  className="font-medium text-sm xl:text-base text-primary underline decoration-primary"
                 >
                   {t("authen.sign_in")}
                 </Link>
+                <SelectLanguage />
               </div>
             ) : (
               <Link
@@ -94,6 +121,50 @@ const Header = () => {
           </div>
         </div>
       </Container>
+    </div>
+  );
+};
+
+const languages = [
+  { key: "en", title: "English" },
+  { key: "ci", title: "Chinese" },
+  { key: "vi", title: "Vietnamese" },
+];
+
+const SelectLanguage = () => {
+  const { i18n } = useTranslation();
+  const [chooseLanguage, setChooseLanguage] = useState<{
+    key: string;
+    title: string;
+  }>({ key: "en", title: "English" });
+  useEffect(() => {
+    i18n.changeLanguage(chooseLanguage.key);
+  }, [chooseLanguage.key, i18n]);
+  return (
+    <div className="font-medium text-icon-color cursor-pointer relative group">
+      <div className="text-sm flex items-center gap-1">
+        {chooseLanguage.title}
+        <span>
+          <IconChevronDown />
+        </span>
+      </div>
+      <div className="absolute left-0 top-[calc(100%+1rem)] invisible opacity-0 group-hover:visible group-hover:opacity-100 group-hover:top-full transition-all duration-300">
+        <div className="p-3 mt-3 rounded-md shadow-xl bg-white space-y-2 flex flex-col text-black">
+          {languages.map((item) => (
+            <div
+              onClick={() => setChooseLanguage(item)}
+              className={classNames(
+                "text-sm hover:text-primary transition-all duration-200",
+                item.key === chooseLanguage.key
+                  ? "text-primary"
+                  : "text-icon-color"
+              )}
+            >
+              {item.title}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

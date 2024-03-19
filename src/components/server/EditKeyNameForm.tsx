@@ -30,10 +30,11 @@ const EditKeyNameForm = ({
     }
   };
   return (
-    <form className="flex items-center" onSubmit={handleSubmit(onSubmit)}>
-      <div className="w-full">
-        <Input name="name" placeholder={placeholder} control={control} />
-      </div>
+    <form
+      className="flex items-center w-[200px]"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <Input name="name" placeholder={placeholder} control={control} />
       <Button type="submit" className="text-gray-500 px-4">
         <IconEdit />
       </Button>

@@ -41,6 +41,9 @@ const LayoutAdmin = () => {
             level1: data.level1,
             level2: data.level2,
             level3: data.level3,
+            minLevel1: data.minLevel1,
+            minLevel2: data.minLevel2,
+            minLevel3: data.minLevel3,
           })
         );
       } catch (error) {

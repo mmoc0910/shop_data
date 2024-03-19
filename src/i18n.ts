@@ -6,7 +6,7 @@ i18n.use(LanguageDetector).use(initReactI18next),
   init({
     debug: true,
     fallbackLng: "en",
-    lng: "vi",
+    lng: "en",
     resources: {
       en: {
         translation: {
@@ -34,12 +34,43 @@ i18n.use(LanguageDetector).use(initReactI18next),
             password: {
               label: "Password*",
               placeholder: "Enter your Password",
-              error: { required: "This field is required" },
+              error: {
+                required: "This field is required",
+                min: "Minimum of 8 characters",
+              },
+            },
+            old_password: {
+              label: "Old Password*",
+              placeholder: "Enter your Old Password",
+              error: {
+                required: "This field is required",
+                min: "Minimum of 8 characters",
+              },
+            },
+            new_password: {
+              label: "New Password*",
+              placeholder: "Enter your New Password",
+              error: {
+                required: "This field is required",
+                min: "Minimum of 8 characters",
+              },
+            },
+            re_new_password: {
+              label: "Re-Type New Password*",
+              placeholder: "Enter Re-Type New Password",
+              error: {
+                required: "This field is required",
+                min: "Minimum of 8 characters",
+                match: "Confirm new password does not match",
+              },
             },
             re_password: {
               label: "Re-Type Password*",
               placeholder: "Enter Re-Type Password",
-              error: { required: "This field is required" },
+              error: {
+                required: "This field is required",
+                min: "Minimum of 8 characters",
+              },
             },
             username: {
               label: "UserName*",
@@ -80,15 +111,16 @@ i18n.use(LanguageDetector).use(initReactI18next),
           },
           menu_user: {
             dashboard: "Dashboard",
-            recharge: "Recharge",
-            pack_of_data: "Pack of data",
-            my_order: "My order",
+            // recharge: "Package",
+            pack_of_data: "Package",
+            my_order: "My Orders",
             transaction_history: "Transaction history",
-            deposit_history: "recharge",
+            deposit_history: "Payment",
             collaborators: "Collaborators",
             user_information: "User information",
           },
           page: {
+            searchPlaceholder: "Search",
             home: {
               home: {
                 heading: "VPNCN2 Cheapest Fastest VPN you may know",
@@ -135,6 +167,247 @@ i18n.use(LanguageDetector).use(initReactI18next),
                 content_3_1_3:
                   "VPN package or your VPN service provider A VPN service provider always has many packages which designed by the customer level, someone may provide you high price but the speed does not make you satisfy. VPNCN2 can give you super-speed access which is considered as a Premium VIP package from other providers. We also have Customer service support 24/7 to support you anytime.",
               },
+              ctv: {
+                heading: "Looking for AGENCY with excited commision",
+                content1:
+                  "Get {{amount}}% commission for order from invitation code",
+                content2: "Commission for AGENCY upto {{amount}}%",
+                content3: "No control Agency’s price or margin up",
+              },
+            },
+            dashboard: {
+              seeAll: "See All",
+              buyNow: "Buy Now",
+              ctvcode: {
+                ctv: "Mã CTV:",
+                desc: "Share your Introduction Code to your friends and get [{{amount}}]% comimission from their orders",
+              },
+              satify: {
+                cash: "Total Payment",
+                currentMoney: "Remaining",
+                transaction: "Bought",
+                rose: "Tips",
+                numberIntoduce: "Đã mời",
+                currentMoneyNode:
+                  "Current balance = Total deposit - Used amount + Commission",
+                roseNode:
+                  "Commission = Total amount [{amount}%] received from the Collaboration program",
+                depositNow: "Deposit Now",
+              },
+              userManual: {
+                userManual: "User manual",
+                heading: "Please carefully read our Service Policy:",
+                title1:
+                  "Each key will be unlimited number of devices but will have a limited total bandwidth of 30 days trailing. This limitation ensures you don’t share the key with other people.",
+                title2:
+                  "Please download Outline Client APP which is available for all platform devices from the link below.",
+                title3:
+                  "You can connect multiple devices at the same time, But if over limited bandwidth, please buy more data from “My orders” menu",
+                title4: "Your data limit will be trailed 30 days.",
+                title5:
+                  "Please join ”VPNCN2 support team” to get instant updates from our team.",
+                note: "If you are in China and cannot download it on the app store, you can use the download link below.",
+                contact1: "Any concerns please contact admin:",
+                contact2: "VPNCN2 Support Team:",
+              },
+              plan: {
+                heading: "Package",
+                field: {
+                  name: "Package name",
+                  type: "Usage cycle",
+                  bandwidth: "Bandwidth",
+                  price: "Price",
+                },
+              },
+              invite: {
+                heading: "Friends are introduced",
+                field: {
+                  name: "Package Name",
+                  rose: "Commission Percentage",
+                  rosePrice: "Commission",
+                  introducedId: "Buyer",
+                  sdt: "Phone",
+                  receivedDate: "Received Date",
+                },
+              },
+              depositHistory: {
+                heading: "Deposit history",
+                content: "You deposited {{price}} on",
+                content_refuse:
+                  "You were denied deposit {{prive}} with reason {{reason}} on",
+              },
+              roseHistory: {
+                heading: "History of receiving commissions",
+                content:
+                  "You receive {{price}}({{discount}}%) commission from {{user}} when purchasing {{package}} package on",
+              },
+            },
+            package: {
+              buyNow: "Buy Now",
+              swal: {
+                title: "Do you want to buy a package",
+                confirmButton: "Agree",
+                cancelButton: "Exit",
+                success: "Successful purchase",
+                warn: "Deposit additional money to use the service",
+              },
+            },
+            myOrder: {
+              instruct1:
+                "Please get the key below and Paste it into Outline software following",
+              instruct2:
+                "Click on the button to copy the key (This key can use for all of devices iphone, android, Windows, MAC)",
+              field: {
+                code: "Trading code",
+                package: "Package",
+                day: "Used Time",
+                useage: "Usage",
+                dataLimit: "Data limit",
+                dateExpand: "eDate Expand",
+                key: "Key",
+                status: "Status",
+                extension: "Extension",
+                buyData: "Buy Data",
+                extend: "Extend",
+                statusLabel: {
+                  active: "Active",
+                  inactive: "Inactive",
+                },
+              },
+              swal: {
+                extend: {
+                  title: "Do you want to renew your package",
+                  success: "Package renewal successful",
+                  error: "Deposit more money to use the service",
+                  cancelButton: "Exit",
+                  confirmButton: "Yes, renew now",
+                },
+                buyData: {
+                  title: "Do you want to buy more data",
+                  success: "successful purchase of additional data",
+                  error: "Deposit more money to use the service",
+                  cancelButton: "Exit",
+                  confirmButton: "Yes, buy now",
+                  buyNow: "Buy Now",
+                  title2: "List of extended packages",
+                  month: "1 Month",
+                  months: "{{month}} months remaining",
+                  cancelModal: "Exit",
+                },
+              },
+            },
+            transaction: {
+              heading: "Transaction history",
+              total: "Total purchase",
+              field: {
+                code: "Trading Code",
+                package: "Package Name",
+                pricePackage: "Package Price",
+                discount: "Discount",
+                disCountPrice: "Payment price",
+                createdAt: "Created at",
+              },
+            },
+            account: {
+              applyBtn: "Apply",
+              info: {
+                level: "Contributor",
+                leveln: "Agent level {{level}}",
+                heading: "Account information",
+                field: {
+                  code: "Introduction Code:",
+                  email: "Email:",
+                  username: "Username:",
+                  level: "User type:",
+                  note: "To be upgraded to become an agent, please contact the admin directly",
+                },
+                success: "Editing success",
+                tooltip:
+                  "User/Contributor: Receive {{commision}}% commission for each referral's order || Level 1 Affiliate: [{{level1}}%] discount for each new order || Agent Level 2: Discount [{{level2}}%] for each new order || Agent Level 3: Discount [{{level3}}%] for each new order || To be upgraded to work Agents please contact admin directly",
+              },
+              change_pass: {
+                heading: "Change Password",
+                success: "Password change successful, please log in again",
+              },
+            },
+            collaborator: {
+              satify: {
+                level: "Level",
+                invite: "Invited",
+                rose_percent: "Commission Percentage",
+                rose: "Commission",
+              },
+              note: {
+                content1:
+                  "User/Contributor: Receive [{{amount}}%] commission for each referral's order.",
+                content2:
+                  "Level 1 Agent: Discount [{{amount}}%] for each new order. Requirement: You need to buy at least 02 monthly packages as {{money}}.",
+                content3:
+                  "Level 2 Agent: Discount [{{amount}}%] for each new order. Last month's bought amount reached at least {{money}}, The discount will be valid for next month.",
+                content4:
+                  "Level 3 Agent: Discount [{{amount}}%] for each new order. Last month's bought amount reached at least {{money}}, The discount will be valid for next month",
+                note: "To be upgraded to become an agent, please contact admin directly.",
+              },
+              heading: "History of receiving commissions",
+              field: {
+                package: "Package name",
+                rose_percent: "% commission",
+                rose: "Commission",
+                user: "Buyer",
+                email: "Email",
+                sdt: "Phone Number",
+                created_at: "Received date",
+              },
+            },
+            cash: {
+              payment: {
+                auto: {
+                  title: " VNbanking automatic top-up",
+                  form: {
+                    placeholder: "Enter the amount to deposit",
+                    button: "Deposit",
+                    warn: "You have not entered the amount to deposit",
+                  },
+                  stk: "Account number:",
+                  bank_name: "Account holder:",
+                  money: "Amount:",
+                  content: "Transfer content",
+                  note: "Note: Please enter the correct transfer content.",
+                  error:
+                    "The system has not yet verified that you have transferred money. If you have transferred money but it has not been successful, please contact Admin for assistance.",
+                  success: "Transaction successful.",
+                },
+                manual: {
+                  title: "Manual deposit",
+                  desc: 'Please transfer money to one of the following methods, notify the admin directly and press the "Request deposit" button',
+                  note: "Other deposit methods: Zalopay, Momopay, Paypal, USDT please contact admin directly",
+                  form: {
+                    placeholder: "Enter the amount to deposit",
+                    button: "Request deposit",
+                  },
+                  success:
+                    "You have just successfully requested a deposit. Please send a photo of the receipt to admin via wechat/zalo for approval.",
+                },
+              },
+              history: {
+                heading: "Load history:",
+                field: {
+                  code: "Transaction code",
+                  username: "Username",
+                  email: "Email",
+                  phone: "Phone number",
+                  money: "Deposit amount",
+                  created_at: "Load date",
+                  updated_at: "Approved date",
+                  status: "Status",
+                  description: "Reason for cancellation",
+                },
+                status: {
+                  pending: "Waiting for approval",
+                  approve: "Paid",
+                  reject: "canceled",
+                },
+              },
             },
           },
         },
@@ -165,12 +438,43 @@ i18n.use(LanguageDetector).use(initReactI18next),
             password: {
               label: "Mật khẩu*",
               placeholder: "Nhập mật khẩu của bạn",
-              error: { required: "Mật khẩu không được bỏ trống" },
+              error: {
+                required: "Mật khẩu không được bỏ trống",
+                min: "Minimum of 8 characters",
+              },
             },
             re_password: {
               label: "Xác nhận mật khẩu*",
               placeholder: "Xác nhận mật khẩu của bạn",
-              error: { required: "Xác nhận mật khẩu không được để trống" },
+              error: {
+                required: "Xác nhận mật khẩu không được để trống",
+                min: "Mật khẩu ít nhất 8 ký tự",
+              },
+            },
+            old_password: {
+              label: "Mật khẩu*",
+              placeholder: "Vui lòng nhập mật khẩu cũ",
+              error: {
+                required: "Không được để trống",
+                min: "Mật khẩu ít nhất 8 ký tự",
+              },
+            },
+            new_password: {
+              label: "Mật Khẩu Mới*",
+              placeholder: "Vui lòng nhập mật khẩu mới",
+              error: {
+                required: "Không được để trống",
+                min: "Mật khẩu ít nhất 8 ký tự",
+              },
+            },
+            re_new_password: {
+              label: "Mật Khẩu Mới*",
+              placeholder: "Vui lòng xác nhận mật khẩu mới",
+              error: {
+                required: "Khẩu không được để trống",
+                min: "Mật khẩu ít nhất 8 ký tự",
+                match: "Xác nhận mật khẩu mới không khớp",
+              },
             },
             username: {
               label: "Tên đăng nhập*",
@@ -220,6 +524,7 @@ i18n.use(LanguageDetector).use(initReactI18next),
             user_information: "Thông tin người dùng",
           },
           page: {
+            searchPlaceholder: "Tìm kiếm",
             home: {
               home: {
                 heading: "VPNCN2 cung cấp dịch vụ VPN VIP với chi phí rẻ nhất",
@@ -267,6 +572,249 @@ i18n.use(LanguageDetector).use(initReactI18next),
                 content_3_1_3:
                   "Nếu có nhu cầu sử dụng thời gian dài, (như đối với du học sinh thì thời gian sử dụng ít nhất 6 tháng- 1 nắm), thì tốt nhất bạn nên tìm hiểu hoặc dùng thử ít nhất 3 nhà cung cấp để so sánh trước khi đưa ra quyết định.",
               },
+              ctv: {
+                heading: "Tuyển CTV và đại lý với  chính sách hấp dẫn",
+                content1:
+                  "Nhận ngay {{amount}}% cho các đơn hàng giới thiệu qua mã CTV",
+                content2: "Đại lý chiết khấu lên tới {{amount}}%",
+                content3: "Không giới hạn mức giá bán ra rừ đại lý",
+              },
+            },
+            dashboard: {
+              seeAll: "Xem tất cả",
+              buyNow: "Mua ngay",
+              ctvcode: {
+                ctv: "Mã CTV:",
+                desc: "Giới thiệu mã CTV này cho bạn bè bạn sẽ nhận được [{{amount}}%] hoa hồng cho mỗi giao dịch.",
+              },
+              satify: {
+                cash: "Tổng nạp",
+                currentMoney: "Số dư hiện tại",
+                transaction: "Số tiền đã sử dụng",
+                rose: "Tiền hoa hồng",
+                numberIntoduce: "Đã mời",
+                currentMoneyNode:
+                  "Số dư hiện tại = Tổng nạp - Số tiền đã sử dụng + Hoa hồng",
+                roseNode:
+                  "Hoa hồng = Tổng tiền [10%] nhận được từ chương trình CTV",
+                depositNow: "Nạp tiền ngay",
+              },
+              userManual: {
+                userManual: "Hướng dẫn sử dụng",
+                heading:
+                  "Trước khi bắt đầu sử dụng dịch vụ của VPNCN2, vui lòng đọc kỹ nội dung quy định sử dụng của chúng tôi.",
+                title1:
+                  "Mỗi key được cấp không giới hạn số lượng thiết bị kết nối nhưng sẽ bị giới hạn tổng băng thông sử dụng theo gói cước tương ứng. Việc giới hạn này với mục đích hạn chế bạn chia sẻ key sử dụng cho người khác.",
+                title2:
+                  'Tải phần mềm kết nối VPN là "OUTLINE" có trên tất cả các loại thiết bị (điện thoại, máy tính, máy tính bảng) và hệ điều hành (Windows, MAC, Chromebook, iOS iphone, Android). Vui lòng sử dụng link tải bên dưới.',
+                title3:
+                  "Bạn có thể kết nối VPN nhiều thiết bị cùng 1 lúc, Nhưng khuyến cáo KHÔNG ĐƯỢC chia sẻ cho người khác cùng sử dụng, nếu vượt quá băng thông sẽ không truy cập được tiếp mà sẽ phải mua thêm băng thông tại mục Đơn hàng của tôi > Chọn Key của bạn > Mua data",
+                title4:
+                  "Băng thông của bạn được giới hạn xoay vòng 30 ngày tính từ ngày mua key. Băng thông mở rộng được tính trong vòng 30 ngày trong điều kiện gói cước của bạn vẫn còn hạn.",
+                title5:
+                  "Để sử dụng lâu dài vui lòng tham gia nhóm wexin “VPNCN2 Support” và nhận thông báo mới nhất từ ban quản trị.",
+                note: "Nếu bạn đang ở China và không tải được trên kho ứng dụng, thì có thể dùng link download dưới đây.",
+                contact1:
+                  "Mọi thắc mắc hoặc sự cố xin vui lòng liên hệ trực tiếp với admin",
+                contact2: "Nhóm VPNCN2 Support",
+              },
+              plan: {
+                heading: "Gói cước",
+                field: {
+                  name: "Tên gói",
+                  type: "Chu kỳ",
+                  bandwidth: "Băng thông",
+                  price: "Giá",
+                },
+              },
+              invite: {
+                heading: "Bạn bè được giới thiệu",
+                field: {
+                  name: "Tên gói",
+                  rose: "% Hóa hồng",
+                  rosePrice: "Tiền hoa hồng",
+                  introducedId: "Người mua",
+                  sdt: "Số điện thoại",
+                  receivedDate: "Ngày nhận",
+                },
+              },
+              depositHistory: {
+                heading: "Lịch sử nạp",
+                content: "Bạn đã nạp {{price}} vào ngày",
+                content_refuse:
+                  "Bạn bị từ chối nạp {{prive}} với lý do {{reason}} vào ngày",
+              },
+              roseHistory: {
+                heading: "Lịch sử nhận hoa hồng",
+                content:
+                  "Bạn nhận được {{price}}({{discount}}%) tiền hoa hồng từ {{user}} khi mua gói {{package}} vào ngày",
+              },
+            },
+            package: {
+              buyNow: "Đăng ký mua",
+              swal: {
+                title: "Bạn có muốn mua gói cước ",
+                confirmButton: "Đồng ý",
+                cancelButton: "Thoát",
+                success: "Mua thành công",
+                warn: "Nạp thêm tiền để sử dụng dịch vụ",
+              },
+            },
+            myOrder: {
+              instruct1:
+                "Vui lòng lấy key bên dưới của bạn và dán vào phần mềm theo hướng dẫn",
+              instruct2: "nhấn để copy Link kết nối",
+              field: {
+                code: "Mã GD",
+                package: "Tên gói",
+                day: "Thời gian",
+                useage: "Usage",
+                dataLimit: "Data limit",
+                dateExpand: "eDate Expand",
+                key: "Key",
+                status: "Trạng thái",
+                extension: "Đặt tên key",
+                buyData: "Mua Data",
+                extend: "Gia hạn",
+                statusLabel: {
+                  active: "Còn hạn",
+                  inactive: "Hết hạn",
+                },
+              },
+              swal: {
+                extend: {
+                  title: "Bạn có muốn gia hạn gói",
+                  success: "Gia hạn gói thành công",
+                  error: "Nạp thêm tiền để sử dụng dịch vụ",
+                  cancelButton: "Thoát",
+                  confirmButton: "Có, gia hạn ngay",
+                },
+                buyData: {
+                  title: "Bạn có muốn mua thêm data",
+                  success: "Mua thêm data thành công",
+                  error: "Nạp thêm tiền để sử dụng dịch vụ",
+                  cancelButton: "Thoát",
+                  confirmButton: "Có, mua ngay",
+                  buyNow: "Mua ngay",
+                  title2: "Danh sách gói cước mở rộng",
+                  month: "1 Tháng",
+                  months: "{{month}} months remaining",
+                  cancelModal: "Thoát",
+                },
+              },
+            },
+            transaction: {
+              heading: "Lịch sử mua",
+              total: "Tổng mua",
+              field: {
+                code: "Mã giao dịch",
+                package: "Tên gói",
+                pricePackage: "Giá gói",
+                discount: "Chiết khấu",
+                disCountPrice: "Giá mua",
+                createdAt: "Ngày tạo",
+              },
+            },
+            account: {
+              applyBtn: "Lưu",
+              info: {
+                level: "Cộng tác viên",
+                leveln: "Đại lý cấp {{level}}",
+                heading: "Thông Tin Tài Khoản",
+                field: {
+                  code: "Mã CTV:",
+                  email: "Email:",
+                  username: "Tên đăng nhập:",
+                  level: "Loại người dùng:",
+                  note: "Để được nâng cấp lên làm đại lý vui lòng liên hệ trực tiếp admin",
+                },
+                success: "Chỉnh sửa thành công",
+                tooltip:
+                  "User/CTV: Nhận được {{commision}}% hoa hồng cho mỗi đơn hàng của người được giới thiệu || Đại lý Cấp 1: Chiết khấu [{{level1}}%] cho mỗi đơn hàng mới || Đại lý Cấp 2: Chiết khấu [{{level2}}%] cho mỗi đơn hàng mới || Đại lý Cấp 3: Chiết khấu [{{level3}}%] cho mỗi đơn hàng mới || Để được nâng cấp lên làm đại lý vui lòng lien hệ trực tiếp admin",
+              },
+              change_pass: {
+                heading: "Đổi Mật Khẩu",
+                success: "Đổi mật khẩu thành công vui lòng đăng nhập lại",
+              },
+            },
+            collaborator: {
+              satify: {
+                level: "Cấp độ",
+                invite: "Đã mời",
+                rose_percent: "% Hóa hồng",
+                rose: "Tiền hoa hồng",
+              },
+              note: {
+                content1:
+                  "User/CTV: Nhận được [{{amount}}%] hoa hồng cho mỗi đơn hàng của người được giới thiệu.",
+                content2:
+                  "Đại lý Cấp 1: Chiết khấu [{{amount}}%] cho mỗi đơn hàng mới. Điều kiện: đã mua ít nhất 02 gói tháng trở lên, tương ứng {{money}}",
+                content3:
+                  "Đại lý Cấp 2: Chiết khấu [{{amount}}%] cho mỗi đơn hàng mới. Điều kiện: Doanh số tháng trước đạt ít nhất {{money}}, Áp dụng trong vòng 1 tháng tiếp theo",
+                content4:
+                  "Đại lý Cấp 3: Chiết khấu [{{amount}}%] cho mỗi đơn hàng mới. Điều kiện: Doanh số tháng trước đạt ít nhất {{money}}, Áp dụng trong vòng 1 tháng tiếp theo",
+                note: "Để được nâng cấp lên làm đại lý vui lòng lien hệ trực tiếp admin.",
+              },
+              heading: "Lịch sử nhận hoa hồng",
+              field: {
+                package: "Tên gói",
+                rose_percent: "% hoa hồng",
+                rose: "Tiền hoa hồng",
+                user: "Người mua",
+                email: "Email",
+                sdt: "SDT",
+                created_at: "Ngày nhận",
+              },
+            },
+            cash: {
+              payment: {
+                auto: {
+                  title: " Nạp tiền tự động VNbanking",
+                  form: {
+                    placeholder: "Nhập số tiền cần nạp",
+                    button: "Nạp tiền",
+                    warn: "Bạn chưa nhập số tiền cần nạp",
+                  },
+                  stk: "Số tài khoản:",
+                  bank_name: "Chủ tài khoản:",
+                  money: "Số tiền:",
+                  content: "Nội dung chuyển khoản",
+                  note: "Lưu ý: Quý khách vui lòng nhập đúng nội dung chuyển khoản.",
+                  error:
+                    "Hệ thống chưa kiểm tra ra bạn đã chuyển khoản, nếu bạn đã chuyển khoản nhưng chưa thành công vui lòng liên hệ với Admin để được hỗ trọ.",
+                  success: "Giao dịch thành công.",
+                },
+                manual: {
+                  title: "Nạp tiền thủ công",
+                  desc: "Vui lòng chuyển khoản đến một trong các hình thức sau, thông báo trực tiếp cho admin và Nhấn nút ”Yêu cầu nạp tiền”.",
+                  note: "Các hình thức nạp tiền khác: Zalopay, Momopay, Paypal, USDT xin vui lòng contact trực tiếp admin",
+                  form: {
+                    placeholder: "Nhập số tiền cần nạp",
+                    button: "Yêu cầu nạp tiền",
+                  },
+                  success:
+                    "Bạn vừa yêu cầu nạp tiền thành công. Vui lòng gửi ảnh hóa đơn cho admin qua wechat/zalo để được phê duyệt.",
+                },
+              },
+              history: {
+                heading: "Lịch sử nạp:",
+                field: {
+                  code: "Mã giao dịch",
+                  username: "Username",
+                  email: "Email",
+                  phone: "Số điện thoại",
+                  money: "Số tiền nạp",
+                  created_at: "Ngày nạp",
+                  updated_at: "Ngày duyệt",
+                  status: "Trạng thái",
+                  description: "Lý do hủy",
+                },
+                status: {
+                  pending: "Chờ phê duyệt",
+                  approve: "Đã thanh toán",
+                  reject: "bị hủy",
+                },
+              },
             },
           },
         },
@@ -279,8 +827,8 @@ i18n.use(LanguageDetector).use(initReactI18next),
             sign_out: "Đăng xuất",
           },
           header: {
-            home: "Trang chủ",
-            pricing: "Bảng giá",
+            home: "主页",
+            pricing: "价格表",
           },
           login: {
             welcome_back: "Chào mừng quay trở lại!",
@@ -396,6 +944,12 @@ i18n.use(LanguageDetector).use(initReactI18next),
                   "您的设备（手机、PC、旧设备或新设备），某些 VPN 服务与旧设备不兼容",
                 content_3_1_3:
                   "VPN 套餐或您的 VPN 服务提供商VPN服务提供商总是有很多客户级别设计的套餐，有人可能会给你很高的价格，但速度并不能让你满意。VPNCN2 可以为您提供超高速访问，这被视为其他提供商的高级 VIP 套餐。 我们还提供 24/7 客户服务支持，随时为您提供支持。",
+              },
+              ctv: {
+                heading: "合作者招聘及福利政策",
+                content1: "·通过合作者介绍码每订单可收{{amount}}%提成",
+                content2: "·代理折扣{{amount}}%",
+                content3: "·不限定代理销售的价位",
               },
             },
           },

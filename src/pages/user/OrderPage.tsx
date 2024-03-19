@@ -8,7 +8,12 @@ import {
   Tooltip,
 } from "antd";
 import { Key, useEffect, useMemo, useState } from "react";
-import { ExtendPlanType, GistType } from "../../type";
+import {
+  CoutryType,
+  ExtendPlanType,
+  GistType,
+  RoseExtendType,
+} from "../../type";
 import { toast } from "react-toastify";
 import {
   DAY_FORMAT,
@@ -20,7 +25,6 @@ import {
 import { api } from "../../api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
-import { VND } from "../../utils/formatPrice";
 import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 import Heading from "../../components/common/Heading";
@@ -32,8 +36,11 @@ import axios from "axios";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import { Link, useNavigate } from "react-router-dom";
 import Radio from "../../components/radio/Radio";
+import { useTranslation } from "react-i18next";
+import { priceFomat } from "../../utils/formatPrice";
 
 const OrderPage = () => {
+  const { t, i18n } = useTranslation();
   const navigation = useNavigate();
   const [loadingTable, setLoadingTable] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -58,17 +65,23 @@ const OrderPage = () => {
       ? listGist.filter(
           (item) =>
             item?.planId &&
-            item.planId.name.toLowerCase().includes(inputValue.toLowerCase()) &&
-            item.extension.toLowerCase().includes(inputValue.toLowerCase()) &&
-            dayjs(item.keyId.startDate).isAfter(startDate) &&
-            dayjs(item.keyId.endDate).isBefore(endDate)
+            (item.planId.name
+              .toLowerCase()
+              .includes(inputValue.toLowerCase()) ||
+              item.extension
+                .toLowerCase()
+                .includes(inputValue.toLowerCase())) &&
+                isSameOrAfter(item.keyId.startDate, startDate) &&
+                isSameOrBefore(item.keyId.endDate, endDate)
         )
       : inputValue
       ? listGist.filter(
           (item) =>
             item?.planId &&
-            item.planId.name.toLowerCase().includes(inputValue.toLowerCase()) &&
-            item.extension.toLowerCase().includes(inputValue.toLowerCase())
+            (item.planId.name
+              .toLowerCase()
+              .includes(inputValue.toLowerCase()) ||
+              item.extension.toLowerCase().includes(inputValue.toLowerCase()))
         )
       : listGist;
   useEffect(() => {
@@ -109,23 +122,25 @@ const OrderPage = () => {
   ) => {
     try {
       const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn gia hạn gói <span class="text-secondary">${name}(${VND.format(
-          price
-        )}VND) ${bandWidth}GB/${type}</span></p>`,
-        // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
+        title: `<p class="leading-tight">${t(
+          "page.myOrder.swal.extend.title"
+        )} <span class="text-secondary">${name}(${priceFomat(
+          price,
+          i18n.language as CoutryType
+        )}) ${bandWidth}GB/${type}</span></p>`,
         icon: "success",
         showCancelButton: true,
         confirmButtonColor: "#1DC071",
         cancelButtonColor: "#d33",
-        cancelButtonText: "Thoát",
-        confirmButtonText: "Có, gia hạn ngay",
+        cancelButtonText: t("page.myOrder.swal.extend.cancelButton"),
+        confirmButtonText: t("page.myOrder.swal.extend.confirmButton"),
       });
       if (isConfirmed) {
         setLoading(true);
         await api.post("/upgrades/plan", { gistId });
         handleOk();
         handleFetchData();
-        toast.success("Gia hạn gói thành công");
+        toast.success(t("page.myOrder.swal.extend.success"));
         setLoading(false);
       }
     } catch (error) {
@@ -137,7 +152,7 @@ const OrderPage = () => {
             "Bạn không đủ tiền để đăng kí dịch vụ này" &&
           error.response.status === 400
         ) {
-          toast.warn("Nạp thêm tiền để sử dụng dịch vụ");
+          toast.warn(t("page.myOrder.swal.extend.error"));
           navigation("/user/dashboard");
         }
       } else {
@@ -172,7 +187,7 @@ const OrderPage = () => {
   const columns: TableColumnsType<GistType> = useMemo(
     () => [
       {
-        title: () => <p className="text-base font-semibold font-primary"></p>,
+        title: () => <p className="font-semibold font-primary text-sm"></p>,
         dataIndex: "index",
         key: "index",
         width: 50,
@@ -187,7 +202,11 @@ const OrderPage = () => {
         ),
       },
       {
-        title: <p className="font-semibold font-primary">Mã GD</p>,
+        title: (
+          <p className="font-semibold font-primary text-sm">
+            {t("page.myOrder.field.code")}
+          </p>
+        ),
         dataIndex: "code",
         key: "code",
         width: 150,
@@ -201,7 +220,11 @@ const OrderPage = () => {
         ),
       },
       {
-        title: <p className="font-semibold font-primary">Tên gói</p>,
+        title: (
+          <p className="font-semibold font-primary text-sm">
+            {t("page.myOrder.field.package")}
+          </p>
+        ),
         dataIndex: "name",
         key: "name",
         width: 100,
@@ -210,7 +233,11 @@ const OrderPage = () => {
         ),
       },
       {
-        title: <p className="font-semibold font-primary">Thời gian</p>,
+        title: (
+          <p className="font-semibold font-primary text-sm">
+            {t("page.myOrder.field.day")}
+          </p>
+        ),
         dataIndex: "day",
         key: "day",
         width: 170,
@@ -222,7 +249,11 @@ const OrderPage = () => {
         ),
       },
       {
-        title: <p className="font-semibold font-primary">Usage</p>,
+        title: (
+          <p className="font-semibold font-primary text-sm">
+            {t("page.myOrder.field.useage")}
+          </p>
+        ),
         dataIndex: "dataUsage",
         key: "dataUsage",
         width: 100,
@@ -239,7 +270,11 @@ const OrderPage = () => {
         },
       },
       {
-        title: <p className="font-semibold font-primary">Data limit</p>,
+        title: (
+          <p className="font-semibold font-primary text-sm">
+            {t("page.myOrder.field.dataLimit")}
+          </p>
+        ),
         dataIndex: "bandWidth",
         key: "bandWidth",
         width: 100,
@@ -254,7 +289,7 @@ const OrderPage = () => {
         },
       },
       // {
-      //   title: <p className="font-semibold font-primary">Data Expand</p>,
+      //   title: <p className="font-semibold font-primary text-sm">Data Expand</p>,
       //   dataIndex: "dataExtend",
       //   key: "dataExtend",
       //   width: 120,
@@ -273,7 +308,11 @@ const OrderPage = () => {
       //   },
       // },
       {
-        title: <p className="font-semibold font-primary"> eDate Expand</p>,
+        title: (
+          <p className="font-semibold font-primary text-sm">
+            {t("page.myOrder.field.dateExpand")}
+          </p>
+        ),
         dataIndex: "endExpandDate",
         key: "endExpandDate",
         width: 120,
@@ -285,7 +324,11 @@ const OrderPage = () => {
         ),
       },
       {
-        title: <p className="font-semibold font-primary">Key</p>,
+        title: (
+          <p className="font-semibold font-primary text-sm">
+            {t("page.myOrder.field.key")}
+          </p>
+        ),
         dataIndex: "key",
         key: "key",
         // fixed: "right",
@@ -332,7 +375,11 @@ const OrderPage = () => {
         },
       },
       {
-        title: <p className="font-semibold font-primary">Trạng thái</p>,
+        title: (
+          <p className="font-semibold font-primary text-sm">
+            {t("page.myOrder.field.status")}
+          </p>
+        ),
         dataIndex: "status",
         key: "status",
         width: 100,
@@ -341,12 +388,16 @@ const OrderPage = () => {
           <div className="text-sm font-primary">
             {record.status === 1 && (
               <Tag color="green">
-                <span className="font-primary">Còn hạn</span>
+                <span className="font-primary">
+                  {t("page.myOrder.field.statusLabel.active")}
+                </span>
               </Tag>
             )}
             {record.status === 0 && (
               <Tag color="red">
-                <span className="font-primary">Hết hạn</span>
+                <span className="font-primary">
+                  {t("page.myOrder.field.statusLabel.inactive")}
+                </span>
               </Tag>
             )}
           </div>
@@ -372,7 +423,11 @@ const OrderPage = () => {
         },
       },
       {
-        title: <p className="font-semibold font-primary">Đặt tên key</p>,
+        title: (
+          <p className="font-semibold font-primary text-sm">
+            {t("page.myOrder.field.extension")}
+          </p>
+        ),
         dataIndex: "extension",
         key: "extension",
         // width: 150,
@@ -391,7 +446,7 @@ const OrderPage = () => {
         },
       },
       {
-        title: <p className="font-semibold font-primary"></p>,
+        title: <p className="font-semibold font-primary text-sm"></p>,
         dataIndex: "action",
         key: "action",
         render: (_: string, record: GistType) =>
@@ -411,7 +466,7 @@ const OrderPage = () => {
                     showModal();
                   }}
                 >
-                  Mua data
+                  {t("page.myOrder.field.buyData")}
                 </button>
               ) : null}
               <button
@@ -426,14 +481,14 @@ const OrderPage = () => {
                   )
                 }
               >
-                Gia hạn
+                {t("page.myOrder.field.extend")}
               </button>
             </div>
           ) : null,
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [t, i18n.language]
   );
 
   const onChangeStartDate: DatePickerProps["onChange"] = (date) => {
@@ -451,9 +506,9 @@ const OrderPage = () => {
     <RequireAuthPage rolePage={2}>
       {loading ? <Loading /> : null}
       <p className="">
-        Vui lòng lấy key bên dưới của bạn và dán vào phần mềm theo hướng dẫn{" "}
+        {t("page.myOrder.instruct1")}{" "}
         <Link to={""} className="underline text-primary decoration-primary">
-          hướng dẫn
+          Link
         </Link>
         :
       </p>
@@ -461,7 +516,7 @@ const OrderPage = () => {
         <span className="text-secondary20">
           <AndroidXML />
         </span>
-        : nhấn để copy Link kết nối
+        : {t("page.myOrder.instruct2")}
       </p>
       {/* <p className="flex items-center gap-2 mb-5">
         <span>
@@ -476,7 +531,7 @@ const OrderPage = () => {
             value={inputValue}
             onChange={handleChange}
             className="focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock"
-            placeholder="Tìm kiếm"
+            placeholder={t("page.searchPlaceholder")}
           />
           {inputValue.length > 0 ? (
             <span
@@ -528,7 +583,9 @@ const OrderPage = () => {
         }}
         footer={[]}
       >
-        <Heading className="font-primary">Danh sách gói cước mở rộng</Heading>
+        <Heading className="font-primary">
+          {t("page.myOrder.swal.buyData.title2")}
+        </Heading>
         <div className="grid grid-cols-1 gap-5 py-3 md:grid-cols-2 lg:grid-cols-3">
           {listExtendPlan.map((item) => (
             <ExtendPlanItem
@@ -551,7 +608,7 @@ const OrderPage = () => {
               setSelectRow(undefined);
             }}
           >
-            Thoát
+            {t("page.myOrder.swal.buyData.cancelModal")}
           </button>
         </div>
       </Modal>
@@ -570,16 +627,30 @@ const ExtendPlanItem = ({
   setLoading: (value: boolean) => void;
   onSubmit: () => void;
 }) => {
+  const [roseExtend, setRoseExtend] = useState<RoseExtendType>();
+  useEffect(() => {
+    (async () => {
+      try {
+        const result = await api.get<RoseExtendType>("/rose-extends");
+        setRoseExtend(result.data);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
+  const { t, i18n } = useTranslation();
   const period =
     selectRow?.endDate && dayjs(selectRow.endDate).diff(dayjs(), "month") + 1;
   const [month, setMonth] = useState<number>(1);
-  const discountPercent =
-    month <= 4
-      ? extendPlan.level1
+  const discountPercent = roseExtend
+    ? month <= 4
+      ? roseExtend.level1
       : month > 4 && month <= 8
-      ? extendPlan.level2
-      : extendPlan.level3;
+      ? roseExtend.level2
+      : roseExtend.level3
+    : undefined;
   const priceDiscount =
+    discountPercent &&
     extendPlan.price * month * ((100 - discountPercent) / 100);
   const navigation = useNavigate();
   const handleUpgradeBrandWidth = async (
@@ -590,14 +661,15 @@ const ExtendPlanItem = ({
   ) => {
     try {
       const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn mua thêm <span class="text-secondary">${bandWidth}GB</span> băng thông</p>`,
-        // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
+        title: `<p class="leading-tight">${t(
+          "page.myOrder.swal.buyData.title"
+        )} <span class="text-secondary">${bandWidth}GB</span></p>`,
         icon: "success",
         showCancelButton: true,
         confirmButtonColor: "#1DC071",
         cancelButtonColor: "#d33",
-        cancelButtonText: "Thoát",
-        confirmButtonText: "Có, mua ngay",
+        cancelButtonText: t("page.myOrder.swal.buyData.cancelButton"),
+        confirmButtonText: t("page.myOrder.swal.buyData.confirmButton"),
       });
       if (isConfirmed) {
         setLoading(true);
@@ -605,7 +677,7 @@ const ExtendPlanItem = ({
         onSubmit();
         // handleOk();
         // handleFetchData();
-        toast.success("Mua thêm băng thông thành công");
+        toast.success(t("page.myOrder.swal.buyData.success"));
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -616,7 +688,7 @@ const ExtendPlanItem = ({
             "Bạn không đủ tiền để đăng kí dịch vụ này" &&
           error.response.status === 400
         ) {
-          toast.warn("Nạp thêm tiền để sử dụng dịch vụ");
+          toast.warn(t("page.myOrder.swal.buyData.error"));
           navigation("/user/dashboard");
         }
       } else {
@@ -634,16 +706,16 @@ const ExtendPlanItem = ({
     >
       <p className="text-base font-semibold text-center">{extendPlan.name}</p>
       <p className="text-xl font-medium text-center">
-        {extendPlan.bandWidth}GB/tháng - {VND.format(priceDiscount)}VND
-        {/* {VND.format(extendPlan.price)} */}
+        {extendPlan.bandWidth}GB/tháng -{" "}
+        {priceFomat(priceDiscount || 0, i18n.language as CoutryType)}
       </p>
       <div className="flex items-center gap-5">
         <Radio checked={month === 1} onClick={() => setMonth(1)}>
-          1 tháng
+          {t("page.myOrder.swal.buyData.month")}
         </Radio>
         {period && period > 1 ? (
           <Radio checked={month === period} onClick={() => setMonth(period)}>
-            {period} tháng còn lại
+            {t("page.myOrder.swal.buyData.months", { month: period })}
           </Radio>
         ) : null}
         {/* {!month && <p className="text-error">Bạn chưa chọn thời gian</p>} */}
@@ -661,7 +733,7 @@ const ExtendPlanItem = ({
           )
         }
       >
-        Mua ngay
+        {t("page.myOrder.swal.buyData.buyNow")}
       </button>
     </div>
   );

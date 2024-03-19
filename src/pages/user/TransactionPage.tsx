@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
-import { TransactionType } from "../../type";
+import { CoutryType, TransactionType } from "../../type";
 import { api } from "../../api";
 import { toast } from "react-toastify";
 import {
@@ -12,11 +12,13 @@ import {
 } from "../../constants";
 import Heading from "../../components/common/Heading";
 import { DatePicker, DatePickerProps, Table, TableColumnsType } from "antd";
-import { VND } from "../../utils/formatPrice";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import dayjs from "dayjs";
+import { useTranslation } from "react-i18next";
+import { priceFomat } from "../../utils/formatPrice";
 
 const TransactionPage = () => {
+  const { t, i18n } = useTranslation();
   const [inputValue, setInputValue] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { _id } = useSelector((state: RootState) => state.auth);
@@ -73,9 +75,7 @@ const TransactionPage = () => {
   const columns: TableColumnsType<TransactionType> = useMemo(
     () => [
       {
-        title: () => (
-          <p className="text-base font-semibold font-primary">STT</p>
-        ),
+        title: () => <p className="text-base font-semibold font-primary"></p>,
         dataIndex: "index",
         key: "index",
         width: 70,
@@ -85,7 +85,9 @@ const TransactionPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Mã giao dich</p>
+          <p className="font-semibold font-primary">
+            {t("page.transaction.field.code")}
+          </p>
         ),
         dataIndex: "code",
         key: "code",
@@ -94,7 +96,11 @@ const TransactionPage = () => {
         ),
       },
       {
-        title: <p className="font-semibold font-primary">Tên gói</p>,
+        title: (
+          <p className="font-semibold font-primary">
+            {t("page.transaction.field.package")}
+          </p>
+        ),
         dataIndex: "name",
         key: "name",
         render: (_: string, record: TransactionType) => (
@@ -106,12 +112,19 @@ const TransactionPage = () => {
         ),
       },
       {
-        title: <p className="font-semibold font-primary">Giá gói</p>,
+        title: (
+          <p className="font-semibold font-primary">
+            {t("page.transaction.field.pricePackage")}
+          </p>
+        ),
         dataIndex: "price",
         key: "price",
         render: (_: string, record: TransactionType) => (
           <p className="text-sm font-primary">
-            {VND.format(record.money / ((100 - record.discount) / 100))}VND
+            {priceFomat(
+              record.money / ((100 - record.discount) / 100),
+              i18n.language as CoutryType
+            )}
           </p>
         ),
         sorter: {
@@ -122,7 +135,11 @@ const TransactionPage = () => {
         },
       },
       {
-        title: <p className="font-semibold font-primary">Chiết khấu</p>,
+        title: (
+          <p className="font-semibold font-primary">
+            {t("page.transaction.field.discount")}
+          </p>
+        ),
         dataIndex: "discount",
         key: "discount",
         render: (_: string, record: TransactionType) => (
@@ -134,11 +151,17 @@ const TransactionPage = () => {
         },
       },
       {
-        title: <p className="font-semibold font-primary">Giá mua</p>,
+        title: (
+          <p className="font-semibold font-primary">
+            {t("page.transaction.field.disCountPrice")}
+          </p>
+        ),
         dataIndex: "money",
         key: "money",
         render: (_: string, record: TransactionType) => (
-          <p className="text-sm font-primary">{VND.format(record.money)}VND</p>
+          <p className="text-sm font-primary">
+            {priceFomat(record.money, i18n.language as CoutryType)}
+          </p>
         ),
         sorter: {
           compare: (a, b) => a.money - b.money,
@@ -146,7 +169,11 @@ const TransactionPage = () => {
         },
       },
       {
-        title: <p className="font-semibold font-primary">Ngày tạo</p>,
+        title: (
+          <p className="font-semibold font-primary">
+            {t("page.transaction.field.createdAt")}
+          </p>
+        ),
         dataIndex: "createdAt",
         key: "createdAt",
         render: (text: Date) => (
@@ -155,7 +182,8 @@ const TransactionPage = () => {
         sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
       },
     ],
-    []
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.language]
   );
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -172,16 +200,16 @@ const TransactionPage = () => {
   return (
     <RequireAuthPage rolePage={2}>
       <div className="space-y-6">
-        <Heading>Lịch sử mua</Heading>
+        <Heading>{t("page.transaction.heading")}</Heading>
         <p className="text-base font-semibold">
-          Tổng mua:{" "}
+          {t("page.transaction.total")}:{" "}
           <span className="text-lg">
-            {VND.format(
+            {priceFomat(
               transactions
                 .map((item) => item.money)
-                .reduce((prev, cur) => (prev += cur), 0)
+                .reduce((prev, cur) => (prev += cur), 0),
+              i18n.language as CoutryType
             )}
-            VND
           </span>
         </p>
         <div className="items-center block gap-5 space-y-3 md:flex md:space-y-0">
@@ -191,7 +219,7 @@ const TransactionPage = () => {
               value={inputValue}
               onChange={handleChange}
               className="focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock"
-              placeholder="Tìm kiếm"
+              placeholder={t("page.searchPlaceholder")}
             />
             {inputValue.length > 0 ? (
               <span

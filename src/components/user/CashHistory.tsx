@@ -5,12 +5,14 @@ import { VND } from "../../utils/formatPrice";
 import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const CashHistory = ({ userCashHistory }: { userCashHistory: CashType[] }) => {
+  const { t } = useTranslation();
   if (userCashHistory.length > 0)
     return (
       <div className="space-y-4">
-        <Heading>Lịch sử nạp</Heading>
+        <Heading>{t("page.dashboard.depositHistory.heading")}</Heading>
         <div className="">
           {userCashHistory.length === 0 ? (
             <p>Chưa có giao dịch nạp nào được thực hiện</p>
@@ -28,22 +30,16 @@ const CashHistory = ({ userCashHistory }: { userCashHistory: CashType[] }) => {
                   <div className="p-3 shadow-xl rounded-lg">
                     {item.status === 0 ? (
                       <p className="text-sm">
-                        <span className="text-error">Bạn bị từ chối nạp </span>
-                        <span className="font-semibold">
-                          {VND.format(item.money)}VND
-                        </span>{" "}
-                        vào ngày{" "}
-                        {dayjs(item.updatedAt).format("DD/MM/YYYY HH:MM")} với
-                        lý do{" "}
-                        <span className="text-error">"{item.description}"</span>
+                        {t("page.dashboard.depositHistory.content_refuse", {
+                          price: `${VND.format(item.money)}VND`,
+                        })}{" "}
+                        {dayjs(item.updatedAt).format("DD/MM/YYYY HH:MM")}
                       </p>
                     ) : (
                       <p className="text-sm">
-                        Bạn đã nạp{" "}
-                        <span className="font-semibold">
-                          {VND.format(item.money)}VND
-                        </span>{" "}
-                        vào ngày{" "}
+                        {t("page.dashboard.depositHistory.content", {
+                          price: `${VND.format(item.money)}VND`,
+                        })}{" "}
                         {dayjs(item.updatedAt).format("DD/MM/YYYY HH:MM")}
                       </p>
                     )}
@@ -55,7 +51,7 @@ const CashHistory = ({ userCashHistory }: { userCashHistory: CashType[] }) => {
                   to={"/user/cash"}
                   className="text-primary underline decoration-primary text-center block"
                 >
-                  Xem tất cả
+                  {t("page.dashboard.seeAll")}
                 </Link>
               ) : null}
             </div>

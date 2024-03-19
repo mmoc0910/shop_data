@@ -41,11 +41,11 @@ const SignUpPage = () => {
           password: yup
             .string()
             .required(t("form.password.error.required"))
-            .min(8, "Minimum of 8 characters"),
+            .min(8, t("form.old_password.error.min")),
           rePassword: yup
             .string()
             .required(t("form.re_password.error.required"))
-            .min(8, "Minimum of 8 characters"),
+            .min(8, t("form.old_password.error.min")),
           phone: yup.string().required(t("form.phone.error.required")),
           country: yup.string().required(t("form.country.error.required")),
           purpose: yup.number().required(t("form.purpose.error.required")),

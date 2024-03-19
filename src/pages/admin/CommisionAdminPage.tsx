@@ -10,7 +10,7 @@ import FormGroup from "../../components/common/FormGroup";
 import { Label } from "../../components/label";
 import { api } from "../../api";
 import { useEffect, useMemo, useState } from "react";
-import { CollabType, UserState } from "../../type";
+import { CollabType, CommisionType, UserState } from "../../type";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import { Link } from "react-router-dom";
 import { AuthState } from "../../store/auth/authSlice";
@@ -23,13 +23,14 @@ import dayjs from "dayjs";
 const schema = yup
   .object({
     value: yup.number().required("This field is required"),
+    min: yup.number().required("This field is required"),
   })
   .required();
 
 const CommisionAdminPage = () => {
   const [listUser, setListUser] = useState<UserState[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
-  const [commision, setCommision] = useState<number>();
+  const [commision, setCommision] = useState<CommisionType>();
   const [loading, setLoading] = useState<boolean>(false);
   const listUserFilter = inputValue
     ? listUser.filter(
@@ -63,9 +64,12 @@ const CommisionAdminPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
-    commision && setValue("value", commision);
+    if(commision){
+setValue("value", commision.value);
+setValue("min", commision.min);
+    } 
   }, [commision, setValue]);
-  const onSubmit = async (data: { value: number }) => {
+  const onSubmit = async (data: { value: number, min: number }) => {
     try {
       await api.post("/commisions", data);
       //   handleOk();
@@ -78,7 +82,7 @@ const CommisionAdminPage = () => {
   const fetchCommision = async () => {
     try {
       const result = await api.get("/commisions");
-      setCommision(result.data.value);
+      setCommision(result.data);
     } catch (error) {
       console.log("error - ", error);
       toast.error(messages.error);
@@ -88,7 +92,7 @@ const CommisionAdminPage = () => {
     () => [
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">STT</p>
+          <p className="font-semibold font-primary">STT</p>
         ),
         dataIndex: "index",
         key: "index",
@@ -194,7 +198,7 @@ const CommisionAdminPage = () => {
               Tỉ lệ % hoa hồng mà người dùng nhận được khi giới thiệu người
               dùng.
               <br />
-              Chính sách hiện tại: {commision}%
+              Chính sách hiện tại: {commision?.value}%
             </p>
             <form
               className="space-y-[15px] md:space-y-5"
@@ -218,14 +222,27 @@ const CommisionAdminPage = () => {
                   </Input>
                 </div>
               </FormGroup>{" "}
+              <FormGroup>
+                <Label htmlFor="value">
+                  Số tiền tối thiểu làm cộng tác viên
+                </Label>
+                <Input
+                  name="min"
+                  type="number"
+                  // placeholder={"% Hoa hồng"}
+                  control={control}
+                  containerclass="flex-1"
+                >
+                  <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
+                    VND
+                  </span>
+                </Input>
+              </FormGroup>
               <Button type="submit" className="px-5 text-white bg-primary">
                 Apply
               </Button>
             </form>
           </div>
-        </div>
-        <div className="space-y-6">
-          <CTVBox />
         </div>
       </div>
       <div className="col-span-2 space-y-6 md:col-span-1">
@@ -293,6 +310,9 @@ const schemaCollab = yup
     level1: yup.number().required("This field is required"),
     level2: yup.number().required("This field is required"),
     level3: yup.number().required("This field is required"),
+    minLevel1: yup.number().required("This field is required"),
+    minLevel2: yup.number().required("This field is required"),
+    minLevel3: yup.number().required("This field is required"),
   })
   .required();
 const Collab = () => {
@@ -324,6 +344,9 @@ const Collab = () => {
       setValue("level1", collab.level1);
       setValue("level2", collab.level2);
       setValue("level3", collab.level3);
+      setValue("minLevel1", collab.minLevel1);
+      setValue("minLevel2", collab.minLevel2);
+      setValue("minLevel3", collab.minLevel3);
     }
   }, [collab, setValue]);
   const fetchData = async () => {
@@ -335,6 +358,9 @@ const Collab = () => {
           level1: result.data.level1,
           level2: result.data.level2,
           level3: result.data.level3,
+          minLevel1: result.data.minLevel1,
+          minLevel2: result.data.minLevel2,
+          minLevel3: result.data.minLevel3,
         })
       );
     } catch (error) {
@@ -346,6 +372,9 @@ const Collab = () => {
     level1: number;
     level2: number;
     level3: number;
+    minLevel1: number;
+    minLevel2: number;
+    minLevel3: number;
   }) => {
     try {
       await api.post("/collab", data);
@@ -377,18 +406,35 @@ const Collab = () => {
             </Link>
             ]
           </Label>
-          <Label htmlFor="value">Mức chiết khấu</Label>
-          <Input
-            name="level1"
-            type="number"
-            placeholder={"% Hoa hồng"}
-            control={control}
-            containerclass="flex-1"
-          >
-            <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
-              %
-            </span>
-          </Input>
+          <div className="grid grid-cols-2 gap-5">
+            <div className="space-y-2">
+              <Label htmlFor="value">Mức chiết khấu</Label>
+              <Input
+                name="level1"
+                type="number"
+                placeholder={"% Hoa hồng"}
+                control={control}
+                containerclass="flex-1"
+              >
+                <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
+                  %
+                </span>
+              </Input>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="value">Mức doanh số tháng tối thiểu</Label>
+              <Input
+                name="minLevel1"
+                type="number"
+                control={control}
+                containerclass="flex-1"
+              >
+                <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
+                  VND
+                </span>
+              </Input>
+            </div>
+          </div>
         </FormGroup>
         <FormGroup>
           <Label htmlFor="value">
@@ -402,18 +448,37 @@ const Collab = () => {
             </Link>
             ]
           </Label>
-          <Label htmlFor="value">Mức chiết khấu</Label>
-          <Input
-            name="level2"
-            type="number"
-            placeholder={"% Hoa hồng"}
-            control={control}
-            containerclass="flex-1"
-          >
-            <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
-              %
-            </span>
-          </Input>
+          <div className="grid grid-cols-2 gap-5">
+            <div className="space-y-2">
+              <Label htmlFor="value">Mức chiết khấu</Label>
+              <Input
+                name="level2"
+                type="number"
+                placeholder={"% Hoa hồng"}
+                control={control}
+                containerclass="flex-1"
+              >
+                <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
+                  %
+                </span>
+              </Input>
+            </div>
+            <div className="space-y-2">
+              <div className="space-y-2">
+                <Label htmlFor="value">Mức doanh số tháng tối thiểu</Label>
+                <Input
+                  name="minLevel2"
+                  type="number"
+                  control={control}
+                  containerclass="flex-1"
+                >
+                  <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
+                    VND
+                  </span>
+                </Input>
+              </div>
+            </div>
+          </div>
         </FormGroup>
         <FormGroup>
           <Label htmlFor="value">
@@ -427,71 +492,43 @@ const Collab = () => {
             </Link>
             ]
           </Label>
-          <Label htmlFor="value">Mức chiết khấu</Label>
-          <Input
-            name="level3"
-            type="number"
-            placeholder={"% Hoa hồng"}
-            control={control}
-            containerclass="flex-1"
-          >
-            <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
-              %
-            </span>
-          </Input>
+          <div className="grid grid-cols-2 gap-5">
+            <div className="space-y-2">
+              <Label htmlFor="value">Mức chiết khấu</Label>
+              <Input
+                name="level3"
+                type="number"
+                placeholder={"% Hoa hồng"}
+                control={control}
+                containerclass="flex-1"
+              >
+                <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
+                  %
+                </span>
+              </Input>
+            </div>
+            <div className="space-y-2">
+              <div className="space-y-2">
+                <Label htmlFor="value">Mức doanh số tháng tối thiểu</Label>
+                <Input
+                  name="minLevel3"
+                  type="number"
+                  control={control}
+                  containerclass="flex-1"
+                >
+                  <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
+                    VND
+                  </span>
+                </Input>
+              </div>
+            </div>
+          </div>
         </FormGroup>
         <Button type="submit" className="px-5 text-white bg-primary">
           Apply
         </Button>
       </form>
     </RequireAuthPage>
-  );
-};
-
-const schemaCTV = yup
-  .object({
-    number: yup.number().required("This field is required"),
-  })
-  .required();
-const CTVBox = () => {
-  const { handleSubmit, control } = useForm({
-    resolver: yupResolver(schemaCTV),
-    mode: "onSubmit",
-  });
-  const onSubmit = async (data: { number: number }) => {
-    try {
-      console.log("abc - ", data);
-    } catch (error) {
-      console.log(error);
-      toast.error(messages.error);
-    }
-  };
-  return (
-    <div className="space-y-6">
-      <form
-        className="space-y-[15px] md:space-y-6"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <FormGroup>
-          <Label htmlFor="value">Số tiền tối thiểu làm cộng tác viên</Label>
-          <Input
-            name="level2"
-            type="number"
-            // placeholder={"% Hoa hồng"}
-            control={control}
-            containerclass="flex-1"
-          >
-            <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
-              VND
-            </span>
-          </Input>
-        </FormGroup>
-
-        <Button type="submit" className="px-5 text-white bg-primary">
-          Apply
-        </Button>
-      </form>
-    </div>
   );
 };
 

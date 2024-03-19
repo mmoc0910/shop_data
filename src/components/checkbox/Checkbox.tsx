@@ -3,7 +3,7 @@ import classNames from "../../utils/classNames";
 
 type CheckboxType = {
   checked?: boolean;
-  onClick?: () => void;
+  onClick?: (checked: boolean) => void;
   children?: React.ReactNode;
 };
 const Checkbox: FC<CheckboxType> = ({
@@ -20,7 +20,7 @@ const Checkbox: FC<CheckboxType> = ({
             ? "border-primary bg-primary text-white"
             : "border-text4 text-white"
         )}
-        onClick={onClick}
+        onClick={() => onClick(checked)}
       >
         <input type="checkbox" className="hidden" />
         <span>
@@ -28,7 +28,7 @@ const Checkbox: FC<CheckboxType> = ({
         </span>
       </div>
       {children && (
-        <div className="flex-1 cursor-pointer select-none text-sm" onClick={onClick}>
+        <div className="flex-1 cursor-pointer select-none text-sm" onClick={() => onClick(checked)}>
           {children}
         </div>
       )}

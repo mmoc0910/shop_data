@@ -11,8 +11,10 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
 import Loading from "../common/Loading";
 import Heading from "../common/Heading";
+import { useTranslation } from "react-i18next";
 
 const PlanDashborad = () => {
+  const { t, i18n } = useTranslation();
   const { _id } = useSelector((state: RootState) => state.auth);
   const [plans, setPlans] = useState<PlanType[]>([]);
   const navigation = useNavigate();
@@ -31,22 +33,14 @@ const PlanDashborad = () => {
   const handleChoosePlan = async (plan: PlanType) => {
     try {
       const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn mua gói cước <span class="text-secondary">${plan.name} ${plan.bandWidth}GB</span></p>`,
-        html: `<div>
-            <p class="text-2xl font-semibold">${VND.format(plan.price)}VND/${
-          plan.type
-        }</p>
-            <ul class="space-y-1 mt-3">
-                ${plan.description.map((item) => `<li>${item}</li>`)}
-            </ul>
-        </div>`,
-        // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
+        title: `<p class="leading-tight">${t("page.package.swal.title")} <span class="text-secondary">${plan.name} ${plan.bandWidth}GB</span></p>`,
+       
         icon: "success",
         showCancelButton: true,
         confirmButtonColor: "#1DC071",
         cancelButtonColor: "#d33",
-        cancelButtonText: "Thoát",
-        confirmButtonText: "Đồng ý",
+        cancelButtonText: t("page.package.swal.cancelButton"),
+        confirmButtonText: t("page.package.swal.confirmButton"),
       });
       if (isConfirmed) {
         setLoading(true);
@@ -54,7 +48,7 @@ const PlanDashborad = () => {
           userId: _id,
           planId: plan._id,
         });
-        toast.success("Mua thành công");
+        toast.success(t("page.package.swal.success"));
         navigation("/user/order");
       }
     } catch (error) {
@@ -72,9 +66,7 @@ const PlanDashborad = () => {
   const columns: TableColumnsType<PlanType> = useMemo(
     () => [
       {
-        title: () => (
-          <p className="text-base font-semibold font-primary">STT</p>
-        ),
+        title: () => <p className="text-sm font-semibold font-primary"></p>,
         dataIndex: "index",
         key: "index",
         render: (text: string) => (
@@ -83,7 +75,9 @@ const PlanDashborad = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Tên gói</p>
+          <p className="text-sm font-semibold font-primary">
+            {t("page.dashboard.plan.field.name")}
+          </p>
         ),
         dataIndex: "name",
         key: "name",
@@ -93,7 +87,9 @@ const PlanDashborad = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Chu kỳ</p>
+          <p className="text-sm font-semibold font-primary">
+            {t("page.dashboard.plan.field.type")}
+          </p>
         ),
         dataIndex: "type",
         key: "type",
@@ -103,7 +99,9 @@ const PlanDashborad = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Băng thông</p>
+          <p className="text-sm font-semibold font-primary">
+            {t("page.dashboard.plan.field.bandwidth")}
+          </p>
         ),
         dataIndex: "bandWidth",
         key: "bandWidth",
@@ -113,7 +111,9 @@ const PlanDashborad = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Giá</p>
+          <p className="text-sm font-semibold font-primary">
+            {t("page.dashboard.plan.field.price")}
+          </p>
         ),
         dataIndex: "price",
         key: "price",
@@ -122,7 +122,7 @@ const PlanDashborad = () => {
         ),
       },
       {
-        title: () => <p className="text-base font-semibold font-primary"></p>,
+        title: () => <p className="text-sm font-semibold font-primary"></p>,
         // dataIndex: "createdAt",
         key: "action",
         render: (_: string, record: PlanType) => (
@@ -131,14 +131,14 @@ const PlanDashborad = () => {
               className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-error font-primary"
               onClick={() => handleChoosePlan(record)}
             >
-              Mua ngay
+              {t("page.dashboard.buyNow")}
             </button>
           </div>
         ),
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [t, i18n.language]
   );
   if (plans.length > 0)
     return (
@@ -146,13 +146,13 @@ const PlanDashborad = () => {
         {loading && <Loading />}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <Heading>Gói cước</Heading>
+            <Heading>{t("page.dashboard.plan.heading")}</Heading>
             {plans.length > 5 ? (
               <Link
                 to={"/user/plan"}
                 className="font-medium underline text-primary decoration-primary"
               >
-                Xem tất cả
+                {t("page.dashboard.seeAll")}
               </Link>
             ) : null}
           </div>{" "}

@@ -1,6 +1,6 @@
 import { Modal, Tooltip } from "antd";
 import Heading from "../../components/common/Heading";
-import { VND } from "../../utils/formatPrice";
+import { priceFomat } from "../../utils/formatPrice";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -14,11 +14,13 @@ import { toast } from "react-toastify";
 import { messages } from "../../constants";
 import { api } from "../../api";
 import CashHistory from "../../components/user/CashHistory";
-import TransactionHistory from "../../components/user/TransactionHistory";
+// import TransactionHistory from "../../components/user/TransactionHistory";
 import RoseHistory from "../../components/user/RoseHistory";
 import {
   CashType,
   CollabType,
+  CommisionType,
+  CoutryType,
   RoseType,
   SatisfyType,
   TransactionType,
@@ -31,12 +33,14 @@ import InviteDashboard from "../../components/user/InviteDashboard";
 import zalo from "../../assets/contact/zalo1.jpg";
 import wechat from "../../assets/contact/wechat.png";
 import whatapp from "../../assets/contact/whatapp.png";
+import picture1 from "../../assets/Picture1.png";
 import { Link } from "react-router-dom";
 import IconQuesionMarkCircle from "../../icons/IconQuesionMarkCircle";
 import { setSatify } from "../../store/satisfy/satisfySlice";
 import { setCommision } from "../../store/commision/commisionSlice";
 import { setCollab } from "../../store/collab/collabSlice";
 import Post from "../../components/user/Post";
+import { useTranslation } from "react-i18next";
 
 const schema = yup
   .object({
@@ -45,8 +49,10 @@ const schema = yup
   .required();
 
 const DashboardUserPage = () => {
+  const { t, i18n } = useTranslation();
   const { _id } = useSelector((state: RootState) => state.auth);
   const satisfy = useSelector((state: RootState) => state.satisfy);
+  const commision = useSelector((state: RootState) => state.commision);
   const [userCashHistory, setUserCashHistory] = useState<CashType[]>([]);
   const [roseHistory, setRoseHistory] = useState<RoseType[]>([]);
   const [transactions, setTransactions] = useState<TransactionType[]>([]);
@@ -61,7 +67,7 @@ const DashboardUserPage = () => {
           { data: dataCollab },
         ] = await Promise.all([
           api.get<SatisfyType>(`/satisfy/${_id}`),
-          api.get<{ value: number }>("/commisions"),
+          api.get<CommisionType>("/commisions"),
           api.get<CollabType>("/collab"),
         ]);
         dispatch(
@@ -73,12 +79,17 @@ const DashboardUserPage = () => {
             transaction: dataSatify.transaction[0]?.money || 0,
           })
         );
-        dispatch(setCommision(dataCommision.value));
+        dispatch(
+          setCommision({ value: dataCommision.value, min: dataCommision.min })
+        );
         dispatch(
           setCollab({
             level1: dataCollab.level1,
             level2: dataCollab.level2,
             level3: dataCollab.level3,
+            minLevel1: dataCollab.minLevel1,
+            minLevel2: dataCollab.minLevel2,
+            minLevel3: dataCollab.minLevel3,
           })
         );
       } catch (error) {
@@ -117,10 +128,11 @@ const DashboardUserPage = () => {
   const onSubmit = async (data: { money: number }) => {
     try {
       Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn nạp <span class="text-secondary">${VND.format(
-          data.money
-        )}VND</span></p>`,
-        // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
+        title: `<p class="leading-tight">Bạn có muốn nạp <span class="text-secondary">${priceFomat(
+          data.money,
+          i18n.language as CoutryType
+        )}</span></p>`,
+
         icon: "success",
         showCancelButton: true,
         confirmButtonColor: "#1DC071",
@@ -143,9 +155,9 @@ const DashboardUserPage = () => {
       toast.error(messages.error);
     }
   };
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
+  // const showModal = () => {
+  //   setIsModalOpen(true);
+  // };
 
   const handleOk = () => {
     setIsModalOpen(false);
@@ -161,66 +173,58 @@ const DashboardUserPage = () => {
           {/* <Heading>Thống kê chi tiết</Heading> */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 rounded-xl border-2 border-[#eeeeed]">
             <div className="flex-1 p-5 space-y-3">
-              <p className="text-base text-gray-500 lg:text-lg">Tổng nạp</p>
+              <p className="text-base text-gray-500 lg:text-lg">
+                {t("page.dashboard.satify.cash")}
+              </p>
 
               <p className="text-xl font-medium md:text-2xl">
-                {VND.format(
-                  // satisfy && satisfy.cash.length > 0 ? satisfy.cash[0].money : 0
-                  satisfy.cash
-                )}
-                VND
+                {priceFomat(satisfy.cash, i18n.language as CoutryType)}
               </p>
             </div>
             <div className="flex-1 p-5 space-y-3">
               <div className="flex items-center gap-2">
                 <p className="text-base text-gray-500 lg:text-lg">
-                  Số dư hiện tại
+                  {t("page.dashboard.satify.currentMoney")}
                 </p>
-                <Tooltip
-                  title={
-                    "Số dư hiện tại = Tổng nạp - Số tiền đã sử dụng + Hoa hồng"
-                  }
-                >
+                <Tooltip title={t("page.dashboard.satify.currentMoneyNode")}>
                   <span className="cursor-pointer text-[#3d6dae]">
                     <IconQuesionMarkCircle />
                   </span>
                 </Tooltip>
               </div>
               <p className="text-xl font-medium md:text-2xl">
-                {VND.format(satisfy ? satisfy.currentMoney : 0)}VND
+                {priceFomat(
+                  satisfy ? satisfy.currentMoney : 0,
+                  i18n.language as CoutryType
+                )}
               </p>
             </div>
             <div className="flex-1 hidden p-5 space-y-3 md:block">
               <p className="text-base text-gray-500 lg:text-lg">
-                Số tiền đã sử dụng
+                {t("page.dashboard.satify.transaction")}
               </p>
               <div className="">
                 <p className="text-xl font-medium md:text-2xl text-error">
-                  {VND.format(
-                    // satisfy && satisfy.transaction.length > 0
-                    //   ? satisfy.transaction[0].money
-                    //   : 0
-                    satisfy.transaction
-                  )}
-                  VND
+                  {priceFomat(satisfy.transaction, i18n.language as CoutryType)}
                 </p>
-                <div
+                <Link
+                  to={"/user/cash"}
                   className="underline cursor-pointer text-primary decoration-primary"
-                  onClick={showModal}
+                  // onClick={showModal}
                 >
-                  Nạp tiền ngay
-                </div>
+                  {t("page.dashboard.satify.depositNow")}
+                </Link>
               </div>
             </div>
             <div className="flex-1 hidden p-5 space-y-3 md:block">
               <div className="flex items-center gap-2">
                 <p className="text-base text-gray-500 lg:text-lg">
-                  Tiền hoa hồng
+                  {t("page.dashboard.satify.rose")}
                 </p>
                 <Tooltip
-                  title={
-                    "Hoa hồng = Tổng tiền [10%] nhận được từ chương trình CTV"
-                  }
+                  title={t("page.dashboard.satify.roseNode", {
+                    amount: commision,
+                  })}
                 >
                   <span className="cursor-pointer text-[#3d6dae]">
                     <IconQuesionMarkCircle />
@@ -228,15 +232,13 @@ const DashboardUserPage = () => {
                 </Tooltip>
               </div>
               <p className="text-xl font-medium md:text-2xl">
-                {VND.format(
-                  // satisfy && satisfy.rose.length > 0 ? satisfy.rose[0].money : 0
-                  satisfy.rose
-                )}
-                VND
+                {priceFomat(satisfy.rose, i18n.language as CoutryType)}
               </p>
             </div>
             <div className="flex-1 hidden p-5 space-y-3 md:block">
-              <p className="text-base text-gray-500 lg:text-lg">Đã mời</p>
+              <p className="text-base text-gray-500 lg:text-lg">
+                {t("page.dashboard.satify.numberIntoduce")}
+              </p>
               <p className="text-xl font-medium md:text-2xl">
                 {/* {satisfy?.numberIntoduce || 0} */}
                 {satisfy.numberIntoduce}
@@ -255,39 +257,6 @@ const DashboardUserPage = () => {
               : "col-span-12 lg:col-span-8"
           )}
         >
-          <div className="space-y-4">
-            <Heading>Liên hệ</Heading>
-            <div className="">
-              <p>Chào mừng quý khách đến với hệ thống của chúng tôi !</p>
-              <p>
-                Nếu gặp khó khăn trong quá trình giao dịch quý khách hãy liên hệ
-                với admin qua :
-              </p>
-              <div className="flex items-center gap-10 mt-5">
-                <div className="flex flex-col items-center gap-3">
-                  <img
-                    src={zalo}
-                    className="object-cover w-full aspect-square"
-                  />
-                  <p className="font-semibold uppercase">Zalo</p>
-                </div>
-                <div className="flex flex-col items-center gap-3">
-                  <img
-                    src={wechat}
-                    className="object-cover w-full aspect-square"
-                  />
-                  <p className="font-semibold uppercase">Wechat</p>
-                </div>
-                <div className="flex flex-col items-center gap-3">
-                  <img
-                    src={whatapp}
-                    className="object-cover w-full aspect-square"
-                  />
-                  <p className="font-semibold uppercase">whatapp</p>
-                </div>
-              </div>
-            </div>
-          </div>
           <Policy />
           <PlanDashborad />
           <InviteDashboard />
@@ -303,7 +272,7 @@ const DashboardUserPage = () => {
               )}
             />
             <RoseHistory roseHistory={roseHistory} />
-            <TransactionHistory transactions={transactions} />
+            {/* <TransactionHistory transactions={transactions} /> */}
           </div>
         )}
       </div>
@@ -339,27 +308,27 @@ const DashboardUserPage = () => {
 };
 
 const Policy = () => {
+  const { t } = useTranslation();
   return (
     <div className="space-y-4">
-      <Heading> Vietnamese VPNCN2 Policy</Heading>
-      <ul className="pl-5 space-y-2 list-decimal">
-        <li className="">
-          Mỗi key không giới hạn số lượng thiết bị kết nối nhưng sẽ bị giới hạn
-          tổng băng thông sử dụng hàng tháng là 150GB, việc giới hạn này với mục
-          đích hạn chế chia sẻ key sử dụng cho người khác.
-        </li>
-        <li className="">
-          Phần mềm kết nối VPN là "OUTLINE" có trên tất cả các loại thiết bị
-          (điện thoại, máy tính, máy tính bảng) và hệ điều hành (Windows, MAC,
-          Chromebook, iOS iphone, Android), có thể kết nối VPN nhiều thiết bị
-          cùng 1 lúc, Nhưng khuyến cáo KHÔNG ĐƯỢC chia sẻ cho người khác cùng sử
-          dụng, nếu vượt quá băng thông bạn sẽ không thể tiếp tục sử dụng, khi
-          đó bạn phải mua thêm băng thông hoặc chờ cho đến khi băng thông được
-          reset xoay vòng 30 ngày
-        </li>
-        <li>
-          Phần mềm OUTLINE có thể cài đặt trực tiếp từ AppStore(iOS) hoặc
-          GooglePlay (Android).
+      <Heading className="!text-primary">Welcome to VPNCN2 !</Heading>
+      <div className="space-y-2">
+        <p>{t("page.dashboard.userManual.heading")}</p>
+        <ul className="pl-5 space-y-2 list-decimal">
+          <li className="">{t("page.dashboard.userManual.title1")}</li>
+          <li className="">{t("page.dashboard.userManual.title2")}</li>
+          <li className="">
+            {t("page.dashboard.userManual.title3")}
+            {/* Bạn có thể kết nối VPN nhiều thiết bị cùng 1 lúc, Nhưng khuyến cáo{" "}
+            <span className="text-error">KHÔNG ĐƯỢC</span> chia sẻ cho người
+            khác cùng sử dụng, nếu vượt quá băng thông sẽ không truy cập được
+            tiếp mà sẽ phải mua thêm băng thông tại mục{" "}
+            <span className="text-secondary">
+              Đơn hàng của tôi {">"} Chọn Key của bạn {">"} Mua data
+            </span> */}
+          </li>
+          <li className="">{t("page.dashboard.userManual.title4")}</li>
+          <li className="">{t("page.dashboard.userManual.title5")}</li>
           <div className="flex flex-wrap items-center gap-10 py-5 md:gap-16 lg:gap-20 ">
             <Link
               to={
@@ -421,8 +390,7 @@ const Policy = () => {
             </Link>
           </div>
           <span className="text-xl font-medium text-secondary40">
-            Nếu bạn đang ở China và không tải được trên kho ứng dụng, thì có thể
-            dùng link download dưới đây.
+            {t("page.dashboard.userManual.note")}
           </span>
           <div className="flex flex-wrap items-stretch gap-10 py-5 md:gap-16 lg:gap-20">
             <Link
@@ -462,27 +430,43 @@ const Policy = () => {
                 (Recommend)
               </span>
             </Link>
-            {/* <Link
-              to={"http://woot2.vn/vpncn2/Outline_1.11.0_Apkpure.apk"}
-              download
-              className="flex flex-col items-center gap-7 group"
-            >
-              <span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 512 512"
-                  className="w-12 h-12 transition-all duration-300 fill-current md:w-20 md:h-20 group-hover:fill-primary"
-                >
-                  <path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z" />
-                </svg>
-              </span>
-              <span className="text-sm font-medium transition-all duration-300 group-hover:text-primary">
-                For Android: Old version
-              </span>
-            </Link> */}
           </div>
-        </li>
-      </ul>
+          <div className="">
+            <p>{t("page.dashboard.userManual.contact1")}</p>
+            <div className="flex items-center gap-10 mt-5">
+              <div className="flex flex-col items-center gap-3">
+                <img src={zalo} className="object-cover w-full aspect-square" />
+                <p className="font-semibold uppercase">Zalo</p>
+              </div>
+              <div className="flex flex-col items-center gap-3">
+                <img
+                  src={wechat}
+                  className="object-cover w-full aspect-square"
+                />
+                <p className="font-semibold uppercase">Wechat</p>
+              </div>
+              <div className="flex flex-col items-center gap-3">
+                <img
+                  src={whatapp}
+                  className="object-cover w-full aspect-square"
+                />
+                <p className="font-semibold uppercase">whatapp</p>
+              </div>
+            </div>
+          </div>
+          <div className="">
+            <p> {t("page.dashboard.userManual.contact2")}</p>
+            <div className="grid grid-cols-4 gap-10 mt-5">
+              <div className="flex flex-col items-center gap-3">
+                <img
+                  src={picture1}
+                  className="object-cover w-full aspect-square"
+                />
+              </div>
+            </div>
+          </div>
+        </ul>
+      </div>
     </div>
   );
 };

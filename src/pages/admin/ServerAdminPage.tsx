@@ -257,6 +257,7 @@ const ServerAdminPage = () => {
         key: "totalBandWidth",
         render: (text: number, record: ServerType) => (
           <EditKeyLimitForm
+          className="!w-[170px]"
             type="number"
             placeholder={`${text / 1000 / 1000 / 1000}GB`}
             handleAddLimitData={(value) => {

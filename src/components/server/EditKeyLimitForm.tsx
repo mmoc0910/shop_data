@@ -5,6 +5,7 @@ import Button from "../button/Button";
 import { Input } from "../input";
 import IconEdit from "../../icons/IconEdit";
 import React from "react";
+import classNames from "../../utils/classNames";
 
 const schema = yup
   .object({
@@ -13,10 +14,12 @@ const schema = yup
   .required();
 
 const EditKeyLimitForm = ({
+  className = "",
   placeholder,
   handleAddLimitData,
   type = "text",
 }: {
+  className?: string;
   placeholder: string;
   handleAddLimitData: (bytes: number) => void;
   type?: React.HTMLInputTypeAttribute;
@@ -34,7 +37,7 @@ const EditKeyLimitForm = ({
   };
   return (
     <form
-      className="flex items-center w-[200px]"
+      className={classNames("flex items-center w-[200px]", className)}
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="w-full">

@@ -21,14 +21,25 @@ import { regexUserName } from "../constants";
 
 const SignInPage = () => {
   const { t, i18n } = useTranslation();
-  const schema = useMemo(() => yup
-  .object({
-    account: yup.string().required(t("form.account.error.required")).matches(regexUserName, t("form.username.error.reg")),
-    password: yup.string().required(t("form.password.error.required")),
-    // .min(8, "Minimum of 8 characters"),
-  })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  .required(),[i18n.language, t])
+  const schema = useMemo(
+    () =>
+      yup
+        .object({
+          account: yup
+            .string()
+            .required(t("form.account.error.required"))
+            .matches(regexUserName, t("form.username.error.reg")),
+          password: yup
+            .string()
+            .required(t("form.password.error.required"))
+            .min(8, t("form.old_password.error.min")),
+          // .min(8, "Minimum of 8 characters"),
+        })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        .required(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [i18n.language, t]
+  );
   const { email, role } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
   const navigation = useNavigate();
@@ -55,7 +66,7 @@ const SignInPage = () => {
       } else if (result.data.data.role === 2) {
         navigation("/user/dashboard");
       }
-      toast.success("Đăng nhập thành công");
+      toast.success("Login Success");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log("error message: ", error);
@@ -109,11 +120,11 @@ const SignInPage = () => {
             to={"/forgot-password"}
             className="text-sm font-medium cursor-pointer select-none text-primary"
           >
-           {t("login.forgot_pass")}
+            {t("login.forgot_pass")}
           </Link>
         </div>
         <Button type="submit" className="w-full text-white bg-primary">
-        {t("authen.sign_in")}
+          {t("authen.sign_in")}
         </Button>
       </form>
     </LayoutAuthentication>

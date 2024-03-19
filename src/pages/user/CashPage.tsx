@@ -8,7 +8,7 @@ import {
 import Heading from "../../components/common/Heading";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import { useEffect, useMemo, useState } from "react";
-import { CashType } from "../../type";
+import { CashType, CoutryType } from "../../type";
 import { api } from "../../api";
 import { toast } from "react-toastify";
 import {
@@ -17,13 +17,15 @@ import {
   isSameOrBefore,
   messages,
 } from "../../constants";
-import { VND } from "../../utils/formatPrice";
+import { priceFomat } from "../../utils/formatPrice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
 import dayjs from "dayjs";
 import RechargePage from "./RechargePage";
+import { useTranslation } from "react-i18next";
 
 const CashPage = () => {
+  const { i18n, t } = useTranslation();
   const { _id } = useSelector((state: RootState) => state.auth);
   const [listCash, setListCash] = useState<CashType[]>([]);
   const [startDate, setStartDate] = useState<dayjs.Dayjs | undefined>();
@@ -52,9 +54,7 @@ const CashPage = () => {
   const columns: TableColumnsType<CashType> = useMemo(
     () => [
       {
-        title: () => (
-          <p className="text-base font-semibold font-primary">STT</p>
-        ),
+        title: () => <p className="font-semibold font-primary"></p>,
         dataIndex: "index",
         key: "index",
         width: 70,
@@ -64,7 +64,9 @@ const CashPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Mã giao dịch</p>
+          <p className="font-semibold font-primary">
+            {t("page.cash.history.field.code")}
+          </p>
         ),
         dataIndex: "code",
         key: "code",
@@ -74,7 +76,7 @@ const CashPage = () => {
       },
       {
         title: () => (
-          <p className="text-sm font-semibold font-primary">Username</p>
+          <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.username")}</p>
         ),
         dataIndex: "username",
         key: "username",
@@ -84,7 +86,7 @@ const CashPage = () => {
       },
       {
         title: () => (
-          <p className="text-sm font-semibold font-primary">Email</p>
+          <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.email")}</p>
         ),
         dataIndex: "email",
         key: "email",
@@ -94,7 +96,7 @@ const CashPage = () => {
       },
       {
         title: () => (
-          <p className="text-sm font-semibold font-primary">Số điện thoại</p>
+          <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.phone")}</p>
         ),
         dataIndex: "phone",
         key: "phone",
@@ -104,18 +106,20 @@ const CashPage = () => {
       },
       {
         title: () => (
-          <p className="text-sm font-semibold font-primary">Số tiền nạp</p>
+          <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.money")}</p>
         ),
         dataIndex: "money",
         key: "money",
         render: (text: number) => (
-          <p className="text-sm font-primary">{VND.format(text)}VND</p>
+          <p className="text-sm font-primary">
+            {priceFomat(text, i18n.language as CoutryType)}
+          </p>
         ),
         sorter: (a, b) => a.money - b.money,
       },
       {
         title: () => (
-          <p className="text-sm font-semibold font-primary">Ngày nạp</p>
+          <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.created_at")}</p>
         ),
         dataIndex: "createdAt",
         key: "createdAt",
@@ -126,20 +130,20 @@ const CashPage = () => {
       },
       {
         title: () => (
-          <p className="text-sm font-semibold font-primary">Ngày duyệt</p>
+          <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.updated_at")}</p>
         ),
         dataIndex: "updatedAt",
         key: "updatedAt",
         render: (text: Date, record: CashType) => (
           <p className="text-sm font-primary">
-            {record.status === 1 ? DAY_FORMAT(text) : null}
+            {record.status !== 2 ? DAY_FORMAT(text) : null}
           </p>
         ),
         sorter: (a, b) => dayjs(a.updatedAt).unix() - dayjs(b.updatedAt).unix(),
       },
       {
         title: () => (
-          <p className="text-sm font-semibold font-primary">Trạng thái</p>
+          <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.status")}</p>
         ),
         dataIndex: "status",
         key: "status",
@@ -147,17 +151,17 @@ const CashPage = () => {
           <div className="text-sm font-primary">
             {record.status === 0 ? (
               <Tag color="red">
-                <span className="font-primary">Đã hủy</span>
+                <span className="font-primary">{t("page.cash.history.status.reject")}</span>
               </Tag>
             ) : null}
             {record.status === 1 ? (
               <Tag color="green">
-                <span className="font-primary">Đã thanh toán</span>
+                <span className="font-primary">{t("page.cash.history.status.pending")}</span>
               </Tag>
             ) : null}
             {record.status === 2 ? (
               <Tag color="lime">
-                <span className="font-primary">Chờ phê duyệt</span>
+                <span className="font-primary">{t("page.cash.history.status.approve")}</span>
               </Tag>
             ) : null}
           </div>
@@ -180,7 +184,7 @@ const CashPage = () => {
       },
       {
         title: () => (
-          <p className="text-sm font-semibold font-primary">Lý do hủy</p>
+          <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.description")}</p>
         ),
         dataIndex: "description",
         key: "description",
@@ -190,7 +194,7 @@ const CashPage = () => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [t, i18n.language]
   );
   const onChangeStartDate: DatePickerProps["onChange"] = (date, dateString) => {
     console.log(date, dateString);
@@ -206,14 +210,14 @@ const CashPage = () => {
       <RechargePage />
       <div className="mt-10 space-y-4 md:space-y-6">
         <Heading>
-          Lịch sử nạp:{" "}
-          {VND.format(
+          {t("page.cash.history.heading")}{" "}
+          {priceFomat(
             listCash
               .filter((item) => item.status === 1)
               .map((item) => item.money)
-              .reduce((prev, cur) => (prev += cur), 0)
+              .reduce((prev, cur) => (prev += cur), 0),
+            i18n.language as CoutryType
           )}
-          VND
         </Heading>
         <div className="flex items-center justify-end gap-5">
           <div className="flex items-center gap-5">

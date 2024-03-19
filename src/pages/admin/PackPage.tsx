@@ -112,7 +112,7 @@ const PackPage = () => {
     () => [
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">STT</p>
+          <p className="font-semibold font-primary">STT</p>
         ),
         dataIndex: "index",
         key: "index",
@@ -123,7 +123,7 @@ const PackPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Tên gói</p>
+          <p className="font-semibold font-primary">Tên gói</p>
         ),
         dataIndex: "name",
         key: "name",
@@ -138,7 +138,7 @@ const PackPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Lượt mua</p>
+          <p className="font-semibold font-primary">Lượt mua</p>
         ),
         dataIndex: "name",
         key: "name",
@@ -146,7 +146,7 @@ const PackPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Chu kỳ</p>
+          <p className="font-semibold font-primary">Chu kỳ</p>
         ),
         dataIndex: "type",
         key: "type",
@@ -156,7 +156,7 @@ const PackPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Ngày</p>
+          <p className="font-semibold font-primary">Ngày</p>
         ),
         dataIndex: "day",
         key: "day",
@@ -167,7 +167,7 @@ const PackPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Bandwidth</p>
+          <p className="font-semibold font-primary">Bandwidth</p>
         ),
         dataIndex: "bandWidth",
         key: "bandWidth",
@@ -178,7 +178,7 @@ const PackPage = () => {
       },
       // {
       //   title: () => (
-      //     <p className="text-base font-semibold font-primary">Trạng thái</p>
+      //     <p className="font-semibold font-primary">Trạng thái</p>
       //   ),
       //   dataIndex: "status",
       //   key: "status",
@@ -194,7 +194,7 @@ const PackPage = () => {
       // },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Ngày tạo</p>
+          <p className="font-semibold font-primary">Ngày tạo</p>
         ),
         dataIndex: "createdAt",
         key: "createdAt",
@@ -204,7 +204,7 @@ const PackPage = () => {
         sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
       },
       {
-        title: () => <p className="text-base font-semibold font-primary"></p>,
+        title: () => <p className="font-semibold font-primary"></p>,
         // dataIndex: "createdAt",
         key: "action",
         render: (_: string, record: PlanType) => (
@@ -228,7 +228,7 @@ const PackPage = () => {
     () => [
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">STT</p>
+          <p className="font-semibold font-primary">STT</p>
         ),
         dataIndex: "index",
         key: "index",
@@ -239,7 +239,7 @@ const PackPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Tên gói</p>
+          <p className="font-semibold font-primary">Tên gói</p>
         ),
         dataIndex: "name",
         key: "name",
@@ -254,7 +254,7 @@ const PackPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Lượt mua</p>
+          <p className="font-semibold font-primary">Lượt mua</p>
         ),
         dataIndex: "name",
         key: "name",
@@ -262,7 +262,7 @@ const PackPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Chu kỳ</p>
+          <p className="font-semibold font-primary">Chu kỳ</p>
         ),
         dataIndex: "type",
         key: "type",
@@ -272,7 +272,7 @@ const PackPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Ngày</p>
+          <p className="font-semibold font-primary">Ngày</p>
         ),
         dataIndex: "day",
         key: "day",
@@ -283,7 +283,7 @@ const PackPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Bandwidth</p>
+          <p className="font-semibold font-primary">Bandwidth</p>
         ),
         dataIndex: "bandWidth",
         key: "bandWidth",
@@ -294,7 +294,7 @@ const PackPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Ngày tạo</p>
+          <p className="font-semibold font-primary">Ngày tạo</p>
         ),
         dataIndex: "createdAt",
         key: "createdAt",
@@ -305,7 +305,7 @@ const PackPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Ngày xóa</p>
+          <p className="font-semibold font-primary">Ngày xóa</p>
         ),
         dataIndex: "updatedAt",
         key: "updatedAt",

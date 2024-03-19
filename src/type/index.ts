@@ -1,5 +1,7 @@
 import { AuthState } from "../store/auth/authSlice";
 
+export type CoutryType = "en" | "vi" | "ci";
+
 export type LocationType = {
   _id: string;
   name: string;
@@ -206,6 +208,7 @@ export type SatisfyType = {
 export type CommisionType = {
   _id: string;
   value: number;
+  min: number;
   createdAt: Date;
   updatedAt: Date;
   __v: 0;
@@ -214,6 +217,9 @@ export type CollabType = {
   level1: number;
   level2: number;
   level3: number;
+  minLevel1: number;
+  minLevel2: number;
+  minLevel3: number;
   _id: string;
   createdAt: Date;
   updatedAt: Date;
@@ -238,6 +244,7 @@ export type KeyDetailType = {
   startDate: Date;
   endDate: Date;
   status: 0 | 1 | 2;
+  historyKey: KeySeverType[];
   createdAt: Date;
   updatedAt: Date;
   __v: 0;

@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import Heading from "../common/Heading";
+import { useTranslation } from "react-i18next";
 
 const Post = () => {
+  const {t} = useTranslation();
   return (
     <div className="space-y-4">
-      <Heading>Hướng dẫn sử dụng</Heading>
+      <Heading>{t("page.dashboard.userManual.userManual")}</Heading>
       <div className="space-y-6">
         <Link to={"/user/dashboard/post/abc"} className="block overflow-hidden bg-gray-100 border rounded-lg">
           <p className="px-5 py-3 text-lg font-medium">Thông tin cần biết</p>

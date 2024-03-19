@@ -8,10 +8,10 @@ import {
   Tooltip,
 } from "antd";
 import { api } from "../../api";
-import { CommisionType, RoseType, SatisfyType } from "../../type";
+import { CommisionType, CoutryType, RoseType, SatisfyType } from "../../type";
 import { RootState } from "../../store/configureStore";
 import { useSelector } from "react-redux";
-import { VND } from "../../utils/formatPrice";
+import { priceFomat } from "../../utils/formatPrice";
 import { AuthState } from "../../store/auth/authSlice";
 import { toast } from "react-toastify";
 import {
@@ -23,8 +23,10 @@ import {
 import dayjs from "dayjs";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import Heading from "../../components/common/Heading";
+import { useTranslation } from "react-i18next";
 
 const InvitePage = () => {
+  const { i18n, t } = useTranslation();
   const collab = useSelector((state: RootState) => state.collab);
   const { _id } = useSelector((state: RootState) => state.auth);
   const [satisfy, setSatisfy] = useState<SatisfyType>();
@@ -97,9 +99,7 @@ const InvitePage = () => {
   const columns: TableColumnsType<RoseType> = useMemo(
     () => [
       {
-        title: () => (
-          <p className="text-base font-semibold font-primary">STT</p>
-        ),
+        title: () => <p className="text-base font-semibold font-primary"></p>,
         dataIndex: "index",
         key: "index",
         width: 70,
@@ -108,7 +108,11 @@ const InvitePage = () => {
         ),
       },
       {
-        title: <p className="font-semibold font-primary">Tên gói</p>,
+        title: (
+          <p className="font-semibold font-primary">
+            {t("page.collaborator.field.package")}
+          </p>
+        ),
         dataIndex: "plan",
         key: "plan",
         render: (text: string) => (
@@ -116,7 +120,11 @@ const InvitePage = () => {
         ),
       },
       {
-        title: <p className="font-semibold font-primary">% hoa hồng</p>,
+        title: (
+          <p className="font-semibold font-primary">
+            {t("page.collaborator.field.rose_percent")}
+          </p>
+        ),
         dataIndex: "percent",
         key: "percent",
         render: (text: number) => (
@@ -128,10 +136,16 @@ const InvitePage = () => {
         },
       },
       {
-        title: <p className="font-semibold font-primary">Tiền hoa hồng</p>,
+        title: (
+          <p className="font-semibold font-primary">
+            {t("page.collaborator.field.rose")}
+          </p>
+        ),
         key: "recive",
         render: (_: string, record: RoseType) => (
-          <p className="text-sm font-primary">{VND.format(record.recive)}VND</p>
+          <p className="text-sm font-primary">
+            {priceFomat(record.recive, i18n.language as CoutryType)}
+          </p>
         ),
         sorter: {
           compare: (a, b) => a.recive - b.recive,
@@ -139,28 +153,44 @@ const InvitePage = () => {
         },
       },
       {
-        title: <p className="font-semibold font-primary">Người mua</p>,
+        title: (
+          <p className="font-semibold font-primary">
+            {t("page.collaborator.field.user")}
+          </p>
+        ),
         key: "username",
         render: (_: string, record: RoseType) => (
           <p className="text-sm font-primary">{record.introducedId.username}</p>
         ),
       },
       {
-        title: <p className="font-semibold font-primary">Email</p>,
+        title: (
+          <p className="font-semibold font-primary">
+            {t("page.collaborator.field.email")}
+          </p>
+        ),
         key: "email",
         render: (_: string, record: RoseType) => (
           <p className="text-sm font-primary">{record.introducedId.email}</p>
         ),
       },
       {
-        title: <p className="font-semibold font-primary">SDT</p>,
+        title: (
+          <p className="font-semibold font-primary">
+            {t("page.collaborator.field.sdt")}
+          </p>
+        ),
         key: "email",
         render: (_: string, record: RoseType) => (
           <p className="text-sm font-primary">{record.introducedId.phone}</p>
         ),
       },
       {
-        title: <p className="font-semibold font-primary">Ngày nhận</p>,
+        title: (
+          <p className="font-semibold font-primary">
+            {t("page.collaborator.field.created_at")}
+          </p>
+        ),
         dataIndex: "createdAt",
         key: "createdAt",
         render: (text: Date) => (
@@ -169,7 +199,7 @@ const InvitePage = () => {
         sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
       },
     ],
-    []
+    [i18n.language, t]
   );
   const onChangeStartDate: DatePickerProps["onChange"] = (date) => {
     setStartDate(date);
@@ -182,15 +212,12 @@ const InvitePage = () => {
     const value = event.target.value;
     setInputValue(value);
   };
-  const tolltip = `User/CTV: 
-  Nhận được ${commision?.value}% hoa hồng cho mỗi đơn hàng của người được giới thiệu || 
-  Đại lý Cấp 1: 
-  Chiết khấu [${collab.level1}%] cho mỗi đơn hàng mới ||
-  Đại lý Cấp 2: 
-  Chiết khấu [${collab.level2}%] cho mỗi đơn hàng mới ||
-  Đại lý Cấp 3: 
-  Chiết khấu [${collab.level3}%] cho mỗi đơn hàng mới || Để được nâng cấp lên làm đại lý vui lòng lien hệ trực tiếp admin
-  `;
+  const tolltip = t("page.account.info.tooltip", {
+    commision: commision?.value,
+    level1: collab.level1,
+    level2: collab.level2,
+    level3: collab.level3,
+  });
   return (
     <RequireAuthPage rolePage={2}>
       <div className="space-y-8">
@@ -200,7 +227,7 @@ const InvitePage = () => {
               {user?.level === 0 ? "Cộng tác viên" : `Đại lý cấp${user?.level}`}
             </p>
             <div className="flex items-center gap-1">
-              <p className="text-lg">Cấp độ</p>
+              <p className="text-lg">{t("page.collaborator.satify.level")}</p>
               <Tooltip title={tolltip}>
                 <span>
                   <IconQuesionMarkCircle />
@@ -213,7 +240,7 @@ const InvitePage = () => {
               {satisfy?.numberIntoduce || 0}
             </p>
             <div className="flex items-center gap-1">
-              <p className="text-lg">Đã mời</p>
+              <p className="text-lg">{t("page.collaborator.satify.invite")}</p>
             </div>
           </div>
           <div className="flex flex-col items-center flex-1 px-5 py-5 space-y-2 md:py-7 rounded-xl md:space-y-4">
@@ -221,7 +248,9 @@ const InvitePage = () => {
               {commision ? commision.value : 0}%
             </p>
             <div className="flex items-center gap-1">
-              <p className="text-lg">% hoa hồng</p>
+              <p className="text-lg">
+                {t("page.collaborator.satify.rose_percent")}
+              </p>
               {/* <Tooltip title="Cấp 1: Nạp Đơn Giá Trị 1.000.000 ₫ , Mua Gói Hoặc Giới Thiệu Khách Nạp Số Dư Sẽ Được Hưởng 10% || Cấp 2: Nạp Đơn Giá Trị 3.000.000 ₫ , Mua Gói Hoặc Giới Thiệu Khách Nạp Số Dư Sẽ Được Hưởng 20% || Cấp 3: Nạp Đơn Giá Trị 10.000.000 ₫ , Mua Gói Hoặc Giới Thiệu Khách Nạp Số Dư Sẽ Được Hưởng 50%">
                 <span>
                   <IconQuesionMarkCircle />
@@ -231,14 +260,14 @@ const InvitePage = () => {
           </div>
           <div className="flex flex-col items-center flex-1 px-5 py-5 space-y-2 md:py-7 rounded-xl md:space-y-4">
             <p className="text-xl font-medium lg:text-2xl xl:text-4xl">
-              {satisfy && satisfy.rose.length > 0
-                ? VND.format(satisfy.rose[0].money)
-                : 0}
-              VND
+              {priceFomat(
+                satisfy && satisfy.rose.length > 0 ? satisfy.rose[0].money : 0,
+                i18n.language as CoutryType
+              )}
             </p>
 
             <div className="flex items-center gap-1">
-              <p className="text-lg">Tiền hoa hồng</p>
+              <p className="text-lg">{t("page.collaborator.satify.rose")}</p>
               {/* <Tooltip title="Cấp 1: Nạp Đơn Giá Trị 1.000.000 ₫ , Mua Gói Hoặc Giới Thiệu Khách Nạp Số Dư Sẽ Được Hưởng 10% || Cấp 2: Nạp Đơn Giá Trị 3.000.000 ₫ , Mua Gói Hoặc Giới Thiệu Khách Nạp Số Dư Sẽ Được Hưởng 20% || Cấp 3: Nạp Đơn Giá Trị 10.000.000 ₫ , Mua Gói Hoặc Giới Thiệu Khách Nạp Số Dư Sẽ Được Hưởng 50%">
                 <span>
                   <IconQuesionMarkCircle />
@@ -249,39 +278,41 @@ const InvitePage = () => {
         </div>
         <div className="font-medium">
           <p>
-            User/CTV: Nhận được{" "}
-            <span className="font-medium text-secondary20">
-              [{commision?.value}%]
-            </span>{" "}
-            hoa hồng cho mỗi đơn hàng của người được giới thiệu.
+            {t("page.collaborator.note.content1", { amount: commision?.value })}
           </p>
           <p>
-            Đại lý Cấp 1: Chiết khấu{" "}
-            <span className="font-medium text-secondary20">
-              [{collab.level1}%]
-            </span>{" "}
-            cho mỗi đơn hàng mới.
+            {t("page.collaborator.note.content2", {
+              amount: collab.level1,
+              money: priceFomat(collab.minLevel1, i18n.language as CoutryType),
+            })}
           </p>
           <p>
-            Đại lý Cấp 2: Chiết khấu{" "}
-            <span className="font-medium text-secondary20">
-              [{collab.level2}%]
-            </span>{" "}
-            cho mỗi đơn hàng mới.
+            {t("page.collaborator.note.content3", {
+              amount: collab.level2,
+              money: priceFomat(collab.minLevel2, i18n.language as CoutryType),
+            })}
           </p>
           <p>
-            Đại lý Cấp 3: Chiết khấu{" "}
-            <span className="font-medium text-secondary20">
-              [{collab.level3}%]
-            </span>{" "}
-            cho mỗi đơn hàng mới.
+            {t("page.collaborator.note.content4", {
+              amount: collab.level3,
+              money: priceFomat(collab.minLevel3, i18n.language as CoutryType),
+            })}
           </p>
           <p className="text-lg font-medium text-secondary20">
-            Để được nâng cấp lên làm đại lý vui lòng lien hệ trực tiếp admin.
+            {t("page.collaborator.note.note")}
           </p>
         </div>
         <div className="space-y-4">
-          <Heading>Lịch sử nhận hoa hồng</Heading>
+          <Heading>
+            {" "}
+            {t("page.collaborator.heading")}:{" "}
+            {priceFomat(
+              listRoseHistoryFilter
+                .map((item) => item.recive)
+                .reduce((prev, cur) => (prev += cur), 0),
+              i18n.language as CoutryType
+            )}
+          </Heading>
           <div className="items-center block gap-5 mb-5 space-y-3 md:flex md:space-y-0">
             <div className="relative flex-1">
               <input
@@ -289,7 +320,7 @@ const InvitePage = () => {
                 value={inputValue}
                 onChange={handleChange}
                 className="focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock"
-                placeholder="Tìm kiếm"
+                placeholder={t("page.searchPlaceholder")}
               />
               {inputValue.length > 0 ? (
                 <span

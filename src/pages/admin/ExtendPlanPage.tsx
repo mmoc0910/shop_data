@@ -126,7 +126,7 @@ const ExtendPlanPage = () => {
     () => [
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">STT</p>
+          <p className="font-semibold font-primary">STT</p>
         ),
         dataIndex: "index",
         key: "index",
@@ -137,7 +137,7 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Tên gói</p>
+          <p className="font-semibold font-primary">Tên gói</p>
         ),
         dataIndex: "name",
         key: "name",
@@ -147,7 +147,7 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Lượt mua</p>
+          <p className="font-semibold font-primary">Lượt mua</p>
         ),
         dataIndex: "name",
         key: "name",
@@ -155,7 +155,7 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Giá</p>
+          <p className="font-semibold font-primary">Giá</p>
         ),
         dataIndex: "price",
         key: "price",
@@ -169,7 +169,7 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Băng thông</p>
+          <p className="font-semibold font-primary">Băng thông</p>
         ),
         dataIndex: "bandWidth",
         key: "bandWidth",
@@ -183,7 +183,7 @@ const ExtendPlanPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Ngày tạo</p>
+          <p className="font-semibold font-primary">Ngày tạo</p>
         ),
         dataIndex: "createdAt",
         key: "createdAt",
@@ -194,7 +194,7 @@ const ExtendPlanPage = () => {
       },
       // {
       //   title: () => (
-      //     <p className="text-base font-semibold font-primary">Ngày chỉnh sửa</p>
+      //     <p className="font-semibold font-primary">Ngày chỉnh sửa</p>
       //   ),
       //   dataIndex: "updatedAt",
       //   key: "updatedAt",
@@ -235,7 +235,7 @@ const ExtendPlanPage = () => {
     () => [
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">STT</p>
+          <p className="font-semibold font-primary">STT</p>
         ),
         dataIndex: "index",
         key: "index",

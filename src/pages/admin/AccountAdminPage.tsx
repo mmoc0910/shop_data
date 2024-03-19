@@ -109,7 +109,7 @@ const AccountAdminPage = () => {
     () => [
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">STT</p>
+          <p className="font-semibold font-primary">STT</p>
         ),
         dataIndex: "index",
         key: "index",

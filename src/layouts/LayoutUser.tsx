@@ -13,7 +13,8 @@ import { Tooltip } from "antd";
 import { copyToClipboard } from "../utils/copyToClipboard";
 import useOnClickOutside from "../hooks/useOnClickOutside";
 import { useTranslation } from "react-i18next";
-import { VND } from "../utils/formatPrice";
+import { priceFomat } from "../utils/formatPrice";
+import { CoutryType } from "../type";
 
 const LayoutUser = () => {
   const { t, i18n } = useTranslation();
@@ -109,11 +110,13 @@ const LayoutUser = () => {
               />
             </svg>
           </div>
-          {cash >= 50000 && (
+          {cash >= commision.min && (
             <div className="rounded-xl border-2 border-[#eeeeed] p-5 w-full md:w-3/4 lg:w-2/4">
               <div className="flex items-center gap-2">
                 <p className="">
-                  <span className="font-medium">Mã CTV:</span>{" "}
+                  <span className="font-medium">
+                    {t("page.dashboard.ctvcode.ctv")}
+                  </span>{" "}
                   <span className="text-lg font-medium text-secondary20">
                     {introduceCode || ""}
                   </span>
@@ -143,9 +146,7 @@ const LayoutUser = () => {
                 </Tooltip>
               </div>
               <p className="">
-                Giới thiệu mã CTV này cho bạn bè bạn sẽ nhận được{" "}
-                <span className="text-secondary20">[{commision}%]</span> hoa
-                hồng cho mỗi giao dịch.
+                {t("page.dashboard.ctvcode.desc", { amount: commision.value })}
               </p>
             </div>
           )}
@@ -160,7 +161,7 @@ const LayoutUser = () => {
               <p>{username || email}</p>
               <p className="hidden xl:block">
                 {" "}
-                - {VND.format(currentMoney)}VND
+                - {priceFomat(currentMoney, i18n.language as CoutryType)}
               </p>
             </Link>
             <div

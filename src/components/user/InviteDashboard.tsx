@@ -10,8 +10,10 @@ import { VND } from "../../utils/formatPrice";
 import dayjs from "dayjs";
 import Heading from "../common/Heading";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const InviteDashboard = () => {
+  const { t } = useTranslation();
   const { _id } = useSelector((state: RootState) => state.auth);
   const [roseHistory, setRoseHistory] = useState<RoseType[]>([]);
   useEffect(() => {
@@ -27,7 +29,7 @@ const InviteDashboard = () => {
   }, [_id]);
   const columns: TableColumnsType<RoseType> = [
     {
-      title: () => <p className="text-base font-semibold font-primary">STT</p>,
+      title: () => <p className="font-semibold font-primary text-sm"></p>,
       dataIndex: "index",
       key: "index",
       render: (text: number) => (
@@ -35,7 +37,11 @@ const InviteDashboard = () => {
       ),
     },
     {
-      title: <p className="font-semibold font-primary">Tên gói</p>,
+      title: (
+        <p className="font-semibold font-primary text-sm">
+          {t("page.dashboard.invite.field.name")}
+        </p>
+      ),
       dataIndex: "namePlan",
       key: "namePlan",
       render: (_: string, record: RoseType) => (
@@ -43,7 +49,7 @@ const InviteDashboard = () => {
       ),
     },
     {
-      title: <p className="font-semibold font-primary">% hoa hồng</p>,
+      title: <p className="font-semibold font-primary text-sm">{t("page.dashboard.invite.field.rose")}</p>,
       dataIndex: "percent",
       key: "percent",
       render: (_: string, record: RoseType) => (
@@ -51,7 +57,7 @@ const InviteDashboard = () => {
       ),
     },
     {
-      title: <p className="font-semibold font-primary">Tiền hoa hồng</p>,
+      title: <p className="font-semibold font-primary text-sm">{t("page.dashboard.invite.field.rosePrice")}</p>,
       dataIndex: "moneyPercent",
       key: "moneyPercent",
       render: (_: string, record: RoseType) => (
@@ -59,7 +65,7 @@ const InviteDashboard = () => {
       ),
     },
     {
-      title: <p className="font-semibold font-primary">Người mua</p>,
+      title: <p className="font-semibold font-primary text-sm">{t("page.dashboard.invite.field.introducedId")}</p>,
       dataIndex: "name",
       key: "name",
       render: (_: string, record: RoseType) => (
@@ -67,7 +73,7 @@ const InviteDashboard = () => {
       ),
     },
     {
-      title: <p className="font-semibold font-primary">SDT</p>,
+      title: <p className="font-semibold font-primary text-sm">{t("page.dashboard.invite.field.sdt")}</p>,
       dataIndex: "phone",
       key: "phone",
       render: (_: string, record: RoseType) => (
@@ -75,7 +81,7 @@ const InviteDashboard = () => {
       ),
     },
     {
-      title: <p className="font-semibold font-primary">Ngày nhận</p>,
+      title: <p className="font-semibold font-primary text-sm">{t("page.dashboard.invite.field.receivedDate")}</p>,
       dataIndex: "moneyPercent",
       key: "moneyPercent",
       render: (_: string, record: RoseType) => (
@@ -89,13 +95,13 @@ const InviteDashboard = () => {
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <Heading>Bạn bè được giới thiệu</Heading>
+          <Heading>{t("page.dashboard.invite.heading")}</Heading>
           {roseHistory.length > 5 ? (
             <Link
               to={"/user/invite"}
               className="font-medium underline text-primary decoration-primary"
             >
-              Xem tất cả
+            {t("page.dashboard.seeAll")}
             </Link>
           ) : null}
         </div>

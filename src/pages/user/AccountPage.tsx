@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Tooltip } from "antd";
 import { copyToClipboard } from "../../utils/copyToClipboard";
 import { countries } from "../../constants";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AuthState, setAuth } from "../../store/auth/authSlice";
 import { api } from "../../api";
 import { toast } from "react-toastify";
@@ -23,24 +23,31 @@ import IconQuesionMarkCircle from "../../icons/IconQuesionMarkCircle";
 import { DropdownWithComponents } from "../../components/dropdown";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-const schema = yup
-  .object({
-    oldPassword: yup
-      .string()
-      .required("This field is required")
-      .min(8, "Minimum of 8 characters"),
-    newPassword: yup
-      .string()
-      .required("This field is required")
-      .min(8, "Minimum of 8 characters"),
-    reNewPassword: yup
-      .string()
-      .required("This field is required")
-      .min(8, "Minimum of 8 characters"),
-  })
-  .required();
 const AccountPage = () => {
+  const { t, i18n } = useTranslation();
+  const schema = useMemo(
+    () =>
+      yup
+        .object({
+          oldPassword: yup
+            .string()
+            .required(t("form.old_password.error.required"))
+            .min(8, t("form.old_password.error.min")),
+          newPassword: yup
+            .string()
+            .required(t("form.new_password.error.required"))
+            .min(8, t("form.old_password.error.min")),
+          reNewPassword: yup
+            .string()
+            .required(t("form.re_new_password.error.required"))
+            .min(8, t("form.old_password.error.min")),
+        })
+        .required(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.language]
+  );
   const navigation = useNavigate();
   const dispatch = useDispatch();
   const commision = useSelector((state: RootState) => state.commision);
@@ -79,10 +86,10 @@ const AccountPage = () => {
         });
         dispatch(setAuth({}));
         navigation("/sign-in");
-        toast.success("Đổi mật khẩu thành công vui lòng đăng nhập lại");
+        toast.success(t("page.account.change_pass.success"));
       } else {
         setError("reNewPassword", {
-          message: "Xác nhận mật khẩu mới không khớp",
+          message: t("form.old_password.error.match"),
         });
       }
     } catch (error) {
@@ -95,19 +102,17 @@ const AccountPage = () => {
       }
     }
   };
-  const tooltip = `User/CTV: 
-  Nhận được ${commision}% hoa hồng cho mỗi đơn hàng của người được giới thiệu || 
-  Đại lý Cấp 1: 
-  Chiết khấu [${collab.level1}%] cho mỗi đơn hàng mới ||
-  Đại lý Cấp 2: 
-  Chiết khấu [${collab.level2}%] cho mỗi đơn hàng mới ||
-  Đại lý Cấp 3: 
-  Chiết khấu [${collab.level3}%] cho mỗi đơn hàng mới || Để được nâng cấp lên làm đại lý vui lòng lien hệ trực tiếp admin
-  `;
+
+  const tooltip = t("page.account.info.tooltip", {
+    commision: commision,
+    level1: collab.level1,
+    level2: collab.level2,
+    level3: collab.level3,
+  });
   return (
     <div className="gap-16 grid grid-cols-5 md:grid-cols-10">
       <div className="space-y-4 col-span-5">
-        <Heading>Thông Tin Tài Khoản</Heading>
+        <Heading>{t("page.account.info.heading")}</Heading>
         <div className="space-y-4">
           {cash >= 50000 && (
             <div className="flex items-center gap-2">
@@ -115,7 +120,9 @@ const AccountPage = () => {
                 title={`Giới thiệu mã CTV này cho bạn bè bạn sẽ nhận được [${commision}%] hoa hồng cho mỗi giao dịch.`}
               >
                 <p className="">
-                  <span className="font-medium">Mã CTV:</span>{" "}
+                  <span className="font-medium">
+                    {t("page.account.info.field.code")}
+                  </span>{" "}
                   <span className="text-[#3d6dae] font-semibold">
                     {introduceCode || ""}
                   </span>
@@ -148,19 +155,25 @@ const AccountPage = () => {
           )}
 
           <p className="">
-            <span className="font-medium">Email:</span>{" "}
+            <span className="font-medium">
+              {t("page.account.info.field.email")}
+            </span>{" "}
             <span className="text-[#3d6dae] font-semibold">{email}</span>
           </p>
           <p className="">
-            <span className="font-medium">Tên đăng nhập:</span>{" "}
+            <span className="font-medium">
+              {t("page.account.info.field.username")}
+            </span>{" "}
             <span className="text-[#3d6dae] font-semibold">{username}</span>
           </p>
           <div className="">
             <div className="flex items-center gap-2">
               <p className="">
-                <span className="font-medium">Loại người dùng:</span>{" "}
+                <span className="font-medium">
+                  {t("page.account.info.field.level")}
+                </span>{" "}
                 <span className="text-[#3d6dae] font-semibold">
-                  {level === 0 ? "Công tác  viên" : `Đại lý cấp ${level}`}
+                  {level === 0 ?    t("page.account.info.level") : t("page.account.info.leveln", {level: level}) }
                 </span>
               </p>
               <Tooltip title={tooltip}>
@@ -170,24 +183,24 @@ const AccountPage = () => {
               </Tooltip>
             </div>
             <p className="text-secondary20">
-              Để được nâng cấp lên làm đại lý vui lòng liên hệ trực tiếp admin
+              {t("page.account.info.field.note")}
             </p>
           </div>
         </div>
         <ChangeProfile />
       </div>
       <div className="space-y-4 col-span-5">
-        <Heading>Đổi Mật Khẩu</Heading>
+        <Heading>{t("page.account.change_pass.heading")}</Heading>
         <form
           className="space-y-[15px] md:space-y-5"
           onSubmit={handleSubmit(onSubmit)}
         >
           <FormGroup>
-            <Label htmlFor="oldPassword">Mật khẩu*</Label>
+            <Label htmlFor="oldPassword">{t("form.old_password.label")}</Label>
             <Input
               type={toogleOldPassword ? "text" : "password"}
               name="oldPassword"
-              placeholder={"Vui lòng nhập mật khẩu cũ"}
+              placeholder={t("form.old_password.placeholder")}
               control={control}
             >
               <IconEyeToogle
@@ -198,11 +211,11 @@ const AccountPage = () => {
             </Input>
           </FormGroup>
           <FormGroup>
-            <Label htmlFor="newPassword">Mật khẩu mới*</Label>
+            <Label htmlFor="newPassword">{t("form.new_password.label")}</Label>
             <Input
               type={toogleNewPassword ? "text" : "password"}
               name="newPassword"
-              placeholder={"Vui lòng nhập mật khẩu mới"}
+              placeholder={t("form.new_password.placeholder")}
               control={control}
             >
               <IconEyeToogle
@@ -213,11 +226,13 @@ const AccountPage = () => {
             </Input>
           </FormGroup>
           <FormGroup>
-            <Label htmlFor="reNewPassword">Mật khẩu mới*</Label>
+            <Label htmlFor="reNewPassword">
+              {t("form.re_new_password.label")}
+            </Label>
             <Input
               type={toogleReNewPassword ? "text" : "password"}
               name="reNewPassword"
-              placeholder={"Vui lòng nhập mật lại khẩu mới"}
+              placeholder={t("form.re_new_password.placeholder")}
               control={control}
             >
               <IconEyeToogle
@@ -228,7 +243,7 @@ const AccountPage = () => {
             </Input>
           </FormGroup>
           <Button type="submit" className="w-full text-white bg-primary">
-            Lưu
+            {t("page.account.applyBtn")}
           </Button>
         </form>
       </div>
@@ -236,16 +251,19 @@ const AccountPage = () => {
   );
 };
 
-const schemaProfile = yup
-  .object({
-    // ctv: yup.string(),
-    phone: yup.string().required("This field is required"),
-    country: yup.string().required("This field is required"),
-    // username: yup.string().required("This field is required"),
-  })
-  .required();
-
 const ChangeProfile = () => {
+  const { t, i18n } = useTranslation();
+  const schemaProfile = useMemo(
+    () =>
+      yup
+        .object({
+          phone: yup.string().required(t("form.phone.error.required")),
+          country: yup.string().required(t("form.country.error.required")),
+        })
+        .required(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.language]
+  );
   const { _id, email, username } = useSelector(
     (state: RootState) => state.auth
   );
@@ -284,7 +302,7 @@ const ChangeProfile = () => {
       await api.patch(`/users/${_id}`, { ...data, email, username });
       const resultUser = await api.get<AuthState>(`/users/${_id}`);
       dispatch(setAuth(resultUser.data));
-      toast.success("Chỉnh sửa thành công");
+      toast.success(t("page.account.info.success"));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log("error message: ", error);
@@ -303,11 +321,11 @@ const ChangeProfile = () => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <FormGroup>
-          <Label htmlFor="email">Số điện thoại*</Label>
+          <Label htmlFor="email">{t("form.phone.label")}</Label>
           <Input name="phone" placeholder={""} control={control} />
         </FormGroup>
         <FormGroup>
-          <Label>Select country*</Label>
+          <Label>{t("form.country.label")}</Label>
           <DropdownWithComponents>
             <DropdownWithComponents.Select
               placeholder={
@@ -316,7 +334,9 @@ const ChangeProfile = () => {
                     {countries.find((i) => i.key === country)?.title}
                   </span>
                 ) : (
-                  <span className="text-text4">Select one</span>
+                  <span className="text-text4">
+                    {t("form.country.placeholder")}
+                  </span>
                 )
               }
             ></DropdownWithComponents.Select>
@@ -334,7 +354,7 @@ const ChangeProfile = () => {
           </DropdownWithComponents>
         </FormGroup>
         <Button type="submit" className="w-full text-white bg-primary">
-          Lưu
+          {t("page.account.applyBtn")}
         </Button>
       </form>
     </RequireAuthPage>

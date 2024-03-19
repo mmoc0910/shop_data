@@ -1,5 +1,6 @@
 import wechat from "../../assets/contact/wechat1.png";
 import alipay from "../../assets/contact/alipay.png";
+import picture2 from "../../assets/Picture2.png";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -11,7 +12,6 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { Input } from "../../components/input";
 import Button from "../../components/button/Button";
-import { VND } from "../../utils/formatPrice";
 import { CountdownProps, Statistic, Tooltip } from "antd";
 import { copyToClipboard } from "../../utils/copyToClipboard";
 import {
@@ -22,6 +22,8 @@ import {
   TEMPLATE,
 } from "../../constants";
 import { useEffect, useState } from "react";
+import { VND } from "../../utils/formatPrice";
+import { useTranslation } from "react-i18next";
 
 const { Countdown } = Statistic;
 const schema = yup
@@ -31,6 +33,7 @@ const schema = yup
   .required();
 
 const RechargePage = () => {
+  const { t } = useTranslation();
   const { _id } = useSelector((state: RootState) => state.auth);
   const { handleSubmit, control, setValue } = useForm({
     resolver: yupResolver(schema),
@@ -43,7 +46,6 @@ const RechargePage = () => {
           title: `<p class="leading-tight">Bạn có muốn nạp <span class="text-secondary">${VND.format(
             data.money
           )}VND</span></p>`,
-          // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
           icon: "success",
           showCancelButton: true,
           confirmButtonColor: "#1DC071",
@@ -55,7 +57,9 @@ const RechargePage = () => {
             await api.post("/cashs", { ...data, userId: _id });
             setValue("money", 0);
             Swal.fire(
-              "<p class='leading-tight'>Bạn vừa yêu cầu nạp tiền thành công. Vui lòng gửi ảnh hóa đơn cho admin qua wechat/zalo để được phê duyệt.</p>"
+              `<p class='leading-tight'>${t(
+                "page.cash.payment.manual.success"
+              )}</p>`
             );
           }
         });
@@ -77,13 +81,12 @@ const RechargePage = () => {
       <AutoBanking />
       <div className="px-5 py-10 rounded-xl shadow-2xl col-span-1 md:col-span-3 xl:col-span-2">
         <p className="font-semibold text-xl text-center mb-3">
-          Nạp tiền thủ công
+          {t("page.cash.payment.manual.title")}
         </p>
         <p className="text-center text-icon-color mb-7">
-          Vui lòng chuyển khoản đến một trong các hình thức sau, thông báo trực
-          tiếp cho admin và Nhấn nút ”Yêu cầu nạp tiền”.
+          {t("page.cash.payment.manual.desc")}
         </p>
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-3 gap-5">
           <div className="flex flex-col items-center">
             <p>Wechat Pay</p>
             <p>(微信支付)</p>
@@ -100,15 +103,24 @@ const RechargePage = () => {
               className="w-full aspect-square object-cover mt-4"
             />
           </div>
+          <div className="flex flex-col items-center">
+            <p>VN Banking</p>
+            <p className="text-white">vvvv</p>
+            <img
+              src={picture2}
+              className="w-full aspect-square object-cover mt-4"
+            />
+          </div>
         </div>
         <p className="text-center text-secondary mt-5">
-          Các hình thức nạp tiền khác: Zalopay, Momopay, Paypal, USDT xin vui
-          lòng contact trực tiếp admin
+          {t("page.cash.payment.manual.note")}
         </p>
         <form className="mt-5" onSubmit={handleSubmit(onSubmit)}>
           <Input
+            min={0}
+            type="number"
             name="money"
-            placeholder={"Nhập số tiền cần nạp"}
+            placeholder={t("page.cash.payment.manual.form.placeholder")}
             control={control}
             containerclass="flex-1"
           />
@@ -116,7 +128,7 @@ const RechargePage = () => {
             type="submit"
             className="px-5 text-white bg-primary w-full mt-5"
           >
-            Yêu cầu nạp tiền
+            {t("page.cash.payment.manual.form.button")}
           </Button>
         </form>
       </div>
@@ -131,22 +143,23 @@ const RechargePage = () => {
 // };
 
 const AutoBanking = () => {
+  const { t } = useTranslation();
   const { username } = useSelector((state: RootState) => state.auth);
   const [amount, setAmount] = useState<string>("");
   const [addInfo, setAddInfo] = useState<string>("");
   const [showQR, setShowQR] = useState<boolean>(false);
 
   return (
-    <div className="px-5 py-10 rounded-xl shadow-2xl col-span-1 md:col-span-3 lg:col-span-2 hidden">
+    <div className="px-5 py-10 rounded-xl shadow-2xl col-span-1 md:col-span-3 lg:col-span-2">
       <p className="font-semibold text-xl text-center mb-7">
-        Nạp tiền tự động VNbanking
+        {t("page.cash.payment.auto.title")}
       </p>
       {!showQR ? (
         <div className="flex items-center gap-5 mb-5">
           <input
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            placeholder="Nhập số tiền cần nạp"
+            placeholder={t("page.cash.payment.auto.form.placeholder")}
             type="number"
             className="focus:border-primary text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock text-text1  "
           />
@@ -156,13 +169,13 @@ const AutoBanking = () => {
                 setAddInfo(`${username.toLocaleUpperCase()}${Date.now()}`);
                 setShowQR(true);
               } else {
-                toast.warn("Bạn chưa nhập số tiền cần nạp");
+                toast.warn(t("page.cash.payment.auto.form.warn"));
               }
             }}
             type="button"
             className="font-semibold lg:py-3 rounded-[10px] lg:min-h-[52px] flex items-center justify-center select-none text-sm lg:text-base min-h-[40px] py-2 px-5 text-white bg-primary shrink-0"
           >
-            Nạp tiền
+            {t("page.cash.payment.auto.form.button")}
           </button>
         </div>
       ) : null}
@@ -187,6 +200,8 @@ const AutoBankingQR = ({
   addInfo: string;
   onSuccess: () => void;
 }) => {
+  const { t } = useTranslation();
+  const { _id } = useSelector((state: RootState) => state.auth);
   useEffect(() => {
     const fetchDataInterval = setInterval(() => {
       // Gọi hàm fetchData ở đây
@@ -216,9 +231,15 @@ const AutoBankingQR = ({
           (item) => item["Giá trị"] >= amount && item["Mô tả"].includes(addInfo)
         )
       ) {
+        await api.post("/cashs/auto-bank", {
+          userId: _id,
+          money: amount,
+        });
         onSuccess();
         Swal.fire({
-          title: `<p class="leading-tight">Giao dịch thành công.</p>`,
+          title: `<p class="leading-tight">${t(
+            "page.cash.payment.auto.success"
+          )}</p>`,
         });
       }
     } catch (error) {
@@ -228,7 +249,9 @@ const AutoBankingQR = ({
   const onFinish: CountdownProps["onFinish"] = () => {
     console.log("finished!");
     Swal.fire({
-      title: `<p class="leading-tight">Hệ thống chưa kiểm tra ra bạn đã chuyển khoản, nếu bạn đã chuyển khoản nhưng chưa thành công vui lòng liên hệ với Admin để được hỗ trọ.</p>`,
+      title: `<p class="leading-tight">${t(
+        "page.cash.payment.auto.error"
+      )}</p>`,
     });
     onSuccess();
   };
@@ -247,20 +270,21 @@ const AutoBankingQR = ({
           <Countdown value={Date.now() + 10 * 60 * 1000} onFinish={onFinish} />
         </div>
         <p className="text-lg">
-          Số tài khoản:{" "}
+          {t("page.cash.payment.auto.stk")}{" "}
           <span className="font-medium text-primary">{ACCOUNT_NO}</span>
         </p>
         <p className="text-lg">
-          Chủ tài khoản: <span className="font-medium">{ACCOUNT_NAME}</span>
+          {t("page.cash.payment.auto.bank_name")}{" "}
+          <span className="font-medium">{ACCOUNT_NAME}</span>
         </p>
         <p className="text-lg">
-          Số tiền:{" "}
+          {t("page.cash.payment.auto.money")}{" "}
           <span className="font-medium">{VND.format(Number(amount))}VND</span>
         </p>
         <div className="text-lg flex items-center gap-2">
           <p>
             {" "}
-            Nội dung chuyển khoản:{" "}
+            {t("page.cash.payment.auto.content")}{" "}
             <span className="font-medium text-secondary">{addInfo}</span>
           </p>
           <Tooltip title="copy">
@@ -285,9 +309,7 @@ const AutoBankingQR = ({
             </button>
           </Tooltip>
         </div>
-        <p className="text-lg">
-          Lưu ý: Quý khách vui lòng nhập đúng nội dung chuyển khoản.
-        </p>
+        <p className="text-lg">{t("page.cash.payment.auto.note")}</p>
       </div>
     </div>
   );

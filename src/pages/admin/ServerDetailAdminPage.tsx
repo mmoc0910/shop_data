@@ -22,6 +22,7 @@ import Loading from "../../components/common/Loading";
 import EditKeyLimitForm from "../../components/server/EditKeyLimitForm";
 import EditRemarkServer from "../../components/server/EditRemarkServer";
 import EditLocationServerForm from "../../components/server/EditLocationServerForm";
+import { Checkbox } from "../../components/checkbox";
 
 const ServerDetailAdminPage = () => {
   const { serverId } = useParams();
@@ -34,9 +35,10 @@ const ServerDetailAdminPage = () => {
   const [selectServer, setSelectServer] = useState<string | undefined>(
     undefined
   );
+  const [selectKeys, setSelectKeys] = useState<string[]>([]);
   useEffect(() => {
-    handleFetchData();
-  }, []);
+    if (serverDetail && serverDetail.status === 1) handleFetchData();
+  }, [serverDetail]);
   const handleFetchData = async () => {
     try {
       const resultServer = await api.get("/servers?status=1");
@@ -328,19 +330,38 @@ const ServerDetailAdminPage = () => {
             </div>
             {listKey.filter((item) => item.status === 1).length > 0 ? (
               <div className="space-y-7">
-                <Heading>Keys Active</Heading>
+                <div className="flex items-center justify-between h-14">
+                  <Heading>Keys Active</Heading>
+                  {selectKeys.length > 0 && (
+                    <button className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20">
+                      Migrate ({selectKeys.length} keys)
+                    </button>
+                  )}
+                </div>
                 <div className="w-full space-y-5 overflow-x-scroll">
-                  {/* <CreateNewKeyForm
-                handleAddNewKey={() =>
-                  handleAddNewKey(serverDetail.apiUrl, serverDetail.fingerPrint)
-                }
-              /> */}
                   <div className="grid grid-cols-5 w-[1180px] lg:w-full">
                     <div className="flex col-span-2 pb-3">
+                      <div className="px-4 font-semibold">
+                        <Checkbox
+                          checked={
+                            selectKeys.length ===
+                            listKey.filter((item) => item.status === 1).length
+                          }
+                          onClick={(checked) =>
+                            checked
+                              ? setSelectKeys([])
+                              : setSelectKeys(
+                                  listKey
+                                    .filter((item) => item.status === 1)
+                                    .map((item) => item._id)
+                                )
+                          }
+                        />
+                      </div>
                       <div className="px-4 font-semibold">#</div>
                       <div className="flex-1 px-4 font-semibold">OrderID</div>
                       <div className="flex-1 px-4 font-semibold">Email</div>
-                      <div className="px-4 font-semibold">Usage</div>
+                      <div className="flex-1 px-4 font-semibold">Usage</div>
                     </div>
                     <div className="flex col-span-3 pb-3">
                       <div className="px-4 font-semibold">Limit</div>
@@ -357,6 +378,23 @@ const ServerDetailAdminPage = () => {
                             key={uuidv4()}
                           >
                             <div className="flex items-center col-span-2">
+                              <div className="px-4 font-semibold">
+                                <Checkbox
+                                  checked={selectKeys.some(
+                                    (i) => i === item._id
+                                  )}
+                                  onClick={(checked) =>
+                                    checked
+                                      ? setSelectKeys((prev) =>
+                                          prev.filter((i) => i !== item._id)
+                                        )
+                                      : setSelectKeys((prev) => [
+                                          ...prev,
+                                          item._id,
+                                        ])
+                                  }
+                                />
+                              </div>
                               <div className="px-4">{item.keyId}</div>
                               <Link
                                 to={`/admin/key/${item._id}`}
@@ -467,44 +505,6 @@ const ServerDetailAdminPage = () => {
                                     Enable
                                   </button>
                                 )}
-                              </div>
-                            </div>
-                          </div>
-                        ) : null
-                      )}
-                    {listKey.length > 0 &&
-                      listKey.map((item) =>
-                        item.status === 0 ? (
-                          <div
-                            className="grid grid-cols-5 col-span-5 py-5 border border-gray-200 rounded-xl"
-                            key={uuidv4()}
-                          >
-                            <div className="flex items-center col-span-2">
-                              <div className="px-4">{item.keyId}</div>
-                              <Link
-                                to={`/admin/key/${item._id}`}
-                                className="flex-1 px-4 text-primary font-medium hover:underline hover:decoration-primary"
-                              >
-                                {item.name || "no name"}
-                              </Link>
-                              <div className="flex-1 px-4">{item.account}</div>
-                              <div className="px-4">
-                                {item.dataUsage
-                                  ? `${(
-                                      item.dataUsage /
-                                      1000 /
-                                      1000 /
-                                      1000
-                                    ).toFixed(2)} GB`
-                                  : "00.00 GB"}
-                              </div>
-                            </div>
-                            <div className="flex items-center col-span-3">
-                              <div className="px-4">
-                                {item.dataLimit / 1000 / 1000 / 1000}GB
-                              </div>
-                              <div className="px-4">
-                                <Tag color="red">Hết hạn</Tag>
                               </div>
                             </div>
                           </div>
@@ -659,7 +659,7 @@ const ServerDetailAdminPage = () => {
               </p>
             )}
         </div>
-        <div>
+        <div className="space-y-2">
           {selectRow &&
             servers.map((item) =>
               item._id !== serverId ? (

@@ -6,6 +6,7 @@ import AboutBox from "../components/home/AboutBox";
 import PricingBox from "../components/home/PricingBox";
 
 const HomePage = () => {
+
   return (
     <div>
       <Header />
