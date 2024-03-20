@@ -3,11 +3,12 @@ import Container from "../common/Container";
 import { Link } from "react-router-dom";
 import classNames from "../../utils/classNames";
 import { v4 as uuidv4 } from "uuid";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
 import { useTranslation } from "react-i18next";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import IconChevronDown from "../../icons/IconChevronDown";
+import { setLanguage } from "../../store/lang/languageSlice";
 
 const Header = () => {
   const { t, i18n } = useTranslation();
@@ -132,18 +133,13 @@ const languages = [
 ];
 
 const SelectLanguage = () => {
-  const { i18n } = useTranslation();
-  const [chooseLanguage, setChooseLanguage] = useState<{
-    key: string;
-    title: string;
-  }>({ key: "en", title: "English" });
-  useEffect(() => {
-    i18n.changeLanguage(chooseLanguage.key);
-  }, [chooseLanguage.key, i18n]);
+  const dispatch = useDispatch();
+  const language = useSelector((state: RootState) => state.lang);
+
   return (
     <div className="font-medium text-icon-color cursor-pointer relative group">
-      <div className="text-sm flex items-center gap-1">
-        {chooseLanguage.title}
+      <div className="text-xs md:text-sm flex items-center gap-1">
+        {languages.find((item) => item.key === language)?.title}
         <span>
           <IconChevronDown />
         </span>
@@ -152,12 +148,10 @@ const SelectLanguage = () => {
         <div className="p-3 mt-3 rounded-md shadow-xl bg-white space-y-2 flex flex-col text-black">
           {languages.map((item) => (
             <div
-              onClick={() => setChooseLanguage(item)}
+              onClick={() => dispatch(setLanguage(item.key))}
               className={classNames(
-                "text-sm hover:text-primary transition-all duration-200",
-                item.key === chooseLanguage.key
-                  ? "text-primary"
-                  : "text-icon-color"
+                "text-xs md:text-sm hover:text-primary transition-all duration-200",
+                item.key === language ? "text-primary" : "text-icon-color"
               )}
             >
               {item.title}

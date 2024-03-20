@@ -71,8 +71,8 @@ const OrderPage = () => {
               item.extension
                 .toLowerCase()
                 .includes(inputValue.toLowerCase())) &&
-                isSameOrAfter(item.keyId.startDate, startDate) &&
-                isSameOrBefore(item.keyId.endDate, endDate)
+            isSameOrAfter(item.keyId.startDate, startDate) &&
+            isSameOrBefore(item.keyId.endDate, endDate)
         )
       : inputValue
       ? listGist.filter(
@@ -192,13 +192,8 @@ const OrderPage = () => {
         key: "index",
         width: 50,
         fixed: "left",
-        render: (text: string, record: GistType) => (
-          <Link
-            to={`/admin/key/${record.keyId._id}`}
-            className="text-sm font-primary text-primary"
-          >
-            {text + 1}
-          </Link>
+        render: (text: string) => (
+          <p className="text-sm font-primary">{text + 1}</p>
         ),
       },
       {
@@ -210,13 +205,8 @@ const OrderPage = () => {
         dataIndex: "code",
         key: "code",
         width: 150,
-        render: (text: string, record: GistType) => (
-          <Link
-            to={`/admin/key/${record.keyId._id}`}
-            className="text-sm font-primary text-primary"
-          >
-            {text}
-          </Link>
+        render: (text: string) => (
+          <p className="text-sm font-primary text-primary">{text}</p>
         ),
       },
       {

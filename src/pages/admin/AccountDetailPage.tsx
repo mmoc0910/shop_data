@@ -143,7 +143,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
   const handleFetchData = async () => {
     try {
       const result = await api.get<GistType[]>(`/gists?userId=${accountId}`);
-      setListGist(result.data);
+      setListGist(result.data.filter(item => item.status !== 2));
     } catch (error) {
       console.log("error - ", error);
       toast.error(messages.error);
@@ -276,10 +276,10 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
             text: "Hết hạn",
             value: 0,
           },
-          {
-            text: "Migrate",
-            value: 2,
-          },
+          // {
+          //   text: "Migrate",
+          //   value: 2,
+          // },
         ],
         onFilter: (value: boolean | Key, record: GistType) => {
           if (typeof value === "boolean") {

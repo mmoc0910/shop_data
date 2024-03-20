@@ -5,12 +5,13 @@ import authSlice from "./auth/authSlice";
 import satisfySlice from "./satisfy/satisfySlice";
 import commisionSlice from "./commision/commisionSlice";
 import collabSlice from "./collab/collabSlice";
+import languageSlice from "./lang/languageSlice";
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth"],
-  blacklist: ["satisfy", "commision", 'collab'],
+  whitelist: ["auth", "lang"],
+  blacklist: ["satisfy", "commision", "collab"],
 };
 
 const rootReducer = combineReducers({
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   satisfy: satisfySlice,
   commision: commisionSlice,
   collab: collabSlice,
+  lang: languageSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

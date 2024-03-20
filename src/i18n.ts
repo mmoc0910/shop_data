@@ -822,91 +822,123 @@ i18n.use(LanguageDetector).use(initReactI18next),
       ci: {
         translation: {
           authen: {
-            sign_in: "Đăng nhập",
+            sign_in: "登录",
             sign_up: "登记",
-            sign_out: "Đăng xuất",
+            sign_out: "登出",
           },
           header: {
             home: "主页",
             pricing: "价格表",
           },
           login: {
-            welcome_back: "Chào mừng quay trở lại!",
-            dont_have_account: "Bạn chưa có tài khoản?",
-            have_account: "Bạn đã có tài khoản?",
-            forgot_pass: "Quên mật khẩu?",
+            welcome_back: "欢迎你回来!",
+            dont_have_account: "还没有账号名?",
+            have_account: "已有账号名?",
+            forgot_pass: "忘记登录密码？",
           },
           form: {
             account: {
-              label: "Tên đăng nhập hoặc Email*",
-              placeholder: "Nhập tên đăng nhập hoặc email của bạn",
-              error: { required: "Trường này không được bỏ trống" },
+              label: "账号名或电子邮件*",
+              placeholder: "输入您的账号名或电子邮件",
+              error: { required: "不能空填" },
             },
             password: {
-              label: "Mật khẩu*",
-              placeholder: "Nhập mật khẩu của bạn",
-              error: { required: "Mật khẩu không được bỏ trống" },
+              label: "密码*",
+              placeholder: "请输入密码",
+              error: {
+                required: "密码不能空填",
+                min: "密码需要最少输入8个字",
+              },
             },
             re_password: {
-              label: "Xác nhận mật khẩu*",
-              placeholder: "Xác nhận mật khẩu của bạn",
-              error: { required: "Xác nhận mật khẩu không được để trống" },
+              label: "再输入密码*",
+              placeholder: "再输入密码",
+              error: {
+                required: "再输入密码不能空填",
+                min: "密码需要最少输入8个字",
+              },
+            },
+            old_password: {
+              label: "老密码*",
+              placeholder: "请输入老密码",
+              error: {
+                required: "不能空填",
+                min: "密码需要最少输入8个字",
+              },
+            },
+            new_password: {
+              label: "新的密码",
+              placeholder: "请输入新的密码",
+              error: {
+                required: "不能空填",
+                min: "密码需要最少输入8个字",
+              },
+            },
+            re_new_password: {
+              label: "新的密码*",
+              placeholder: "再输入密码",
+              error: {
+                required: "密码不能空填",
+                min: "密码需要最少输入8个字",
+                match: "新密码不同一的",
+              },
             },
             username: {
-              label: "Tên đăng nhập*",
-              placeholder: "NHập tên đăng nhập của bạn",
+              label: "账号名*",
+              placeholder: "请输入您的账号名",
               error: {
-                required: "Tên đăng nhập không được để trống",
-                reg: "Ký tự liền nhau, không dấu",
+                required: "账号名不能空填",
+                reg: "账号名不按照要求",
               },
             },
             email: {
-              label: "Email*",
-              placeholder: "Nhập email của bạn",
+              label: "电子邮件*",
+              placeholder: "请输入您的电子邮件",
               error: {
-                required: "Email không được để trống",
+                required: "电子邮件不能空填",
                 email: "Không đúng định dạng email",
               },
             },
             phone: {
-              label: "Số điện thoại*",
-              placeholder: "Nhập số điện thoại của bạn",
-              error: { required: "Số điện thoại không được để trống" },
+              label: "电话号码*",
+              placeholder: "请输入电话号码",
+              error: { required: "电话号码不能空" },
             },
             introduce_code: {
-              label: "Mã giới thiệu",
-              placeholder: "Nhập mã giới thiệu",
-              error: { required: "This field is required" },
+              label: "介绍代码",
+              placeholder: "请输入介绍代码",
+              error: { required: "介绍代码不对" },
             },
             country: {
-              label: "Quốc gia*",
-              placeholder: "Chọn quốc gia",
-              error: { required: "Quốc gia không được để trống" },
+              label: "你的国家*",
+              placeholder: "选你的国家",
+              error: { required: "还没选国家" },
             },
             purpose: {
-              label: "Mục đích sử dụng*",
-              placeholder: "Chọn mục đích sử dụng",
-              error: { required: "Mục đích sử dụng không được để trống" },
+              label: "你的VPN的目的*",
+              placeholder: "选你的目的",
+              error: { required: "目的还没选" },
             },
           },
           menu_user: {
-            dashboard: "Dashboard",
-            recharge: "Nạp tiền",
-            pack_of_data: "Gói cước",
-            my_order: "Đơn hàng của tôi",
-            transaction_history: "Lịch sử giao dịch",
-            deposit_history: "Lịch sử nạp",
-            collaborators: "Cộng tác viên",
-            user_information: "Thông tin người dùng",
+            dashboard: "首页",
+            recharge: "付款",
+            pack_of_data: "包裹",
+            my_order: "我的单",
+            transaction_history: "买的历史",
+            deposit_history: "付款历史",
+            collaborators: "合作者",
+            user_information: "用户信息",
           },
           page: {
+            searchPlaceholder: "搜索",
             home: {
               home: {
-                heading: "VPNCN2 您可能知道的最便宜、最快的 VPN",
+                heading: "您可能知道的最便宜、最快的 VPN",
                 content: {
-                  phr1: "能够访问被封锁或限制的软件如：脸书、谷歌、油管、纸飞机、瓦次普、抖音国际版、等等",
+                  phr1: "能够访问被封锁或限制的软件如：脸书、谷歌、油管、纸飞机、瓦次普、抖音国际版、等等 ...",
                   phr2: "提供更快速、更安全的网络连接",
-                  phr3: "软件质保期无限, 24/7客服支持",
+                  phr3: "软件质保期无限，24/7客服支持",
                   phr4: "支持多种支付方式：支付宝、微信、贝宝、泰达等等",
                   phr5: "安装及连接操作简单",
                   phr6: "主要针对中国、伊朗市场的用户",
@@ -915,46 +947,410 @@ i18n.use(LanguageDetector).use(initReactI18next),
                 contact: "扫我或者",
               },
               pricing: {
-                title: "绝佳体验，惊喜价格",
-                desc: "不要为了等待而浪费你宝贵的时间。立即打开虚拟专用网络，随时随地访问各地网络资源。",
+                title: " 绝佳体验，惊喜价格",
+                desc: "不要为了等待而浪费你宝贵的时间。立即打开虚拟专用网络，随时随地访问各地网络资源.",
                 desc2: "马上登记为了获得三天免费试用 《FREE TRIAL 03 DAYS》",
               },
               register: {
-                title: "Register",
-                desc: "Please fill the form right here to register or contact us via bellow information:",
-                phone: "Phone Number",
-                email: "E-mail Address",
-                web: "Official Website",
-                fanpage: "Fanpage",
+                title: "联系方式",
+                desc: "请给我们联系通过下一些方式：",
+                phone: "电话号码",
+                email: "电子邮件",
+                web: "网址",
+                fanpage: "粉丝专页",
               },
               about: {
-                title: "你对VPN有何了解？",
-                heading1: "VPN是什么",
+                title: "你对VPN有何了解?",
+                heading1: "VPN是什么？",
                 heading2: "VPNCN2 可以帮助您什么？",
                 heading3: "选择 VPN 提供商时应注意什么？",
                 content1_1:
                   "VPN 是一种服务，可以帮助您缺乏或提高您无法通过普通 Wifi/互联网访问的全球网站/应用程序（例如：Google/Youtube/Twiter/Instagram/Github/Telegram）的速度连接",
-                content2_1: "",
+                content2_1:
+                  "由于中国互联网不允许您访问中国大陆以外的网站，您无法访问 Google、Facebook、Youtube...我们的 VPNCN2 将通过优质连接帮助您解决此问题。",
                 content2_2:
-                  "由于中国互联网不允许您访问中国大陆以外的网站，您无法访问 Google、Facebook、Youtube...我们的 VPNCN2 将通过优质连接帮助您解决此问题。另一方面，其他用户想要使用VPN进行流媒体、游戏、假IP……VPNCN2也可以帮助您，没有任何限制。 我们还可以为专门用户构建定制包。",
+                  "另一方面，其他用户想要使用VPN进行流媒体、游戏、假IP……VPNCN2也可以帮助您，没有任何限制。 我们还可以为专门用户构建定制包。",
                 content3_1: "您的 VPN 连接取决于以下一些原因：",
                 content3_1_1:
-                  "您的网速它们是您的数据包（4G、5G）或 Wifi 互联网",
+                  "您的网速。它们是您的数据包（4G、5G）或 Wifi 互联网",
                 content3_1_2:
                   "您的设备（手机、PC、旧设备或新设备），某些 VPN 服务与旧设备不兼容",
                 content_3_1_3:
-                  "VPN 套餐或您的 VPN 服务提供商VPN服务提供商总是有很多客户级别设计的套餐，有人可能会给你很高的价格，但速度并不能让你满意。VPNCN2 可以为您提供超高速访问，这被视为其他提供商的高级 VIP 套餐。 我们还提供 24/7 客户服务支持，随时为您提供支持。",
+                  "VPN 套餐或您的 VPN 服务提供商.VPN服务提供商总是有很多客户级别设计的套餐，有人可能会给你很高的价格，但速度并不能让你满意。VPNCN2 可以为您提供超高速访问，这被视为其他提供商的高级 VIP 套餐。 我们还提供 24/7 客户服务支持，随时为您提供支持。",
               },
               ctv: {
                 heading: "合作者招聘及福利政策",
-                content1: "·通过合作者介绍码每订单可收{{amount}}%提成",
-                content2: "·代理折扣{{amount}}%",
-                content3: "·不限定代理销售的价位",
+                content1: "通过合作者介绍码每订单可收 {{amount}}% 提成",
+                content2: "代理折扣 {{amount}}%",
+                content3: "不限定代理销售的价位",
+              },
+            },
+            dashboard: {
+              seeAll: "一切",
+              buyNow: "买它",
+              ctvcode: {
+                ctv: "介绍代码:",
+                desc: "与您的朋友分享您的介绍代码，并从他们的订单中获得 10% 的佣金 [{{amount}}%] 的佣金.",
+              },
+              satify: {
+                cash: "付款总额",
+                currentMoney: "其余的",
+                transaction: "已买",
+                rose: "[{{amount}}%] 得到",
+                numberIntoduce: "已请",
+                currentMoneyNode: "其余的 = 付款总额 - 已买 + 得到",
+                roseNode: "得到 = 总共 [{{amount}}%] 收到从介绍代码",
+                depositNow: "付款",
+              },
+              userManual: {
+                userManual: "用户手册",
+                heading: "请仔细阅读我们的服务政策：",
+                title1:
+                  "每个密钥的设备数量不受限制，但跟踪总带宽有限。 此限制可确保您不会与其他人共享密钥。",
+                title2:
+                  "请从以下链接下载适用于所有平台设备的Outline Client APP",
+                title3:
+                  "您可以同时连接多个设备，但如果超出带宽限制，请从“我的单”菜单购买更多数据。",
+                title4: "您的数据限制将被跟踪 30 天。",
+                title5: "请加入“VPNCN2 support team”以获取我们团队的即时更新。",
+                note: "直接下载线 （如果你在用中国网络）：",
+                contact1: "如有任何疑问，请联系管理员：:",
+                contact2: "VPNCN2 支持的微信群:",
+              },
+              plan: {
+                heading: "包裹",
+                field: {
+                  name: "包裹名",
+                  type: "时期",
+                  bandwidth: "流量",
+                  price: "价格",
+                },
+              },
+              invite: {
+                heading: "已介绍的朋友",
+                field: {
+                  name: "包裹名",
+                  rose: "% 佣金",
+                  rosePrice: "佣金数",
+                  introducedId: "买家",
+                  sdt: "电话",
+                  receivedDate: "时间",
+                },
+              },
+              depositHistory: {
+                heading: "付款的历史",
+                content: "您刚付了 {{price}} 在 ",
+                content_refuse: "你被拒绝 {{prive}} 为了 {{reason}}原因 在",
+              },
+              roseHistory: {
+                heading: "佣金的历史",
+                content:
+                  "你收到 {{price}}({{discount}}%) 的佣金 从 {{user}} 买了 {{package}} 在",
+              },
+            },
+            package: {
+              buyNow: "买它",
+              swal: {
+                title: "您要买 ",
+                confirmButton: "确定",
+                cancelButton: "取消",
+                success: "买了成功",
+                warn: "你的钱不够，清付款",
+              },
+            },
+            myOrder: {
+              instruct1: "请获取下面的密钥并按照说明将其粘贴到 Outline 软件中",
+              instruct2: "单击按钮复制密钥",
+              field: {
+                code: "单号",
+                package: "包裹名",
+                day: "时间",
+                useage: "已用",
+                dataLimit: "限制",
+                dateExpand: "加时间",
+                key: "Key 钥匙",
+                status: "状态",
+                extension: "改名",
+                buyData: "加流量",
+                extend: "延长",
+                statusLabel: {
+                  active: "有效",
+                  inactive: "已过期",
+                },
+              },
+              swal: {
+                extend: {
+                  title: "您要延长 ？",
+                  success: "延长成功",
+                  error: "你的钱不够，清付款",
+                  cancelButton: "取消",
+                  confirmButton: "好, 决定",
+                },
+                buyData: {
+                  title: "你要加流量？",
+                  success: "加流量成功",
+                  error: "你的钱不够，清付款",
+                  cancelButton: "取消",
+                  confirmButton: "好, 买它",
+                  buyNow: "买它",
+                  title2: "增加流量的列表",
+                  month: "1 个月",
+                  months: "剩下 {{month}} 个月",
+                  cancelModal: "取消",
+                },
+              },
+            },
+            transaction: {
+              heading: "买的历史",
+              total: "买总",
+              field: {
+                code: "单号",
+                package: "包裹名",
+                pricePackage: "价格",
+                discount: "打折",
+                disCountPrice: "买的",
+                createdAt: "时间",
+              },
+            },
+            account: {
+              applyBtn: "确定",
+              info: {
+                level: "合作者",
+                leveln: "代理 {{level}}",
+                heading: "用户信息",
+                field: {
+                  code: "介绍代码:",
+                  email: "电子邮件:",
+                  username: "账号名:",
+                  level: "用户等级:",
+                  note: "如果您想成为我们的代理机构，请联系管理员",
+                },
+                success: "改变成功",
+                tooltip:
+                  "合作者: 每受邀者订单获得 {{commision}}%  || 代理1：每笔订单折扣 [{{level1}}%] || 代理2：每笔订单折扣 [{{level2}}%] || 代理3：每笔订单折扣 [{{level3}}%] ",
+              },
+              change_pass: {
+                heading: "换密码",
+                success: "换密码成功， 请再登入",
+              },
+            },
+            collaborator: {
+              satify: {
+                level: "等级",
+                invite: "已请",
+                rose_percent: "% 佣金",
+                rose: "佣金数",
+              },
+              note: {
+                content1: "合作者: 每受邀者订单获得[{{amount}}%] .",
+                content2:
+                  "代理1：每笔订单折扣 [{{amount}}%]. 要求：要买了最少02每月包裹 [{{money}}]",
+                content3:
+                  "代理2：每笔订单折扣 [{{amount}}%]. 要求：上个月购买金额至少达到  [{{money}}], 折扣有效期为下个月",
+                content4:
+                  "代理3：每笔订单折扣 [{{amount}}%] .要求：上个月购买金额至少达到  [{{money}}], 折扣有效期为下个月",
+                note: "如果您想成为我们的代理机构，请联系管理员.",
+              },
+              heading: "佣金的历史",
+              field: {
+                package: "包裹名",
+                rose_percent: "% 佣金",
+                rose: "佣金数",
+                user: "买家",
+                email: "电子邮件",
+                sdt: "电话",
+                created_at: "时间",
+              },
+            },
+            cash: {
+              payment: {
+                auto: {
+                  title: " 自动付款 VIETNAM BANKING",
+                  form: {
+                    placeholder: "填入付款的数量",
+                    button: "付款",
+                    warn: "付款的数量还没填",
+                  },
+                  stk: "贷款号码:",
+                  bank_name: "贷款的主人:",
+                  money: "数量:",
+                  content: "付款的内容",
+                  note: "注意: 请准确填付款的内容.",
+                  error:
+                    "系统尚未检查您是否已转账，如果您已转账但未成功，请联系管理员寻求支持.",
+                  success: "交易成功.请检查你的贷款",
+                },
+                manual: {
+                  title: "手动付款",
+                  desc: "通过以下方法之一向我们付款:",
+                  note: "其他付款方式，如 Zalopay、Momo、Paypal、USDT…请考虑直接联系管理员。",
+                  form: {
+                    placeholder: "输入您的付款金额",
+                    button: "提交",
+                  },
+                  success:
+                    "Bạn vừa yêu cầu nạp tiền thành công. Vui lòng gửi ảnh hóa đơn cho admin qua wechat/zalo để được phê duyệt.",
+                },
+              },
+              history: {
+                heading: "付款历史:",
+                field: {
+                  code: "交易吗",
+                  username: "用户",
+                  email: "电子邮件",
+                  phone: "电话",
+                  money: "付款数",
+                  created_at: "付时",
+                  updated_at: "批准时",
+                  status: "状态",
+                  description: "原因",
+                },
+                status: {
+                  pending: "等批准",
+                  approve: "已付",
+                  reject: "已取消",
+                },
               },
             },
           },
         },
       },
+      // ci: {
+      //   translation: {
+      //     authen: {
+      //       sign_in: "Đăng nhập",
+      //       sign_up: "登记",
+      //       sign_out: "Đăng xuất",
+      //     },
+      //     header: {
+      //       home: "主页",
+      //       pricing: "价格表",
+      //     },
+      //     login: {
+      //       welcome_back: "Chào mừng quay trở lại!",
+      //       dont_have_account: "Bạn chưa có tài khoản?",
+      //       have_account: "Bạn đã có tài khoản?",
+      //       forgot_pass: "Quên mật khẩu?",
+      //     },
+      //     form: {
+      //       account: {
+      //         label: "Tên đăng nhập hoặc Email*",
+      //         placeholder: "Nhập tên đăng nhập hoặc email của bạn",
+      //         error: { required: "Trường này không được bỏ trống" },
+      //       },
+      //       password: {
+      //         label: "Mật khẩu*",
+      //         placeholder: "Nhập mật khẩu của bạn",
+      //         error: { required: "Mật khẩu không được bỏ trống" },
+      //       },
+      //       re_password: {
+      //         label: "Xác nhận mật khẩu*",
+      //         placeholder: "Xác nhận mật khẩu của bạn",
+      //         error: { required: "Xác nhận mật khẩu không được để trống" },
+      //       },
+      //       username: {
+      //         label: "Tên đăng nhập*",
+      //         placeholder: "NHập tên đăng nhập của bạn",
+      //         error: {
+      //           required: "Tên đăng nhập không được để trống",
+      //           reg: "Ký tự liền nhau, không dấu",
+      //         },
+      //       },
+      //       email: {
+      //         label: "Email*",
+      //         placeholder: "Nhập email của bạn",
+      //         error: {
+      //           required: "Email không được để trống",
+      //           email: "Không đúng định dạng email",
+      //         },
+      //       },
+      //       phone: {
+      //         label: "Số điện thoại*",
+      //         placeholder: "Nhập số điện thoại của bạn",
+      //         error: { required: "Số điện thoại không được để trống" },
+      //       },
+      //       introduce_code: {
+      //         label: "Mã giới thiệu",
+      //         placeholder: "Nhập mã giới thiệu",
+      //         error: { required: "This field is required" },
+      //       },
+      //       country: {
+      //         label: "Quốc gia*",
+      //         placeholder: "Chọn quốc gia",
+      //         error: { required: "Quốc gia không được để trống" },
+      //       },
+      //       purpose: {
+      //         label: "Mục đích sử dụng*",
+      //         placeholder: "Chọn mục đích sử dụng",
+      //         error: { required: "Mục đích sử dụng không được để trống" },
+      //       },
+      //     },
+      //     menu_user: {
+      //       dashboard: "Dashboard",
+      //       recharge: "Nạp tiền",
+      //       pack_of_data: "Gói cước",
+      //       my_order: "Đơn hàng của tôi",
+      //       transaction_history: "Lịch sử giao dịch",
+      //       deposit_history: "Lịch sử nạp",
+      //       collaborators: "Cộng tác viên",
+      //       user_information: "Thông tin người dùng",
+      //     },
+      //     page: {
+      //       home: {
+      //         home: {
+      //           heading: "VPNCN2 您可能知道的最便宜、最快的 VPN",
+      //           content: {
+      //             phr1: "能够访问被封锁或限制的软件如：脸书、谷歌、油管、纸飞机、瓦次普、抖音国际版、等等",
+      //             phr2: "提供更快速、更安全的网络连接",
+      //             phr3: "软件质保期无限, 24/7客服支持",
+      //             phr4: "支持多种支付方式：支付宝、微信、贝宝、泰达等等",
+      //             phr5: "安装及连接操作简单",
+      //             phr6: "主要针对中国、伊朗市场的用户",
+      //           },
+      //           download: "下载APP",
+      //           contact: "扫我或者",
+      //         },
+      //         pricing: {
+      //           title: "绝佳体验，惊喜价格",
+      //           desc: "不要为了等待而浪费你宝贵的时间。立即打开虚拟专用网络，随时随地访问各地网络资源。",
+      //           desc2: "马上登记为了获得三天免费试用 《FREE TRIAL 03 DAYS》",
+      //         },
+      //         register: {
+      //           title: "Register",
+      //           desc: "Please fill the form right here to register or contact us via bellow information:",
+      //           phone: "Phone Number",
+      //           email: "E-mail Address",
+      //           web: "Official Website",
+      //           fanpage: "Fanpage",
+      //         },
+      //         about: {
+      //           title: "你对VPN有何了解？",
+      //           heading1: "VPN是什么",
+      //           heading2: "VPNCN2 可以帮助您什么？",
+      //           heading3: "选择 VPN 提供商时应注意什么？",
+      //           content1_1:
+      //             "VPN 是一种服务，可以帮助您缺乏或提高您无法通过普通 Wifi/互联网访问的全球网站/应用程序（例如：Google/Youtube/Twiter/Instagram/Github/Telegram）的速度连接",
+      //           content2_1: "",
+      //           content2_2:
+      //             "由于中国互联网不允许您访问中国大陆以外的网站，您无法访问 Google、Facebook、Youtube...我们的 VPNCN2 将通过优质连接帮助您解决此问题。另一方面，其他用户想要使用VPN进行流媒体、游戏、假IP……VPNCN2也可以帮助您，没有任何限制。 我们还可以为专门用户构建定制包。",
+      //           content3_1: "您的 VPN 连接取决于以下一些原因：",
+      //           content3_1_1:
+      //             "您的网速它们是您的数据包（4G、5G）或 Wifi 互联网",
+      //           content3_1_2:
+      //             "您的设备（手机、PC、旧设备或新设备），某些 VPN 服务与旧设备不兼容",
+      //           content_3_1_3:
+      //             "VPN 套餐或您的 VPN 服务提供商VPN服务提供商总是有很多客户级别设计的套餐，有人可能会给你很高的价格，但速度并不能让你满意。VPNCN2 可以为您提供超高速访问，这被视为其他提供商的高级 VIP 套餐。 我们还提供 24/7 客户服务支持，随时为您提供支持。",
+      //         },
+      //         ctv: {
+      //           heading: "合作者招聘及福利政策",
+      //           content1: "·通过合作者介绍码每订单可收{{amount}}%提成",
+      //           content2: "·代理折扣{{amount}}%",
+      //           content3: "·不限定代理销售的价位",
+      //         },
+      //       },
+      //     },
+      //   },
+      // },
     },
   });
 
