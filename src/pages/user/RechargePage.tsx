@@ -1,6 +1,5 @@
 import wechat from "../../assets/contact/wechat1.png";
 import alipay from "../../assets/contact/alipay.png";
-import picture2 from "../../assets/Picture2.png";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -22,7 +21,7 @@ import {
   TEMPLATE,
 } from "../../constants";
 import { useEffect, useState } from "react";
-import { VND } from "../../utils/formatPrice";
+import { EXCHANGE_RATE, VND } from "../../utils/formatPrice";
 import { useTranslation } from "react-i18next";
 
 const { Countdown } = Statistic;
@@ -33,7 +32,7 @@ const schema = yup
   .required();
 
 const RechargePage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { _id } = useSelector((state: RootState) => state.auth);
   const { handleSubmit, control, setValue } = useForm({
     resolver: yupResolver(schema),
@@ -43,18 +42,26 @@ const RechargePage = () => {
     if (data.money > 0) {
       try {
         Swal.fire({
-          title: `<p class="leading-tight">Bạn có muốn nạp <span class="text-secondary">${VND.format(
-            data.money
-          )}VND</span></p>`,
+          title: `<p class="leading-tight">${t(
+            "page.cash.payment.manual.ques"
+          )}<span class="text-secondary">${VND.format(data.money)}${
+            i18n.language === "vi" ? "VND" : "元"
+          }</span></p>`,
           icon: "success",
           showCancelButton: true,
           confirmButtonColor: "#1DC071",
           cancelButtonColor: "#d33",
-          cancelButtonText: "Thoát",
-          confirmButtonText: "Đồng ý",
+          cancelButtonText: t(
+            "page.cash.payment.manual.cancelButton"
+          ),
+          confirmButtonText: t(
+            "page.cash.payment.manual.confirmButton"
+          ),
         }).then(async (result) => {
           if (result.isConfirmed) {
-            await api.post("/cashs", { ...data, userId: _id });
+            const money =
+              i18n.language === "vi" ? data.money : data.money * EXCHANGE_RATE;
+            await api.post("/cashs", { money, userId: _id });
             setValue("money", 0);
             Swal.fire(
               `<p class='leading-tight'>${t(
@@ -83,10 +90,11 @@ const RechargePage = () => {
         <p className="font-semibold text-xl text-center mb-3">
           {t("page.cash.payment.manual.title")}
         </p>
-        <p className="text-center text-icon-color mb-7">
+        <p className="mb-5 text-primary">
           {t("page.cash.payment.manual.desc")}
         </p>
-        <div className="grid grid-cols-3 gap-5">
+        <p className="mb-7">{t("page.cash.payment.manual.step1")}</p>
+        <div className="grid grid-cols-2 gap-5">
           <div className="flex flex-col items-center">
             <p>Wechat Pay</p>
             <p>(微信支付)</p>
@@ -103,18 +111,8 @@ const RechargePage = () => {
               className="w-full aspect-square object-cover mt-4"
             />
           </div>
-          <div className="flex flex-col items-center">
-            <p>VN Banking</p>
-            <p className="text-white">vvvv</p>
-            <img
-              src={picture2}
-              className="w-full aspect-square object-cover mt-4"
-            />
-          </div>
         </div>
-        <p className="text-center text-secondary mt-5">
-          {t("page.cash.payment.manual.note")}
-        </p>
+        <p className="mt-5">{t("page.cash.payment.manual.step2")}</p>
         <form className="mt-5" onSubmit={handleSubmit(onSubmit)}>
           <Input
             min={0}
@@ -123,7 +121,11 @@ const RechargePage = () => {
             placeholder={t("page.cash.payment.manual.form.placeholder")}
             control={control}
             containerclass="flex-1"
-          />
+          >
+            <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
+              {i18n.language === "vi" ? "VND" : "元"}
+            </span>
+          </Input>
           <Button
             type="submit"
             className="px-5 text-white bg-primary w-full mt-5"
@@ -131,6 +133,10 @@ const RechargePage = () => {
             {t("page.cash.payment.manual.form.button")}
           </Button>
         </form>
+        <p className="mt-5">{t("page.cash.payment.manual.step3")}</p>
+        <p className="mt-5 text-primary">
+          {t("page.cash.payment.manual.note")}
+        </p>
       </div>
     </div>
   );
@@ -153,6 +159,9 @@ const AutoBanking = () => {
     <div className="px-5 py-10 rounded-xl shadow-2xl col-span-1 md:col-span-3 lg:col-span-2">
       <p className="font-semibold text-xl text-center mb-7">
         {t("page.cash.payment.auto.title")}
+      </p>
+      <p className="text-center mb-7 text-primary">
+        {t("page.cash.payment.auto.desc")}
       </p>
       {!showQR ? (
         <div className="flex items-center gap-5 mb-5">

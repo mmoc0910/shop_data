@@ -5,21 +5,26 @@ import qrWechat from "../../assets/qr-wechat.png";
 import qrZalo from "../../assets/qr-zalo.png";
 import img from "../../assets/illustration-of-a-blue-smartphone-with-a-security-shield-vpn-technology-privacy-and-security-on-the-internet-banner-on-blue-background-secure-access-to-online-data-free-vector-removebg.png";
 import { useTranslation } from "react-i18next";
+import logo from "../../assets/logo.png";
 
 const HomeBox = () => {
   const { t } = useTranslation();
   return (
     <div
       id="home"
-      className="bg-[url('https://images.unsplash.com/photo-1644088379091-d574269d422f?q=80&w=1993&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center relative pt-20"
+      className="bg-[url('https://images.unsplash.com/photo-1644088379091-d574269d422f?q=80&w=1993&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center relative pt-4"
     >
       <img src={bg} className="absolute bottom-0 left-0 right-0 z-[2]" />
       <div className="absolute w-full h-full inset-0 bg-[#000000a0] z-[1]"></div>
       <Container className="pb-14 md:pb-20 grid grid-cols-10 relative z-10 md:gap-x-8">
         <div className="col-span-10 md:col-span-7">
-          <h1 className="text-3xl lg:text-5xl font-medium text-white mb-5 !leading-relaxed tracking-wide">
-            {t("page.home.home.heading")}
-          </h1>
+          <div className="flex item md:items-center gap-2 mb-5">
+            <img src={logo} className="w-40 md:w-56 xl:w-60 object-cover" />
+            <h1 className="text-3xl lg:text-5xl font-medium text-white !leading-relaxed tracking-wide">
+              {t("page.home.home.heading")}
+            </h1>
+          </div>
+
           <ul className="space-y-3 text-white list-disc pl-5 text-base lg:text-lg">
             <li>{t("page.home.home.content.phr1")}</li>
             <li>{t("page.home.home.content.phr2")}</li>
@@ -36,7 +41,7 @@ const HomeBox = () => {
           <div className="grid grid-cols-12">
             <div className="col-span-12 md:col-span-6 lg:col-span-5">
               <p className="text-white font-medium mb-10 text-lg">
-              {t("page.home.home.download")}
+                {t("page.home.home.download")}
               </p>
               <div className="flex justify-between">
                 <Link
@@ -123,12 +128,12 @@ const HomeBox = () => {
             </div>
             <div className="col-span-12 md:col-span-6 lg:col-span-7 ml-0 md:ml-10 lg:ml-32 mt-10 md:mt-0">
               <p className="text-white font-medium mb-10 text-lg">
-              {t("page.home.home.contact")}{" "}
+                {t("page.home.home.contact")}{" "}
                 <Link
                   to={"/sign-up"}
-                  className="font-medium underline decoration-primary text-primary text-lg"
+                  className="font-medium underline decoration-primary text-primary text-2xl"
                 >
-                     {t("authen.sign_up")}
+                  {t("authen.sign_up")}
                 </Link>
               </p>
               <div className="flex gap-5 justify-evenly xl:justify-start xl:gap-10">

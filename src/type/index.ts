@@ -107,6 +107,7 @@ export type PlanType = {
   bandWidth: number;
   createdAt: Date;
   updatedAt: Date;
+  numberPurchase: number;
   display: 0 | 1;
   status: 0 | 1;
 };

@@ -1,4 +1,3 @@
-import Logo from "../logo/Logo";
 import Container from "../common/Container";
 import { Link } from "react-router-dom";
 import classNames from "../../utils/classNames";
@@ -9,6 +8,9 @@ import { useTranslation } from "react-i18next";
 import { useMemo } from "react";
 import IconChevronDown from "../../icons/IconChevronDown";
 import { setLanguage } from "../../store/lang/languageSlice";
+import chinaFlag from "../../assets/flag/china.png";
+import vietnamlag from "../../assets/flag/vietnam.png";
+import engFlag from "../../assets/flag/united-kingdom.png";
 
 const Header = () => {
   const { t, i18n } = useTranslation();
@@ -24,17 +26,20 @@ const Header = () => {
     [t, i18n.language]
   );
   return (
-    <div className="fixed top-0 left-0 right-0 bg-white z-20 shadow-sm">
+    <div
+      className="z-20 shadow-sm bg-black"
+      // className="fixed top-0 left-0 right-0 w-screen bg-white z-20 shadow-sm"
+    >
       <Container className="py-2">
-        <div className="flex items-center justify-between">
-          <Logo />
-          <div className="flex gap-3 md:gap-7 items-center">
+        <div className="flex items-start justify-end">
+          {/* <Logo /> */}
+          <div className="flex gap-3 md:gap-7 items-center mt-2">
             {menu.map((item) => (
               <a
                 key={uuidv4()}
                 href={item.to}
                 className={classNames(
-                  "font-medium text-sm xl:text-lg",
+                  "font-medium text-sm xl:text-lg hidden md:block",
                   item.to === "#home" ? "text-primary" : "text-icon-color"
                 )}
               >
@@ -43,16 +48,16 @@ const Header = () => {
             ))}
             <div className="font-medium text-icon-color cursor-pointer relative group">
               <div className="text-sm xl:text-lg">Download</div>
-              <div className="absolute right-0 top-[calc(100%+1rem)] invisible opacity-0 group-hover:visible group-hover:opacity-100 group-hover:top-full transition-all duration-300">
+              <div className="absolute z-50 right-0 top-[calc(100%+1rem)] invisible opacity-0 group-hover:visible group-hover:opacity-100 group-hover:top-full transition-all duration-300">
                 <div className="py-4 px-8 mt-3 rounded-lg shadow-xl bg-white space-y-2 flex flex-col text-black">
                   <Link
                     to={
-                      "https://play.google.com/store/apps/details?id=org.outline.android.client&pcampaignid=web_share"
+                      "https://s3.ap-northeast-3.amazonaws.com/vpncn2.top/outlinefiles/Outline-Client-1.12.apk"
                     }
-                    target="_blank"
+                    download
                     className="text-sm hover:text-primary transition-all duration-200"
                   >
-                    GooglePlay(Android)
+                    Android
                   </Link>
                   <Link
                     to={
@@ -73,24 +78,34 @@ const Header = () => {
                     AppStore(iOS)
                   </Link>
                   <Link
-                    to={"http://woot2.vn/vpncn2/Win-outline-client.zip"}
+                    to={
+                      "https://s3.ap-northeast-3.amazonaws.com/vpncn2.top/outlinefiles/win-outline-client-1.12.exe"
+                    }
                     download
                     className="text-sm hover:text-primary transition-all duration-200"
                   >
                     Windows
                   </Link>
+                  <Link
+                    to={
+                      "https://s3.ap-northeast-3.amazonaws.com/vpncn2.top/outlinefiles/linux-Outline-Client_1.12.appimage"
+                    }
+                    download
+                    className="text-sm hover:text-primary transition-all duration-200"
+                  >
+                    Linux
+                  </Link>
                 </div>
               </div>
             </div>
             {!email ? (
-              <div className="flex items-end gap-5">
+              <div className="flex items-center gap-5">
                 <Link
                   to={"/sign-in"}
                   className="font-medium text-sm xl:text-base text-primary underline decoration-primary"
                 >
                   {t("authen.sign_in")}
                 </Link>
-                <SelectLanguage />
               </div>
             ) : (
               <Link
@@ -119,6 +134,7 @@ const Header = () => {
                 </div>
               </Link>
             )}
+            <SelectLanguage />
           </div>
         </div>
       </Container>
@@ -128,23 +144,33 @@ const Header = () => {
 
 const languages = [
   { key: "en", title: "English" },
-  { key: "ci", title: "Chinese" },
+  { key: "ci", title: "中文" },
   { key: "vi", title: "Vietnamese" },
 ];
 
-const SelectLanguage = () => {
+export const SelectLanguage = () => {
   const dispatch = useDispatch();
   const language = useSelector((state: RootState) => state.lang);
 
   return (
     <div className="font-medium text-icon-color cursor-pointer relative group">
       <div className="text-xs md:text-sm flex items-center gap-1">
-        {languages.find((item) => item.key === language)?.title}
+        {/* {languages.find((item) => item.key === language)?.title} */}
+        <img
+          src={
+            language === "vi"
+              ? vietnamlag
+              : language === "ci"
+              ? chinaFlag
+              : engFlag
+          }
+          className="w-5 md:w-7 h-auto rounded-md"
+        />
         <span>
           <IconChevronDown />
         </span>
       </div>
-      <div className="absolute left-0 top-[calc(100%+1rem)] invisible opacity-0 group-hover:visible group-hover:opacity-100 group-hover:top-full transition-all duration-300">
+      <div className="absolute z-50 right-0 top-[calc(100%+1rem)] invisible opacity-0 group-hover:visible group-hover:opacity-100 group-hover:top-full transition-all duration-300">
         <div className="p-3 mt-3 rounded-md shadow-xl bg-white space-y-2 flex flex-col text-black">
           {languages.map((item) => (
             <div

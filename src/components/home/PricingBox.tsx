@@ -69,7 +69,7 @@ const PricingBox = () => {
               className="my-9 lg:my-14 py-2 px-9 bg-[#f2f4f7] rounded-full"
             >
               <div className="font-medium text-white bg-primary px-6 py-3 rounded-full">
-                Xem thêm
+              {t("page.home.pricing.seemore")}
               </div>
             </div>
           ) : null}

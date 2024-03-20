@@ -123,7 +123,7 @@ i18n.use(LanguageDetector).use(initReactI18next),
             searchPlaceholder: "Search",
             home: {
               home: {
-                heading: "VPNCN2 Cheapest Fastest VPN you may know",
+                heading: "Cheapest Fastest VPN you may know",
                 content: {
                   phr1: "Access global services such as Facebook, Google, Youtube, Telegram, Whatsapp, Tiktok ...",
                   phr2: "Fast and secure",
@@ -139,6 +139,7 @@ i18n.use(LanguageDetector).use(initReactI18next),
                 title: "Wonderful experience! Surprise costing",
                 desc: "Don't wait your time, try our service to enjoy the best connectivity",
                 desc2: "Register now to get FREE TRIAL 03 DAYS",
+                seemore: "See more",
               },
               register: {
                 title: "Register",
@@ -363,6 +364,7 @@ i18n.use(LanguageDetector).use(initReactI18next),
               payment: {
                 auto: {
                   title: " VNbanking automatic top-up",
+                  desc: 'Please fill in the amount you want to deposit and transfer to our account information after you click "Submit". Your account will automatically update after 5-10 seconds.',
                   form: {
                     placeholder: "Enter the amount to deposit",
                     button: "Deposit",
@@ -379,12 +381,21 @@ i18n.use(LanguageDetector).use(initReactI18next),
                 },
                 manual: {
                   title: "Manual deposit",
-                  desc: 'Please transfer money to one of the following methods, notify the admin directly and press the "Request deposit" button',
-                  note: "Other deposit methods: Zalopay, Momopay, Paypal, USDT please contact admin directly",
+                  desc: "Payment approval may take 10-30 minutes. Please follow this below procedure:",
+                  step1:
+                    "1. Please transfer money to us via the following method:",
+                  step2:
+                    "2. Fill a deposit amount and “Submit” payment request.",
+                  step3:
+                    "3. Screenshot your Invoice and send it to Admin Contact to get approval as soon as possible..",
+                  note: "*Other payment methods like Zalopay, Momo, Paypal, USDT… Please consider directly contacting Admin.",
                   form: {
                     placeholder: "Enter the amount to deposit",
                     button: "Request deposit",
                   },
+                  ques: "Do you want to deposit ",
+                  cancelButton: "Cancel",
+                  confirmButton: "OK",
                   success:
                     "You have just successfully requested a deposit. Please send a photo of the receipt to admin via wechat/zalo for approval.",
                 },
@@ -527,7 +538,7 @@ i18n.use(LanguageDetector).use(initReactI18next),
             searchPlaceholder: "Tìm kiếm",
             home: {
               home: {
-                heading: "VPNCN2 cung cấp dịch vụ VPN VIP với chi phí rẻ nhất",
+                heading: "cung cấp dịch vụ VPN VIP với chi phí rẻ nhất",
                 content: {
                   phr1: "Giúp truy cập đến các ứng dụng bị chặn như Facebook, Google, Youtube, Telegram, Whatsapp, Tiktok ...",
                   phr2: "Tốc độ siêu nhanh, kết nối bảo mật",
@@ -543,6 +554,7 @@ i18n.use(LanguageDetector).use(initReactI18next),
                 title: " Trải nghiệm tuyệt vời, chi phí bất ngờ",
                 desc: "Đừng lãng phí thời gian quý báu của bạn để chờ đợi. Mở ngay dịch vụ chuyển tiếp mạng toàn cầu và truy cập Internet toàn cầu mọi lúc, mọi nơi.",
                 desc2: "Đăng ký ngay để nhận gói FREE TRIAL 03 DAYS",
+                seemore: "Xem thêm",
               },
               register: {
                 title: "Liên hệ",
@@ -770,6 +782,7 @@ i18n.use(LanguageDetector).use(initReactI18next),
               payment: {
                 auto: {
                   title: " Nạp tiền tự động VNbanking",
+                  desc: "Vui lòng điền số tiền bạn muốn nạp và chuyển khoản tới thông tin tài khoản (MBBANK) sau khi bạn nhấn Nạp tiền. Tài khoản của bạn sẽ tự động cập nhật sau 5-10s.",
                   form: {
                     placeholder: "Nhập số tiền cần nạp",
                     button: "Nạp tiền",
@@ -786,12 +799,20 @@ i18n.use(LanguageDetector).use(initReactI18next),
                 },
                 manual: {
                   title: "Nạp tiền thủ công",
-                  desc: "Vui lòng chuyển khoản đến một trong các hình thức sau, thông báo trực tiếp cho admin và Nhấn nút ”Yêu cầu nạp tiền”.",
-                  note: "Các hình thức nạp tiền khác: Zalopay, Momopay, Paypal, USDT xin vui lòng contact trực tiếp admin",
+                  desc: "Thời gian phê duyệt thanh toán có thể mất từ 10-30 phút. Vui lòng thao tác theo quy trình sau:",
+                  step1:
+                    "1. Vui lòng chuyển khoản cho chúng tôi qua các hình thức sau:",
+                  step2: '2. Gửi yêu cầu nạp tiền và nhấn "Nạp tiền".',
+                  step3:
+                    "3. Chụp ảnh màn hình chuyển khoản và thông báo cho Admin để nhận đượcphê duỵệt nhanh nhất.",
+                  note: "*Các hình thức chuyển tiền khác ZaloPay, Momo, Paypal, USDT ... vui lòng liên hệ trực tiếp với admin",
                   form: {
                     placeholder: "Nhập số tiền cần nạp",
                     button: "Yêu cầu nạp tiền",
                   },
+                  ques: "Bạn có muốn nạp ",
+                  cancelButton: "Hủy",
+                  confirmButton: "Đồng ý",
                   success:
                     "Bạn vừa yêu cầu nạp tiền thành công. Vui lòng gửi ảnh hóa đơn cho admin qua wechat/zalo để được phê duyệt.",
                 },
@@ -950,6 +971,7 @@ i18n.use(LanguageDetector).use(initReactI18next),
                 title: " 绝佳体验，惊喜价格",
                 desc: "不要为了等待而浪费你宝贵的时间。立即打开虚拟专用网络，随时随地访问各地网络资源.",
                 desc2: "马上登记为了获得三天免费试用 《FREE TRIAL 03 DAYS》",
+                seemore: "其他",
               },
               register: {
                 title: "联系方式",
@@ -990,13 +1012,13 @@ i18n.use(LanguageDetector).use(initReactI18next),
               buyNow: "买它",
               ctvcode: {
                 ctv: "介绍代码:",
-                desc: "与您的朋友分享您的介绍代码，并从他们的订单中获得 10% 的佣金 [{{amount}}%] 的佣金.",
+                desc: "与您的朋友分享您的介绍代码，并从他们的订单中获得 [{{amount}}%] 的佣金.",
               },
               satify: {
                 cash: "付款总额",
                 currentMoney: "其余的",
                 transaction: "已买",
-                rose: "[{{amount}}%] 得到",
+                rose: "%得到",
                 numberIntoduce: "已请",
                 currentMoneyNode: "其余的 = 付款总额 - 已买 + 得到",
                 roseNode: "得到 = 总共 [{{amount}}%] 收到从介绍代码",
@@ -1166,6 +1188,7 @@ i18n.use(LanguageDetector).use(initReactI18next),
               payment: {
                 auto: {
                   title: " 自动付款 VIETNAM BANKING",
+                  desc: "点击“付款”后，请填写您要存入并转入我们账户的金额信息。您的帐户将在 5-10 秒后自动更新。",
                   form: {
                     placeholder: "填入付款的数量",
                     button: "付款",
@@ -1182,12 +1205,19 @@ i18n.use(LanguageDetector).use(initReactI18next),
                 },
                 manual: {
                   title: "手动付款",
-                  desc: "通过以下方法之一向我们付款:",
-                  note: "其他付款方式，如 Zalopay、Momo、Paypal、USDT…请考虑直接联系管理员。",
+                  desc: "付款批准可能需要 10-30 分钟。 请按照以下步骤操作:",
+                  step1: "1. 通过以下方法之一向我们付款:",
+                  step2: "2. 提交付款请求.",
+                  step3:
+                    "3. 截取您的发票并将其发送给管理员联系人以尽快获得批准。",
+                  note: "*其他付款方式，如 Zalopay、Momo、Paypal、USDT…请考虑直接联系管理员。",
                   form: {
                     placeholder: "输入您的付款金额",
                     button: "提交",
                   },
+                  ques: "您要付 ",
+                  cancelButton: "取消",
+                  confirmButton: "确定",
                   success:
                     "Bạn vừa yêu cầu nạp tiền thành công. Vui lòng gửi ảnh hóa đơn cho admin qua wechat/zalo để được phê duyệt.",
                 },
@@ -1215,142 +1245,6 @@ i18n.use(LanguageDetector).use(initReactI18next),
           },
         },
       },
-      // ci: {
-      //   translation: {
-      //     authen: {
-      //       sign_in: "Đăng nhập",
-      //       sign_up: "登记",
-      //       sign_out: "Đăng xuất",
-      //     },
-      //     header: {
-      //       home: "主页",
-      //       pricing: "价格表",
-      //     },
-      //     login: {
-      //       welcome_back: "Chào mừng quay trở lại!",
-      //       dont_have_account: "Bạn chưa có tài khoản?",
-      //       have_account: "Bạn đã có tài khoản?",
-      //       forgot_pass: "Quên mật khẩu?",
-      //     },
-      //     form: {
-      //       account: {
-      //         label: "Tên đăng nhập hoặc Email*",
-      //         placeholder: "Nhập tên đăng nhập hoặc email của bạn",
-      //         error: { required: "Trường này không được bỏ trống" },
-      //       },
-      //       password: {
-      //         label: "Mật khẩu*",
-      //         placeholder: "Nhập mật khẩu của bạn",
-      //         error: { required: "Mật khẩu không được bỏ trống" },
-      //       },
-      //       re_password: {
-      //         label: "Xác nhận mật khẩu*",
-      //         placeholder: "Xác nhận mật khẩu của bạn",
-      //         error: { required: "Xác nhận mật khẩu không được để trống" },
-      //       },
-      //       username: {
-      //         label: "Tên đăng nhập*",
-      //         placeholder: "NHập tên đăng nhập của bạn",
-      //         error: {
-      //           required: "Tên đăng nhập không được để trống",
-      //           reg: "Ký tự liền nhau, không dấu",
-      //         },
-      //       },
-      //       email: {
-      //         label: "Email*",
-      //         placeholder: "Nhập email của bạn",
-      //         error: {
-      //           required: "Email không được để trống",
-      //           email: "Không đúng định dạng email",
-      //         },
-      //       },
-      //       phone: {
-      //         label: "Số điện thoại*",
-      //         placeholder: "Nhập số điện thoại của bạn",
-      //         error: { required: "Số điện thoại không được để trống" },
-      //       },
-      //       introduce_code: {
-      //         label: "Mã giới thiệu",
-      //         placeholder: "Nhập mã giới thiệu",
-      //         error: { required: "This field is required" },
-      //       },
-      //       country: {
-      //         label: "Quốc gia*",
-      //         placeholder: "Chọn quốc gia",
-      //         error: { required: "Quốc gia không được để trống" },
-      //       },
-      //       purpose: {
-      //         label: "Mục đích sử dụng*",
-      //         placeholder: "Chọn mục đích sử dụng",
-      //         error: { required: "Mục đích sử dụng không được để trống" },
-      //       },
-      //     },
-      //     menu_user: {
-      //       dashboard: "Dashboard",
-      //       recharge: "Nạp tiền",
-      //       pack_of_data: "Gói cước",
-      //       my_order: "Đơn hàng của tôi",
-      //       transaction_history: "Lịch sử giao dịch",
-      //       deposit_history: "Lịch sử nạp",
-      //       collaborators: "Cộng tác viên",
-      //       user_information: "Thông tin người dùng",
-      //     },
-      //     page: {
-      //       home: {
-      //         home: {
-      //           heading: "VPNCN2 您可能知道的最便宜、最快的 VPN",
-      //           content: {
-      //             phr1: "能够访问被封锁或限制的软件如：脸书、谷歌、油管、纸飞机、瓦次普、抖音国际版、等等",
-      //             phr2: "提供更快速、更安全的网络连接",
-      //             phr3: "软件质保期无限, 24/7客服支持",
-      //             phr4: "支持多种支付方式：支付宝、微信、贝宝、泰达等等",
-      //             phr5: "安装及连接操作简单",
-      //             phr6: "主要针对中国、伊朗市场的用户",
-      //           },
-      //           download: "下载APP",
-      //           contact: "扫我或者",
-      //         },
-      //         pricing: {
-      //           title: "绝佳体验，惊喜价格",
-      //           desc: "不要为了等待而浪费你宝贵的时间。立即打开虚拟专用网络，随时随地访问各地网络资源。",
-      //           desc2: "马上登记为了获得三天免费试用 《FREE TRIAL 03 DAYS》",
-      //         },
-      //         register: {
-      //           title: "Register",
-      //           desc: "Please fill the form right here to register or contact us via bellow information:",
-      //           phone: "Phone Number",
-      //           email: "E-mail Address",
-      //           web: "Official Website",
-      //           fanpage: "Fanpage",
-      //         },
-      //         about: {
-      //           title: "你对VPN有何了解？",
-      //           heading1: "VPN是什么",
-      //           heading2: "VPNCN2 可以帮助您什么？",
-      //           heading3: "选择 VPN 提供商时应注意什么？",
-      //           content1_1:
-      //             "VPN 是一种服务，可以帮助您缺乏或提高您无法通过普通 Wifi/互联网访问的全球网站/应用程序（例如：Google/Youtube/Twiter/Instagram/Github/Telegram）的速度连接",
-      //           content2_1: "",
-      //           content2_2:
-      //             "由于中国互联网不允许您访问中国大陆以外的网站，您无法访问 Google、Facebook、Youtube...我们的 VPNCN2 将通过优质连接帮助您解决此问题。另一方面，其他用户想要使用VPN进行流媒体、游戏、假IP……VPNCN2也可以帮助您，没有任何限制。 我们还可以为专门用户构建定制包。",
-      //           content3_1: "您的 VPN 连接取决于以下一些原因：",
-      //           content3_1_1:
-      //             "您的网速它们是您的数据包（4G、5G）或 Wifi 互联网",
-      //           content3_1_2:
-      //             "您的设备（手机、PC、旧设备或新设备），某些 VPN 服务与旧设备不兼容",
-      //           content_3_1_3:
-      //             "VPN 套餐或您的 VPN 服务提供商VPN服务提供商总是有很多客户级别设计的套餐，有人可能会给你很高的价格，但速度并不能让你满意。VPNCN2 可以为您提供超高速访问，这被视为其他提供商的高级 VIP 套餐。 我们还提供 24/7 客户服务支持，随时为您提供支持。",
-      //         },
-      //         ctv: {
-      //           heading: "合作者招聘及福利政策",
-      //           content1: "·通过合作者介绍码每订单可收{{amount}}%提成",
-      //           content2: "·代理折扣{{amount}}%",
-      //           content3: "·不限定代理销售的价位",
-      //         },
-      //       },
-      //     },
-      //   },
-      // },
     },
   });
 

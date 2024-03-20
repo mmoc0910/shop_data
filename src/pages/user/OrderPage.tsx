@@ -394,11 +394,11 @@ const OrderPage = () => {
         ),
         filters: [
           {
-            text: "Còn hạn",
+            text: t("page.myOrder.field.statusLabel.active"),
             value: 1,
           },
           {
-            text: "Hết hạn",
+            text: t("page.myOrder.field.statusLabel.inactive"),
             value: 0,
           },
         ],

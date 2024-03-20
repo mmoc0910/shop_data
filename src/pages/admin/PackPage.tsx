@@ -111,9 +111,7 @@ const PackPage = () => {
   const columns: TableColumnsType<PlanType> = useMemo(
     () => [
       {
-        title: () => (
-          <p className="font-semibold font-primary">STT</p>
-        ),
+        title: () => <p className="font-semibold font-primary">STT</p>,
         dataIndex: "index",
         key: "index",
         width: 70,
@@ -122,9 +120,7 @@ const PackPage = () => {
         ),
       },
       {
-        title: () => (
-          <p className="font-semibold font-primary">Tên gói</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Tên gói</p>,
         dataIndex: "name",
         key: "name",
         render: (text: string, record: PlanType) => (
@@ -137,17 +133,15 @@ const PackPage = () => {
         ),
       },
       {
-        title: () => (
-          <p className="font-semibold font-primary">Lượt mua</p>
+        title: () => <p className="font-semibold font-primary">Lượt mua</p>,
+        dataIndex: "numberPurchase",
+        key: "numberPurchase",
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text}</p>
         ),
-        dataIndex: "name",
-        key: "name",
-        render: () => <p className="text-sm font-primary">{1}</p>,
       },
       {
-        title: () => (
-          <p className="font-semibold font-primary">Chu kỳ</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Chu kỳ</p>,
         dataIndex: "type",
         key: "type",
         render: (text: string) => (
@@ -155,9 +149,7 @@ const PackPage = () => {
         ),
       },
       {
-        title: () => (
-          <p className="font-semibold font-primary">Ngày</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Ngày</p>,
         dataIndex: "day",
         key: "day",
         render: (text: string) => (
@@ -166,9 +158,7 @@ const PackPage = () => {
         sorter: (a, b) => a.day - b.day,
       },
       {
-        title: () => (
-          <p className="font-semibold font-primary">Bandwidth</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Bandwidth</p>,
         dataIndex: "bandWidth",
         key: "bandWidth",
         render: (text: string) => (
@@ -193,9 +183,7 @@ const PackPage = () => {
       //   ),
       // },
       {
-        title: () => (
-          <p className="font-semibold font-primary">Ngày tạo</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Ngày tạo</p>,
         dataIndex: "createdAt",
         key: "createdAt",
         render: (text: Date) => (
@@ -227,9 +215,7 @@ const PackPage = () => {
   const columnHistory: TableColumnsType<PlanType> = useMemo(
     () => [
       {
-        title: () => (
-          <p className="font-semibold font-primary">STT</p>
-        ),
+        title: () => <p className="font-semibold font-primary">STT</p>,
         dataIndex: "index",
         key: "index",
         width: 70,
@@ -238,9 +224,7 @@ const PackPage = () => {
         ),
       },
       {
-        title: () => (
-          <p className="font-semibold font-primary">Tên gói</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Tên gói</p>,
         dataIndex: "name",
         key: "name",
         render: (text: string, record: PlanType) => (
@@ -253,17 +237,13 @@ const PackPage = () => {
         ),
       },
       {
-        title: () => (
-          <p className="font-semibold font-primary">Lượt mua</p>
-        ),
-        dataIndex: "name",
-        key: "name",
-        render: () => <p className="text-sm font-primary">{1}</p>,
+        title: () => <p className="font-semibold font-primary">Lượt mua</p>,
+        dataIndex: "numberPurchase",
+        key: "numberPurchase",
+        render: (text: number) => <p className="text-sm font-primary">{text}</p>,
       },
       {
-        title: () => (
-          <p className="font-semibold font-primary">Chu kỳ</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Chu kỳ</p>,
         dataIndex: "type",
         key: "type",
         render: (text: string) => (
@@ -271,9 +251,7 @@ const PackPage = () => {
         ),
       },
       {
-        title: () => (
-          <p className="font-semibold font-primary">Ngày</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Ngày</p>,
         dataIndex: "day",
         key: "day",
         render: (text: string) => (
@@ -282,9 +260,7 @@ const PackPage = () => {
         sorter: (a, b) => a.day - b.day,
       },
       {
-        title: () => (
-          <p className="font-semibold font-primary">Bandwidth</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Bandwidth</p>,
         dataIndex: "bandWidth",
         key: "bandWidth",
         render: (text: string) => (
@@ -293,9 +269,7 @@ const PackPage = () => {
         sorter: (a, b) => a.bandWidth - b.bandWidth,
       },
       {
-        title: () => (
-          <p className="font-semibold font-primary">Ngày tạo</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Ngày tạo</p>,
         dataIndex: "createdAt",
         key: "createdAt",
         render: (text: Date) => (
@@ -304,9 +278,7 @@ const PackPage = () => {
         sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
       },
       {
-        title: () => (
-          <p className="font-semibold font-primary">Ngày xóa</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Ngày xóa</p>,
         dataIndex: "updatedAt",
         key: "updatedAt",
         render: (text: Date, record: PlanType) =>

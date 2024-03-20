@@ -14,7 +14,11 @@ const LayoutAuthentication: FC<LayoutAuthentication> = ({
   return (
     <div className="relative w-screen overflow-hidden xl:h-auto xl:overflow-auto">
       <div className="w-full min-h-screen p-6 md:p-10 bg-lite">
-        <Logo />
+        <div className="flex items-center justify-center">
+          {" "}
+          <Logo />
+        </div>
+
         <div className="w-full sm:w-[556px] rounded-xl bg-white px-[20px] py-[30px] sm:px-[60px] sm:py-[50px] mx-auto relative z-[1]">
           <h1 className="text-lg font-semibold md:text-xl text-text1 mb-[5px] md:mb-[10px] text-center">
             {heading}

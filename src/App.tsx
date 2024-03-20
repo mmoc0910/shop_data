@@ -45,24 +45,11 @@ const KeyDetailAdminPage = lazy(
 );
 
 function App() {
-  const { country } = useSelector((state: RootState) => state.auth);
   const lang = useSelector((state: RootState) => state.lang);
   const { i18n } = useTranslation();
   useEffect(() => {
-    if (country) {
-      if (country === "ci") {
-        i18n.changeLanguage("ci");
-      }
-      if (country === "vi") {
-        i18n.changeLanguage("vi");
-      }
-      if (country === "ir" || country === "orther") {
-        i18n.changeLanguage("en");
-      }
-    } else if (!country) {
-      i18n.changeLanguage(lang);
-    }
-  }, [country, i18n, lang]);
+    i18n.changeLanguage(lang);
+  }, [i18n, lang]);
   return (
     <>
       <Suspense

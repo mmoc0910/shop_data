@@ -65,8 +65,10 @@ const LayoutAdmin = () => {
       >
         <div className="absolute inset-0 bg-black xl:bg-opacity-50" />
         <div className="absolute w-full z-5 h-full py-10 px-5 ">
-          <Logo className="xl:text-4xl text-white" />
-          <div className="flex flex-col gap-2 pt-28">
+          <div className="flex justify-center">
+            <Logo className="text-4xl text-white" />
+          </div>
+          <div className="flex flex-col gap-2 pt-10">
             {menu.map((item) => {
               return (
                 <div className="w-full" onClick={() => setIsopen(false)}>

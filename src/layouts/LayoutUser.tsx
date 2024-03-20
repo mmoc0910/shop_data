@@ -15,6 +15,7 @@ import useOnClickOutside from "../hooks/useOnClickOutside";
 import { useTranslation } from "react-i18next";
 import { priceFomat } from "../utils/formatPrice";
 import { CoutryType } from "../type";
+import { SelectLanguage } from "../components/header/Header";
 
 const LayoutUser = () => {
   const { t, i18n } = useTranslation();
@@ -56,8 +57,10 @@ const LayoutUser = () => {
       >
         <div className="absolute inset-0 bg-black xl:bg-opacity-50" />
         <div className="absolute w-full h-full px-5 py-10 z-5 ">
-          <Logo className="text-4xl text-white" />
-          <div className="flex flex-col gap-2 pt-28">
+          <div className="flex justify-center">
+            <Logo className="text-4xl text-white" />
+          </div>
+          <div className="flex flex-col gap-2 pt-10">
             {menu.map((item) => {
               return (
                 <div onClick={() => setIsopen(false)}>
@@ -79,6 +82,21 @@ const LayoutUser = () => {
               );
             })}
             <div
+              className={classNames(
+                "hover:bg-[#403f3f] px-4 py-3 rounded-lg transition-all duration-200 flex items-center gap-2 cursor-pointer",
+                "text-white font-medium bg-[#403f3f]"
+              )}
+              onClick={() => {
+                dispatch(setAuth({}));
+                navigation("/");
+              }}
+            >
+              <span className="-translate-y-[2px]">
+                <IconLogout />
+              </span>
+              <p> {t("authen.sign_out")}</p>
+            </div>
+            {/* <div
               onClick={() => {
                 dispatch(setAuth({}));
                 navigation("/");
@@ -88,7 +106,7 @@ const LayoutUser = () => {
               )}
             >
               {t("authen.sign_out")}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -111,7 +129,7 @@ const LayoutUser = () => {
             </svg>
           </div>
           {cash >= commision.min && (
-            <div className="rounded-xl border-2 border-[#eeeeed] p-5 w-full md:w-3/4 lg:w-2/4">
+            <div className="rounded-xl border-2 border-[#eeeeed] p-5 w-full md:w-3/4 lg:w-[60%] space-y-2 mr-5">
               <div className="flex items-center gap-2">
                 <p className="">
                   <span className="font-medium">
@@ -146,7 +164,9 @@ const LayoutUser = () => {
                 </Tooltip>
               </div>
               <p className="">
-                {t("page.dashboard.ctvcode.desc", { amount: commision.value })}
+                {t("page.dashboard.ctvcode.desc", {
+                  amount: commision.value,
+                })}
               </p>
             </div>
           )}
@@ -164,7 +184,7 @@ const LayoutUser = () => {
                 - {priceFomat(currentMoney, i18n.language as CoutryType)}
               </p>
             </Link>
-            <div
+            {/* <div
               className="shrink-0 items-center hidden gap-2 px-4 py-2 text-white cursor-pointer xl:flex bg-primary rounded-xl"
               onClick={() => {
                 dispatch(setAuth({}));
@@ -175,7 +195,8 @@ const LayoutUser = () => {
                 <IconLogout />
               </span>
               <p> {t("authen.sign_out")}</p>
-            </div>
+            </div> */}
+            <SelectLanguage />
           </div>
         </div>
         <div className="py-14">

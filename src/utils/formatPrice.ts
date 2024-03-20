@@ -9,7 +9,7 @@ const YUAN = new Intl.NumberFormat("zh-CN", {
   currency: "CNY",
 });
 
-const EXCHANGE_RATE = 3400;
+export const EXCHANGE_RATE = 3400;
 
 export const priceFomat = (price: number, country: CoutryType = "vi") => {
   if (country === "vi") {

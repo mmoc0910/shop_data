@@ -149,9 +149,9 @@ const ExtendPlanPage = () => {
         title: () => (
           <p className="font-semibold font-primary">Lượt mua</p>
         ),
-        dataIndex: "name",
-        key: "name",
-        render: () => <p className="text-sm font-primary">{1}</p>,
+        dataIndex: "numberPurchase",
+        key: "numberPurchase",
+        render: (text) => <p className="text-sm font-primary">{text}</p>,
       },
       {
         title: () => (
@@ -258,9 +258,9 @@ const ExtendPlanPage = () => {
         title: () => (
           <p className="text-base font-semibold font-primary">Lượt mua</p>
         ),
-        dataIndex: "name",
-        key: "name",
-        render: () => <p className="text-sm font-primary">{1}</p>,
+        dataIndex: "numberPurchase",
+        key: "numberPurchase",
+        render: (text: number) => <p className="text-sm font-primary">{text}</p>,
       },
       {
         title: () => (

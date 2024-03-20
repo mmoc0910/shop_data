@@ -489,10 +489,10 @@ const KeyDetailAdminPage = () => {
                               : "00.00 GB"}
                           </div>
                           <div className="flex-1 px-4">
-                            {DAY_FORMAT(item.startDate)}
+                            {DAY_FORMAT(item.createdAt)}
                           </div>
                           <div className="flex-1 px-4">
-                            {DAY_FORMAT(item.endDate)}
+                            {DAY_FORMAT(item.updatedAt)}
                           </div>
                         </div>
                       </div>
