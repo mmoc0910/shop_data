@@ -54,6 +54,17 @@ const OrderPage = () => {
   const [startDate, setStartDate] = useState<dayjs.Dayjs | undefined>();
   const [endDate, setEndDate] = useState<dayjs.Dayjs | undefined>();
   const [inputValue, setInputValue] = useState<string>("");
+  const [roseExtend, setRoseExtend] = useState<RoseExtendType>();
+  useEffect(() => {
+    (async () => {
+      try {
+        const result = await api.get<RoseExtendType>("/rose-extends");
+        setRoseExtend(result.data);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
   const listGistFilter =
     startDate && endDate && !inputValue
       ? listGist.filter(
@@ -565,7 +576,7 @@ const OrderPage = () => {
         />
       </div>
       <Modal
-        width={1000}
+        width={1200}
         open={isModalOpen}
         onCancel={() => {
           handleCancel();
@@ -577,18 +588,20 @@ const OrderPage = () => {
           {t("page.myOrder.swal.buyData.title2")}
         </Heading>
         <div className="grid grid-cols-1 gap-5 py-3 md:grid-cols-2 lg:grid-cols-3">
-          {listExtendPlan.map((item) => (
-            <ExtendPlanItem
-              key={uuidv4()}
-              extendPlan={item}
-              onSubmit={() => {
-                handleOk();
-                handleFetchData();
-              }}
-              selectRow={selectRow}
-              setLoading={(value: boolean) => setLoading(value)}
-            />
-          ))}
+          {roseExtend &&
+            listExtendPlan.map((item) => (
+              <ExtendPlanItem
+                key={uuidv4()}
+                extendPlan={item}
+                onSubmit={() => {
+                  handleOk();
+                  handleFetchData();
+                }}
+                selectRow={selectRow}
+                setLoading={(value: boolean) => setLoading(value)}
+                roseExtend={roseExtend}
+              />
+            ))}
         </div>
         <div className="flex justify-end mt-5">
           <button
@@ -611,36 +624,26 @@ const ExtendPlanItem = ({
   extendPlan,
   setLoading,
   onSubmit,
+  roseExtend,
 }: {
   selectRow?: { id: string; endDate: Date };
   extendPlan: ExtendPlanType;
   setLoading: (value: boolean) => void;
   onSubmit: () => void;
+  roseExtend: RoseExtendType;
 }) => {
-  const [roseExtend, setRoseExtend] = useState<RoseExtendType>();
-  useEffect(() => {
-    (async () => {
-      try {
-        const result = await api.get<RoseExtendType>("/rose-extends");
-        setRoseExtend(result.data);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, []);
   const { t, i18n } = useTranslation();
   const period =
     selectRow?.endDate && dayjs(selectRow.endDate).diff(dayjs(), "month") + 1;
   const [month, setMonth] = useState<number>(1);
-  const discountPercent = roseExtend
-    ? month <= 4
+  console.log("ahcvh - ", roseExtend);
+  const discountPercent =
+    month <= 4
       ? roseExtend.level1
       : month > 4 && month <= 8
       ? roseExtend.level2
-      : roseExtend.level3
-    : undefined;
+      : roseExtend.level3;
   const priceDiscount =
-    discountPercent &&
     extendPlan.price * month * ((100 - discountPercent) / 100);
   const navigation = useNavigate();
   const handleUpgradeBrandWidth = async (
@@ -696,7 +699,7 @@ const ExtendPlanItem = ({
     >
       <p className="text-base font-semibold text-center">{extendPlan.name}</p>
       <p className="text-xl font-medium text-center">
-        {extendPlan.bandWidth}GB/tháng -{" "}
+        {extendPlan.bandWidth}GB/{t("page.myOrder.swal.buyData.month")} - {" "}
         {priceFomat(priceDiscount || 0, i18n.language as CoutryType)}
       </p>
       <div className="flex items-center gap-5">

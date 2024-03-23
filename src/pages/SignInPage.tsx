@@ -59,7 +59,6 @@ const SignInPage = () => {
   const onSubmit = async (data: { account: string; password: string }) => {
     try {
       const result = await api.post<{ data: AuthState }>("/users/login", data);
-      console.log("resut - ", result.data);
       dispatch(setAuth(result.data.data));
       if (result.data.data.role === 1) {
         navigation("/admin/dashboard");
