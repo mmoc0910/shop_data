@@ -17,7 +17,7 @@ import { useEffect, useMemo } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
-import { regexUserName } from "../constants";
+// import { regexUserName } from "../constants";
 
 const SignInPage = () => {
   const { t, i18n } = useTranslation();
@@ -27,8 +27,8 @@ const SignInPage = () => {
         .object({
           account: yup
             .string()
-            .required(t("form.account.error.required"))
-            .matches(regexUserName, t("form.username.error.reg")),
+            .required(t("form.account.error.required")),
+            // .matches(regexUserName, t("form.username.error.reg")),
           password: yup
             .string()
             .required(t("form.password.error.required"))
@@ -58,7 +58,10 @@ const SignInPage = () => {
   }, [email, navigation, role]);
   const onSubmit = async (data: { account: string; password: string }) => {
     try {
-      const result = await api.post<{ data: AuthState }>("/users/login", data);
+      const result = await api.post<{ data: AuthState }>("/users/login", {
+        ...data,
+        account: data.account.toLowerCase(),
+      });
       dispatch(setAuth(result.data.data));
       if (result.data.data.role === 1) {
         navigation("/admin/dashboard");

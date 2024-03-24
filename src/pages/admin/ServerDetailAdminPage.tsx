@@ -23,11 +23,17 @@ import EditKeyLimitForm from "../../components/server/EditKeyLimitForm";
 import EditRemarkServer from "../../components/server/EditRemarkServer";
 import EditLocationServerForm from "../../components/server/EditLocationServerForm";
 import { Checkbox } from "../../components/checkbox";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/configureStore";
+import { DropdownWithComponents } from "../../components/dropdown";
 
 const ServerDetailAdminPage = () => {
   const { serverId } = useParams();
+  const servers = useSelector((state: RootState) => state.server).filter(
+    (item) => item.status === 1 && item._id !== serverId
+  );
   const [loading, setLoading] = useState<boolean>(false);
-  const [servers, setServers] = useState<ServerType[]>([]);
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [serverDetail, setServerDetail] = useState<ServerType>();
   const [listKey, setListKey] = useState<KeySeverType[]>([]);
@@ -36,23 +42,6 @@ const ServerDetailAdminPage = () => {
     undefined
   );
   const [selectKeys, setSelectKeys] = useState<string[]>([]);
-  useEffect(() => {
-    if (serverDetail && serverDetail.status === 1) handleFetchData();
-  }, [serverDetail]);
-  const handleFetchData = async () => {
-    try {
-      const resultServer = await api.get("/servers?status=1");
-      setServers(resultServer.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log("error message: ", error);
-        toast.error(error.response?.data.message);
-      } else {
-        console.log("unexpected error: ", error);
-        return "An unexpected error occurred";
-      }
-    }
-  };
   useEffect(() => {
     handleFetchServerDetail();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -332,11 +321,18 @@ const ServerDetailAdminPage = () => {
               <div className="space-y-7">
                 <div className="flex items-center justify-between h-14">
                   <Heading>Keys Active</Heading>
-                  {selectKeys.length > 0 && (
-                    <button className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20">
-                      Migrate ({selectKeys.length} keys)
-                    </button>
-                  )}
+                  <button
+                    className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
+                    onClick={() => {
+                      if (selectKeys.length > 0) {
+                        showModal();
+                      } else {
+                        toast.warn("Bạn chưa chọn key để migrate");
+                      }
+                    }}
+                  >
+                    Migrate (select {selectKeys.length} keys)
+                  </button>
                 </div>
                 <div className="w-full space-y-5 overflow-x-scroll">
                   <div className="grid grid-cols-5 w-[1180px] lg:w-full">
@@ -650,7 +646,7 @@ const ServerDetailAdminPage = () => {
         }}
         footer={[]}
       >
-        <div className="mb-5">
+        <div className="mb-3">
           <p className="font-primary">Chọn máy chủ để migrate key</p>
           {selectRow &&
             servers.filter((item) => item._id !== serverId).length === 0 && (
@@ -659,18 +655,30 @@ const ServerDetailAdminPage = () => {
               </p>
             )}
         </div>
-        <div className="space-y-2">
-          {selectRow &&
-            servers.map((item) =>
-              item._id !== serverId ? (
-                <Radio
-                  checked={item._id === selectServer}
+        <div className="mb-5">
+          <DropdownWithComponents>
+            <DropdownWithComponents.Select
+              placeholder={
+                selectServer ? (
+                  <span className="text-black">
+                    {servers.find((i) => i._id === selectServer)?.name}
+                  </span>
+                ) : (
+                  <span className="text-text4">Chọn server</span>
+                )
+              }
+            ></DropdownWithComponents.Select>
+            <DropdownWithComponents.List>
+              {servers.map((item) => (
+                <DropdownWithComponents.Option
+                  key={uuidv4()}
                   onClick={() => setSelectServer(item._id)}
                 >
-                  <span className="block font-primary">{item.name}</span>
-                </Radio>
-              ) : null
-            )}
+                  <span className="capitalize">{item.name}</span>
+                </DropdownWithComponents.Option>
+              ))}
+            </DropdownWithComponents.List>
+          </DropdownWithComponents>
         </div>
         <div className="flex items-center justify-end gap-5">
           <button

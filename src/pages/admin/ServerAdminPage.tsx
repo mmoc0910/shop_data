@@ -14,29 +14,31 @@ import { Modal, Table, TableColumnsType, Tag } from "antd";
 import Swal from "sweetalert2";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import axios from "axios";
-import Radio from "../../components/radio/Radio";
 import Loading from "../../components/common/Loading";
 import PickLocationForm from "../../components/server/PickLocationForm";
 import EditKeyLimitForm from "../../components/server/EditKeyLimitForm";
 import dayjs from "dayjs";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store/configureStore";
+import { setServer } from "../../store/server/serverSlice";
+import { DropdownWithComponents } from "../../components/dropdown";
+import { v4 as uuidv4 } from "uuid";
 
 const schema = yup
   .object({
     apiUrl: yup.string().required("This field is required"),
     fingerPrint: yup.string().required("This field is required"),
     remark: yup.string().required("This field is required"),
-    // numberRecomendKey: yup.number(),
     location: yup.string().required("This field is required"),
-    // defaultBandWidth: yup.number().required("This field is required"),
     totalBandWidth: yup.number().required("This field is required"),
   })
   .required();
 
 const ServerAdminPage = () => {
+  const dispatch = useDispatch();
+  const listServerStore = useSelector((state: RootState) => state.server);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingtable, setLoadingTable] = useState<boolean>(false);
-  const [servers, setServers] = useState<ServerType[]>([]);
-  const [listServerHistory, setListServerHistory] = useState<ServerType[]>([]);
   const [selectRow, setSelectRow] = useState<string | undefined>();
   const [selectServer, setSelectServer] = useState<string | undefined>(
     undefined
@@ -56,16 +58,14 @@ const ServerAdminPage = () => {
   const locationWatch = watch("location");
   useEffect(() => {
     handleFetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const handleFetchData = async () => {
     try {
       console.log("load server");
       setLoadingTable(true);
       const resultServer = await api.get<ServerType[]>("/servers");
-      setServers(resultServer.data.filter((item) => item.status === 1));
-      setListServerHistory(
-        resultServer.data.filter((item) => item.status === 0)
-      );
+      dispatch(setServer(resultServer.data));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log("error message: ", error);
@@ -257,7 +257,7 @@ const ServerAdminPage = () => {
         key: "totalBandWidth",
         render: (text: number, record: ServerType) => (
           <EditKeyLimitForm
-          className="!w-[170px]"
+            className="!w-[170px]"
             type="number"
             placeholder={`${text / 1000 / 1000 / 1000}GB`}
             handleAddLimitData={(value) => {
@@ -471,7 +471,7 @@ const ServerAdminPage = () => {
         <div className="flex items-start rounded-xl border-2 border-[#eeeeed]">
           <div className="flex-1 p-5 space-y-3">
             <p className="text-lg text-gray-500">Tổng số máy chủ</p>
-            <p className="text-2xl font-medium">{servers.length}</p>
+            <p className="text-2xl font-medium">{listServerStore.length}</p>
           </div>
           {/* <div className="flex-1 p-5 space-y-3">
             <p className="text-lg text-gray-500">Tổng số key</p>
@@ -542,20 +542,24 @@ const ServerAdminPage = () => {
           </form>
         </div>
 
-        <Heading>Danh sách máy chủ({servers.length})</Heading>
+        <Heading>
+          Danh sách máy chủ(
+          {listServerStore.filter((item) => item.status === 1).length})
+        </Heading>
         <Table
           loading={loadingtable}
-          dataSource={servers.map((item, index) => ({ index, ...item }))}
+          dataSource={listServerStore
+            .filter((item) => item.status === 1)
+            .map((item, index) => ({ index, ...item }))}
           columns={columns}
           scroll={{ x: 1120 }}
         />
         <Heading>Lịch sử máy chủ</Heading>
         <Table
           loading={loadingtable}
-          dataSource={listServerHistory.map((item, index) => ({
-            index,
-            ...item,
-          }))}
+          dataSource={listServerStore
+            .filter((item) => item.status === 0)
+            .map((item, index) => ({ index, ...item }))}
           columns={columnsHistory}
           scroll={{ x: 1120 }}
         />
@@ -568,27 +572,44 @@ const ServerAdminPage = () => {
         }}
         footer={[]}
       >
-        <div className="mb-5">
+        <div className="mb-3">
           <p className="font-primary">Chọn máy chủ để migrate key</p>
           {selectRow &&
-            servers.filter((item) => item._id !== selectRow).length === 0 && (
+            listServerStore.filter((item) => item._id !== selectRow).length ===
+              0 && (
               <p className="text-error font-primary">
                 Bạn cần thêm server mới để migrate key sang
               </p>
             )}
         </div>
-        <div>
-          {selectRow &&
-            servers.map((item) =>
-              item._id !== selectRow ? (
-                <Radio
-                  checked={item._id === selectServer}
-                  onClick={() => setSelectServer(item._id)}
-                >
-                  <span className="block font-primary">{item.name}</span>
-                </Radio>
-              ) : null
-            )}
+        <div className="mb-5">
+          <DropdownWithComponents>
+            <DropdownWithComponents.Select
+              placeholder={
+                selectServer ? (
+                  <span className="text-black">
+                    {listServerStore.find((i) => i._id === selectServer)?.name}
+                  </span>
+                ) : (
+                  <span className="text-text4">Chọn server</span>
+                )
+              }
+            ></DropdownWithComponents.Select>
+            <DropdownWithComponents.List>
+              {listServerStore
+                .filter((item) => item.status === 1)
+                .map((item) =>
+                  item._id !== selectRow ? (
+                    <DropdownWithComponents.Option
+                      key={uuidv4()}
+                      onClick={() => setSelectServer(item._id)}
+                    >
+                      <span className="capitalize">{item.name}</span>
+                    </DropdownWithComponents.Option>
+                  ) : null
+                )}
+            </DropdownWithComponents.List>
+          </DropdownWithComponents>
         </div>
         <div className="flex items-center justify-end gap-5">
           <button
