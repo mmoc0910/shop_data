@@ -12,17 +12,19 @@ import { Input } from "../components/input";
 import { api } from "../api";
 import { AuthState } from "../store/auth/authSlice";
 import { toast } from "react-toastify";
-import { countries, purposes } from "../constants";
-import { useEffect, useMemo } from "react";
+import { countries, purposes, regexUserName } from "../constants";
+import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/configureStore";
 import axios from "axios";
 import { DropdownWithComponents } from "../components/dropdown";
 import { v4 as uuidv4 } from "uuid";
 import { useTranslation } from "react-i18next";
+import Loading from "../components/common/Loading";
 
 const SignUpPage = () => {
   const { t, i18n } = useTranslation();
+  const [loading, setLoading] = useState<boolean>(false);
   const { email, role } = useSelector((state: RootState) => state.auth);
   const navigation = useNavigate();
   const { value: tooglePassword, handleToogleValue: handleTooglePassword } =
@@ -33,8 +35,8 @@ const SignUpPage = () => {
     () =>
       yup
         .object({
-          username: yup.string().required(t("form.username.error.required")),
-          // .matches(regexUserName, t("form.username.error.reg")),
+          username: yup.string().required(t("form.username.error.required"))
+          .matches(regexUserName, t("form.username.error.reg")),
           email: yup
             .string()
             .required(t("form.email.error.required"))
@@ -99,6 +101,7 @@ const SignUpPage = () => {
         introduceCode,
       } = data;
       if (password === rePassword) {
+        setLoading(true);
         if (introduceCode) {
           if (introduceCode.length === 7) {
             await api.post<{ data: AuthState }>("/users", {
@@ -129,6 +132,7 @@ const SignUpPage = () => {
           navigation("/sign-in");
           toast.success("Đăng ký tài khoản thành công");
         }
+        setLoading(false);
       } else {
         setError("rePassword", { message: "Xác nhận mật khẩu không đúng" });
       }
@@ -144,6 +148,7 @@ const SignUpPage = () => {
   };
   return (
     <LayoutAuthentication heading={t("authen.sign_up")}>
+      {loading && <Loading />}
       <p className="mb-[25px] md:mb-[30px] text-xs font-normal text-center md:text-sm md:font-medium text-text3">
         {t("login.have_account")}{" "}
         <Link

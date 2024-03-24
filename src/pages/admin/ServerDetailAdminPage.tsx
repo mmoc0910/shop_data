@@ -41,6 +41,9 @@ const ServerDetailAdminPage = () => {
   const [selectServer, setSelectServer] = useState<string | undefined>(
     undefined
   );
+  const [migrateMode, setMigrateMode] = useState<
+    "multiple" | "single" | undefined
+  >();
   const [selectKeys, setSelectKeys] = useState<string[]>([]);
   useEffect(() => {
     handleFetchServerDetail();
@@ -83,6 +86,7 @@ const ServerDetailAdminPage = () => {
         confirmButtonText: "Đồng ý",
       });
       if (isConfirmed) {
+        console.log("migrate signle key");
         setLoading(true);
         await api.post(`/keys/migrate`, {
           keyId,
@@ -90,6 +94,44 @@ const ServerDetailAdminPage = () => {
         });
         handleFetchServerDetail();
         handleCancel();
+        toast.success("Migrate key thành công");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log("error message: ", error);
+        toast.error(error.response?.data.message);
+      } else {
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handelMigrateMultipleKey = async (
+    selectServer: string,
+    selectKeys: string[]
+  ) => {
+    try {
+      const { isConfirmed } = await Swal.fire({
+        title: `<p class="leading-tight">Bạn có muốn migate những key đã chọn</p>`,
+        icon: "success",
+        showCancelButton: true,
+        confirmButtonColor: "#1DC071",
+        cancelButtonColor: "#d33",
+        cancelButtonText: "Thoát",
+        confirmButtonText: "Đồng ý",
+      });
+      if (isConfirmed) {
+        console.log(selectServer, selectKeys);
+        setLoading(true);
+        await api.post(`/keys/multi-migrate`, {
+          listKeyId: selectKeys,
+          serverId: selectServer,
+        });
+        handleFetchServerDetail();
+        handleCancel();
+        setSelectKeys([]);
         toast.success("Migrate key thành công");
       }
     } catch (error) {
@@ -189,8 +231,9 @@ const ServerDetailAdminPage = () => {
   const handleCancel = () => {
     if (selectRow) {
       setSelectRow(undefined);
-      setSelectServer(undefined);
     }
+    setSelectServer(undefined);
+    setMigrateMode(undefined);
     setIsModalOpen(false);
   };
   const handleChangeLocation = async (value: string) => {
@@ -325,6 +368,7 @@ const ServerDetailAdminPage = () => {
                     className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
                     onClick={() => {
                       if (selectKeys.length > 0) {
+                        setMigrateMode("multiple");
                         showModal();
                       } else {
                         toast.warn("Bạn chưa chọn key để migrate");
@@ -436,6 +480,7 @@ const ServerDetailAdminPage = () => {
                                     <button
                                       className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
                                       onClick={() => {
+                                        setMigrateMode("single");
                                         setSelectRow(item._id);
                                         showModal();
                                       }}
@@ -690,10 +735,18 @@ const ServerDetailAdminPage = () => {
           <button
             className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-secondary40 font-primary"
             onClick={() => {
-              if (selectRow && selectServer) {
-                handleMigratekey(selectRow, selectServer);
-              } else {
-                toast.warn("bạn chưa chọn server để migrate key sang");
+              if (migrateMode === "single") {
+                if (selectRow && selectServer) {
+                  handleMigratekey(selectRow, selectServer);
+                } else {
+                  toast.warn("bạn chưa chọn server để migrate key sang");
+                }
+              } else if (migrateMode === "multiple") {
+                if (selectServer) {
+                  handelMigrateMultipleKey(selectServer, selectKeys);
+                } else {
+                  toast.warn("bạn chưa chọn server để migrate key sang");
+                }
               }
             }}
           >

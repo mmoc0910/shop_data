@@ -43,6 +43,7 @@ const ServerAdminPage = () => {
   const [selectServer, setSelectServer] = useState<string | undefined>(
     undefined
   );
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const {
     handleSubmit,
@@ -58,7 +59,7 @@ const ServerAdminPage = () => {
   const locationWatch = watch("location");
   useEffect(() => {
     handleFetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const handleFetchData = async () => {
     try {
@@ -541,7 +542,6 @@ const ServerAdminPage = () => {
             </div>
           </form>
         </div>
-
         <Heading>
           Danh sách máy chủ(
           {listServerStore.filter((item) => item.status === 1).length})

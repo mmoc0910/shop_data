@@ -13,22 +13,22 @@ import { useDispatch, useSelector } from "react-redux";
 import { api } from "../api";
 import { AuthState, setAuth } from "../store/auth/authSlice";
 import { RootState } from "../store/configureStore";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+import Loading from "../components/common/Loading";
 // import { regexUserName } from "../constants";
 
 const SignInPage = () => {
+  const [loading, setLoading] = useState<boolean>(false);
   const { t, i18n } = useTranslation();
   const schema = useMemo(
     () =>
       yup
         .object({
-          account: yup
-            .string()
-            .required(t("form.account.error.required")),
-            // .matches(regexUserName, t("form.username.error.reg")),
+          account: yup.string().required(t("form.account.error.required")),
+          // .matches(regexUserName, t("form.username.error.reg")),
           password: yup
             .string()
             .required(t("form.password.error.required"))
@@ -58,11 +58,10 @@ const SignInPage = () => {
   }, [email, navigation, role]);
   const onSubmit = async (data: { account: string; password: string }) => {
     try {
-      const result = await api.post<{ data: AuthState }>("/users/login", {
-        ...data,
-        account: data.account.toLowerCase(),
-      });
+      setLoading(true);
+      const result = await api.post<{ data: AuthState }>("/users/login", data);
       dispatch(setAuth(result.data.data));
+      setLoading(false);
       if (result.data.data.role === 1) {
         navigation("/admin/dashboard");
       } else if (result.data.data.role === 2) {
@@ -81,6 +80,7 @@ const SignInPage = () => {
   };
   return (
     <LayoutAuthentication heading={t("login.welcome_back")}>
+      {loading && <Loading />}
       <p className="mb-[25px] md:mb-[30px] text-xs font-normal text-center md:text-sm md:font-medium text-text3">
         {t("login.dont_have_account")}{" "}
         <Link

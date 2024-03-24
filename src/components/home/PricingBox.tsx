@@ -69,7 +69,7 @@ const PricingBox = () => {
               className="my-9 lg:my-14 py-2 px-9 bg-[#f2f4f7] rounded-full"
             >
               <div className="font-medium text-white bg-primary px-6 py-3 rounded-full">
-              {t("page.home.pricing.seemore")}
+                {t("page.home.pricing.seemore")}
               </div>
             </div>
           ) : null}
@@ -85,6 +85,7 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
   const { _id } = useSelector((state: RootState) => state.auth);
   const navigation = useNavigate();
   const { name, price, description, type, bandWidth } = plan;
+  console.log(type.split("_"))
   return (
     <>
       <div className="col-span-1 shadow-xl flex flex-col items-center rounded-2xl overflow-hidden">
@@ -94,16 +95,34 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
         <div className="pb-10 pt-10">
           <p className="text-primary text-3xl font-medium mb-2">
             {/* {VND.format(price)} */}
-            {priceFomat(price, i18n.language as CoutryType)}/{type}
+            {priceFomat(price, i18n.language as CoutryType)}/
+            {i18n.language === "vi" && type.split("_")[0]}
+            {i18n.language === "en" && type.split("_")[1]}
+            {i18n.language === "ci" && type.split("_")[2]}
           </p>
           <p className="font-semibold text-center text-primary text-3xl mt-3">
             {bandWidth}GB
           </p>
         </div>
         <div className="w-[80%] mx-auto space-y-5 pb-16 mb-auto">
-          {description.map((desc) => (
-            <Check content={desc} key={uuidv4()} />
-          ))}
+          {i18n.language === "ci" &&
+            description
+              .filter((item) => item.includes("ci_"))
+              .map((desc) => (
+                <Check content={desc.replace("ci_", "")} key={uuidv4()} />
+              ))}
+          {i18n.language === "en" &&
+            description
+              .filter((item) => item.includes("en_"))
+              .map((desc) => (
+                <Check content={desc.replace("en_", "")} key={uuidv4()} />
+              ))}
+          {i18n.language === "vi" &&
+            description
+              .filter((item) => item.includes("vi_"))
+              .map((desc) => (
+                <Check content={desc.replace("vi_", "")} key={uuidv4()} />
+              ))}
         </div>
         <button
           className="flex items-center justify-center bg-primary w-full py-4 flex-col gap-2"
@@ -111,7 +130,9 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
             if (_id) {
               try {
                 const { isConfirmed } = await Swal.fire({
-                  title: `<p class="leading-tight">${t("page.package.swal.title")} <span class="text-secondary20">${name}</span></p>`,
+                  title: `<p class="leading-tight">${t(
+                    "page.package.swal.title"
+                  )} <span class="text-secondary20">${name}</span></p>`,
                   text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
                   icon: "success",
                   showCancelButton: true,
@@ -152,7 +173,9 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
             }
           }}
         >
-          <p className="font-medium text-white text-xl">{t("page.package.buyNow")}</p>
+          <p className="font-medium text-white text-xl">
+            {t("page.package.buyNow")}
+          </p>
         </button>
       </div>
       {loading ? <Loading /> : null}

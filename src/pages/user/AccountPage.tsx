@@ -173,7 +173,9 @@ const AccountPage = () => {
                   {t("page.account.info.field.level")}
                 </span>{" "}
                 <span className="text-[#3d6dae] font-semibold">
-                  {level === 0 ?    t("page.account.info.level") : t("page.account.info.leveln", {level: level}) }
+                  {level === 0
+                    ? t("page.account.info.level")
+                    : t("page.account.info.leveln", { level: level })}
                 </span>
               </p>
               <Tooltip title={tooltip}>
@@ -264,9 +266,7 @@ const ChangeProfile = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [t, i18n.language]
   );
-  const { _id, email, username } = useSelector(
-    (state: RootState) => state.auth
-  );
+  const { _id } = useSelector((state: RootState) => state.auth);
   const [user, setUser] = useState<AuthState>();
   const dispatch = useDispatch();
   const { handleSubmit, control, setValue, watch } = useForm({
@@ -299,7 +299,7 @@ const ChangeProfile = () => {
     // username: string;
   }) => {
     try {
-      await api.patch(`/users/${_id}`, { ...data, email, username });
+      await api.patch(`/users/${_id}`, { ...data });
       const resultUser = await api.get<AuthState>(`/users/${_id}`);
       dispatch(setAuth(resultUser.data));
       toast.success(t("page.account.info.success"));

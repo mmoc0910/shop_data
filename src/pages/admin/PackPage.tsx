@@ -240,7 +240,9 @@ const PackPage = () => {
         title: () => <p className="font-semibold font-primary">Lượt mua</p>,
         dataIndex: "numberPurchase",
         key: "numberPurchase",
-        render: (text: number) => <p className="text-sm font-primary">{text}</p>,
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text}</p>
+        ),
       },
       {
         title: () => <p className="font-semibold font-primary">Chu kỳ</p>,
@@ -403,16 +405,18 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
         <div className="pt-10 pb-10">
           <p className="mb-2 text-4xl font-medium text-primary">
             {VND.format(price)}
-            <span className="text-xl">VND/{type}</span>
+            <span className="text-xl">VND/{type.split("_")[0]}</span>
           </p>
           <p className="mt-3 text-3xl font-semibold text-center text-primary">
             {bandWidth}GB
           </p>
         </div>
         <div className="w-[80%] mx-auto space-y-5 pb-16 mb-auto">
-          {description.map((desc) => (
-            <Check content={desc} key={uuidv4()} />
-          ))}
+          {description
+            .filter((item) => item.includes("vi_"))
+            .map((desc) => (
+              <Check content={desc.replace("vi_", "")} key={uuidv4()} />
+            ))}
         </div>
         <button className="flex flex-col items-center justify-center w-full gap-2 py-4 bg-primary">
           <p className="text-xl font-medium text-white">Đăng ký mua</p>

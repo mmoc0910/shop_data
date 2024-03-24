@@ -1,44 +1,33 @@
 import { ReactNode } from "react";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
-import CashDashboard from "../../components/admin/CashDashboard";
 import UserPieChart from "../../components/admin/UserPieChart";
-import RevenueLineChart from "../../components/admin/RevenueLineChart";
+import ServerSatify from "../../components/dashboard/ServerSatify";
+import TopUser from "../../components/dashboard/TopUser";
+import TopPlan from "../../components/dashboard/TopPlan";
+import SatifyByMonth from "../../components/dashboard/SatifyByMonth";
+import SatifyByYear from "../../components/dashboard/SatifyByYear";
 
 const DashboardAdminPage = () => {
   return (
     <RequireAuthPage rolePage={1}>
-      <div className="grid grid-cols-12 gap-x-5 gap-y-10">
-        <div className="p-5 gap-y-5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 rounded-xl border-2 border-[#eeeeed] col-span-12">
-          <SatifyItem title="Tổng nguời dùng" content={0} />
-          <SatifyItem title="Tổng nạp" content={"0VND"} />
-          <SatifyItem title="Doanh thu" content={"0VND"} />
-          <SatifyItem title="Máy chủ" content={0} />
-          <SatifyItem title="Key sử dụng" content={0} />
-          <SatifyItem title="Gói cước" content={0} />
-          <SatifyItem title="Gói cước mở rộng" content={0} />
-        </div>
-        <div className="col-span-12 grid grid-cols-12 gap-x-5 gap-y-10">
-          <div className="col-span-12 lg:col-span-8 p-5">
-            <RevenueLineChart />
-          </div>
-          <div className="col-span-12 lg:col-span-4 p-5">
-            <UserPieChart />
-          </div>
-        </div>
-        <div className="col-span-4 p-5">
-          <CashDashboard />
-        </div>
+      <div className="grid grid-cols-12 gap-x-10 gap-y-10">
+        <SatifyByMonth />
+        <SatifyByYear />
+        <TopPlan />
+        <ServerSatify />
+        <UserPieChart />
+        <TopUser />
       </div>
     </RequireAuthPage>
   );
 };
 
-const SatifyItem = ({
+export const SatifyItem = ({
   content,
   title,
   desc,
 }: {
-  content: string | number;
+  content: string | number | ReactNode;
   title: string;
   desc?: string | ReactNode;
 }) => {

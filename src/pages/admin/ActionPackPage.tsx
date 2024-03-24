@@ -108,14 +108,14 @@ const ActionPackPage = () => {
       <div className="space-y-4">
         <Heading>Thêm gói cước mới</Heading>
         <form
-          className="grid grid-cols-2 lg:grid-cols-5 gap-6"
+          className="grid grid-cols-2 lg:grid-cols-6 gap-6"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <FormGroup>
+          <FormGroup className="col-span-2">
             <Label htmlFor="name">Mã/Tên gói cước*</Label>
             <Input name="name" control={control} />
           </FormGroup>
-          <FormGroup>
+          <FormGroup className="col-span-2">
             <Label htmlFor="price">Giá gói cước*</Label>
             <Input name="price" control={control} type="number" min={0}>
               <p className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2 font-semibold text-icon-color">
@@ -123,7 +123,7 @@ const ActionPackPage = () => {
               </p>
             </Input>
           </FormGroup>
-          <FormGroup>
+          <FormGroup className="col-span-2">
             <Label htmlFor="bandWidth">Băng thông*</Label>
             <Input name="bandWidth" control={control} type="number" min={0}>
               <p className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2 font-semibold text-icon-color">
@@ -131,11 +131,11 @@ const ActionPackPage = () => {
               </p>
             </Input>
           </FormGroup>
-          <FormGroup>
-            <Label htmlFor="type">Chu kỳ*</Label>
+          <FormGroup className="col-span-2">
+            <Label htmlFor="type">Chu kỳ(Vietnam_English_Chinese)*</Label>
             <Input name="type" control={control} />
           </FormGroup>
-          <FormGroup>
+          <FormGroup className="col-span-2">
             <Label htmlFor="day">Ngày*</Label>
             <Input name="day" control={control} type="number" min={0}>
               <p className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2 font-semibold text-icon-color">
@@ -143,12 +143,12 @@ const ActionPackPage = () => {
               </p>
             </Input>
           </FormGroup>
-          <FormGroup className="col-span-2 lg:col-span-5">
+          <FormGroup className="col-span-2 lg:col-span-6">
             <Label htmlFor="description">Nội dung gói cước*</Label>
             <Textarea
               name="description"
               control={control}
-              className="min-h-[200px]"
+              className="min-h-[300px]"
             />
           </FormGroup>
           <FormGroup>
