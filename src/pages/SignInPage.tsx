@@ -61,7 +61,7 @@ const SignInPage = () => {
       setLoading(true);
       const result = await api.post<{ data: AuthState }>("/users/login", data);
       dispatch(setAuth(result.data.data));
-      setLoading(false);
+
       if (result.data.data.role === 1) {
         navigation("/admin/dashboard");
       } else if (result.data.data.role === 2) {
@@ -76,6 +76,8 @@ const SignInPage = () => {
         console.log("unexpected error: ", error);
         return "An unexpected error occurred";
       }
+    } finally {
+      setLoading(false);
     }
   };
   return (

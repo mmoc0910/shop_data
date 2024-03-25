@@ -35,8 +35,10 @@ const SignUpPage = () => {
     () =>
       yup
         .object({
-          username: yup.string().required(t("form.username.error.required"))
-          .matches(regexUserName, t("form.username.error.reg")),
+          username: yup
+            .string()
+            .required(t("form.username.error.required"))
+            .matches(regexUserName, t("form.username.error.reg")),
           email: yup
             .string()
             .required(t("form.email.error.required"))
@@ -132,7 +134,6 @@ const SignUpPage = () => {
           navigation("/sign-in");
           toast.success("Đăng ký tài khoản thành công");
         }
-        setLoading(false);
       } else {
         setError("rePassword", { message: "Xác nhận mật khẩu không đúng" });
       }
@@ -144,6 +145,8 @@ const SignUpPage = () => {
         console.log("unexpected error: ", error);
         return "An unexpected error occurred";
       }
+    } finally {
+      setLoading(false);
     }
   };
   return (
