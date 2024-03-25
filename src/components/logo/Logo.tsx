@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import classNames from "../../utils/classNames";
-import logo from '../../assets/logo.png'
+import logo from '../../assets/logo.svg'
 const Logo = ({ className = "" }: { className?: string }) => {
   return (
     <Link

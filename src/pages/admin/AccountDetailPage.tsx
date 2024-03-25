@@ -19,14 +19,16 @@ import {
   messages,
 } from "../../constants";
 import { api } from "../../api";
-import { VND } from "../../utils/formatPrice";
+import { priceFomat } from "../../utils/formatPrice";
 import dayjs from "dayjs";
 import Heading from "../../components/common/Heading";
 import UpdateExtension from "../../components/user/UpdateExtension";
 import { copyToClipboard } from "../../utils/copyToClipboard";
 import { AndroidXML } from "../user/OrderPage";
+import { useTranslation } from "react-i18next";
 
 const AccountDetailPage = () => {
+  const { i18n } = useTranslation();
   const { accountId } = useParams();
   const [user, setUser] = useState<UserState>();
   useEffect(() => {
@@ -76,7 +78,10 @@ const AccountDetailPage = () => {
             </p> */}
             <p>
               Số dư:{" "}
-              <span className="font-medium">{VND.format(user.money)}VND</span>
+              <span className="font-medium">
+                {" "}
+                {priceFomat(user.money, i18n.language)}
+              </span>
             </p>
             <p>
               Quốc gia:{" "}
@@ -143,7 +148,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
   const handleFetchData = async () => {
     try {
       const result = await api.get<GistType[]>(`/gists?userId=${accountId}`);
-      setListGist(result.data.filter(item => item.status !== 2));
+      setListGist(result.data.filter((item) => item.status !== 2));
     } catch (error) {
       console.log("error - ", error);
       toast.error(messages.error);

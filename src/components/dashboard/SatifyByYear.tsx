@@ -13,6 +13,9 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { SatifyItem } from "../../pages/admin/DashboardAdminPage";
+import { priceFomat } from "../../utils/formatPrice";
+import { useTranslation } from "react-i18next";
 
 type DataType = {
   month: number;
@@ -66,6 +69,7 @@ const labels = [
   "Tháng 12",
 ];
 const SatifyByYear = () => {
+  const { i18n } = useTranslation();
   const [date, setDate] = useState<dayjs.Dayjs>(dayjs());
   const [data, setData] = useState<DataType[]>([]);
   console.log(dayjs(date).get("months"), dayjs(date).get("year"));
@@ -116,7 +120,12 @@ const SatifyByYear = () => {
   const onChangeStartDate: DatePickerProps["onChange"] = (date) => {
     setDate(date);
   };
-  if (data.length > 0)
+  if (data.length > 0) {
+    const totalSatify = data.map((item) => ({
+      transaction: item.transaction[0]?.money || 0,
+      rose: item.rose[0]?.money || 0,
+      cash: item.cash[0]?.money || 0,
+    }));
     return (
       <div className="space-y-5 col-span-12">
         <Heading className="flex items-center gap-5">
@@ -129,9 +138,43 @@ const SatifyByYear = () => {
             picker="year"
           />
         </Heading>
+        <div className="p-5 gap-y-5 grid grid-cols-2 md:grid-cols-3 rounded-xl border-2 border-[#eeeeed]">
+          <SatifyItem
+            title="Tổng nạp"
+            content={priceFomat(
+              totalSatify.reduce(
+                (accumulator, currentItem) => (accumulator += currentItem.cash),
+                0
+              ),
+              i18n.language
+            )}
+          />
+          <SatifyItem
+            title="Tổng mua"
+            content={priceFomat(
+              totalSatify.reduce(
+                (accumulator, currentItem) =>
+                  (accumulator += currentItem.transaction),
+                0
+              ),
+              i18n.language
+            )}
+          />
+          <SatifyItem
+            title="Tổng hoa hồng"
+            content={priceFomat(
+              totalSatify.reduce(
+                (accumulator, currentItem) => (accumulator += currentItem.rose),
+                0
+              ),
+              i18n.language
+            )}
+          />
+        </div>
         <Bar options={options} data={dataBar} />
       </div>
     );
+  }
   return;
 };
 

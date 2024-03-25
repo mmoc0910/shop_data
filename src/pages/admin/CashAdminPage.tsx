@@ -17,14 +17,16 @@ import {
   TableColumnsType,
   Tag,
 } from "antd";
-import { VND } from "../../utils/formatPrice";
+import { VND, priceFomat } from "../../utils/formatPrice";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import Swal from "sweetalert2";
 import axios from "axios";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const CashAdminPage = () => {
+  const { i18n } = useTranslation();
   const [listCash, setListCash] = useState<CashType[]>([]);
   const [startDate, setStartDate] = useState<dayjs.Dayjs | undefined>();
   const [endDate, setEndDate] = useState<dayjs.Dayjs | undefined>();
@@ -174,9 +176,7 @@ const CashAdminPage = () => {
   const columns: TableColumnsType<CashType> = useMemo(
     () => [
       {
-        title: () => (
-          <p className="font-semibold font-primary">STT</p>
-        ),
+        title: () => <p className="font-semibold font-primary">STT</p>,
         dataIndex: "index",
         key: "index",
         width: 70,
@@ -214,7 +214,10 @@ const CashAdminPage = () => {
         dataIndex: "money",
         key: "money",
         render: (_: string, record: CashType) => (
-          <p className="text-sm font-primary">{VND.format(record.money)}VND</p>
+          <p className="text-sm font-primary">
+            {" "}
+            {priceFomat(record.money, i18n.language)}
+          </p>
         ),
         sorter: (a, b) => a.money - b.money,
       },
@@ -282,7 +285,7 @@ const CashAdminPage = () => {
           },
         ],
         onFilter: (value: boolean | Key, record: CashType) => {
-          if (typeof value === 'boolean') {
+          if (typeof value === "boolean") {
             // Xử lý trường hợp value là boolean
             return record.status === (value ? 1 : 0);
           } else {
@@ -332,7 +335,7 @@ const CashAdminPage = () => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [i18n.language]
   );
   const onChangeStartDate: DatePickerProps["onChange"] = (date) => {
     setStartDate(date);

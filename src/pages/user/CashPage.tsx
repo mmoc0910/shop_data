@@ -17,12 +17,12 @@ import {
   isSameOrBefore,
   messages,
 } from "../../constants";
-import { priceFomat } from "../../utils/formatPrice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
 import dayjs from "dayjs";
 import RechargePage from "./RechargePage";
 import { useTranslation } from "react-i18next";
+import { priceFomat } from "../../utils/formatPrice";
 
 const CashPage = () => {
   const { i18n, t } = useTranslation();

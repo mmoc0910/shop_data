@@ -3,7 +3,8 @@ import { SatifyItem } from "../../pages/admin/DashboardAdminPage";
 import { PlanType } from "../../type";
 import Heading from "../common/Heading";
 import { api } from "../../api";
-import { VND } from "../../utils/formatPrice";
+import { priceFomat } from "../../utils/formatPrice";
+import { useTranslation } from "react-i18next";
 
 type DataType = {
   _id: string;
@@ -12,6 +13,7 @@ type DataType = {
   plan: [PlanType];
 };
 const TopPlan = () => {
+  const { i18n } = useTranslation();
   const [data, setData] = useState<DataType[]>([]);
   useEffect(() => {
     (async () => {
@@ -35,7 +37,9 @@ const TopPlan = () => {
               content={
                 <div className="flex flex-col gap-2 text-lg">
                   <p>Lượt mua: {item.count}</p>
-                  <p>Tổng thu: {VND.format(item.totalMoney)}VND</p>
+                  <p>
+                    Tổng thu: {priceFomat(item.totalMoney, i18n.language)}
+                  </p>
                 </div>
               }
             />

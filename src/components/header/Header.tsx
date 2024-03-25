@@ -47,7 +47,9 @@ const Header = () => {
               </a>
             ))}
             <div className="font-medium text-icon-color cursor-pointer relative group">
-              <div className="text-sm xl:text-lg">Download</div>
+              <div className="text-sm xl:text-lg">
+                {i18n.language === "ci" ? "下载" : "Download"}
+              </div>
               <div className="absolute z-50 right-0 top-[calc(100%+1rem)] invisible opacity-0 group-hover:visible group-hover:opacity-100 group-hover:top-full transition-all duration-300">
                 <div className="py-4 px-8 mt-3 rounded-lg shadow-xl bg-white space-y-2 flex flex-col text-black">
                   <Link

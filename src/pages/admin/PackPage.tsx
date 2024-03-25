@@ -13,9 +13,11 @@ import { DAY_FORMAT } from "../../constants";
 import dayjs from "dayjs";
 import { Check } from "../../components/home/PricingBox";
 import { v4 as uuidv4 } from "uuid";
-import { VND } from "../../utils/formatPrice";
+import { priceFomat } from "../../utils/formatPrice";
+import { useTranslation } from "react-i18next";
 
 const PackPage = () => {
+  const { i18n } = useTranslation();
   const [plans, setPlans] = useState<PlanType[]>([]);
   const [listPlanHistory, setListPlanHistory] = useState<PlanType[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -85,7 +87,7 @@ const PackPage = () => {
     try {
       const { isConfirmed } = await Swal.fire({
         title: `<p class="leading-tight">Bạn có muốn xóa gói cước này</p>`,
-        // text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
+       
         icon: "success",
         showCancelButton: true,
         confirmButtonColor: "#1DC071",
@@ -130,6 +132,16 @@ const PackPage = () => {
           >
             {text}
           </Link>
+        ),
+      },
+      {
+        title: () => <p className="font-semibold font-primary">Giá gói</p>,
+        dataIndex: "price",
+        key: "price",
+        render: (text: number) => (
+          <p className="text-sm font-primary">
+            {priceFomat(text, i18n.language)}
+          </p>
         ),
       },
       {
@@ -210,7 +222,7 @@ const PackPage = () => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [i18n.language]
   );
   const columnHistory: TableColumnsType<PlanType> = useMemo(
     () => [
@@ -234,6 +246,16 @@ const PackPage = () => {
           >
             {text}
           </Link>
+        ),
+      },
+      {
+        title: () => <p className="font-semibold font-primary">Giá gói</p>,
+        dataIndex: "price",
+        key: "price",
+        render: (text: number) => (
+          <p className="text-sm font-primary">
+            {priceFomat(text, i18n.language)}
+          </p>
         ),
       },
       {
@@ -395,6 +417,7 @@ const PackPage = () => {
 };
 
 export const PricingItem = ({ plan }: { plan: PlanType }) => {
+  const { i18n } = useTranslation();
   const { name, price, description, type, bandWidth } = plan;
   return (
     <>
@@ -404,8 +427,8 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
         </h4>
         <div className="pt-10 pb-10">
           <p className="mb-2 text-4xl font-medium text-primary">
-            {VND.format(price)}
-            <span className="text-xl">VND/{type.split("_")[0]}</span>
+            {priceFomat(price, i18n.language)}
+            <span className="text-xl">/{type.split("_")[0]}</span>
           </p>
           <p className="mt-3 text-3xl font-semibold text-center text-primary">
             {bandWidth}GB

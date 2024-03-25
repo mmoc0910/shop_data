@@ -3,8 +3,9 @@ import Heading from "../common/Heading";
 import { useEffect, useMemo, useState } from "react";
 import { UserState } from "../../type";
 import { api } from "../../api";
-import { VND } from "../../utils/formatPrice";
+import {  priceFomat } from "../../utils/formatPrice";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 type DataType = {
   _id: string;
@@ -12,6 +13,7 @@ type DataType = {
   user: [UserState];
 };
 const TopUser = () => {
+  const { i18n } = useTranslation();
   const [data, setData] = useState<DataType[]>([]);
   useEffect(() => {
     (async () => {
@@ -70,12 +72,13 @@ const TopUser = () => {
         dataIndex: "totalMoney",
         key: "totalMoney",
         render: (text: number) => (
-          <p className="text-sm font-primary">{VND.format(text)}VND</p>
+          <p className="text-sm font-primary">
+            {priceFomat(text, i18n.language)}
+          </p>
         ),
       },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [i18n.language]
   );
   return (
     <div className="space-y-5 col-span-12 md:col-span-8">
@@ -88,7 +91,7 @@ const TopUser = () => {
           }))}
           columns={columns}
           pagination={{ pageSize: 5 }}
-          scroll={{ x: 770}}
+          scroll={{ x: 770 }}
         />
       </div>
     </div>

@@ -10,13 +10,14 @@ import FormGroup from "../../components/common/FormGroup";
 import { Label } from "../../components/label";
 import Button from "../../components/button/Button";
 import Radio from "../../components/radio/Radio";
-import { VND } from "../../utils/formatPrice";
+import { priceFomat } from "../../utils/formatPrice";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
 import { UserState } from "../../type";
 import dayjs from "dayjs";
+import { useTranslation } from "react-i18next";
 
 const levels = [
   { id: 0, title: "Cộng tác viên" },
@@ -32,6 +33,7 @@ const schema = yup
   .required();
 
 const AccountAdminPage = () => {
+  const { i18n } = useTranslation();
   const collab = useSelector((state: RootState) => state.collab);
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -108,9 +110,7 @@ const AccountAdminPage = () => {
   const columns: TableColumnsType<UserState> = useMemo(
     () => [
       {
-        title: () => (
-          <p className="font-semibold font-primary">STT</p>
-        ),
+        title: () => <p className="font-semibold font-primary">STT</p>,
         dataIndex: "index",
         key: "index",
         width: 70,
@@ -151,7 +151,7 @@ const AccountAdminPage = () => {
         key: "cash",
         render: (text: number) => (
           <p className="text-sm font-primary">
-            {text ? VND.format(text) : 0}VND
+            {priceFomat(text || 0, i18n.language)}
           </p>
         ),
         sorter: {
@@ -166,7 +166,10 @@ const AccountAdminPage = () => {
         dataIndex: "money",
         key: "money",
         render: (text: number) => (
-          <p className="text-sm font-primary">{VND.format(text)}VND</p>
+          <p className="text-sm font-primary">
+            {" "}
+            {priceFomat(text, i18n.language)}
+          </p>
         ),
         sorter: {
           compare: (a, b) => a.money - b.money,
@@ -247,7 +250,7 @@ const AccountAdminPage = () => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [i18n.language]
   );
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;

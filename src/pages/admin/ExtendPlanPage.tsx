@@ -1,7 +1,7 @@
 import { Modal, Table, TableColumnsType } from "antd";
 import Heading from "../../components/common/Heading";
 import { ExtendPlanType } from "../../type";
-import { VND } from "../../utils/formatPrice";
+import { priceFomat } from "../../utils/formatPrice";
 import { toast } from "react-toastify";
 import { api } from "../../api";
 import { DAY_FORMAT, messages } from "../../constants";
@@ -17,6 +17,7 @@ import { Input } from "../../components/input";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import Swal from "sweetalert2";
 import RoseExtendPlan from "../../components/extendPlan/RoseExtendPlan";
+import { useTranslation } from "react-i18next";
 
 const schema = yup
   .object({
@@ -27,6 +28,7 @@ const schema = yup
   .required();
 
 const ExtendPlanPage = () => {
+  const { i18n } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [listExtendPlan, setListExtendPlan] = useState<ExtendPlanType[]>([]);
   const [listExtendPlanDelete, setListExtendPlanDelete] = useState<
@@ -125,9 +127,7 @@ const ExtendPlanPage = () => {
   const columns: TableColumnsType<ExtendPlanType> = useMemo(
     () => [
       {
-        title: () => (
-          <p className="font-semibold font-primary">STT</p>
-        ),
+        title: () => <p className="font-semibold font-primary">STT</p>,
         dataIndex: "index",
         key: "index",
         width: 70,
@@ -136,9 +136,7 @@ const ExtendPlanPage = () => {
         ),
       },
       {
-        title: () => (
-          <p className="font-semibold font-primary">Tên gói</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Tên gói</p>,
         dataIndex: "name",
         key: "name",
         render: (text: string) => (
@@ -146,21 +144,20 @@ const ExtendPlanPage = () => {
         ),
       },
       {
-        title: () => (
-          <p className="font-semibold font-primary">Lượt mua</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Lượt mua</p>,
         dataIndex: "numberPurchase",
         key: "numberPurchase",
         render: (text) => <p className="text-sm font-primary">{text}</p>,
       },
       {
-        title: () => (
-          <p className="font-semibold font-primary">Giá</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Giá</p>,
         dataIndex: "price",
         key: "price",
         render: (text: number) => (
-          <p className="text-sm font-primary">{VND.format(text)}VND</p>
+          <p className="text-sm font-primary">
+            {" "}
+            {priceFomat(text, i18n.language)}
+          </p>
         ),
         sorter: {
           compare: (a, b) => a.price - b.price,
@@ -168,9 +165,7 @@ const ExtendPlanPage = () => {
         },
       },
       {
-        title: () => (
-          <p className="font-semibold font-primary">Băng thông</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Băng thông</p>,
         dataIndex: "bandWidth",
         key: "bandWidth",
         render: (text: string) => (
@@ -182,9 +177,7 @@ const ExtendPlanPage = () => {
         },
       },
       {
-        title: () => (
-          <p className="font-semibold font-primary">Ngày tạo</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Ngày tạo</p>,
         dataIndex: "createdAt",
         key: "createdAt",
         render: (text: Date) => (
@@ -234,9 +227,7 @@ const ExtendPlanPage = () => {
   const columnDelete: TableColumnsType<ExtendPlanType> = useMemo(
     () => [
       {
-        title: () => (
-          <p className="font-semibold font-primary">STT</p>
-        ),
+        title: () => <p className="font-semibold font-primary">STT</p>,
         dataIndex: "index",
         key: "index",
         width: 70,
@@ -260,7 +251,9 @@ const ExtendPlanPage = () => {
         ),
         dataIndex: "numberPurchase",
         key: "numberPurchase",
-        render: (text: number) => <p className="text-sm font-primary">{text}</p>,
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text}</p>
+        ),
       },
       {
         title: () => (
@@ -269,7 +262,10 @@ const ExtendPlanPage = () => {
         dataIndex: "price",
         key: "price",
         render: (text: number) => (
-          <p className="text-sm font-primary">{VND.format(text)}VND</p>
+          <p className="text-sm font-primary">
+            {" "}
+            {priceFomat(text, i18n.language)}
+          </p>
         ),
         sorter: {
           compare: (a, b) => a.price - b.price,
@@ -314,7 +310,7 @@ const ExtendPlanPage = () => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [i18n.language]
   );
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

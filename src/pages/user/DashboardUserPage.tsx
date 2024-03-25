@@ -14,7 +14,6 @@ import { toast } from "react-toastify";
 import { messages } from "../../constants";
 import { api } from "../../api";
 import CashHistory from "../../components/user/CashHistory";
-// import TransactionHistory from "../../components/user/TransactionHistory";
 import RoseHistory from "../../components/user/RoseHistory";
 import {
   CashType,
@@ -41,6 +40,7 @@ import { setCommision } from "../../store/commision/commisionSlice";
 import { setCollab } from "../../store/collab/collabSlice";
 import Post from "../../components/user/Post";
 import { useTranslation } from "react-i18next";
+import logoOutline from '../../assets/logo_outline.jpg'
 
 const schema = yup
   .object({
@@ -330,6 +330,12 @@ const Policy = () => {
           <li className="">{t("page.dashboard.userManual.title4")}</li>
           <li className="">{t("page.dashboard.userManual.title5")}</li>
           <div className="flex flex-wrap items-center gap-10 py-5 md:gap-16 lg:gap-20 ">
+            <div
+              
+              className="flex flex-col items-center gap-7 group"
+            >
+              <img src={logoOutline} className="w-[100px]"/>
+            </div>
             <Link
               to={
                 "https://play.google.com/store/apps/details?id=org.outline.android.client&pcampaignid=web_share"

@@ -367,7 +367,7 @@ i18n.use(LanguageDetector).use(initReactI18next),
                   desc: 'Please fill in the amount you want to deposit and transfer to our account information after you click "Submit". Your account will automatically update after 5-10 seconds.',
                   form: {
                     placeholder: "Enter the amount to deposit",
-                    button: "Deposit",
+                    button: "Submit",
                     warn: "You have not entered the amount to deposit",
                   },
                   stk: "Account number:",

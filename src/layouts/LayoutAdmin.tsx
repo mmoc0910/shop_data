@@ -12,6 +12,7 @@ import { api } from "../api";
 import { useEffect, useRef, useState } from "react";
 import { RootState } from "../store/configureStore";
 import useOnClickOutside from "../hooks/useOnClickOutside";
+import { SelectLanguage } from "../components/header/Header";
 
 const menu = [
   { to: "/admin/dashboard", title: "Dashboard" },
@@ -140,6 +141,7 @@ const LayoutAdmin = () => {
               </span>
               <p>Đăng xuất</p>
             </div>
+            <SelectLanguage />
           </div>
         </div>
         <div className="py-14">
