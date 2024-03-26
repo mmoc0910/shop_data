@@ -21,9 +21,13 @@ import {
   TEMPLATE,
 } from "../../constants";
 import { useEffect, useState } from "react";
-import {EXCHANGE_RATE_CHINA, EXCHANGE_RATE_ENGLISH, VND } from "../../utils/formatPrice";
+import {
+  EXCHANGE_RATE_CHINA,
+  EXCHANGE_RATE_ENGLISH,
+  VND,
+} from "../../utils/formatPrice";
 import { useTranslation } from "react-i18next";
-import logoMB from '../../assets/th (1).jpg'
+import logoMB from "../../assets/th (1).jpg";
 
 const { Countdown } = Statistic;
 const schema = yup
@@ -52,17 +56,17 @@ const RechargePage = () => {
           showCancelButton: true,
           confirmButtonColor: "#1DC071",
           cancelButtonColor: "#d33",
-          cancelButtonText: t(
-            "page.cash.payment.manual.cancelButton"
-          ),
-          confirmButtonText: t(
-            "page.cash.payment.manual.confirmButton"
-          ),
+          cancelButtonText: t("page.cash.payment.manual.cancelButton"),
+          confirmButtonText: t("page.cash.payment.manual.confirmButton"),
         }).then(async (result) => {
           if (result.isConfirmed) {
             const money =
-              i18n.language === "vi" ? data.money : i18n.language === 'ci' ? data.money * EXCHANGE_RATE_CHINA : data.money * EXCHANGE_RATE_ENGLISH;
-            await api.post("/cashs", { money, userId: _id });
+              i18n.language === "vi"
+                ? data.money
+                : i18n.language === "ci"
+                ? data.money * EXCHANGE_RATE_CHINA
+                : data.money * EXCHANGE_RATE_ENGLISH;
+            await api.post("/cashs", { money, userId: _id, type: 1 });
             setValue("money", 0);
             Swal.fire(
               `<p class='leading-tight'>${t(
@@ -124,7 +128,11 @@ const RechargePage = () => {
             containerclass="flex-1"
           >
             <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
-              {i18n.language === "vi" ? "VND" : i18n.language === 'ci' ? "元" : '$'}
+              {i18n.language === "vi"
+                ? "VND"
+                : i18n.language === "ci"
+                ? "元"
+                : "$"}
             </span>
           </Input>
           <Button
@@ -164,7 +172,7 @@ const AutoBanking = () => {
       <p className="text-center mb-7 text-primary">
         {t("page.cash.payment.auto.desc")}
       </p>
-      <img src={logoMB} className="w-3/4 h-[100px] object-cover mx-auto"/>
+      <img src={logoMB} className="w-3/4 h-[100px] object-cover mx-auto" />
       {!showQR ? (
         <div className="flex items-center gap-5 mb-5">
           <input
