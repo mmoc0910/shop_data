@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Container from "../common/Container";
 import { CoutryType, PlanType } from "../../type";
 import { v4 as uuidv4 } from "uuid";
-import { VND, priceFomat } from "../../utils/formatPrice";
+import {  priceFomat } from "../../utils/formatPrice";
 import { IconCheck } from "../checkbox/Checkbox";
 import { api } from "../../api";
 import { useSelector } from "react-redux";
@@ -13,6 +13,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import Loading from "../common/Loading";
 import { useTranslation } from "react-i18next";
+import { translateType } from "../../constants";
 
 const PricingBox = () => {
   const { t } = useTranslation();
@@ -85,7 +86,7 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
   const { _id } = useSelector((state: RootState) => state.auth);
   const navigation = useNavigate();
   const { name, price, description, type, bandWidth } = plan;
-  console.log(type.split("_"))
+  console.log(type.split("_"));
   return (
     <>
       <div className="col-span-1 shadow-xl flex flex-col items-center rounded-2xl overflow-hidden">
@@ -133,7 +134,10 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
                   title: `<p class="leading-tight">${t(
                     "page.package.swal.title"
                   )} <span class="text-secondary20">${name}</span></p>`,
-                  text: `${bandWidth}GB - ${VND.format(price)}VND/${type}`,
+                  text: `${bandWidth}GB - ${priceFomat(
+                    price,
+                    i18n.language
+                  )}/${translateType(type, i18n.language)}`,
                   icon: "success",
                   showCancelButton: true,
                   confirmButtonColor: "#1DC071",

@@ -21,6 +21,7 @@ import {
   isSameOrBefore,
   // linkGist,
   messages,
+  translateType,
 } from "../../constants";
 import { api } from "../../api";
 import { useSelector } from "react-redux";
@@ -138,7 +139,7 @@ const OrderPage = () => {
         )} <span class="text-secondary">${name}(${priceFomat(
           price,
           i18n.language as CoutryType
-        )}) ${bandWidth}GB/${type}</span></p>`,
+        )}) ${bandWidth}GB/${translateType(type, i18n.language)}</span></p>`,
         icon: "success",
         showCancelButton: true,
         confirmButtonColor: "#1DC071",
@@ -236,6 +237,128 @@ const OrderPage = () => {
       {
         title: (
           <p className="font-semibold font-primary text-sm">
+            {t("page.myOrder.field.key")}
+          </p>
+        ),
+        dataIndex: "key",
+        key: "key",
+        // fixed: "right",
+        render: (_: string, record: GistType) => {
+          // const key = `${linkGist}/${record.gistId}/raw/${record?.fileName}#`;
+          return (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Tooltip title="copy">
+                  <button
+                    className="text-secondary20"
+                    onClick={() =>
+                      copyToClipboard(
+                        `${record.keyId.awsId?.fileName.replace(
+                          /https/g,
+                          "ssconf"
+                        )}#${record.extension}`
+                      )
+                    }
+                  >
+                    <AndroidXML />
+                  </button>
+                </Tooltip>
+                <p className="font-primary text-sm w-[350px] line-clamp-1">
+                  {record.keyId.awsId?.fileName.replace(/https/g, "ssconf")}#
+                  {record.extension}
+                </p>
+              </div>
+              {/* <div className="flex items-center gap-2">
+                <Tooltip title="copy">
+                  <button
+                    onClick={() => copyToClipboard(`${key}${record.extension}`)}
+                  >
+                    <AndroidXML />
+                  </button>
+                </Tooltip>
+                <p className="font-primary text-sm w-[350px] line-clamp-1">
+                  {key}
+                  {record.extension}
+                </p>
+              </div> */}
+            </div>
+          );
+        },
+      },
+      {
+        title: (
+          <p className="font-semibold font-primary text-sm">
+            {t("page.myOrder.field.extension")}
+          </p>
+        ),
+        dataIndex: "extension",
+        key: "extension",
+        // width: 150,
+        render: (_: string, record: GistType) => {
+          return (
+            <UpdateExtension
+              initialValue={record.extension}
+              // placeholder={record.extension}
+              onSubmit={(value: string) => {
+                handleUpdateExtension(record._id, value);
+                handleFetchData();
+                toast.success("Thay đổi thành công");
+              }}
+            />
+          );
+        },
+      },
+      {
+        title: (
+          <p className="font-semibold font-primary text-sm">
+            {t("page.myOrder.field.status")}
+          </p>
+        ),
+        dataIndex: "status",
+        key: "status",
+        width: 100,
+        // fixed: "right",
+        render: (_: string, record: GistType) => (
+          <div className="text-sm font-primary">
+            {record.status === 1 && (
+              <Tag color="green">
+                <span className="font-primary">
+                  {t("page.myOrder.field.statusLabel.active")}
+                </span>
+              </Tag>
+            )}
+            {record.status === 0 && (
+              <Tag color="red">
+                <span className="font-primary">
+                  {t("page.myOrder.field.statusLabel.inactive")}
+                </span>
+              </Tag>
+            )}
+          </div>
+        ),
+        filters: [
+          {
+            text: t("page.myOrder.field.statusLabel.active"),
+            value: 1,
+          },
+          {
+            text: t("page.myOrder.field.statusLabel.inactive"),
+            value: 0,
+          },
+        ],
+        onFilter: (value: boolean | Key, record: GistType) => {
+          if (typeof value === "boolean") {
+            // Xử lý trường hợp value là boolean
+            return record.status === (value ? 1 : 0);
+          } else {
+            // Xử lý trường hợp value là Key (đối với trường hợp khi dùng dropdown filter)
+            return record.status === value;
+          }
+        },
+      },
+      {
+        title: (
+          <p className="font-semibold font-primary text-sm">
             {t("page.myOrder.field.day")}
           </p>
         ),
@@ -324,128 +447,7 @@ const OrderPage = () => {
           </p>
         ),
       },
-      {
-        title: (
-          <p className="font-semibold font-primary text-sm">
-            {t("page.myOrder.field.key")}
-          </p>
-        ),
-        dataIndex: "key",
-        key: "key",
-        // fixed: "right",
-        render: (_: string, record: GistType) => {
-          // const key = `${linkGist}/${record.gistId}/raw/${record?.fileName}#`;
-          return (
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Tooltip title="copy">
-                  <button
-                    className="text-secondary20"
-                    onClick={() =>
-                      copyToClipboard(
-                        `${record.keyId.awsId?.fileName.replace(
-                          /https/g,
-                          "ssconf"
-                        )}#${record.extension}`
-                      )
-                    }
-                  >
-                    <AndroidXML />
-                  </button>
-                </Tooltip>
-                <p className="font-primary text-sm w-[350px] line-clamp-1">
-                  {record.keyId.awsId?.fileName.replace(/https/g, "ssconf")}#
-                  {record.extension}
-                </p>
-              </div>
-              {/* <div className="flex items-center gap-2">
-                <Tooltip title="copy">
-                  <button
-                    onClick={() => copyToClipboard(`${key}${record.extension}`)}
-                  >
-                    <AndroidXML />
-                  </button>
-                </Tooltip>
-                <p className="font-primary text-sm w-[350px] line-clamp-1">
-                  {key}
-                  {record.extension}
-                </p>
-              </div> */}
-            </div>
-          );
-        },
-      },
-      {
-        title: (
-          <p className="font-semibold font-primary text-sm">
-            {t("page.myOrder.field.status")}
-          </p>
-        ),
-        dataIndex: "status",
-        key: "status",
-        width: 100,
-        // fixed: "right",
-        render: (_: string, record: GistType) => (
-          <div className="text-sm font-primary">
-            {record.status === 1 && (
-              <Tag color="green">
-                <span className="font-primary">
-                  {t("page.myOrder.field.statusLabel.active")}
-                </span>
-              </Tag>
-            )}
-            {record.status === 0 && (
-              <Tag color="red">
-                <span className="font-primary">
-                  {t("page.myOrder.field.statusLabel.inactive")}
-                </span>
-              </Tag>
-            )}
-          </div>
-        ),
-        filters: [
-          {
-            text: t("page.myOrder.field.statusLabel.active"),
-            value: 1,
-          },
-          {
-            text: t("page.myOrder.field.statusLabel.inactive"),
-            value: 0,
-          },
-        ],
-        onFilter: (value: boolean | Key, record: GistType) => {
-          if (typeof value === "boolean") {
-            // Xử lý trường hợp value là boolean
-            return record.status === (value ? 1 : 0);
-          } else {
-            // Xử lý trường hợp value là Key (đối với trường hợp khi dùng dropdown filter)
-            return record.status === value;
-          }
-        },
-      },
-      {
-        title: (
-          <p className="font-semibold font-primary text-sm">
-            {t("page.myOrder.field.extension")}
-          </p>
-        ),
-        dataIndex: "extension",
-        key: "extension",
-        // width: 150,
-        render: (_: string, record: GistType) => {
-          return (
-            <UpdateExtension
-              initialValue={record.extension}
-              // placeholder={record.extension}
-              onSubmit={(value: string) => {
-                handleUpdateExtension(record._id, value);
-                handleFetchData();
-                toast.success("Thay đổi thành công");
-              }}
-            />
-          );
-        },
-      },
+
       {
         title: <p className="font-semibold font-primary text-sm"></p>,
         dataIndex: "action",
@@ -699,7 +701,7 @@ const ExtendPlanItem = ({
     >
       <p className="text-base font-semibold text-center">{extendPlan.name}</p>
       <p className="text-xl font-medium text-center">
-        {extendPlan.bandWidth}GB/{t("page.myOrder.swal.buyData.month")} - {" "}
+        {extendPlan.bandWidth}GB/{t("page.myOrder.swal.buyData.month")} -{" "}
         {priceFomat(priceDiscount || 0, i18n.language as CoutryType)}
       </p>
       <div className="flex items-center gap-5">

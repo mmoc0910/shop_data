@@ -5,13 +5,14 @@ import { api } from "../../api";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
-import { VND } from "../../utils/formatPrice";
+import { priceFomat } from "../../utils/formatPrice";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
 import Loading from "../common/Loading";
 import Heading from "../common/Heading";
 import { useTranslation } from "react-i18next";
+import { translateType } from "../../constants";
 
 const PlanDashborad = () => {
   const { t, i18n } = useTranslation();
@@ -33,8 +34,12 @@ const PlanDashborad = () => {
   const handleChoosePlan = async (plan: PlanType) => {
     try {
       const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">${t("page.package.swal.title")} <span class="text-secondary">${plan.name} ${plan.bandWidth}GB</span></p>`,
-       
+        title: `<p class="leading-tight">${t(
+          "page.package.swal.title"
+        )} <span class="text-secondary">${plan.name} ${
+          plan.bandWidth
+        }GB</span></p>`,
+
         icon: "success",
         showCancelButton: true,
         confirmButtonColor: "#1DC071",
@@ -94,7 +99,9 @@ const PlanDashborad = () => {
         dataIndex: "type",
         key: "type",
         render: (text: string) => (
-          <p className="text-sm font-primary">{text}</p>
+          <p className="text-sm font-primary">
+            {translateType(text, i18n.language)}
+          </p>
         ),
       },
       {
@@ -118,7 +125,9 @@ const PlanDashborad = () => {
         dataIndex: "price",
         key: "price",
         render: (text: number) => (
-          <p className="text-sm font-primary">{VND.format(text)}VND</p>
+          <p className="text-sm font-primary">
+            {priceFomat(text, i18n.language)}VND
+          </p>
         ),
       },
       {

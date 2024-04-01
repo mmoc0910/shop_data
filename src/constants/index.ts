@@ -44,3 +44,9 @@ export function isSameOrAfter(
     dayjs(dateA).isSame(dateB, "day") || dayjs(dateA).isAfter(dateB, "day")
   );
 }
+
+export function translateType(type: string, lang: string) {
+  if (lang === "vi") return type.split("_")[0];
+  if (lang === "en") return type.split("_")[1];
+  if (lang === "ci") return type.split("_")[2];
+}

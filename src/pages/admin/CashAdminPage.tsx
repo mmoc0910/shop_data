@@ -193,6 +193,39 @@ const CashAdminPage = () => {
         ),
       },
       {
+        title: <p className="font-semibold font-primary">Loại giao dịch</p>,
+        dataIndex: "type",
+        key: "type",
+        render: (text: number) => (
+          <p className="text-sm font-primary">
+            {text === 0 ? (
+              <Tag color="blue">Auto Banking</Tag>
+            ) : (
+              <Tag color="pink-inverse">Manual Banking</Tag>
+            )}
+          </p>
+        ),
+        filters: [
+          {
+            text: "Auto Banking",
+            value: 0,
+          },
+          {
+            text: "Manual Banking",
+            value: 1,
+          },
+        ],
+        onFilter: (value: boolean | Key, record: CashType) => {
+          if (typeof value === "boolean") {
+            // Xử lý trường hợp value là boolean
+            return record.type === (value ? 1 : 0);
+          } else {
+            // Xử lý trường hợp value là Key (đối với trường hợp khi dùng dropdown filter)
+            return record.type === value;
+          }
+        },
+      },
+      {
         title: () => (
           <p className="text-sm font-semibold font-primary">Username</p>
         ),
@@ -240,7 +273,7 @@ const CashAdminPage = () => {
         key: "updated",
         render: (text: Date, record: CashType) => (
           <p className="text-sm font-primary">
-            {record.status === 1 ? DAY_FORMAT(text) : null}
+            {record.status !== 2 ? DAY_FORMAT(text) : null}
           </p>
         ),
         sorter: (a, b) => dayjs(a.updatedAt).unix() - dayjs(b.updatedAt).unix(),
@@ -293,6 +326,20 @@ const CashAdminPage = () => {
             return record.status === value;
           }
         },
+      },
+      {
+        title: () => (
+          <p className="text-sm font-semibold font-primary">
+            Nội dung chuyển khoản
+          </p>
+        ),
+        dataIndex: "content",
+        key: "content",
+        render: (text?: string) => (
+          <p className="text-sm font-primary text-primary">
+            {text || ""}
+          </p>
+        ),
       },
       {
         title: () => (

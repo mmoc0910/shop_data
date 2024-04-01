@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import bg from "../assets/Ellipse.png";
 import Logo from "../components/logo/Logo";
+import { SelectLanguage } from "../components/header/Header";
 
 type LayoutAuthentication = {
   heading?: string;
@@ -13,6 +14,9 @@ const LayoutAuthentication: FC<LayoutAuthentication> = ({
 }) => {
   return (
     <div className="relative w-screen overflow-hidden xl:h-auto xl:overflow-auto">
+      <div className="absolute top-5 right-5">
+        <SelectLanguage />
+      </div>
       <div className="w-full min-h-screen p-6 md:p-10 bg-lite">
         <div className="flex items-center justify-center">
           {" "}

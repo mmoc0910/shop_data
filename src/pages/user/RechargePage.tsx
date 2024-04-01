@@ -28,6 +28,7 @@ import {
 } from "../../utils/formatPrice";
 import { useTranslation } from "react-i18next";
 import logoMB from "../../assets/th (1).jpg";
+import dayjs from "dayjs";
 
 const { Countdown } = Statistic;
 const schema = yup
@@ -50,7 +51,7 @@ const RechargePage = () => {
           title: `<p class="leading-tight">${t(
             "page.cash.payment.manual.ques"
           )}<span class="text-secondary">${VND.format(data.money)}${
-            i18n.language === "vi" ? "VND" : "元"
+            i18n.language === "vi" ? "VND" : i18n.language === "ci" ? "元" : "$"
           }</span></p>`,
           icon: "success",
           showCancelButton: true,
@@ -159,11 +160,11 @@ const RechargePage = () => {
 
 const AutoBanking = () => {
   const { t } = useTranslation();
-  const { username } = useSelector((state: RootState) => state.auth);
+  const { username, _id } = useSelector((state: RootState) => state.auth);
   const [amount, setAmount] = useState<string>("");
   const [addInfo, setAddInfo] = useState<string>("");
   const [showQR, setShowQR] = useState<boolean>(false);
-
+  const [orderId, setOrderId] = useState<string>();
   return (
     <div className="px-5 py-10 rounded-xl shadow-2xl col-span-1 md:col-span-3 lg:col-span-2">
       <p className="font-semibold text-xl text-center mb-7">
@@ -175,17 +176,38 @@ const AutoBanking = () => {
       <img src={logoMB} className="w-3/4 h-[100px] object-cover mx-auto" />
       {!showQR ? (
         <div className="flex items-center gap-5 mb-5">
-          <input
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder={t("page.cash.payment.auto.form.placeholder")}
-            type="number"
-            className="focus:border-primary text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock text-text1  "
-          />
+          <div className="relative w-full">
+            <input
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder={t("page.cash.payment.auto.form.placeholder")}
+              type="number"
+              className="focus:border-primary text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock text-text1  "
+            />
+            <p className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2 font-semibold text-icon-color">
+              VND
+            </p>
+          </div>
           <button
-            onClick={() => {
+            onClick={async () => {
               if (amount && Number(amount) > 0 && username) {
-                setAddInfo(`${username.toLocaleUpperCase()}${Date.now()}`);
+                const contentPayment = `${username.toLocaleUpperCase()}${dayjs().get(
+                  "minute"
+                )}${dayjs().get("hour")}${dayjs().get("date")}${dayjs().get(
+                  "month"
+                )}`;
+                const result = await api.post<{ data: { _id: string } }>(
+                  "/cashs",
+                  {
+                    money: Number(amount),
+                    userId: _id,
+                    type: 0,
+                    content: contentPayment,
+                  }
+                );
+                console.log("result - ", result.data.data._id);
+                setOrderId(result.data.data._id);
+                setAddInfo(contentPayment);
                 setShowQR(true);
               } else {
                 toast.warn(t("page.cash.payment.auto.form.warn"));
@@ -199,8 +221,9 @@ const AutoBanking = () => {
         </div>
       ) : null}
 
-      {showQR ? (
+      {showQR && orderId ? (
         <AutoBankingQR
+          orderId={orderId}
           amount={Number(amount)}
           addInfo={addInfo}
           onSuccess={() => setShowQR(false)}
@@ -211,16 +234,17 @@ const AutoBanking = () => {
 };
 
 const AutoBankingQR = ({
+  orderId,
   amount,
   addInfo,
   onSuccess,
 }: {
+  orderId: string;
   amount: number;
   addInfo: string;
   onSuccess: () => void;
 }) => {
   const { t } = useTranslation();
-  const { _id } = useSelector((state: RootState) => state.auth);
   useEffect(() => {
     const fetchDataInterval = setInterval(() => {
       // Gọi hàm fetchData ở đây
@@ -250,10 +274,11 @@ const AutoBankingQR = ({
           (item) => item["Giá trị"] >= amount && item["Mô tả"].includes(addInfo)
         )
       ) {
-        await api.post("/cashs/auto-bank", {
-          userId: _id,
-          money: amount,
-        });
+        // await api.post("/cashs/auto-bank", {
+        //   userId: _id,
+        //   money: amount,
+        // });
+        await api.get(`/cashs/approve/${orderId}`);
         onSuccess();
         Swal.fire({
           title: `<p class="leading-tight">${t(
@@ -265,8 +290,11 @@ const AutoBankingQR = ({
       console.log(error);
     }
   };
-  const onFinish: CountdownProps["onFinish"] = () => {
+  const onFinish: CountdownProps["onFinish"] = async () => {
     console.log("finished!");
+    await api.post(`/cashs/reject/${orderId}`, {
+      description: "Nạp tiền tự động bị hủy do quá thời gian chuyển khoản",
+    });
     Swal.fire({
       title: `<p class="leading-tight">${t(
         "page.cash.payment.auto.error"
@@ -286,7 +314,7 @@ const AutoBankingQR = ({
       <div className="space-y-5 mx-5">
         <div className="flex items-center gap-5">
           <div className="w-full h-[7px] relative my-0 mx-auto my before:content-[''] before:absolute before:right-auto before:left-0 before:h-full before:bg-primary  before:rounded-full before:animate-lineloading"></div>
-          <Countdown value={Date.now() + 10 * 60 * 1000} onFinish={onFinish} />
+          <Countdown value={Date.now() + 10 * 60 * 100} onFinish={onFinish} />
         </div>
         <p className="text-lg">
           {t("page.cash.payment.auto.stk")}{" "}

@@ -88,6 +88,7 @@ const InvitePage = () => {
           api.get<RoseType[]>(`/roses?reciveRoseId=${_id}`),
         ]);
       setSatisfy(resultSatify.data);
+      // console.log('basvcjvj - ',resultSatify.data)
       setUser(resultUser.data);
       setCommision(resultCommision.data);
       setRoseHistory(resultRose.data);
@@ -224,7 +225,9 @@ const InvitePage = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 items-start rounded-xl border-2 border-[#eeeeed]">
           <div className="flex flex-col items-center flex-1 px-5 py-5 space-y-2 md:py-7 rounded-xl md:space-y-4">
             <p className="text-xl font-medium lg:text-2xl xl:text-4xl">
-              {user?.level === 0 ? "Cộng tác viên" : `Đại lý cấp${user?.level}`}
+              {user?.level === 0
+                ? t("page.account.info.level")
+                : t("page.account.info.leveln", { level: user?.level })}
             </p>
             <div className="flex items-center gap-1">
               <p className="text-lg">{t("page.collaborator.satify.level")}</p>

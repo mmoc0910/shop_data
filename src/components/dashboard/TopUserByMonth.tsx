@@ -1,30 +1,34 @@
-import { Table, TableColumnsType } from "antd";
+import { DatePicker, DatePickerProps, Table, TableColumnsType } from "antd";
 import Heading from "../common/Heading";
 import { useEffect, useMemo, useState } from "react";
 import { UserState } from "../../type";
 import { api } from "../../api";
-import {  priceFomat } from "../../utils/formatPrice";
+import { priceFomat } from "../../utils/formatPrice";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import dayjs from "dayjs";
 
 type DataType = {
   _id: string;
   totalMoney: number;
   user: [UserState];
 };
-const TopUser = () => {
+const TopUserByMonth = () => {
   const { i18n } = useTranslation();
+  const [date, setDate] = useState<dayjs.Dayjs>(dayjs());
   const [data, setData] = useState<DataType[]>([]);
   useEffect(() => {
     (async () => {
       try {
-        const result = await api.get("/satisfy/get-top-user");
+        const result = await api.post("/satisfy/get-top-user-by-month", {
+          month: `${dayjs(date).get("year")}-${dayjs(date).get("months") + 1}`,
+        });
         setData(result.data);
       } catch (error) {
         console.log(error);
       }
     })();
-  }, []);
+  }, [date]);
   const columns: TableColumnsType<DataType> = useMemo(
     () => [
       {
@@ -80,9 +84,21 @@ const TopUser = () => {
     ],
     [i18n.language]
   );
+  const onChangeStartDate: DatePickerProps["onChange"] = (date) => {
+    setDate(date);
+  };
   return (
     <div className="space-y-5">
-      <Heading>Top người dùng</Heading>
+      <Heading className="flex items-center gap-5">
+        <p>Top người dùng theo tháng</p>
+        <DatePicker
+          value={date}
+          onChange={onChangeStartDate}
+          className="!focus:border-primary text-black font-medium placeholder:text-base placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid bg-inherit peer outline-none border-strock"
+          placeholder="Select month"
+          picker="month"
+        />
+      </Heading>
       <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
         <Table
           dataSource={data.map((item, index) => ({
@@ -98,4 +114,4 @@ const TopUser = () => {
   );
 };
 
-export default TopUser;
+export default TopUserByMonth;

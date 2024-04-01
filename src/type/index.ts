@@ -121,6 +121,8 @@ export type CashType = {
   updatedAt: Date;
   status: 0 | 1 | 2;
   description: string;
+  type: 0 | 1;
+  content?: string;
   //2:pending, 1:approve, 0:reject
   __v: 0;
 };
