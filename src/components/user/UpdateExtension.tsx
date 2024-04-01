@@ -23,7 +23,7 @@ const UpdateExtension = ({
     >
       <input
         value={value}
-        className="px-3 py-1 rounded-lg border border-gray-300 outline-none text-sm"
+        className="px-3 py-1 rounded-lg border border-gray-300 outline-none text-sm "
         placeholder={placeholder}
         onChange={(e) => setValue(e.target.value)}
       />

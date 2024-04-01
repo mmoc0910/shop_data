@@ -59,7 +59,27 @@ const PlanDashborad = () => {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log("error message: ", error);
-        toast.error(error.response?.data.message);
+        // toast.error(error.response?.data.message);
+        if (
+          error.response?.data.message ===
+            "Bạn không đủ tiền để đăng kí dịch vụ này" &&
+          error.response.status === 400
+        ) {
+          toast.warn(t("page.package.swal.warn"));
+          navigation("/user/dashboard");
+        }
+        if (
+          error.response?.data.message === "Bạn đã đăng kí gói dùng thử." &&
+          error.response.status === 400
+        ) {
+          toast.warn(
+            i18n.language === "vi"
+              ? "Gói dùng thử chỉ được mua 1 lần."
+              : i18n.language === "en"
+              ? "Trial only buy once."
+              : "试用只会买一次"
+          );
+        }
       } else {
         console.log("unexpected error: ", error);
         return "An unexpected error occurred";

@@ -31,7 +31,7 @@ const CashHistory = ({ userCashHistory }: { userCashHistory: CashType[] }) => {
                     {item.status === 0 ? (
                       <p className="text-sm">
                         {t("page.dashboard.depositHistory.content_refuse", {
-                          price: `${VND.format(item.money)}VND`,
+                          prive: `${VND.format(item.money)}VND`,reason: item.description
                         })}{" "}
                         {dayjs(item.updatedAt).format("DD/MM/YYYY HH:MM")}
                       </p>

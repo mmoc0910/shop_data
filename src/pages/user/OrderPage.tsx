@@ -460,7 +460,7 @@ const OrderPage = () => {
                 dayjs().isAfter(record.keyId.endExpandDate, "day") &&
                 record.planId.price > 0) ? (
                 <button
-                  className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary"
+                  className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary shrink-0"
                   onClick={() => {
                     setSelectRow({
                       id: record._id,
@@ -473,7 +473,7 @@ const OrderPage = () => {
                 </button>
               ) : null}
               <button
-                className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-primary font-primary"
+                className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-primary font-primary shrink-0"
                 onClick={() =>
                   handleUpgradPlan(
                     record._id,
@@ -486,6 +486,12 @@ const OrderPage = () => {
               >
                 {t("page.myOrder.field.extend")}
               </button>
+              {/* <button
+                className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-primary font-primary shrink-0"
+                onClick={() => {}}
+              >
+                Move server
+              </button> */}
             </div>
           ) : null,
       },

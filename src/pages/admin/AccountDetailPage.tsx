@@ -204,48 +204,68 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
         ),
       },
       {
-        title: <p className="font-semibold font-primary">Thời gian</p>,
-        dataIndex: "day",
-        key: "day",
-        width: 120,
-        render: (_: string, record: GistType) => (
-          <p className="text-sm font-primary">
-            {dayjs(record.keyId.startDate).format("DD/MM/YYYY")} <br />-{" "}
-            {dayjs(record.keyId.endDate).format("DD/MM/YYYY")}
-          </p>
-        ),
-      },
-      {
-        title: <p className="font-semibold font-primary">Data limit</p>,
-        dataIndex: "bandWidth",
-        key: "bandWidth",
-        width: 120,
-        render: (_: string, record: GistType) => (
-          <p className="text-sm font-primary">
-            {record.keyId.dataLimit / 1000 / 1000 / 1000}GB
-          </p>
-        ),
-        sorter: {
-          compare: (a: GistType, b: GistType) =>
-            a.keyId.dataLimit - b.keyId.dataLimit,
-          multiple: 1,
+        title: <p className="font-semibold font-primary">Key</p>,
+        dataIndex: "key",
+        key: "key",
+        // fixed: "right",
+        render: (_: string, record: GistType) => {
+          // const key = `${linkGist}/${record.gistId}/raw/${record?.fileName}#`;
+          return (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Tooltip title="copy">
+                  <button
+                    className="text-secondary20"
+                    onClick={() =>
+                      copyToClipboard(
+                        `${record.keyId.awsId?.fileName.replace(
+                          /https/g,
+                          "ssconf"
+                        )}#${record.extension}`
+                      )
+                    }
+                  >
+                    <AndroidXML />
+                  </button>
+                </Tooltip>
+                <p className="font-primary text-sm w-[200px] line-clamp-1">
+                  {record.keyId.awsId?.fileName.replace(/https/g, "ssconf")}#
+                  {record.extension}
+                </p>
+              </div>
+              {/* <div className="flex items-center gap-2">
+                <Tooltip title="copy">
+                  <button
+                    onClick={() => copyToClipboard(`${key}${record.extension}`)}
+                  >
+                    <AndroidXML />
+                  </button>
+                </Tooltip>
+                <p className="font-primary text-sm w-[350px] line-clamp-1">
+                  {key}
+                  {record.extension}
+                </p>
+              </div> */}
+            </div>
+          );
         },
       },
       {
-        title: <p className="font-semibold font-primary">Data Usage</p>,
-        dataIndex: "dataUsage",
-        key: "dataUsage",
-        width: 150,
-        render: (_: string, record: GistType) => (
-          <p className="text-sm font-primary">
-            {record.keyId.dataUsage
-              ? `${(record.keyId.dataUsage / 1000 / 1000 / 1000).toFixed(2)}GB`
-              : "0GB"}
-          </p>
-        ),
-        sorter: {
-          compare: (a, b) => a.keyId.dataUsage - b.keyId.dataUsage,
-          multiple: 2,
+        title: <p className="font-semibold font-primary">Đặt tên key</p>,
+        dataIndex: "extension",
+        key: "extension",
+        // width: 150,
+        render: (_: string, record: GistType) => {
+          return (
+            <UpdateExtension
+              initialValue={record.extension}
+              onSubmit={(value: string) => {
+                handleUpdateExtension(record._id, value);
+                handleFetchData();
+                toast.success("Thay đổi thành công");
+              }}
+            />
+          );
         },
       },
       {
@@ -297,68 +317,48 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
         },
       },
       {
-        title: <p className="font-semibold font-primary">Key</p>,
-        dataIndex: "key",
-        key: "key",
-        // fixed: "right",
-        render: (_: string, record: GistType) => {
-          // const key = `${linkGist}/${record.gistId}/raw/${record?.fileName}#`;
-          return (
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Tooltip title="copy">
-                  <button
-                    className="text-secondary20"
-                    onClick={() =>
-                      copyToClipboard(
-                        `${record.keyId.awsId?.fileName.replace(
-                          /https/g,
-                          "ssconf"
-                        )}#${record.extension}`
-                      )
-                    }
-                  >
-                    <AndroidXML />
-                  </button>
-                </Tooltip>
-                <p className="font-primary text-sm w-[200px] line-clamp-1">
-                  {record.keyId.awsId?.fileName.replace(/https/g, "ssconf")}#
-                  {record.extension}
-                </p>
-              </div>
-              {/* <div className="flex items-center gap-2">
-                <Tooltip title="copy">
-                  <button
-                    onClick={() => copyToClipboard(`${key}${record.extension}`)}
-                  >
-                    <AndroidXML />
-                  </button>
-                </Tooltip>
-                <p className="font-primary text-sm w-[350px] line-clamp-1">
-                  {key}
-                  {record.extension}
-                </p>
-              </div> */}
-            </div>
-          );
+        title: <p className="font-semibold font-primary">Thời gian</p>,
+        dataIndex: "day",
+        key: "day",
+        width: 120,
+        render: (_: string, record: GistType) => (
+          <p className="text-sm font-primary">
+            {dayjs(record.keyId.startDate).format("DD/MM/YYYY")} <br />-{" "}
+            {dayjs(record.keyId.endDate).format("DD/MM/YYYY")}
+          </p>
+        ),
+      },
+      {
+        title: <p className="font-semibold font-primary">Data limit</p>,
+        dataIndex: "bandWidth",
+        key: "bandWidth",
+        width: 120,
+        render: (_: string, record: GistType) => (
+          <p className="text-sm font-primary">
+            {record.keyId.dataLimit / 1000 / 1000 / 1000}GB
+          </p>
+        ),
+        sorter: {
+          compare: (a: GistType, b: GistType) =>
+            a.keyId.dataLimit - b.keyId.dataLimit,
+          multiple: 1,
         },
       },
       {
-        title: <p className="font-semibold font-primary">Đặt tên key</p>,
-        dataIndex: "extension",
-        key: "extension",
+        title: <p className="font-semibold font-primary">Data Usage</p>,
+        dataIndex: "dataUsage",
+        key: "dataUsage",
         width: 150,
-        render: (_: string, record: GistType) => {
-          return (
-            <UpdateExtension
-              initialValue={record.extension}
-              onSubmit={(value: string) => {
-                handleUpdateExtension(record._id, value);
-                handleFetchData();
-                toast.success("Thay đổi thành công");
-              }}
-            />
-          );
+        render: (_: string, record: GistType) => (
+          <p className="text-sm font-primary">
+            {record.keyId.dataUsage
+              ? `${(record.keyId.dataUsage / 1000 / 1000 / 1000).toFixed(2)}GB`
+              : "0GB"}
+          </p>
+        ),
+        sorter: {
+          compare: (a, b) => a.keyId.dataUsage - b.keyId.dataUsage,
+          multiple: 2,
         },
       },
     ],

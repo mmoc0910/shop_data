@@ -46,9 +46,7 @@ const AccountAdminPage = () => {
   const listUserFilter = inputValue
     ? listUser.filter(
         (item) =>
-          item?.username?.toLowerCase().includes(inputValue.toLowerCase()) 
-          // item?.email?.toLowerCase().includes(inputValue.toLowerCase()) ||
-          // item?.phone?.toLowerCase().includes(inputValue.toLowerCase())
+          item?.username?.toLowerCase().includes(inputValue.toLowerCase())
       )
     : listUser;
   const { handleSubmit, reset, setValue, watch } = useForm({

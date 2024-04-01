@@ -7,7 +7,7 @@ import {
 } from "antd";
 import Heading from "../../components/common/Heading";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
-import { useEffect, useMemo, useState } from "react";
+import { Key, useEffect, useMemo, useState } from "react";
 import { CashType, CoutryType } from "../../type";
 import { api } from "../../api";
 import { toast } from "react-toastify";
@@ -75,8 +75,47 @@ const CashPage = () => {
         ),
       },
       {
+        title: (
+          <p className="font-semibold font-primary">
+            {t("page.cash.history.field.transactionType")}
+          </p>
+        ),
+        dataIndex: "type",
+        key: "type",
+        render: (text: number) => (
+          <p className="text-sm font-primary">
+            {text === 0 ? (
+              <Tag color="blue">{i18n.language === 'ci' ? "自动银行支付" : "Auto Banking"}</Tag>
+            ) : (
+              <Tag color="pink-inverse">{i18n.language === 'ci' ? "手动" : "Manual Banking"}</Tag>
+            )}
+          </p>
+        ),
+        filters: [
+          {
+            text: i18n.language === 'ci' ? "自动银行支付" : "Auto Banking",
+            value: 0,
+          },
+          {
+            text: i18n.language === 'ci' ? "手动" : "Manual Banking",
+            value: 1,
+          },
+        ],
+        onFilter: (value: boolean | Key, record: CashType) => {
+          if (typeof value === "boolean") {
+            // Xử lý trường hợp value là boolean
+            return record.type === (value ? 1 : 0);
+          } else {
+            // Xử lý trường hợp value là Key (đối với trường hợp khi dùng dropdown filter)
+            return record.type === value;
+          }
+        },
+      },
+      {
         title: () => (
-          <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.username")}</p>
+          <p className="text-sm font-semibold font-primary">
+            {t("page.cash.history.field.username")}
+          </p>
         ),
         dataIndex: "username",
         key: "username",
@@ -84,29 +123,31 @@ const CashPage = () => {
           <p className="text-sm font-primary">{record.userId?.username}</p>
         ),
       },
+      // {
+      //   title: () => (
+      //     <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.email")}</p>
+      //   ),
+      //   dataIndex: "email",
+      //   key: "email",
+      //   render: (_: string, record: CashType) => (
+      //     <p className="text-sm font-primary">{record.userId.email}</p>
+      //   ),
+      // },
+      // {
+      //   title: () => (
+      //     <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.phone")}</p>
+      //   ),
+      //   dataIndex: "phone",
+      //   key: "phone",
+      //   render: (_: string, record: CashType) => (
+      //     <p className="text-sm font-primary">{record.userId.phone}</p>
+      //   ),
+      // },
       {
         title: () => (
-          <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.email")}</p>
-        ),
-        dataIndex: "email",
-        key: "email",
-        render: (_: string, record: CashType) => (
-          <p className="text-sm font-primary">{record.userId.email}</p>
-        ),
-      },
-      {
-        title: () => (
-          <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.phone")}</p>
-        ),
-        dataIndex: "phone",
-        key: "phone",
-        render: (_: string, record: CashType) => (
-          <p className="text-sm font-primary">{record.userId.phone}</p>
-        ),
-      },
-      {
-        title: () => (
-          <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.money")}</p>
+          <p className="text-sm font-semibold font-primary">
+            {t("page.cash.history.field.money")}
+          </p>
         ),
         dataIndex: "money",
         key: "money",
@@ -119,7 +160,9 @@ const CashPage = () => {
       },
       {
         title: () => (
-          <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.created_at")}</p>
+          <p className="text-sm font-semibold font-primary">
+            {t("page.cash.history.field.created_at")}
+          </p>
         ),
         dataIndex: "createdAt",
         key: "createdAt",
@@ -130,7 +173,9 @@ const CashPage = () => {
       },
       {
         title: () => (
-          <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.updated_at")}</p>
+          <p className="text-sm font-semibold font-primary">
+            {t("page.cash.history.field.updated_at")}
+          </p>
         ),
         dataIndex: "updatedAt",
         key: "updatedAt",
@@ -143,7 +188,9 @@ const CashPage = () => {
       },
       {
         title: () => (
-          <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.status")}</p>
+          <p className="text-sm font-semibold font-primary">
+            {t("page.cash.history.field.status")}
+          </p>
         ),
         dataIndex: "status",
         key: "status",
@@ -151,40 +198,68 @@ const CashPage = () => {
           <div className="text-sm font-primary">
             {record.status === 0 ? (
               <Tag color="red">
-                <span className="font-primary">{t("page.cash.history.status.reject")}</span>
+                <span className="font-primary">
+                  {t("page.cash.history.status.reject")}
+                </span>
               </Tag>
             ) : null}
             {record.status === 1 ? (
               <Tag color="green">
-                <span className="font-primary">{t("page.cash.history.status.pending")}</span>
+                <span className="font-primary">
+                  {t("page.cash.history.status.pending")}
+                </span>
               </Tag>
             ) : null}
             {record.status === 2 ? (
               <Tag color="lime">
-                <span className="font-primary">{t("page.cash.history.status.approve")}</span>
+                <span className="font-primary">
+                  {t("page.cash.history.status.approve")}
+                </span>
               </Tag>
             ) : null}
           </div>
         ),
-        // filters: [
-        //   {
-        //     text: "Đã hủy",
-        //     value: 0,
-        //   },
-        //   {
-        //     text: "Đã hoàn thành",
-        //     value: 1,
-        //   },
-        //   {
-        //     text: "Chờ phê duyệt",
-        //     value: 2,
-        //   },
-        // ],
-        // onFilter: (value: number, record: CashType) => record.status === value,
+        filters: [
+          {
+            text: t("page.cash.history.status.reject"),
+            value: 0,
+          },
+          {
+            text: t("page.cash.history.status.approve"),
+            value: 1,
+          },
+          {
+            text: t("page.cash.history.status.pending"),
+            value: 2,
+          },
+        ],
+        onFilter: (value: boolean | Key, record: CashType) => {
+          if (typeof value === "boolean") {
+            // Xử lý trường hợp value là boolean
+            return record.status === (value ? 1 : 0);
+          } else {
+            // Xử lý trường hợp value là Key (đối với trường hợp khi dùng dropdown filter)
+            return record.status === value;
+          }
+        },
       },
       {
         title: () => (
-          <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.description")}</p>
+          <p className="text-sm font-semibold font-primary">
+            {t("page.cash.history.field.content")}
+          </p>
+        ),
+        dataIndex: "content",
+        key: "content",
+        render: (text?: string) => (
+          <p className="text-sm font-primary text-primary">{text || ""}</p>
+        ),
+      },
+      {
+        title: () => (
+          <p className="text-sm font-semibold font-primary">
+            {t("page.cash.history.field.description")}
+          </p>
         ),
         dataIndex: "description",
         key: "description",

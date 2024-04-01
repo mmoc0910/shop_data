@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { Key, useEffect, useMemo, useState } from "react";
 import { api } from "../../api";
 import Heading from "../../components/common/Heading";
-import { KeySeverType, ServerType } from "../../type";
+import { KeySeverType, LocationType, ServerType } from "../../type";
 import { toast } from "react-toastify";
 import { DAY_FORMAT } from "../../constants";
 import { Link } from "react-router-dom";
@@ -43,8 +43,26 @@ const ServerAdminPage = () => {
   const [selectServer, setSelectServer] = useState<string | undefined>(
     undefined
   );
-
+  const [inputValue, setInputValue] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [locations, setLocations] = useState<LocationType[]>([]);
+  const listFilterServerStore = listServerStore.filter(
+    (item) =>
+      item.name.toLowerCase().includes(inputValue.toLowerCase()) ||
+      item.hostnameForAccessKeys
+        .toLowerCase()
+        .includes(inputValue.toLowerCase())
+  );
+  useEffect(() => {
+    (async () => {
+      try {
+        const result = await api.get<LocationType[]>("/locations");
+        setLocations(result.data);
+      } catch (error) {
+        console.log("error - ", error);
+      }
+    })();
+  }, []);
   const {
     handleSubmit,
     control,
@@ -241,6 +259,19 @@ const ServerAdminPage = () => {
         render: (text: string) => (
           <p className="text-sm font-primary">{text}</p>
         ),
+        filters: locations.map((item) => ({
+          text: item.name,
+          value: item.name,
+        })),
+        onFilter: (value: boolean | Key, record: ServerType) => {
+          if (typeof value === "boolean") {
+            // Xử lý trường hợp value là boolean
+            return record.location === (value ? "1" : "0");
+          } else {
+            // Xử lý trường hợp value là Key (đối với trường hợp khi dùng dropdown filter)
+            return record.location === value;
+          }
+        },
       },
       {
         title: () => <p className="text-sm font-semibold font-primary">IP</p>,
@@ -331,14 +362,12 @@ const ServerAdminPage = () => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [locations]
   );
   const columnsHistory: TableColumnsType<ServerType> = useMemo(
     () => [
       {
-        title: () => (
-          <p className="text-base font-semibold font-primary">STT</p>
-        ),
+        title: () => <p className="font-semibold font-primary">STT</p>,
         dataIndex: "index",
         key: "index",
         width: 70,
@@ -347,9 +376,7 @@ const ServerAdminPage = () => {
         ),
       },
       {
-        title: () => (
-          <p className="text-base font-semibold font-primary">Server Name</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Server Name</p>,
         dataIndex: "email",
         key: "email",
         render: (_: string, record: ServerType) => (
@@ -395,19 +422,28 @@ const ServerAdminPage = () => {
         },
       },
       {
-        title: () => (
-          <p className="text-base font-semibold font-primary">Location</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Location</p>,
         dataIndex: "location",
         key: "location",
         render: (_: string, record: ServerType) => (
           <p className="text-sm font-primary">{record.location}</p>
         ),
+        filters: locations.map((item) => ({
+          text: item.name,
+          value: item.name,
+        })),
+        onFilter: (value: boolean | Key, record: ServerType) => {
+          if (typeof value === "boolean") {
+            // Xử lý trường hợp value là boolean
+            return record.location === (value ? "1" : "0");
+          } else {
+            // Xử lý trường hợp value là Key (đối với trường hợp khi dùng dropdown filter)
+            return record.location === value;
+          }
+        },
       },
       {
-        title: () => (
-          <p className="text-base font-semibold font-primary">Trạng thái</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Trạng thái</p>,
         dataIndex: "status",
         key: "status",
         render: (status: 0 | 1) => (
@@ -425,9 +461,7 @@ const ServerAdminPage = () => {
         ),
       },
       {
-        title: () => (
-          <p className="text-base font-semibold font-primary">Ngày tạo</p>
-        ),
+        title: () => <p className="font-semibold font-primary">Ngày tạo</p>,
         dataIndex: "createdAt",
         key: "createdAt",
         render: (date: Date) => (
@@ -436,7 +470,7 @@ const ServerAdminPage = () => {
       },
       {
         title: () => (
-          <p className="text-base font-semibold font-primary">Ngày cập nhật</p>
+          <p className="font-semibold font-primary">Ngày cập nhật</p>
         ),
         dataIndex: "updatedAt",
         key: "updatedAt",
@@ -446,7 +480,7 @@ const ServerAdminPage = () => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [locations]
   );
   // const totalKey =
   //   servers.length > 0
@@ -464,6 +498,10 @@ const ServerAdminPage = () => {
       setSelectServer(undefined);
     }
     setIsModalOpen(false);
+  };
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setInputValue(value);
   };
   return (
     <RequireAuthPage rolePage={1}>
@@ -546,9 +584,37 @@ const ServerAdminPage = () => {
           Danh sách máy chủ(
           {listServerStore.filter((item) => item.status === 1).length})
         </Heading>
+        <div className="relative flex-1">
+          <input
+            type="text"
+            value={inputValue}
+            onChange={handleChange}
+            className="focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock"
+            placeholder={"Search..."}
+          />
+          {inputValue.length > 0 ? (
+            <span
+              className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2"
+              onClick={() => setInputValue("")}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-5 h-5 text-icon-color"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </span>
+          ) : null}
+        </div>
         <Table
           loading={loadingtable}
-          dataSource={listServerStore
+          dataSource={listFilterServerStore
             .filter((item) => item.status === 1)
             .map((item, index) => ({ index, ...item }))}
           columns={columns}
@@ -557,7 +623,7 @@ const ServerAdminPage = () => {
         <Heading>Lịch sử máy chủ</Heading>
         <Table
           loading={loadingtable}
-          dataSource={listServerStore
+          dataSource={listFilterServerStore
             .filter((item) => item.status === 0)
             .map((item, index) => ({ index, ...item }))}
           columns={columnsHistory}
