@@ -40,7 +40,8 @@ import { setCommision } from "../../store/commision/commisionSlice";
 import { setCollab } from "../../store/collab/collabSlice";
 import Post from "../../components/user/Post";
 import { useTranslation } from "react-i18next";
-import logoOutline from '../../assets/logo_outline.jpg'
+import logoOutline from "../../assets/logo_outline.jpg";
+import i18n from "../../i18n";
 
 const schema = yup
   .object({
@@ -317,25 +318,22 @@ const Policy = () => {
         <ul className="pl-5 space-y-2 list-decimal">
           <li className="">{t("page.dashboard.userManual.title1")}</li>
           <li className="">{t("page.dashboard.userManual.title2")}</li>
-          <li className="">
-            {t("page.dashboard.userManual.title3")}
-            {/* Bạn có thể kết nối VPN nhiều thiết bị cùng 1 lúc, Nhưng khuyến cáo{" "}
-            <span className="text-error">KHÔNG ĐƯỢC</span> chia sẻ cho người
-            khác cùng sử dụng, nếu vượt quá băng thông sẽ không truy cập được
-            tiếp mà sẽ phải mua thêm băng thông tại mục{" "}
-            <span className="text-secondary">
-              Đơn hàng của tôi {">"} Chọn Key của bạn {">"} Mua data
-            </span> */}
-          </li>
+          <li className="">{t("page.dashboard.userManual.title3")}</li>
           <li className="">{t("page.dashboard.userManual.title4")}</li>
           <li className="">{t("page.dashboard.userManual.title5")}</li>
-          <div className="flex flex-wrap items-center gap-10 py-5 md:gap-16 lg:gap-20 ">
-            <div
-              
-              className="flex flex-col items-center gap-7 group"
-            >
-              <img src={logoOutline} className="w-[100px]"/>
+          <div className="flex items-end gap-2">
+            <p className="text-xl font-medium text-secondary40">
+              {i18n.language === "vi"
+                ? "Link download phần mềm"
+                : i18n.language === "en"
+                ? "Link download software"
+                : "下载软件"}
+            </p>
+            <div className="flex flex-col items-center gap-7 group">
+              <img src={logoOutline} className="w-[100px]" />
             </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-10 py-5 md:gap-16 lg:gap-20 ">
             <Link
               to={
                 "https://play.google.com/store/apps/details?id=org.outline.android.client&pcampaignid=web_share"

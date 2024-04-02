@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { UserState } from "../../type";
+import { ServerType, UserState } from "../../type";
 import { countries, purposes } from "../../constants";
 import {
   DatePicker,
@@ -26,26 +26,59 @@ import UpdateExtension from "../../components/user/UpdateExtension";
 import { copyToClipboard } from "../../utils/copyToClipboard";
 import { AndroidXML } from "../user/OrderPage";
 import { useTranslation } from "react-i18next";
+import { Checkbox } from "../../components/checkbox";
+import MoveServer from "../../components/user/MoveServer";
 
 const AccountDetailPage = () => {
   const { i18n } = useTranslation();
   const { accountId } = useParams();
   const [user, setUser] = useState<UserState>();
+  const [canMigrate, setCanMigrate] = useState<boolean>(false);
   useEffect(() => {
-    (async () => {
-      try {
-        const resultUser = await api.get<UserState>(`/users/${accountId}`);
-        setUser(resultUser.data);
-      } catch (error) {
-        console.log("error - ", error);
-        // toast.error(messages.error);
-      }
-    })();
+    if (accountId) fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountId]);
+  const fetchData = async () => {
+    try {
+      const resultUser = await api.get<UserState>(`/users/${accountId}`);
+      setUser(resultUser.data);
+      setCanMigrate(resultUser.data.canMigrate);
+    } catch (error) {
+      console.log("error - ", error);
+      // toast.error(messages.error);
+    }
+  };
+  const handleUpdateUser = async (userId: string, canMigrate: boolean) => {
+    try {
+      await api.patch(`/users/${userId}`, { canMigrate });
+      fetchData;
+      toast("Success");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="space-y-10">
       <div className="space-y-4">
-        <Heading>Chi tiết người dùng</Heading>
+        <div className="flex items-center justify-between">
+          <Heading>Chi tiết người dùng</Heading>
+          <div className="flex items-center gap-5">
+            <Checkbox
+              checked={canMigrate}
+              onClick={() => setCanMigrate((prev) => !prev)}
+            >
+              Can Migrate
+            </Checkbox>
+            <button
+              className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-primary font-primary shrink-0"
+              onClick={() =>
+                accountId && handleUpdateUser(accountId, canMigrate)
+              }
+            >
+              Apply
+            </button>
+          </div>
+        </div>
         {user ? (
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
             <p>
@@ -109,6 +142,19 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
   const [startDate, setStartDate] = useState<dayjs.Dayjs | undefined>();
   const [endDate, setEndDate] = useState<dayjs.Dayjs | undefined>();
   const [inputValue, setInputValue] = useState<string>("");
+  const [servers, setServers] = useState<ServerType[]>([]);
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data: dataServers } = await api.get<ServerType[]>(
+          "/servers/normal-server?status=1"
+        );
+        setServers(dataServers);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, []);
   const listGistFilter =
     startDate && endDate && !inputValue
       ? listGist.filter(
@@ -361,9 +407,25 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
           multiple: 2,
         },
       },
+      {
+        title: <p className="font-semibold font-primary text-sm"></p>,
+        dataIndex: "action",
+        key: "action",
+        width: 100,
+        render: (_: string, record: GistType) =>
+          record.status ? (
+            <div className="flex flex-col lg:flex-row gap-3 lg:gap-2 justify-end w-[150px] lg:w-[250px] px-5">
+              <MoveServer
+                servers={servers}
+                gist={record}
+                handleReloadData={handleFetchData}
+              />
+            </div>
+          ) : null,
+      },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [servers]
   );
 
   const onChangeStartDate: DatePickerProps["onChange"] = (date) => {

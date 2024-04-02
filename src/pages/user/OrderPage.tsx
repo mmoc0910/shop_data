@@ -7,12 +7,14 @@ import {
   Tag,
   Tooltip,
 } from "antd";
-import { Key, useEffect, useMemo, useState } from "react";
+import { Key, useCallback, useEffect, useMemo, useState } from "react";
 import {
   CoutryType,
   ExtendPlanType,
   GistType,
   RoseExtendType,
+  ServerType,
+  UserState,
 } from "../../type";
 import { toast } from "react-toastify";
 import {
@@ -39,6 +41,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Radio from "../../components/radio/Radio";
 import { useTranslation } from "react-i18next";
 import { priceFomat } from "../../utils/formatPrice";
+import MoveServer from "../../components/user/MoveServer";
 
 const OrderPage = () => {
   const { t, i18n } = useTranslation();
@@ -56,6 +59,23 @@ const OrderPage = () => {
   const [endDate, setEndDate] = useState<dayjs.Dayjs | undefined>();
   const [inputValue, setInputValue] = useState<string>("");
   const [roseExtend, setRoseExtend] = useState<RoseExtendType>();
+  const [servers, setServers] = useState<ServerType[]>([]);
+  const [canMigrate, setCanMigrate] = useState<boolean>(false);
+  useEffect(() => {
+    (async () => {
+      try {
+        const [{ data: infoUser }, { data: dataServers }] = await Promise.all([
+          api.get<UserState>(`/users/${_id}`),
+          api.get<ServerType[]>("/servers/normal-server?status=1"),
+        ]);
+        console.log(infoUser, dataServers);
+        setServers(dataServers);
+        setCanMigrate(infoUser.canMigrate);
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, [_id]);
   useEffect(() => {
     (async () => {
       try {
@@ -102,7 +122,7 @@ const OrderPage = () => {
     setLoadingTable(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const handleFetchData = async () => {
+  const handleFetchData = useCallback(async () => {
     try {
       const result = await api.get<GistType[]>(`/gists?userId=${_id}`);
       setListGist(result.data.filter((item) => item.status !== 2));
@@ -111,7 +131,8 @@ const OrderPage = () => {
       console.log("error - ", error);
       toast.error(messages.error);
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     (async () => {
       try {
@@ -412,25 +433,6 @@ const OrderPage = () => {
           multiple: 1,
         },
       },
-      // {
-      //   title: <p className="font-semibold font-primary text-sm">Data Expand</p>,
-      //   dataIndex: "dataExtend",
-      //   key: "dataExtend",
-      //   width: 120,
-      //   render: (_: string, record: GistType) => (
-      //     <p className="text-sm font-primary">
-      //       {(record.keyId.dataExpand - record.keyId.dataLimit) /
-      //         1000 /
-      //         1000 /
-      //         1000}
-      //       GB
-      //     </p>
-      //   ),
-      //   sorter: {
-      //     compare: (a, b) => a.keyId.dataLimit - b.keyId.dataLimit,
-      //     multiple: 1,
-      //   },
-      // },
       {
         title: (
           <p className="font-semibold font-primary text-sm">
@@ -447,20 +449,19 @@ const OrderPage = () => {
           </p>
         ),
       },
-
       {
         title: <p className="font-semibold font-primary text-sm"></p>,
         dataIndex: "action",
         key: "action",
         render: (_: string, record: GistType) =>
           record.status ? (
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 justify-end w-[150px] lg:w-[250px] px-5">
+            <div className="flex flex-col lg:flex-row gap-3 lg:gap-2 justify-end w-[150px] lg:w-[250px] px-5">
               {!record.keyId.endExpandDate ||
               (record.keyId.endExpandDate &&
                 dayjs().isAfter(record.keyId.endExpandDate, "day") &&
                 record.planId.price > 0) ? (
                 <button
-                  className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary shrink-0"
+                  className="px-2 py-1 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary shrink-0"
                   onClick={() => {
                     setSelectRow({
                       id: record._id,
@@ -473,7 +474,7 @@ const OrderPage = () => {
                 </button>
               ) : null}
               <button
-                className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-primary font-primary shrink-0"
+                className="px-2 py-1 text-xs font-medium text-white rounded-lg bg-primary font-primary shrink-0"
                 onClick={() =>
                   handleUpgradPlan(
                     record._id,
@@ -486,18 +487,19 @@ const OrderPage = () => {
               >
                 {t("page.myOrder.field.extend")}
               </button>
-              {/* <button
-                className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-primary font-primary shrink-0"
-                onClick={() => {}}
-              >
-                Move server
-              </button> */}
+              {canMigrate && (
+                <MoveServer
+                  servers={servers}
+                  gist={record}
+                  handleReloadData={handleFetchData}
+                />
+              )}
             </div>
           ) : null,
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [t, i18n.language]
+    [t, canMigrate, i18n.language, servers]
   );
 
   const onChangeStartDate: DatePickerProps["onChange"] = (date) => {
@@ -580,7 +582,7 @@ const OrderPage = () => {
           dataSource={listGistFilter.map((item, index) => ({ index, ...item }))}
           columns={columns}
           loading={loadingTable}
-          scroll={{ x: 1600 }}
+          scroll={{ x: 1600, y: 500 }}
         />
       </div>
       <Modal

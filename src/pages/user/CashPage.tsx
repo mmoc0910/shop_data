@@ -85,19 +85,23 @@ const CashPage = () => {
         render: (text: number) => (
           <p className="text-sm font-primary">
             {text === 0 ? (
-              <Tag color="blue">{i18n.language === 'ci' ? "自动银行支付" : "Auto Banking"}</Tag>
+              <Tag color="blue">
+                {i18n.language === "ci" ? "自动银行支付" : "Auto Banking"}
+              </Tag>
             ) : (
-              <Tag color="pink-inverse">{i18n.language === 'ci' ? "手动" : "Manual Banking"}</Tag>
+              <Tag color="pink-inverse">
+                {i18n.language === "ci" ? "手动" : "Manual Banking"}
+              </Tag>
             )}
           </p>
         ),
         filters: [
           {
-            text: i18n.language === 'ci' ? "自动银行支付" : "Auto Banking",
+            text: i18n.language === "ci" ? "自动银行支付" : "Auto Banking",
             value: 0,
           },
           {
-            text: i18n.language === 'ci' ? "手动" : "Manual Banking",
+            text: i18n.language === "ci" ? "手动" : "Manual Banking",
             value: 1,
           },
         ],
@@ -206,14 +210,14 @@ const CashPage = () => {
             {record.status === 1 ? (
               <Tag color="green">
                 <span className="font-primary">
-                  {t("page.cash.history.status.pending")}
+                  {t("page.cash.history.status.approve")}
                 </span>
               </Tag>
             ) : null}
             {record.status === 2 ? (
               <Tag color="lime">
                 <span className="font-primary">
-                  {t("page.cash.history.status.approve")}
+                  {t("page.cash.history.status.pending")}
                 </span>
               </Tag>
             ) : null}

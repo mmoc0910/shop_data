@@ -21,6 +21,7 @@ export type RoseExtendType = {
 };
 
 export interface UserState {
+  canMigrate: boolean;
   level: number;
   email: string;
   role: 1 | 2;
@@ -57,6 +58,7 @@ export type ServerType = {
   updatedAt: Date;
   defaultBandWidth: number;
   totalBandWidth: number;
+  numberKey: number;
   __v: 0;
   listKeys?: KeySeverType[];
 };
@@ -82,7 +84,7 @@ export type KeySeverType = {
   enable: boolean;
   dataLimit: number;
   dataUsage: number;
-  serverId: ServerType;
+  serverId: ServerType | string;
   awsId: AWSType;
   userId: AuthState;
   account: string;
