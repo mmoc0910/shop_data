@@ -90,7 +90,7 @@ const RechargePage = () => {
     }
   };
   return (
-    <div className="grid grid-cols-1 md:grid-cols-6 xl:grid-cols-4 gap-20 px-10">
+    <div className="grid grid-cols-1 md:grid-cols-6 xl:grid-cols-4 gap-5 md:gap-10 xl:gap-20 xl:px-10">
       <AutoBanking />
       <div className="px-5 py-10 rounded-xl shadow-2xl col-span-1 md:col-span-3 xl:col-span-2">
         <p className="font-semibold text-xl text-center mb-3">
@@ -271,7 +271,10 @@ const AutoBankingQR = ({
       console.log("data - ", result.data.data);
       if (
         result.data.data.some(
-          (item) => item["Giá trị"] >= amount && item["Mô tả"].includes(addInfo)
+          (item) =>
+            item["Giá trị"] >= amount &&
+            (item["Mô tả"].includes(addInfo) ||
+              item["Mô tả"].toLowerCase().includes(addInfo.toLowerCase()))
         )
       ) {
         // await api.post("/cashs/auto-bank", {
@@ -307,31 +310,30 @@ const AutoBankingQR = ({
       <img
         src={`https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-${TEMPLATE}.png?amount=${Number(
           amount
-        )}`}
+        )}&addInfo=${addInfo}`}
         className="w-4/6 h-auto object-cover mx-auto mb-10"
       />
 
       <div className="space-y-5 mx-5">
         <div className="flex items-center gap-5">
           <div className="w-full h-[7px] relative my-0 mx-auto my before:content-[''] before:absolute before:right-auto before:left-0 before:h-full before:bg-primary  before:rounded-full before:animate-lineloading"></div>
-          <Countdown value={Date.now() + 10 * 60 * 100} onFinish={onFinish} />
+          <Countdown value={Date.now() + 10 * 60 * 1000} onFinish={onFinish} />
         </div>
         <p className="text-lg">
-          {t("page.cash.payment.auto.stk")}{" "}
+          {t("page.cash.payment.auto.stk")}
           <span className="font-medium text-primary">{ACCOUNT_NO}</span>
         </p>
         <p className="text-lg">
-          {t("page.cash.payment.auto.bank_name")}{" "}
+          {t("page.cash.payment.auto.bank_name")}
           <span className="font-medium">{ACCOUNT_NAME}</span>
         </p>
         <p className="text-lg">
-          {t("page.cash.payment.auto.money")}{" "}
+          {t("page.cash.payment.auto.money")}
           <span className="font-medium">{VND.format(Number(amount))}VND</span>
         </p>
         <div className="text-lg flex items-center gap-2">
           <p>
-            {" "}
-            {t("page.cash.payment.auto.content")}{" "}
+            {t("page.cash.payment.auto.content")}
             <span className="font-medium text-secondary">{addInfo}</span>
           </p>
           <Tooltip title="copy">

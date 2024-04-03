@@ -12,7 +12,10 @@ import { CashType, CoutryType } from "../../type";
 import { api } from "../../api";
 import { toast } from "react-toastify";
 import {
+  ACCOUNT_NO,
+  BANK_ID,
   DAY_FORMAT,
+  TEMPLATE,
   isSameOrAfter,
   isSameOrBefore,
   messages,
@@ -23,6 +26,7 @@ import dayjs from "dayjs";
 import RechargePage from "./RechargePage";
 import { useTranslation } from "react-i18next";
 import { priceFomat } from "../../utils/formatPrice";
+import { Link } from "react-router-dom";
 
 const CashPage = () => {
   const { i18n, t } = useTranslation();
@@ -255,8 +259,19 @@ const CashPage = () => {
         ),
         dataIndex: "content",
         key: "content",
-        render: (text?: string) => (
-          <p className="text-sm font-primary text-primary">{text || ""}</p>
+        render: (text: string, record: CashType) => (
+          <Link
+            target="_blank"
+            to={`https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-${TEMPLATE}.png?amount=${record.money}&addInfo=${record.content}`}
+            className="text-sm font-primary text-primary"
+          >
+            {text && record.type === 0 && (
+              <img
+                src={`https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-${TEMPLATE}.png?amount=${record.money}&addInfo=${record.content}`}
+                className="w-28 h-28 object-cover"
+              />
+            )}
+          </Link>
         ),
       },
       {
