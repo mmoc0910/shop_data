@@ -122,38 +122,6 @@ const CashPage = () => {
       {
         title: () => (
           <p className="text-sm font-semibold font-primary">
-            {t("page.cash.history.field.username")}
-          </p>
-        ),
-        dataIndex: "username",
-        key: "username",
-        render: (_: string, record: CashType) => (
-          <p className="text-sm font-primary">{record.userId?.username}</p>
-        ),
-      },
-      // {
-      //   title: () => (
-      //     <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.email")}</p>
-      //   ),
-      //   dataIndex: "email",
-      //   key: "email",
-      //   render: (_: string, record: CashType) => (
-      //     <p className="text-sm font-primary">{record.userId.email}</p>
-      //   ),
-      // },
-      // {
-      //   title: () => (
-      //     <p className="text-sm font-semibold font-primary">{t("page.cash.history.field.phone")}</p>
-      //   ),
-      //   dataIndex: "phone",
-      //   key: "phone",
-      //   render: (_: string, record: CashType) => (
-      //     <p className="text-sm font-primary">{record.userId.phone}</p>
-      //   ),
-      // },
-      {
-        title: () => (
-          <p className="text-sm font-semibold font-primary">
             {t("page.cash.history.field.money")}
           </p>
         ),
@@ -334,7 +302,7 @@ const CashPage = () => {
               ...item,
             }))}
             columns={columns}
-            scroll={{ x: 1300 }}
+            scroll={{ x: 1300, y: 600 }}
           />
         </div>
       </div>

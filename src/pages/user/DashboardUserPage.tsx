@@ -8,7 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "../../components/button/Button";
 import { Label } from "../../components/label";
 import { Input } from "../../components/input";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
 import { toast } from "react-toastify";
 import { messages } from "../../constants";
@@ -17,11 +17,8 @@ import CashHistory from "../../components/user/CashHistory";
 import RoseHistory from "../../components/user/RoseHistory";
 import {
   CashType,
-  CollabType,
-  CommisionType,
   CoutryType,
   RoseType,
-  SatisfyType,
   TransactionType,
 } from "../../type";
 import Swal from "sweetalert2";
@@ -35,9 +32,6 @@ import whatapp from "../../assets/contact/whatapp.png";
 import picture1 from "../../assets/Picture1.png";
 import { Link } from "react-router-dom";
 import IconQuesionMarkCircle from "../../icons/IconQuesionMarkCircle";
-import { setSatify } from "../../store/satisfy/satisfySlice";
-import { setCommision } from "../../store/commision/commisionSlice";
-import { setCollab } from "../../store/collab/collabSlice";
 import Post from "../../components/user/Post";
 import { useTranslation } from "react-i18next";
 import logoOutline from "../../assets/logo_outline.jpg";
@@ -58,46 +52,7 @@ const DashboardUserPage = () => {
   const [roseHistory, setRoseHistory] = useState<RoseType[]>([]);
   const [transactions, setTransactions] = useState<TransactionType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const dispatch = useDispatch();
-  useEffect(() => {
-    (async () => {
-      try {
-        const [
-          { data: dataSatify },
-          { data: dataCommision },
-          { data: dataCollab },
-        ] = await Promise.all([
-          api.get<SatisfyType>(`/satisfy/${_id}`),
-          api.get<CommisionType>("/commisions"),
-          api.get<CollabType>("/collab"),
-        ]);
-        dispatch(
-          setSatify({
-            cash: dataSatify.cash[0]?.money || 0,
-            rose: dataSatify.rose[0]?.money || 0,
-            currentMoney: dataSatify.currentMoney,
-            numberIntoduce: dataSatify.numberIntoduce,
-            transaction: dataSatify.transaction[0]?.money || 0,
-          })
-        );
-        dispatch(
-          setCommision({ value: dataCommision.value, min: dataCommision.min })
-        );
-        dispatch(
-          setCollab({
-            level1: dataCollab.level1,
-            level2: dataCollab.level2,
-            level3: dataCollab.level3,
-            minLevel1: dataCollab.minLevel1,
-            minLevel2: dataCollab.minLevel2,
-            minLevel3: dataCollab.minLevel3,
-          })
-        );
-      } catch (error) {
-        console.log("error - ", error);
-      }
-    })();
-  }, [_id, dispatch]);
+
   useEffect(() => {
     (async () => {
       try {
@@ -434,8 +389,9 @@ const Policy = () => {
                 </svg>
               </span>
               <span className="text-sm font-medium text-center transition-all duration-300 group-hover:text-primary">
-                For Android: New version <br />
-                (Recommend)
+                For Android
+                {/* : New version <br />
+                (Recommend) */}
               </span>
             </Link>
             <Link

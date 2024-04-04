@@ -11,7 +11,7 @@ const PlanPage = () => {
     (async () => {
       try {
         const result = await api.get<PlanType[]>("/plans");
-        setPlans(result.data.filter((item) => item.status === 1));
+        setPlans(result.data.filter((item) => item.status === 1).sort((a, b) => b.numberPurchase - a.numberPurchase));
       } catch (error) {
         console.log("error - ", error);
       }

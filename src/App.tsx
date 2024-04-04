@@ -6,9 +6,14 @@ import { Route, Routes } from "react-router-dom";
 import LayoutUser from "./layouts/LayoutUser";
 import LayoutAdmin from "./layouts/LayoutAdmin";
 import "./i18n";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store/configureStore";
 import { useTranslation } from "react-i18next";
+import { setCommision } from "./store/commision/commisionSlice";
+import { setCollab } from "./store/collab/collabSlice";
+import { setSatify } from "./store/satisfy/satisfySlice";
+import { api } from "./api";
+import { CollabType, CommisionType, SatisfyType } from "./type";
 const RechargePage = lazy(() => import("./pages/user/RechargePage"));
 const AccountDetailPage = lazy(() => import("./pages/admin/AccountDetailPage"));
 const CashPage = lazy(() => import("./pages/user/CashPage"));
@@ -46,7 +51,49 @@ const KeyDetailAdminPage = lazy(
 
 function App() {
   const lang = useSelector((state: RootState) => state.lang);
+  const { _id } = useSelector((state: RootState) => state.auth);
   const { i18n } = useTranslation();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    (async () => {
+      if (_id)
+        try {
+          const [
+            { data: dataSatify },
+            { data: dataCommision },
+            { data: dataCollab },
+          ] = await Promise.all([
+            api.get<SatisfyType>(`/satisfy/${_id}`),
+            api.get<CommisionType>("/commisions"),
+            api.get<CollabType>("/collab"),
+          ]);
+          dispatch(
+            setSatify({
+              cash: dataSatify.cash[0]?.money || 0,
+              rose: dataSatify.rose[0]?.money || 0,
+              currentMoney: dataSatify.currentMoney,
+              numberIntoduce: dataSatify.numberIntoduce,
+              transaction: dataSatify.transaction[0]?.money || 0,
+            })
+          );
+          dispatch(
+            setCommision({ value: dataCommision.value, min: dataCommision.min })
+          );
+          dispatch(
+            setCollab({
+              level1: dataCollab.level1,
+              level2: dataCollab.level2,
+              level3: dataCollab.level3,
+              minLevel1: dataCollab.minLevel1,
+              minLevel2: dataCollab.minLevel2,
+              minLevel3: dataCollab.minLevel3,
+            })
+          );
+        } catch (error) {
+          console.log("error - ", error);
+        }
+    })();
+  }, [_id, dispatch]);
   useEffect(() => {
     i18n.changeLanguage(lang);
   }, [i18n, lang]);

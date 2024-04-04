@@ -96,7 +96,7 @@ const KeyDetailAdminPage = () => {
         confirmButtonText: "Đồng ý",
       });
       if (isConfirmed) {
-        await api.patch(`i/keys/rename/${_id}`, { name });
+        await api.patch(`/keys/rename/${_id}`, { name });
         fetchData(_id);
         toast.success("Thành công");
       }

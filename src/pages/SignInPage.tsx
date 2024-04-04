@@ -58,8 +58,12 @@ const SignInPage = () => {
   }, [email, navigation, role]);
   const onSubmit = async (data: { account: string; password: string }) => {
     try {
+      const { account, password } = data;
       setLoading(true);
-      const result = await api.post<{ data: AuthState }>("/users/login", data);
+      const result = await api.post<{ data: AuthState }>("/users/login", {
+        account: account.toLowerCase(),
+        password,
+      });
       dispatch(setAuth(result.data.data));
 
       if (result.data.data.role === 1) {

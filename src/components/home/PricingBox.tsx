@@ -25,7 +25,11 @@ const PricingBox = () => {
     (async () => {
       try {
         const result = await api.get<PlanType[]>("/plans");
-        setPlans(result.data.filter((item) => item.status === 1));
+        setPlans(
+          result.data
+            .filter((item) => item.status === 1)
+            .sort((a, b) => b.numberPurchase - a.numberPurchase)
+        );
       } catch (error) {
         console.log("error - ", error);
       }
@@ -43,7 +47,7 @@ const PricingBox = () => {
               {t("page.home.pricing.desc")}
             </p>
             <p className="text-center text-secondary20 font-medium text-xl">
-              {t("page.home.pricing.desc2")}
+              {t("page.home.pricing.desc2")}{" "}
             </p>
           </div>
           {/* <div className="my-9 lg:my-14 py-2 px-7 bg-[#f2f4f7] rounded-full">

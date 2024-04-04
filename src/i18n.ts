@@ -364,7 +364,7 @@ i18n.use(LanguageDetector).use(initReactI18next),
               payment: {
                 auto: {
                   title: " VNbanking automatic top-up",
-                  desc: 'Please fill in the amount you want to deposit and transfer to our account information after you click "Submit". Your account will automatically update after 5-10 seconds.',
+                  desc: 'Please transfer the correct amount you want to deposit and the "Transfer content" provided. The system will automatically update after 5-10 seconds after confirming successful payment. If there are any problem, please contact admin.',
                   form: {
                     placeholder: "Enter the amount to deposit",
                     button: "Submit",
@@ -591,7 +591,7 @@ i18n.use(LanguageDetector).use(initReactI18next),
                 content1:
                   "Nhận ngay {{amount}}% cho các đơn hàng giới thiệu qua mã CTV",
                 content2: "Đại lý chiết khấu lên tới {{amount}}%",
-                content3: "Không giới hạn mức giá bán ra rừ đại lý",
+                content3: "Không giới hạn mức giá bán ra từ đại lý",
               },
             },
             dashboard: {
@@ -784,7 +784,7 @@ i18n.use(LanguageDetector).use(initReactI18next),
               payment: {
                 auto: {
                   title: " Nạp tiền tự động VNbanking",
-                  desc: "Vui lòng điền số tiền bạn muốn nạp và chuyển khoản tới thông tin tài khoản (MBBANK) sau khi bạn nhấn Nạp tiền. Tài khoản của bạn sẽ tự động cập nhật sau 5-10s.",
+                  desc: 'Vui lòng chuyển đúng số tiền bạn muốn nạp và "Nội dung chuyển khoản" được cung cấp. Hệ thống sẽ tự động cập nhật sau 5-10s sau khi xác nhận thanh toán thành công. Nếu có sai sót vui lòng liên hệ admin.',
                   form: {
                     placeholder: "Nhập số tiền cần nạp",
                     button: "Nạp tiền",
@@ -1192,7 +1192,7 @@ i18n.use(LanguageDetector).use(initReactI18next),
               payment: {
                 auto: {
                   title: " 自动付款 VIETNAM BANKING",
-                  desc: "点击“付款”后，请填写您要存入并转入我们账户的金额信息。您的帐户将在 5-10 秒后自动更新。",
+                  desc: "请正确转账您要存入的金额以及提供的“支付内容”。 确认支付成功后，系统将在5-10秒后自动更新。 如有错误，请联系管理员。",
                   form: {
                     placeholder: "填入付款的数量",
                     button: "付款",

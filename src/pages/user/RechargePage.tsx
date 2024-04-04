@@ -358,7 +358,7 @@ const AutoBankingQR = ({
             </button>
           </Tooltip>
         </div>
-        <p className="text-lg">{t("page.cash.payment.auto.note")}</p>
+        {/* <p className="text-lg">{t("page.cash.payment.auto.note")}</p> */}
       </div>
     </div>
   );
