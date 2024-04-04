@@ -343,6 +343,7 @@ const KeyDetailAdminPage = () => {
                   <EditKeyNameForm
                     placeholder={key.name}
                     handleRenameKey={(name) => handleRenameKey(_id, name)}
+                    className="w-full"
                   />
                 ) : (
                   <p>{key.name}</p>
@@ -452,7 +453,7 @@ const KeyDetailAdminPage = () => {
                   </div>
                   {historyKey.length > 0 &&
                     historyKey.map((item, index) => {
-                      const server = item.serverId as ServerType
+                      const server = item.serverId as ServerType;
                       return (
                         <div
                           className="grid grid-cols-5 col-span-5 py-5 border border-gray-200 rounded-xl"

@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "../button/Button";
 import { Input } from "../input";
 import IconEdit from "../../icons/IconEdit";
+import classNames from "../../utils/classNames";
 
 const schema = yup
   .object({
@@ -14,9 +15,11 @@ const schema = yup
 const EditKeyNameForm = ({
   placeholder,
   handleRenameKey,
+  className = "",
 }: {
   placeholder: string;
   handleRenameKey: (name: string) => void;
+  className?: string;
 }) => {
   const { handleSubmit, control } = useForm({
     resolver: yupResolver(schema),
@@ -31,7 +34,7 @@ const EditKeyNameForm = ({
   };
   return (
     <form
-      className="flex items-center w-[200px]"
+      className={classNames("flex items-center w-[200px]", className)}
       onSubmit={handleSubmit(onSubmit)}
     >
       <Input name="name" placeholder={placeholder} control={control} />
