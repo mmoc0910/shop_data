@@ -9,6 +9,7 @@ import axios from "axios";
 import Loading from "../common/Loading";
 import { api } from "../../api";
 import { useTranslation } from "react-i18next";
+import classNames from "../../utils/classNames";
 
 type MoveServerProps = {
   servers: ServerType[];
@@ -20,7 +21,7 @@ const MoveServer: FC<MoveServerProps> = memo(
     const { i18n } = useTranslation();
     const [selectServer, setSelectServer] = useState<
       { id: string; name: string } | undefined
-    >(undefined);
+    >({ id: gist.keyId.serverId as string, name: gist.keyId.name });
     const [loading, setLoading] = useState<boolean>(false);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const showModal = () => {
@@ -114,6 +115,7 @@ const MoveServer: FC<MoveServerProps> = memo(
                 : i18n.language === "ci"
                 ? "选server location"
                 : "Select server location"}
+              [{servers.find((item) => item._id === gist.keyId.serverId)?.name}]
             </p>
           </div>
           <div className="mb-5">
@@ -136,19 +138,28 @@ const MoveServer: FC<MoveServerProps> = memo(
                 }
               ></DropdownWithComponents.Select>
               <DropdownWithComponents.List>
-                {servers.map((item) =>
-                  item._id !== (gist.keyId.serverId as string) ? (
+                {servers.map(
+                  (item) => (
+                    // item._id !== (gist.keyId.serverId as string) ? (
                     <DropdownWithComponents.Option
                       key={uuidv4()}
                       onClick={() =>
                         setSelectServer({ id: item._id, name: item.name })
                       }
                     >
-                      <span className="capitalize">
+                      <span
+                        className={classNames(
+                          "capitalize",
+                          item._id === selectServer?.id
+                            ? "font-semibold text-primary"
+                            : ""
+                        )}
+                      >
                         {item.name} ({item.numberKey} keys)
                       </span>
                     </DropdownWithComponents.Option>
-                  ) : null
+                  )
+                  // ) : null
                 )}
               </DropdownWithComponents.List>
             </DropdownWithComponents>

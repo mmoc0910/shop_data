@@ -50,7 +50,7 @@ const SatifyByMonth = () => {
   };
   if (data)
     return (
-      <div className="space-y-5 col-span-12">
+      <div className="space-y-5">
         <Heading className="flex items-center gap-5">
           <p>Doanh số theo tháng</p>
           <DatePicker

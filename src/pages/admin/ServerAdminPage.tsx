@@ -16,13 +16,13 @@ import RequireAuthPage from "../../components/common/RequireAuthPage";
 import axios from "axios";
 import Loading from "../../components/common/Loading";
 import PickLocationForm from "../../components/server/PickLocationForm";
-import EditKeyLimitForm from "../../components/server/EditKeyLimitForm";
 import dayjs from "dayjs";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
 import { setServer } from "../../store/server/serverSlice";
 import { DropdownWithComponents } from "../../components/dropdown";
 import { v4 as uuidv4 } from "uuid";
+import classNames from "../../utils/classNames";
 
 const schema = yup
   .object({
@@ -37,6 +37,7 @@ const schema = yup
 const ServerAdminPage = () => {
   const dispatch = useDispatch();
   const listServerStore = useSelector((state: RootState) => state.server);
+  const [listServer, setListServer] = useState<ServerType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingtable, setLoadingTable] = useState<boolean>(false);
   const [selectRow, setSelectRow] = useState<string | undefined>();
@@ -46,7 +47,7 @@ const ServerAdminPage = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [locations, setLocations] = useState<LocationType[]>([]);
-  const listFilterServerStore = listServerStore.filter(
+  const listFilterServer = listServer.filter(
     (item) =>
       item.name.toLowerCase().includes(inputValue.toLowerCase()) ||
       item.hostnameForAccessKeys
@@ -79,12 +80,26 @@ const ServerAdminPage = () => {
     handleFetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useEffect(() => {
+    (async () => {
+      try {
+        const result = await api.get<ServerType[]>(
+          "/servers/normal-server?status=1"
+        );
+        dispatch(setServer(result.data));
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const handleFetchData = async () => {
     try {
       console.log("load server");
       setLoadingTable(true);
       const resultServer = await api.get<ServerType[]>("/servers");
-      dispatch(setServer(resultServer.data));
+      // dispatch(setServer(resultServer.data));
+      setListServer(resultServer.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log("error message: ", error);
@@ -194,36 +209,36 @@ const ServerAdminPage = () => {
       setLoading(false);
     }
   };
-  const handleChangeLimitData = async (_id: string, totalBandwidth: number) => {
-    try {
-      const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn chỉnh sửa total bandwidth máy chủ này</p>`,
-        icon: "success",
-        showCancelButton: true,
-        confirmButtonColor: "#1DC071",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Thoát",
-        confirmButtonText: "Đồng ý",
-      });
-      if (isConfirmed) {
-        setLoading(true);
-        await api.patch(`/servers/total-bandwidth/${_id}`, {
-          totalBandwidth,
-        });
-        toast.success("Chỉnh sửa thành công");
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log("error message: ", error);
-        toast.error(error.response?.data.message);
-      } else {
-        console.log("unexpected error: ", error);
-        return "An unexpected error occurred";
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const handleChangeLimitData = async (_id: string, totalBandwidth: number) => {
+  //   try {
+  //     const { isConfirmed } = await Swal.fire({
+  //       title: `<p class="leading-tight">Bạn có muốn chỉnh sửa total bandwidth máy chủ này</p>`,
+  //       icon: "success",
+  //       showCancelButton: true,
+  //       confirmButtonColor: "#1DC071",
+  //       cancelButtonColor: "#d33",
+  //       cancelButtonText: "Thoát",
+  //       confirmButtonText: "Đồng ý",
+  //     });
+  //     if (isConfirmed) {
+  //       setLoading(true);
+  //       await api.patch(`/servers/total-bandwidth/${_id}`, {
+  //         totalBandwidth,
+  //       });
+  //       toast.success("Chỉnh sửa thành công");
+  //     }
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       console.log("error message: ", error);
+  //       toast.error(error.response?.data.message);
+  //     } else {
+  //       console.log("unexpected error: ", error);
+  //       return "An unexpected error occurred";
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const columns: TableColumnsType<ServerType> = useMemo(
     () => [
       {
@@ -283,25 +298,47 @@ const ServerAdminPage = () => {
       },
       {
         title: () => (
-          <p className="text-sm font-semibold font-primary">Total BandWidth</p>
+          <p className="text-sm font-semibold font-primary">
+          Days
+          </p>
         ),
-        dataIndex: "totalBandWidth",
-        key: "totalBandWidth",
-        render: (text: number, record: ServerType) => (
-          <EditKeyLimitForm
-            className="!w-[170px]"
-            type="number"
-            placeholder={`${text / 1000 / 1000 / 1000}GB`}
-            handleAddLimitData={(value) => {
-              handleChangeLimitData(record._id, Number(value));
-            }}
-          />
-          // <p className="text-sm font-primary">{text / 1000 / 1000 / 1000}GB</p>
-        ),
+        dataIndex: "hostnameForAccessKeys",
+        key: "hostnameForAccessKeys",
+        render: (_text: string, record: ServerType) => {
+          const diff = dayjs().diff(dayjs(record.createdAt), "days");
+          return (
+            <p className="text-sm font-primary">
+              {diff < 1
+                ? `${dayjs(record.updatedAt).diff(
+                    dayjs(record.createdAt),
+                    "hour"
+                  )} giờ`
+                : `${diff} ngày`}
+            </p>
+          );
+        },
       },
+      // {
+      //   title: () => (
+      //     <p className="text-sm font-semibold font-primary">Total BandWidth</p>
+      //   ),
+      //   dataIndex: "totalBandWidth",
+      //   key: "totalBandWidth",
+      //   render: (text: number, record: ServerType) => (
+      //     <EditKeyLimitForm
+      //       className="!w-[170px]"
+      //       type="number"
+      //       placeholder={`${text / 1000 / 1000 / 1000}GB`}
+      //       handleAddLimitData={(value) => {
+      //         handleChangeLimitData(record._id, Number(value));
+      //       }}
+      //     />
+      //     // <p className="text-sm font-primary">{text / 1000 / 1000 / 1000}GB</p>
+      //   ),
+      // },
       {
         title: () => (
-          <p className="text-sm font-semibold font-primary">Tổng key sử dụng</p>
+          <p className="text-sm font-semibold font-primary">Key Nums</p>
         ),
         dataIndex: "usedkey",
         key: "usedkey",
@@ -510,7 +547,7 @@ const ServerAdminPage = () => {
         <div className="flex items-start rounded-xl border-2 border-[#eeeeed]">
           <div className="flex-1 p-5 space-y-3">
             <p className="text-lg text-gray-500">Tổng số máy chủ</p>
-            <p className="text-2xl font-medium">{listServerStore.length}</p>
+            <p className="text-2xl font-medium">{listServer.length}</p>
           </div>
           {/* <div className="flex-1 p-5 space-y-3">
             <p className="text-lg text-gray-500">Tổng số key</p>
@@ -582,7 +619,7 @@ const ServerAdminPage = () => {
         </div>
         <Heading>
           Danh sách máy chủ(
-          {listServerStore.filter((item) => item.status === 1).length})
+          {listServer.filter((item) => item.status === 1).length})
         </Heading>
         <div className="relative flex-1">
           <input
@@ -614,7 +651,7 @@ const ServerAdminPage = () => {
         </div>
         <Table
           loading={loadingtable}
-          dataSource={listFilterServerStore
+          dataSource={listFilterServer
             .filter((item) => item.status === 1)
             .map((item, index) => ({ index, ...item }))}
           columns={columns}
@@ -623,7 +660,7 @@ const ServerAdminPage = () => {
         <Heading>Lịch sử máy chủ</Heading>
         <Table
           loading={loadingtable}
-          dataSource={listFilterServerStore
+          dataSource={listFilterServer
             .filter((item) => item.status === 0)
             .map((item, index) => ({ index, ...item }))}
           columns={columnsHistory}
@@ -670,7 +707,16 @@ const ServerAdminPage = () => {
                       key={uuidv4()}
                       onClick={() => setSelectServer(item._id)}
                     >
-                      <span className="capitalize">{item.name}</span>
+                      <span
+                        className={classNames(
+                          "capitalize",
+                          selectServer && selectServer === item._id
+                            ? "font-semibold text-primary"
+                            : ""
+                        )}
+                      >
+                        {item.name} ({item.numberKey} keys)
+                      </span>
                     </DropdownWithComponents.Option>
                   ) : null
                 )}

@@ -12,8 +12,10 @@ const DashboardAdminPage = () => {
   return (
     <RequireAuthPage rolePage={1}>
       <div className="grid grid-cols-12 gap-x-10 gap-y-10">
-        <SatifyByMonth />
-        <SatifyByYear />
+        <div className="col-span-8 space-y-10">
+          <SatifyByMonth />
+          <SatifyByYear />
+        </div>
         <TopPlan />
         <ServerSatify />
         <UserPieChart />

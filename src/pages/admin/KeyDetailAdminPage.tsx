@@ -96,7 +96,8 @@ const KeyDetailAdminPage = () => {
         confirmButtonText: "Đồng ý",
       });
       if (isConfirmed) {
-        await api.patch(`/keys/rename/${_id}`, { name });
+        // await api.patch(`/keys/rename/${_id}`, { name });
+        await api.patch(`/gists/extension/${_id}`, { extension: name });
         fetchData(_id);
         toast.success("Thành công");
       }
@@ -208,7 +209,6 @@ const KeyDetailAdminPage = () => {
   console.log("key id - ", keyId);
   if (key) {
     const {
-      _id,
       gist,
       awsId,
       dataLimit,
@@ -220,6 +220,7 @@ const KeyDetailAdminPage = () => {
       endDate,
       serverId,
       historyKey,
+      accessUrl,
     } = key;
     return (
       <RequireAuthPage rolePage={1}>
@@ -297,6 +298,24 @@ const KeyDetailAdminPage = () => {
                     </button>
                   </Tooltip>
                 </div>
+                <p>Static key:</p>
+                <div className="flex items-baseline gap-2">
+                  <p>
+                    {accessUrl}#{serverId.name}-k{key.keyId}
+                  </p>
+                  <Tooltip title="copy">
+                    <button
+                      className="text-secondary20"
+                      onClick={() =>
+                        copyToClipboard(
+                          `${accessUrl}#${serverId.name}-k${key.keyId}`
+                        )
+                      }
+                    >
+                      <AndroidXML />
+                    </button>
+                  </Tooltip>
+                </div>
               </div>
               <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg flex flex-col gap-1">
                 Mã giao dịch: <span className="font-medium">{gist.code}</span>
@@ -341,9 +360,9 @@ const KeyDetailAdminPage = () => {
                 Tên key:{" "}
                 {status === 1 ? (
                   <EditKeyNameForm
-                    placeholder={key.name}
-                    handleRenameKey={(name) => handleRenameKey(_id, name)}
-                    className="w-full"
+                    placeholder={gist.extension}
+                    handleRenameKey={(name) => handleRenameKey(gist._id, name)}
+                    className="w-full flex-1"
                   />
                 ) : (
                   <p>{key.name}</p>

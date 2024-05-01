@@ -44,7 +44,9 @@ const AccountPage = lazy(() => import("./pages/user/AccountPage"));
 const PlanPage = lazy(() => import("./pages/user/PlanPage"));
 const OrderPage = lazy(() => import("./pages/user/OrderPage"));
 const InvitePage = lazy(() => import("./pages/user/InvitePage"));
-const PostPage = lazy(() => import("./pages/user/PostPage"));
+const AndroidGuidePost = lazy(() => import("./pages/user/post/AndroidGuidePost"));
+const TiTokIphoneGuide = lazy(() => import("./pages/user/post/TiTokIphoneGuide"));
+const QuestionPost = lazy(() => import("./pages/user/post/QuestionPost"));
 const KeyDetailAdminPage = lazy(
   () => import("./pages/admin/KeyDetailAdminPage")
 );
@@ -135,13 +137,15 @@ function App() {
           <Route element={<LayoutUser />}>
             <Route path="/user/dashboard" element={<DashboardUserPage />} />
             <Route path="/user/account" element={<AccountPage />} />
-            <Route path="user/plan" element={<PlanPage />} />
-            <Route path="user/order" element={<OrderPage />} />
-            <Route path="user/invite" element={<InvitePage />} />
-            <Route path="user/transaction" element={<TransactionPage />} />
-            <Route path="user/cash" element={<CashPage />} />
-            <Route path="user/recharge" element={<RechargePage />} />
-            <Route path="user/dashboard/post/:slug" element={<PostPage />} />
+            <Route path="/user/plan" element={<PlanPage />} />
+            <Route path="/user/order" element={<OrderPage />} />
+            <Route path="/user/invite" element={<InvitePage />} />
+            <Route path="/user/transaction" element={<TransactionPage />} />
+            <Route path="/user/cash" element={<CashPage />} />
+            <Route path="/user/recharge" element={<RechargePage />} />
+            <Route path="/user/dashboard/post/android-vi_outline-phone-guide" element={<AndroidGuidePost />} />
+            <Route path="/user/dashboard/post/tiktok-iphone-guide" element={<TiTokIphoneGuide />} />
+            <Route path="/user/dashboard/post/questions" element={<QuestionPost />} />
           </Route>
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />

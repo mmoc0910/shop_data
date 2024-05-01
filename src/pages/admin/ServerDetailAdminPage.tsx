@@ -26,6 +26,7 @@ import { Checkbox } from "../../components/checkbox";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
 import { DropdownWithComponents } from "../../components/dropdown";
+import classNames from "../../utils/classNames";
 
 const ServerDetailAdminPage = () => {
   const { serverId } = useParams();
@@ -456,7 +457,7 @@ const ServerDetailAdminPage = () => {
                             </div>
                             <div className="flex items-center col-span-3">
                               <div className="px-4">
-                                {item.dataLimit / 1000 / 1000 / 1000}GB
+                                {item.dataExpand / 1000 / 1000 / 1000}GB
                               </div>
                               <div className="px-4">
                                 {item?.enable && (
@@ -719,7 +720,16 @@ const ServerDetailAdminPage = () => {
                   key={uuidv4()}
                   onClick={() => setSelectServer(item._id)}
                 >
-                  <span className="capitalize">{item.name}</span>
+                  <span
+                    className={classNames(
+                      "capitalize",
+                      selectServer === item._id
+                        ? "font-semibold text-primary"
+                        : ""
+                    )}
+                  >
+                    {item.name} ({item.numberKey} keys)
+                  </span>
                 </DropdownWithComponents.Option>
               ))}
             </DropdownWithComponents.List>
@@ -773,6 +783,7 @@ const EditServerForm = ({
   const { handleSubmit, control } = useForm({
     resolver: yupResolver(schema),
     mode: "onSubmit",
+    defaultValues: { value: placeholder },
   });
   const onSubmit = (data: { value?: string }) => {
     try {

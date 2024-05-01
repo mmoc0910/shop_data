@@ -11,7 +11,7 @@ export const countries = [
   { key: "vi", title: "Việt Nam" },
   { key: "ci", title: "Chinese" },
   { key: "ir", title: "Iran" },
-  { key: "orther", title: "Orther" },
+  { key: "orther", title: "Other" },
 ];
 export const purposes = [
   { id: 1, title: "Access global internet from China" },

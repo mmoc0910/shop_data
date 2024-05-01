@@ -381,7 +381,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
         width: 120,
         render: (_: string, record: GistType) => (
           <p className="text-sm font-primary">
-            {record.keyId.dataLimit / 1000 / 1000 / 1000}GB
+             {record.keyId.dataExpand / 1000 / 1000 / 1000}GB
           </p>
         ),
         sorter: {

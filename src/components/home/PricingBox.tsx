@@ -7,7 +7,7 @@ import { IconCheck } from "../checkbox/Checkbox";
 import { api } from "../../api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -46,9 +46,12 @@ const PricingBox = () => {
             <p className="text-center text-gray-400">
               {t("page.home.pricing.desc")}
             </p>
-            <p className="text-center text-secondary20 font-medium text-xl">
+            <Link to={'/sign-up'} className="block text-center text-secondary20 font-medium text-xl">
               {t("page.home.pricing.desc2")}{" "}
-            </p>
+              {/* <Link to={"/sign-up"} className="font-bold underline">
+                {t("authen.sign_up")}
+              </Link> */}
+            </Link>
           </div>
           {/* <div className="my-9 lg:my-14 py-2 px-7 bg-[#f2f4f7] rounded-full">
             <div className="font-medium text-white bg-primary px-4 py-3 rounded-full">

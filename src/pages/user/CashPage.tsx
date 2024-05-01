@@ -1,13 +1,14 @@
 import {
   DatePicker,
   DatePickerProps,
+  Modal,
   Table,
   TableColumnsType,
   Tag,
 } from "antd";
 import Heading from "../../components/common/Heading";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
-import { Key, useEffect, useMemo, useState } from "react";
+import { Key, useCallback, useEffect, useMemo, useState } from "react";
 import { CashType, CoutryType } from "../../type";
 import { api } from "../../api";
 import { toast } from "react-toastify";
@@ -26,7 +27,7 @@ import dayjs from "dayjs";
 import RechargePage from "./RechargePage";
 import { useTranslation } from "react-i18next";
 import { priceFomat } from "../../utils/formatPrice";
-import { Link } from "react-router-dom";
+import Loading from "../../components/common/Loading";
 
 const CashPage = () => {
   const { i18n, t } = useTranslation();
@@ -38,6 +39,63 @@ const CashPage = () => {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      listCash.forEach((item) => {
+        const currentTime = new Date().getTime(); // Thời gian hiện tại (timestamp)
+        const createdAtTime = new Date(item.createdAt).getTime(); // Thời gian tạo (timestamp)
+        const tenMinutesInMilliseconds = 10 * 60 * 1000; // 10 phút tính bằng mili giây
+        console.log(
+          `${item.code} - `,
+          currentTime - createdAtTime > tenMinutesInMilliseconds
+        );
+        if (
+          item.status === 2 &&
+          item.type === 0 &&
+          currentTime - createdAtTime > tenMinutesInMilliseconds
+        )
+          handleCheckCash(item);
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listCash]);
+  const handleCheckCash = async (cash: CashType) => {
+    try {
+      console.log("abc");
+      const result = await api.get<{
+        data: {
+          "Mã GD": number;
+          "Mô tả": string;
+          "Giá trị": number;
+          "Ngày diễn ra": Date;
+          "Số tài khoản": string;
+        }[];
+      }>(
+        "https://script.google.com/macros/s/AKfycby4nlJ_Q-Ppsf6V72FIZ5a7gM-HE8ZryCXiRRLHFZnnB94TX_FXJIWjMpeCNtvMdaz-_Q/exec"
+      );
+      console.log("data - ", result.data.data);
+      if (
+        result.data.data.some(
+          (item) =>
+            cash.content &&
+            item["Giá trị"] >= cash.money &&
+            (item["Mô tả"].includes(cash.content) ||
+              item["Mô tả"].toLowerCase().includes(cash.content.toLowerCase()))
+        )
+      ) {
+        await api.get(`/cashs/approve/${cash._id}`);
+        fetchData();
+      } else {
+        await api.post(`/cashs/reject/${cash._id}`, {
+          description: "We can not find out your payment. Please contact Admin",
+        });
+        fetchData();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const listCashFilter =
     startDate && endDate
       ? listCash.filter(
@@ -46,7 +104,7 @@ const CashPage = () => {
             isSameOrBefore(item.createdAt, endDate)
         )
       : listCash;
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const result = await api.get<CashType[]>(`/cashs?userId=${_id}`);
       setListCash(result.data);
@@ -54,7 +112,7 @@ const CashPage = () => {
       console.log("error - ", error);
       toast.error(messages.error);
     }
-  };
+  }, [_id]);
   const columns: TableColumnsType<CashType> = useMemo(
     () => [
       {
@@ -74,8 +132,8 @@ const CashPage = () => {
         ),
         dataIndex: "code",
         key: "code",
-        render: (text: number) => (
-          <p className="text-sm font-primary">{text}</p>
+        render: (text: string, record) => (
+          <ButtonDetailCash code={text} cash={record} onSuccess={fetchData} />
         ),
       },
       {
@@ -227,19 +285,8 @@ const CashPage = () => {
         ),
         dataIndex: "content",
         key: "content",
-        render: (text: string, record: CashType) => (
-          <Link
-            target="_blank"
-            to={`https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-${TEMPLATE}.png?amount=${record.money}&addInfo=${record.content}`}
-            className="text-sm font-primary text-primary"
-          >
-            {text && record.type === 0 && (
-              <img
-                src={`https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-${TEMPLATE}.png?amount=${record.money}&addInfo=${record.content}`}
-                className="w-28 h-28 object-cover"
-              />
-            )}
-          </Link>
+        render: (text: string) => (
+          <p className="text-sm font-primary font-semibold">{text}</p>
         ),
       },
       {
@@ -310,4 +357,190 @@ const CashPage = () => {
   );
 };
 
+const ButtonDetailCash = ({
+  code,
+  cash,
+  onSuccess,
+}: {
+  code: string;
+  cash: CashType;
+  onSuccess: () => void;
+}) => {
+  const { i18n, t } = useTranslation();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const currentTime = new Date().getTime(); // Thời gian hiện tại (timestamp)
+  const createdAtTime = new Date(cash.createdAt).getTime(); // Thời gian tạo (timestamp)
+  const tenMinutesInMilliseconds = 10 * 60 * 1000; // 10 phút tính bằng mili giây
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCheckCash = async () => {
+    try {
+      setLoading(true);
+      const result = await api.get<{
+        data: {
+          "Mã GD": number;
+          "Mô tả": string;
+          "Giá trị": number;
+          "Ngày diễn ra": Date;
+          "Số tài khoản": string;
+        }[];
+      }>(
+        "https://script.google.com/macros/s/AKfycby4nlJ_Q-Ppsf6V72FIZ5a7gM-HE8ZryCXiRRLHFZnnB94TX_FXJIWjMpeCNtvMdaz-_Q/exec"
+      );
+      console.log("data - ", result.data.data);
+      if (
+        result.data.data.some(
+          (item) =>
+            cash.content &&
+            item["Giá trị"] >= cash.money &&
+            (item["Mô tả"].includes(cash.content) ||
+              item["Mô tả"].toLowerCase().includes(cash.content.toLowerCase()))
+        )
+      ) {
+        await api.get(`/cashs/approve/${cash._id}`);
+      } else {
+        await api.post(`/cashs/reject/${cash._id}`, {
+          description: "We can not find out your payment. Please contact Admin",
+        });
+      }
+      handleOk();
+      onSuccess();
+      toast("Success checked");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      {loading ? <Loading className="bg-[#00000027]" /> : null}
+      <button className="text-primary" onClick={showModal}>
+        {code}
+      </button>
+      <Modal
+        title={
+          i18n.language === "vi"
+            ? "Chi tiết giao dịch"
+            : i18n.language === "ci"
+            ? "交款的仔细"
+            : "Detail of transaction"
+        }
+        footer={[]}
+        onCancel={handleCancel}
+        open={isModalOpen}
+        centered
+      >
+        <div className="font-primary space-y-2 text-base relative">
+          <p>
+            {t("page.cash.history.field.code")}: {cash.code}
+          </p>
+          <p>
+            {t("page.cash.history.field.transactionType")}:{" "}
+            {cash.type === 0 ? (
+              <Tag color="blue">
+                {i18n.language === "ci" ? "自动银行支付" : "Auto Banking"}
+              </Tag>
+            ) : (
+              <Tag color="pink-inverse">
+                {i18n.language === "ci" ? "手动" : "Manual Banking"}
+              </Tag>
+            )}
+          </p>
+          <p>
+            {t("page.cash.history.field.money")}:{" "}
+            <span className="font-semibold">
+              {priceFomat(cash.money, i18n.language as CoutryType)}
+            </span>
+          </p>
+          <p>
+            {t("page.cash.history.field.created_at")}:{" "}
+            {DAY_FORMAT(cash.createdAt)}
+          </p>
+          {cash.status !== 2 ? (
+            <p>
+              {t("page.cash.history.field.updated_at")}:{" "}
+              {DAY_FORMAT(cash.updatedAt)}
+            </p>
+          ) : null}
+
+          <p>
+            {t("page.cash.history.field.status")}:{" "}
+            {cash.status === 0 ? (
+              <Tag color="red">
+                <span className="font-primary">
+                  {t("page.cash.history.status.reject")}
+                </span>
+              </Tag>
+            ) : null}
+            {cash.status === 1 ? (
+              <Tag color="green">
+                <span className="font-primary">
+                  {t("page.cash.history.status.approve")}
+                </span>
+              </Tag>
+            ) : null}
+            {cash.status === 2 ? (
+              <Tag color="lime">
+                <span className="font-primary">
+                  {t("page.cash.history.status.pending")}
+                </span>
+              </Tag>
+            ) : null}
+          </p>
+          {cash.status === 0 && cash.description ? (
+            <p>
+              {t("page.cash.history.field.description")}:{" "}
+              <span className="text-error">{cash.description}</span>
+            </p>
+          ) : null}
+          {cash.type === 0 && (
+            <img
+              src={`https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-${TEMPLATE}.png?amount=${cash.money}&addInfo=${cash.content}`}
+              className="w-52 h-auto mx-auto py-5 object-cover"
+            />
+          )}
+          {cash.content ? (
+            <p>
+              {i18n.language === "vi"
+                ? "Nội dung chuyển khoản"
+                : i18n.language === "ci"
+                ? "支付的内容"
+                : "Content"}
+              : <span className="text-primary">{cash.content}</span>
+            </p>
+          ) : null}
+          {cash.status === 2 &&
+          cash.type === 0 &&
+          currentTime - createdAtTime > tenMinutesInMilliseconds ? (
+            <div className="mt-5">
+              <p>
+                Nếu bạn đã chuyển khoản vui lòng{" "}
+                <span
+                  className="font-semibold text-primary underline cursor-pointer"
+                  onClick={handleCheckCash}
+                >
+                  click vào đây
+                </span>{" "}
+                để kiểm tra lại. Nếu chưa được vui lòng liên hệ admin.
+              </p>
+            </div>
+          ) : null}
+        </div>
+      </Modal>
+    </>
+  );
+};
 export default CashPage;

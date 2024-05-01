@@ -126,6 +126,7 @@ const OrderPage = () => {
     try {
       const result = await api.get<GistType[]>(`/gists?userId=${_id}`);
       setListGist(result.data.filter((item) => item.status !== 2));
+      // setListGist(result.data);
       console.log("abc");
     } catch (error) {
       console.log("error - ", error);

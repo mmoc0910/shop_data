@@ -245,6 +245,24 @@ const AutoBankingQR = ({
   onSuccess: () => void;
 }) => {
   const { t } = useTranslation();
+  // useEffect(() => {
+  //   const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+  //     const confirmationMessage = "Bạn có chắc muốn reload trang?";
+  //     event.returnValue = confirmationMessage;
+  //     const userConfirmed = window.confirm(confirmationMessage);
+  //     if (userConfirmed) {
+  //       handelCancelPayment();
+  //     }
+  //     return confirmationMessage;
+  //   };
+
+  //   window.addEventListener("beforeunload", handleBeforeUnload);
+
+  //   return () => {
+  //     window.removeEventListener("beforeunload", handleBeforeUnload);
+  //   };
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
   useEffect(() => {
     const fetchDataInterval = setInterval(() => {
       // Gọi hàm fetchData ở đây
@@ -295,15 +313,22 @@ const AutoBankingQR = ({
   };
   const onFinish: CountdownProps["onFinish"] = async () => {
     console.log("finished!");
-    await api.post(`/cashs/reject/${orderId}`, {
-      description: "Nạp tiền tự động bị hủy do quá thời gian chuyển khoản",
-    });
-    Swal.fire({
-      title: `<p class="leading-tight">${t(
-        "page.cash.payment.auto.error"
-      )}</p>`,
-    });
-    onSuccess();
+    handelCancelPayment();
+  };
+  const handelCancelPayment = async () => {
+    try {
+      await api.post(`/cashs/reject/${orderId}`, {
+        description: "Nạp tiền tự động bị hủy do quá thời gian chuyển khoản",
+      });
+      Swal.fire({
+        title: `<p class="leading-tight">${t(
+          "page.cash.payment.auto.error"
+        )}</p>`,
+      });
+      onSuccess();
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div>
@@ -333,7 +358,7 @@ const AutoBankingQR = ({
         </p>
         <div className="text-lg flex items-center gap-2">
           <p>
-            {t("page.cash.payment.auto.content")}
+            {t("page.cash.payment.auto.content")}:{" "}
             <span className="font-medium text-secondary">{addInfo}</span>
           </p>
           <Tooltip title="copy">
