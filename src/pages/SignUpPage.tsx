@@ -35,7 +35,10 @@ const SignUpPage = () => {
     () =>
       yup
         .object({
-          username: yup.string().required(t("form.username.error.required")),
+          username: yup
+            .string()
+            .required(t("form.username.error.required"))
+            .matches(/^\S+$/, { message: "Không được để khoảng trắng" }),
           // .matches(regexUserName, t("form.username.error.reg")),
           email: yup
             .string()
