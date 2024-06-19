@@ -14,8 +14,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { SatifyItem } from "../../pages/admin/DashboardAdminPage";
-import { priceFomat } from "../../utils/formatPrice";
-import { useTranslation } from "react-i18next";
+import { useFormatPrice } from "../../hooks/useFormatPrice";
 
 type DataType = {
   month: number;
@@ -69,7 +68,7 @@ const labels = [
   "Tháng 12",
 ];
 const SatifyByYear = () => {
-  const { i18n } = useTranslation();
+  const priceFomat = useFormatPrice();
   const [date, setDate] = useState<dayjs.Dayjs>(dayjs());
   const [data, setData] = useState<DataType[]>([]);
   console.log(dayjs(date).get("months"), dayjs(date).get("year"));
@@ -145,8 +144,7 @@ const SatifyByYear = () => {
               totalSatify.reduce(
                 (accumulator, currentItem) => (accumulator += currentItem.cash),
                 0
-              ),
-              i18n.language
+              )
             )}
           />
           <SatifyItem
@@ -156,8 +154,7 @@ const SatifyByYear = () => {
                 (accumulator, currentItem) =>
                   (accumulator += currentItem.transaction),
                 0
-              ),
-              i18n.language
+              )
             )}
           />
           <SatifyItem
@@ -166,8 +163,7 @@ const SatifyByYear = () => {
               totalSatify.reduce(
                 (accumulator, currentItem) => (accumulator += currentItem.rose),
                 0
-              ),
-              i18n.language
+              )
             )}
           />
         </div>

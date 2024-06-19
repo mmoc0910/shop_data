@@ -9,7 +9,6 @@ import {
 } from "antd";
 import { Key, useCallback, useEffect, useMemo, useState } from "react";
 import {
-  CoutryType,
   ExtendPlanType,
   GistType,
   RoseExtendType,
@@ -40,10 +39,11 @@ import RequireAuthPage from "../../components/common/RequireAuthPage";
 import { Link, useNavigate } from "react-router-dom";
 import Radio from "../../components/radio/Radio";
 import { useTranslation } from "react-i18next";
-import { priceFomat } from "../../utils/formatPrice";
 import MoveServer from "../../components/user/MoveServer";
+import { useFormatPrice } from "../../hooks/useFormatPrice";
 
 const OrderPage = () => {
+  const priceFomat = useFormatPrice();
   const { t, i18n } = useTranslation();
   const navigation = useNavigate();
   const [loadingTable, setLoadingTable] = useState<boolean>(false);
@@ -159,8 +159,7 @@ const OrderPage = () => {
         title: `<p class="leading-tight">${t(
           "page.myOrder.swal.extend.title"
         )} <span class="text-secondary">${name}(${priceFomat(
-          price,
-          i18n.language as CoutryType
+          price
         )}) ${bandWidth}GB/${translateType(type, i18n.language)}</span></p>`,
         icon: "success",
         showCancelButton: true,
@@ -264,15 +263,18 @@ const OrderPage = () => {
         ),
         dataIndex: "key",
         key: "key",
-        // fixed: "right",
+        width: 120,
         render: (_: string, record: GistType) => {
           // const key = `${linkGist}/${record.gistId}/raw/${record?.fileName}#`;
+          const {
+            keyId: { accessUrl, keyId, serverId },
+          } = record;
           return (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Tooltip title="copy">
+                <Tooltip title="Copy link chính">
                   <button
-                    className="text-secondary20"
+                    className="text-white px-2 w-fit aspect-square rounded-md bg-secondary20"
                     onClick={() =>
                       copyToClipboard(
                         `${record.keyId.awsId?.fileName.replace(
@@ -285,24 +287,17 @@ const OrderPage = () => {
                     <AndroidXML />
                   </button>
                 </Tooltip>
-                <p className="font-primary text-sm w-[350px] line-clamp-1">
-                  {record.keyId.awsId?.fileName.replace(/https/g, "ssconf")}#
-                  {record.extension}
-                </p>
-              </div>
-              {/* <div className="flex items-center gap-2">
-                <Tooltip title="copy">
+                <Tooltip title="Copy link dự phòng">
                   <button
-                    onClick={() => copyToClipboard(`${key}${record.extension}`)}
+                    className="text-white px-2 w-fit aspect-square rounded-md bg-gray-400"
+                    onClick={() =>
+                      copyToClipboard(`${accessUrl}#${serverId}-k${keyId}`)
+                    }
                   >
                     <AndroidXML />
                   </button>
                 </Tooltip>
-                <p className="font-primary text-sm w-[350px] line-clamp-1">
-                  {key}
-                  {record.extension}
-                </p>
-              </div> */}
+              </div>
             </div>
           );
         },
@@ -517,19 +512,31 @@ const OrderPage = () => {
   return (
     <RequireAuthPage rolePage={2}>
       {loading ? <Loading /> : null}
-      <p className="">
-        {t("page.myOrder.instruct1")}{" "}
-        <Link to={""} className="underline text-primary decoration-primary">
-          Link
-        </Link>
-        :
-      </p>
-      <p className="flex items-center gap-2 mb-5">
-        <span className="text-secondary20">
-          <AndroidXML />
-        </span>
-        : {t("page.myOrder.instruct2")}
-      </p>
+      <div className="bg-[#ffeaa754] rounded-lg p-5 mb-5">
+        <p className="mb-1">
+          {t("page.myOrder.instruct1")}{" "}
+          <Link
+            to={"/user/dashboard/post/android-vi_outline-phone-guide"}
+            className="underline text-primary decoration-primary"
+          >
+            Link
+          </Link>
+          :
+        </p>
+        <div className="flex items-center gap-2 mb-1">
+          <button className="text-white px-2 w-fit aspect-square rounded-md bg-secondary20">
+            <AndroidXML />
+          </button>
+          <p>: {t("page.myOrder.instruct2")}</p>
+        </div>
+        <div className="flex items-center gap-2 mb-5">
+          <button className="text-white px-2 w-fit aspect-square rounded-md bg-gray-400">
+            <AndroidXML />
+          </button>
+          <p>: {t("page.myOrder.instruct3")}</p>
+        </div>
+      </div>
+
       {/* <p className="flex items-center gap-2 mb-5">
         <span>
           <AndroidXML />
@@ -642,8 +649,8 @@ const ExtendPlanItem = ({
   setLoading: (value: boolean) => void;
   onSubmit: () => void;
   roseExtend: RoseExtendType;
-}) => {
-  const { t, i18n } = useTranslation();
+}) => {const priceFomat = useFormatPrice();
+  const { t } = useTranslation();
   const period =
     selectRow?.endDate && dayjs(selectRow.endDate).diff(dayjs(), "month") + 1;
   const [month, setMonth] = useState<number>(1);
@@ -711,7 +718,7 @@ const ExtendPlanItem = ({
       <p className="text-base font-semibold text-center">{extendPlan.name}</p>
       <p className="text-xl font-medium text-center">
         {extendPlan.bandWidth}GB/{t("page.myOrder.swal.buyData.month")} -{" "}
-        {priceFomat(priceDiscount || 0, i18n.language as CoutryType)}
+        {priceFomat(priceDiscount || 0)}
       </p>
       <div className="flex items-center gap-5">
         <Radio checked={month === 1} onClick={() => setMonth(1)}>

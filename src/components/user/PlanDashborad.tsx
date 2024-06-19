@@ -5,7 +5,6 @@ import { api } from "../../api";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
-import { priceFomat } from "../../utils/formatPrice";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
@@ -13,8 +12,10 @@ import Loading from "../common/Loading";
 import Heading from "../common/Heading";
 import { useTranslation } from "react-i18next";
 import { translateType } from "../../constants";
+import { useFormatPrice } from "../../hooks/useFormatPrice";
 
 const PlanDashborad = () => {
+  const priceFomat = useFormatPrice();
   const { t, i18n } = useTranslation();
   const { _id } = useSelector((state: RootState) => state.auth);
   const [plans, setPlans] = useState<PlanType[]>([]);
@@ -146,7 +147,7 @@ const PlanDashborad = () => {
         key: "price",
         render: (text: number) => (
           <p className="text-sm font-primary">
-            {priceFomat(text, i18n.language)}VND
+            {priceFomat(text)}VND
           </p>
         ),
       },

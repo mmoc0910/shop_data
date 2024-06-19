@@ -300,7 +300,7 @@ const KeyDetailAdminPage = () => {
                 </div>
                 <p>Static key:</p>
                 <div className="flex items-baseline gap-2">
-                  <p>
+                  <p className="line-clamp-1">
                     {accessUrl}#{serverId.name}-k{key.keyId}
                   </p>
                   <Tooltip title="copy">

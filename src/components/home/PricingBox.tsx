@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import Container from "../common/Container";
-import { CoutryType, PlanType } from "../../type";
+import {  PlanType } from "../../type";
 import { v4 as uuidv4 } from "uuid";
-import { priceFomat } from "../../utils/formatPrice";
 import { IconCheck } from "../checkbox/Checkbox";
 import { api } from "../../api";
 import { useSelector } from "react-redux";
@@ -14,6 +13,7 @@ import Swal from "sweetalert2";
 import Loading from "../common/Loading";
 import { useTranslation } from "react-i18next";
 import { translateType } from "../../constants";
+import { useFormatPrice } from "../../hooks/useFormatPrice";
 
 const PricingBox = () => {
   const { t } = useTranslation();
@@ -46,7 +46,10 @@ const PricingBox = () => {
             <p className="text-center text-gray-400">
               {t("page.home.pricing.desc")}
             </p>
-            <Link to={'/sign-up'} className="block text-center text-secondary20 font-medium text-xl">
+            <Link
+              to={"/sign-up"}
+              className="block text-center text-secondary20 font-medium text-xl"
+            >
               {t("page.home.pricing.desc2")}{" "}
               {/* <Link to={"/sign-up"} className="font-bold underline">
                 {t("authen.sign_up")}
@@ -88,12 +91,87 @@ const PricingBox = () => {
 };
 
 export const PricingItem = ({ plan }: { plan: PlanType }) => {
+  const priceFomat = useFormatPrice();
   const { t, i18n } = useTranslation();
+  // const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const { _id } = useSelector((state: RootState) => state.auth);
   const navigation = useNavigate();
   const { name, price, description, type, bandWidth } = plan;
   console.log(type.split("_"));
+  const handleBuy = async (_id: string | undefined) => {
+    if (_id) {
+      try {
+        const { isConfirmed } = await Swal.fire({
+          title: `<p class="leading-tight">${t(
+            "page.package.swal.title"
+          )} <span class="text-secondary20">${name}</span></p>`,
+          text: `${bandWidth}GB - ${priceFomat(price)}/${translateType(
+            type,
+            i18n.language
+          )}`,
+          icon: "success",
+          showCancelButton: true,
+          confirmButtonColor: "#1DC071",
+          cancelButtonColor: "#d33",
+          cancelButtonText: t("page.package.swal.cancelButton"),
+          confirmButtonText: t("page.package.swal.confirmButton"),
+        });
+        if (isConfirmed) {
+          setLoading(true);
+          await api.post("/gists", {
+            userId: _id,
+            planId: plan._id,
+          });
+          toast.success(t("page.package.swal.success"));
+          navigation("/user/order");
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          // toast.error(error.response?.data.message);
+          if (
+            error.response?.data.message ===
+              "Bạn không đủ tiền để đăng kí dịch vụ này" &&
+            error.response.status === 400
+          ) {
+            toast.warn(t("page.package.swal.warn"));
+            navigation("/user/dashboard");
+          }
+          if (
+            error.response?.data.message === "Bạn đã đăng kí gói dùng thử." &&
+            error.response.status === 400
+          ) {
+            toast.warn(
+              i18n.language === "vi"
+                ? "Gói dùng thử chỉ được mua 1 lần."
+                : i18n.language === "en"
+                ? "Trial only buy once."
+                : "试用只会买一次"
+            );
+          }
+        } else {
+          console.log("unexpected error: ", error);
+          return "An unexpected error occurred";
+        }
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      navigation("/sign-in");
+    }
+  };
+
+  // const showModal = () => {
+  //   setIsModalOpen(true);
+  // };
+
+  // const handleOk = () => {
+  //   setIsModalOpen(false);
+  // };
+
+  // const handleCancel = () => {
+  //   setIsModalOpen(false);
+  // };
   return (
     <>
       <div className="col-span-1 shadow-xl flex flex-col items-center rounded-2xl overflow-hidden">
@@ -103,8 +181,7 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
         <div className="pb-10 pt-10">
           <p className="text-primary text-3xl font-medium mb-2">
             {/* {VND.format(price)} */}
-            {priceFomat(price, i18n.language as CoutryType)}/
-            {i18n.language === "vi" && type.split("_")[0]}
+            {priceFomat(price)}/{i18n.language === "vi" && type.split("_")[0]}
             {i18n.language === "en" && type.split("_")[1]}
             {i18n.language === "ci" && type.split("_")[2]}
           </p>
@@ -134,68 +211,8 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
         </div>
         <button
           className="flex items-center justify-center bg-primary w-full py-4 flex-col gap-2"
-          onClick={async () => {
-            if (_id) {
-              try {
-                const { isConfirmed } = await Swal.fire({
-                  title: `<p class="leading-tight">${t(
-                    "page.package.swal.title"
-                  )} <span class="text-secondary20">${name}</span></p>`,
-                  text: `${bandWidth}GB - ${priceFomat(
-                    price,
-                    i18n.language
-                  )}/${translateType(type, i18n.language)}`,
-                  icon: "success",
-                  showCancelButton: true,
-                  confirmButtonColor: "#1DC071",
-                  cancelButtonColor: "#d33",
-                  cancelButtonText: t("page.package.swal.cancelButton"),
-                  confirmButtonText: t("page.package.swal.confirmButton"),
-                });
-                if (isConfirmed) {
-                  setLoading(true);
-                  await api.post("/gists", {
-                    userId: _id,
-                    planId: plan._id,
-                  });
-                  toast.success(t("page.package.swal.success"));
-                  navigation("/user/order");
-                }
-              } catch (error) {
-                if (axios.isAxiosError(error)) {
-                  // toast.error(error.response?.data.message);
-                  if (
-                    error.response?.data.message ===
-                      "Bạn không đủ tiền để đăng kí dịch vụ này" &&
-                    error.response.status === 400
-                  ) {
-                    toast.warn(t("page.package.swal.warn"));
-                    navigation("/user/dashboard");
-                  }
-                  if (
-                    error.response?.data.message ===
-                      "Bạn đã đăng kí gói dùng thử." &&
-                    error.response.status === 400
-                  ) {
-                    toast.warn(
-                      i18n.language === "vi"
-                        ? "Gói dùng thử chỉ được mua 1 lần."
-                        : i18n.language === "en"
-                        ? "Trial only buy once."
-                        : "试用只会买一次"
-                    );
-                  }
-                } else {
-                  console.log("unexpected error: ", error);
-                  return "An unexpected error occurred";
-                }
-              } finally {
-                setLoading(false);
-              }
-            } else {
-              navigation("/sign-in");
-            }
-          }}
+          onClick={() => handleBuy(_id)}
+          // onClick={showModal}
         >
           <p className="font-medium text-white text-xl">
             {t("page.package.buyNow")}
@@ -203,6 +220,56 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
         </button>
       </div>
       {loading ? <Loading /> : null}
+      {/* <Modal open={isModalOpen} onCancel={handleCancel} footer={[]} centered>
+        <div className="pt-5 font-primary">
+          <p className="text-center font-medium text-xl">
+            Bạn vừa mua thành công gói cước
+          </p>
+          <div className="space-y-2 pt-5">
+            <p>
+              <span className="font-medium">Hiệu lực từ:</span>{" "}
+              <span>19:20 21/12/2024</span>
+            </p>
+            <p>
+              <span className="font-medium">Đến ngày:</span>{" "}
+              <span>19:20 21/12/2024</span>
+            </p>
+            <p>
+              <span className="font-medium">Dung lượng:</span>{" "}
+              <span>60GB/30 ngày</span>
+            </p>
+            <div className="flex items-baseline gap-2">
+              <div className="font-medium">Tên key:</div>{" "}
+              <EditKeyNameForm
+                placeholder="abcdef-123"
+                handleRenameKey={(name) => console.log("name - ", name)}
+                // className="w-full flex-1"
+              />
+            </div>
+            <p className="font-medium">
+              Copy key này và dán vào phần mềm outline client để sử dụng
+            </p>
+            <div className="flex items-center gap-2">
+              <Tooltip title="Copy key">
+                <button
+                  className="text-white px-2 w-fit aspect-square rounded-md bg-secondary20"
+                  onClick={() =>
+                    copyToClipboard(
+                      `ssconf://s3.ap-northeast-3.amazonaws.com/vpncn2.top/20240618-mchina-manhnguyen-lwyc.json#mchina-zuhaib-240618-1
+`
+                    )
+                  }
+                >
+                  <AndroidXML />
+                </button>
+              </Tooltip>
+              <p className="line-clamp-2">
+                ssconf://s3.ap-northeast-3.amazonaws.com/vpncn2.top/20240618-mchina-manhnguyen-lwyc.json#mchina-zuhaib-240618-1
+              </p>
+            </div>
+          </div>
+        </div>
+      </Modal> */}
     </>
   );
 };

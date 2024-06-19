@@ -13,10 +13,12 @@ import { DAY_FORMAT } from "../../constants";
 import dayjs from "dayjs";
 import { Check } from "../../components/home/PricingBox";
 import { v4 as uuidv4 } from "uuid";
-import { priceFomat } from "../../utils/formatPrice";
 import { useTranslation } from "react-i18next";
+import IconTrash from "../../icons/IconTrash";
+import { useFormatPrice } from "../../hooks/useFormatPrice";
 
 const PackPage = () => {
+  const priceFomat = useFormatPrice();
   const { i18n } = useTranslation();
   const [plans, setPlans] = useState<PlanType[]>([]);
   const [listPlanHistory, setListPlanHistory] = useState<PlanType[]>([]);
@@ -87,7 +89,7 @@ const PackPage = () => {
     try {
       const { isConfirmed } = await Swal.fire({
         title: `<p class="leading-tight">Bạn có muốn xóa gói cước này</p>`,
-       
+
         icon: "success",
         showCancelButton: true,
         confirmButtonColor: "#1DC071",
@@ -139,9 +141,7 @@ const PackPage = () => {
         dataIndex: "price",
         key: "price",
         render: (text: number) => (
-          <p className="text-sm font-primary">
-            {priceFomat(text, i18n.language)}
-          </p>
+          <p className="text-sm font-primary">{priceFomat(text)}</p>
         ),
       },
       {
@@ -211,10 +211,10 @@ const PackPage = () => {
           <div className="flex gap-4">
             {record.status === 1 ? (
               <button
-                className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-error font-primary"
+                className="px-2 aspect-square text-xs font-medium text-white rounded-md bg-error font-primary"
                 onClick={() => handleRemovePlan(record._id)}
               >
-                Xóa
+                <IconTrash className="w-5 h-5" />
               </button>
             ) : null}
           </div>
@@ -253,9 +253,7 @@ const PackPage = () => {
         dataIndex: "price",
         key: "price",
         render: (text: number) => (
-          <p className="text-sm font-primary">
-            {priceFomat(text, i18n.language)}
-          </p>
+          <p className="text-sm font-primary">{priceFomat(text)}</p>
         ),
       },
       {
@@ -341,7 +339,13 @@ const PackPage = () => {
             )}
           </div>
         </div>
-        <div className="flex justify-end gap-10 my-10">
+        <div className="flex justify-end gap-5 my-10">
+          <Button
+            className="px-5 text-white bg-primary20"
+            href="/admin/pack/extend-plan"
+          >
+            Quản lý gói cước mở rộng
+          </Button>
           <Button
             className="px-5 text-white bg-secondary"
             href="/admin/pack/add"
@@ -417,7 +421,7 @@ const PackPage = () => {
 };
 
 export const PricingItem = ({ plan }: { plan: PlanType }) => {
-  const { i18n } = useTranslation();
+  const priceFomat = useFormatPrice();
   const { name, price, description, type, bandWidth } = plan;
   return (
     <>
@@ -427,7 +431,7 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
         </h4>
         <div className="pt-10 pb-10">
           <p className="mb-2 text-4xl font-medium text-primary">
-            {priceFomat(price, i18n.language)}
+            {priceFomat(price)}
             <span className="text-xl">/{type.split("_")[0]}</span>
           </p>
           <p className="mt-3 text-3xl font-semibold text-center text-primary">

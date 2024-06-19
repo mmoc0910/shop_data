@@ -1,6 +1,6 @@
 import { FC, memo, useState } from "react";
 import { GistType, ServerType } from "../../type";
-import { Modal } from "antd";
+import { Modal, Tooltip } from "antd";
 import { DropdownWithComponents } from "../dropdown";
 import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
@@ -10,6 +10,7 @@ import Loading from "../common/Loading";
 import { api } from "../../api";
 import { useTranslation } from "react-i18next";
 import classNames from "../../utils/classNames";
+import IconArrowRightLeft from "../../icons/IconArrowRightLeft";
 
 type MoveServerProps = {
   servers: ServerType[];
@@ -94,12 +95,14 @@ const MoveServer: FC<MoveServerProps> = memo(
     return (
       <>
         {loading && <Loading />}
-        <button
-          className="px-2 py-1 text-xs font-medium text-white rounded-lg bg-primary font-primary shrink-0"
-          onClick={showModal}
-        >
-          Move server
-        </button>
+        <Tooltip title="Move server">
+          <button
+            className="px-2 aspect-square grow-0 w-fit text-xs font-medium text-white rounded-md bg-secondary40 font-primary"
+            onClick={showModal}
+          >
+            <IconArrowRightLeft className="size-4" />
+          </button>
+        </Tooltip>
         <Modal
           title=""
           open={isModalOpen}

@@ -113,7 +113,7 @@ function App() {
           <Route element={<LayoutAdmin />}>
             <Route path="/admin/dashboard" element={<DashboardAdminPage />} />
             <Route path="/admin/pack" element={<PackPage />} />
-            <Route path="admin/extend-plan" element={<ExtendPlanPage />} />
+            <Route path="admin/pack/extend-plan" element={<ExtendPlanPage />} />
             <Route path="/admin/pack/add" element={<ActionPackPage />} />
             <Route
               path="/admin/pack/edit/:packId"

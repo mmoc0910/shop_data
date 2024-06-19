@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import { messages } from "../../constants";
 import { PlanType } from "../../type";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
+import { Checkbox } from "../../components/checkbox";
 
 const schema = yup
   .object({
@@ -143,6 +144,16 @@ const ActionPackPage = () => {
               </p>
             </Input>
           </FormGroup>
+          {plan && packId && (
+            <FormGroup className="col-span-2">
+              <Label htmlFor="day">Status*</Label>
+              <div className="flex items-center h-full">
+                <Checkbox checked={!!plan.status}>
+                  {plan.status ? "Active" : "InActive"}
+                </Checkbox>
+              </div>
+            </FormGroup>
+          )}
           <FormGroup className="col-span-2 lg:col-span-6">
             <Label htmlFor="description">Nội dung gói cước*</Label>
             <Textarea

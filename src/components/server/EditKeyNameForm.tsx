@@ -38,9 +38,14 @@ const EditKeyNameForm = ({
       className={classNames("flex items-center w-[200px]", className)}
       onSubmit={handleSubmit(onSubmit)}
     >
-      <Input name="name" placeholder={placeholder} control={control} containerclass="w-full" />
+      <Input
+        name="name"
+        placeholder={placeholder}
+        control={control}
+        containerclass="w-full"
+      />
       <Button type="submit" className="text-gray-500 px-4">
-        <IconEdit />
+        <IconEdit className="size-6" />
       </Button>
     </form>
   );

@@ -10,7 +10,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Input, Textarea } from "../../components/input";
 import Button from "../../components/button/Button";
-import { Modal, Table, TableColumnsType, Tag } from "antd";
+import { Modal, Table, TableColumnsType, Tag, Tooltip } from "antd";
 import Swal from "sweetalert2";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import axios from "axios";
@@ -23,6 +23,9 @@ import { setServer } from "../../store/server/serverSlice";
 import { DropdownWithComponents } from "../../components/dropdown";
 import { v4 as uuidv4 } from "uuid";
 import classNames from "../../utils/classNames";
+import IconTrash from "../../icons/IconTrash";
+import IconArrowRightLeft from "../../icons/IconArrowRightLeft";
+import { Checkbox } from "../../components/checkbox";
 
 const schema = yup
   .object({
@@ -46,6 +49,7 @@ const ServerAdminPage = () => {
   );
   const [inputValue, setInputValue] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isModalAddServerOpen, setIsModalAddServerOpen] = useState(false);
   const [locations, setLocations] = useState<LocationType[]>([]);
   const listFilterServer = listServer.filter(
     (item) =>
@@ -297,11 +301,7 @@ const ServerAdminPage = () => {
         ),
       },
       {
-        title: () => (
-          <p className="text-sm font-semibold font-primary">
-          Days
-          </p>
-        ),
+        title: () => <p className="text-sm font-semibold font-primary">Days</p>,
         dataIndex: "hostnameForAccessKeys",
         key: "hostnameForAccessKeys",
         render: (_text: string, record: ServerType) => {
@@ -378,21 +378,23 @@ const ServerAdminPage = () => {
         key: "action",
         width: 170,
         render: (_: string, record: ServerType) => (
-          <div className="flex flex-col gap-2">
+          <div className="flex gap-2">
+            <Tooltip title="Migrate server">
+              <button
+                className="px-2 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary"
+                onClick={() => {
+                  setSelectRow(record._id);
+                  showModal();
+                }}
+              >
+                <IconArrowRightLeft className="size-4" />
+              </button>
+            </Tooltip>
             <button
-              className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary"
-              onClick={() => {
-                setSelectRow(record._id);
-                showModal();
-              }}
-            >
-              Migrate server
-            </button>
-            <button
-              className="px-4 py-2 text-xs font-medium text-white rounded-lg bg-error font-primary"
+              className="px-2 aspect-square text-xs font-medium text-white rounded-md bg-error font-primary"
               onClick={() => handleRemoveServer(record._id)}
             >
-              Xóa máy chủ
+              <IconTrash className="size-4" />
             </button>
           </div>
         ),
@@ -544,17 +546,27 @@ const ServerAdminPage = () => {
     <RequireAuthPage rolePage={1}>
       {loading && <Loading />}
       <div className="space-y-10">
-        <div className="flex items-start rounded-xl border-2 border-[#eeeeed]">
-          <div className="flex-1 p-5 space-y-3">
-            <p className="text-lg text-gray-500">Tổng số máy chủ</p>
+        <div className="grid grid-cols-2 p-5 gap-5 md:grid-cols-5 rounded-xl border-2 border-[#eeeeed]">
+          <div className="flex-1 space-y-3">
+            <p className="text-lg text-gray-500">Total servers</p>
             <p className="text-2xl font-medium">{listServer.length}</p>
           </div>
-          {/* <div className="flex-1 p-5 space-y-3">
-            <p className="text-lg text-gray-500">Tổng số key</p>
-            <p className="text-2xl font-medium">{totalKey}</p>
-          </div> */}
-          <div className="flex-1 p-5 space-y-3">
-            <p className="text-lg text-gray-500">Tổng key đang sử dụng</p>
+          <div className="flex-1 space-y-3">
+            <p className="text-lg text-primary20">Active</p>
+            <p className="text-2xl font-medium text-primary20">
+              {listServer.filter((item) => item.status === 1).length}
+            </p>
+          </div>
+          <div className="flex-1 space-y-3">
+            <p className="text-lg text-[#ffaa01]">Maintenance</p>
+            <p className="text-2xl font-medium text-[#ffaa01]"></p>
+          </div>
+          <div className="flex-1 space-y-3">
+            <p className="text-lg text-error">Down</p>
+            <p className="text-2xl font-medium text-error"></p>
+          </div>
+          <div className="flex-1 space-y-3">
+            <p className="text-lg text-gray-500">Total keys</p>
             <p className="text-2xl font-medium">{TotalKeyUsage({})}</p>
           </div>
           {/* <div className="flex-1 p-5 space-y-3">
@@ -564,18 +576,18 @@ const ServerAdminPage = () => {
             </p>
           </div> */}
         </div>
-        <div className="space-y-5">
-          <Heading>Thêm máy chủ</Heading>
-          <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
-            <div className="w-full lg:flex-1">
-              <Textarea
-                name="remark"
-                placeholder={"remark"}
-                control={control}
-                className="!h-[100px]"
-              />
-            </div>
-            <div className="flex flex-col items-center gap-5 lg:flex-row">
+        <Modal
+          centered
+          open={isModalAddServerOpen}
+          onCancel={() => {
+            reset();
+            setIsModalAddServerOpen(false);
+          }}
+          footer={[]}
+        >
+          <div className="space-y-5">
+            <Heading>Thêm máy chủ</Heading>
+            <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
               <div className="w-full lg:flex-1">
                 <PickLocationForm
                   location={locationWatch}
@@ -608,19 +620,36 @@ const ServerAdminPage = () => {
                   control={control}
                 />
               </div>
+              <Textarea
+                name="remark"
+                placeholder={"remark"}
+                control={control}
+                className="!h-[100px]"
+              />
+              <Checkbox checked>Active</Checkbox>
               <Button
-                className="w-full px-5 text-white bg-secondary20 lg:w-fit"
+                className="w-full px-5 py-2 text-white bg-secondary20 lg:w-fit"
                 type="submit"
               >
                 Thêm máy chủ
               </Button>
-            </div>
-          </form>
+            </form>
+          </div>
+        </Modal>
+        <div className="flex items-center justify-between">
+          <Heading>
+            Danh sách máy chủ(
+            {listServer.filter((item) => item.status === 1).length})
+          </Heading>
+          <button
+            className="py-2 px-5 text-white bg-secondary20 rounded-lg font-medium"
+            type="button"
+            onClick={() => setIsModalAddServerOpen(true)}
+          >
+            Thêm máy chủ
+          </button>
         </div>
-        <Heading>
-          Danh sách máy chủ(
-          {listServer.filter((item) => item.status === 1).length})
-        </Heading>
+
         <div className="relative flex-1">
           <input
             type="text"

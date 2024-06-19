@@ -20,6 +20,12 @@ export const purposes = [
   { id: 4, title: "Others" },
 ];
 
+export const listCurrency = [
+  { key: "vi", title: "VND" },
+  { key: "en", title: "USD" },
+  { key: "ci", title: "CNY" },
+];
+
 export const regexUserName = /^[a-z0-9!@#$%^&*()_+{}[\]:;<>,.?/~`|-]+$/;
 
 export const linkGist = import.meta.env.VITE_LINK_GIST;

@@ -8,10 +8,9 @@ import {
   Tooltip,
 } from "antd";
 import { api } from "../../api";
-import { CommisionType, CoutryType, RoseType, SatisfyType } from "../../type";
+import { CommisionType,  RoseType, SatisfyType } from "../../type";
 import { RootState } from "../../store/configureStore";
 import { useSelector } from "react-redux";
-import { priceFomat } from "../../utils/formatPrice";
 import { AuthState } from "../../store/auth/authSlice";
 import { toast } from "react-toastify";
 import {
@@ -24,8 +23,9 @@ import dayjs from "dayjs";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import Heading from "../../components/common/Heading";
 import { useTranslation } from "react-i18next";
+import { useFormatPrice } from "../../hooks/useFormatPrice";
 
-const InvitePage = () => {
+const InvitePage = () => {  const priceFomat = useFormatPrice();
   const { i18n, t } = useTranslation();
   const collab = useSelector((state: RootState) => state.collab);
   const { _id } = useSelector((state: RootState) => state.auth);
@@ -145,7 +145,7 @@ const InvitePage = () => {
         key: "recive",
         render: (_: string, record: RoseType) => (
           <p className="text-sm font-primary">
-            {priceFomat(record.recive, i18n.language as CoutryType)}
+            {priceFomat(record.recive)}
           </p>
         ),
         sorter: {
@@ -264,8 +264,7 @@ const InvitePage = () => {
           <div className="flex flex-col items-center flex-1 px-5 py-5 space-y-2 md:py-7 rounded-xl md:space-y-4">
             <p className="text-xl font-medium lg:text-2xl xl:text-4xl">
               {priceFomat(
-                satisfy && satisfy.rose.length > 0 ? satisfy.rose[0].money : 0,
-                i18n.language as CoutryType
+                satisfy && satisfy.rose.length > 0 ? satisfy.rose[0].money : 0
               )}
             </p>
 
@@ -286,19 +285,19 @@ const InvitePage = () => {
           <p>
             {t("page.collaborator.note.content2", {
               amount: collab.level1,
-              money: priceFomat(collab.minLevel1, i18n.language as CoutryType),
+              money: priceFomat(collab.minLevel1),
             })}
           </p>
           <p>
             {t("page.collaborator.note.content3", {
               amount: collab.level2,
-              money: priceFomat(collab.minLevel2, i18n.language as CoutryType),
+              money: priceFomat(collab.minLevel2),
             })}
           </p>
           <p>
             {t("page.collaborator.note.content4", {
               amount: collab.level3,
-              money: priceFomat(collab.minLevel3, i18n.language as CoutryType),
+              money: priceFomat(collab.minLevel3),
             })}
           </p>
           <p className="text-lg font-medium text-secondary20">
@@ -312,8 +311,7 @@ const InvitePage = () => {
             {priceFomat(
               listRoseHistoryFilter
                 .map((item) => item.recive)
-                .reduce((prev, cur) => (prev += cur), 0),
-              i18n.language as CoutryType
+                .reduce((prev, cur) => (prev += cur), 0)
             )}
           </Heading>
           <div className="items-center block gap-5 mb-5 space-y-3 md:flex md:space-y-0">

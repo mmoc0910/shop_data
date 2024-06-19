@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
-import { ServerType, UserState } from "../../type";
-import { countries, purposes } from "../../constants";
+import { CashType, ServerType, TransactionType, UserState } from "../../type";
+import { countries, DAY_FORMAT, purposes } from "../../constants";
 import {
   DatePicker,
   DatePickerProps,
@@ -9,7 +9,7 @@ import {
   Tag,
   Tooltip,
 } from "antd";
-import { Key, useEffect, useMemo, useState } from "react";
+import { Key, useCallback, useEffect, useMemo, useState } from "react";
 import { GistType } from "../../type";
 import { toast } from "react-toastify";
 import {
@@ -19,7 +19,6 @@ import {
   messages,
 } from "../../constants";
 import { api } from "../../api";
-import { priceFomat } from "../../utils/formatPrice";
 import dayjs from "dayjs";
 import Heading from "../../components/common/Heading";
 import UpdateExtension from "../../components/user/UpdateExtension";
@@ -28,9 +27,10 @@ import { AndroidXML } from "../user/OrderPage";
 import { useTranslation } from "react-i18next";
 import { Checkbox } from "../../components/checkbox";
 import MoveServer from "../../components/user/MoveServer";
+import { useFormatPrice } from "../../hooks/useFormatPrice";
 
 const AccountDetailPage = () => {
-  const { i18n } = useTranslation();
+  const priceFomat = useFormatPrice();
   const { accountId } = useParams();
   const [user, setUser] = useState<UserState>();
   const [canMigrate, setCanMigrate] = useState<boolean>(false);
@@ -111,10 +111,7 @@ const AccountDetailPage = () => {
             </p> */}
             <p>
               Số dư:{" "}
-              <span className="font-medium">
-                {" "}
-                {priceFomat(user.money, i18n.language)}
-              </span>
+              <span className="font-medium"> {priceFomat(user.money)}</span>
             </p>
             <p>
               Quốc gia:{" "}
@@ -132,6 +129,8 @@ const AccountDetailPage = () => {
         ) : null}
       </div>
       <OrderKeyUser accountId={accountId as string} />
+      <HistoryCashUser accountId={accountId as string} />
+      <HistoryTransactionUser accountId={accountId as string} />
     </div>
   );
 };
@@ -146,12 +145,15 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
   useEffect(() => {
     (async () => {
       try {
+        setLoadingTable(true);
         const { data: dataServers } = await api.get<ServerType[]>(
           "/servers/normal-server?status=1"
         );
         setServers(dataServers);
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoadingTable(false);
       }
     })();
   }, []);
@@ -255,13 +257,16 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
         key: "key",
         // fixed: "right",
         render: (_: string, record: GistType) => {
+          const {
+            keyId: { accessUrl, keyId, serverId },
+          } = record;
           // const key = `${linkGist}/${record.gistId}/raw/${record?.fileName}#`;
           return (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Tooltip title="copy">
+                <Tooltip title="Copy link chính">
                   <button
-                    className="text-secondary20"
+                    className="text-white px-2 w-fit aspect-square rounded-md bg-secondary20"
                     onClick={() =>
                       copyToClipboard(
                         `${record.keyId.awsId?.fileName.replace(
@@ -274,10 +279,20 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
                     <AndroidXML />
                   </button>
                 </Tooltip>
-                <p className="font-primary text-sm w-[200px] line-clamp-1">
+                <Tooltip title="Copy link dự phòng">
+                  <button
+                    className="text-white px-2 w-fit aspect-square rounded-md bg-gray-400"
+                    onClick={() =>
+                      copyToClipboard(`${accessUrl}#${serverId}-k${keyId}`)
+                    }
+                  >
+                    <AndroidXML />
+                  </button>
+                </Tooltip>
+                {/* <p className="font-primary text-sm w-[200px] line-clamp-1">
                   {record.keyId.awsId?.fileName.replace(/https/g, "ssconf")}#
                   {record.extension}
-                </p>
+                </p> */}
               </div>
               {/* <div className="flex items-center gap-2">
                 <Tooltip title="copy">
@@ -297,7 +312,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
         },
       },
       {
-        title: <p className="font-semibold font-primary">Đặt tên key</p>,
+        title: <p className="font-semibold font-primary">Tên key</p>,
         dataIndex: "extension",
         key: "extension",
         // width: 150,
@@ -381,7 +396,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
         width: 120,
         render: (_: string, record: GistType) => (
           <p className="text-sm font-primary">
-             {record.keyId.dataExpand / 1000 / 1000 / 1000}GB
+            {record.keyId.dataExpand / 1000 / 1000 / 1000}GB
           </p>
         ),
         sorter: {
@@ -408,19 +423,31 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
         },
       },
       {
+        title: (
+          <p className="font-semibold font-primary text-sm">Date Expand</p>
+        ),
+        dataIndex: "endExpandDate",
+        key: "endExpandDate",
+        width: 120,
+        render: (_: string, record: GistType) => (
+          <p className="text-sm font-primary">
+            {record.keyId?.endExpandDate &&
+              DAY_FORMAT(record.keyId.endExpandDate)}
+          </p>
+        ),
+      },
+      {
         title: <p className="font-semibold font-primary text-sm"></p>,
         dataIndex: "action",
         key: "action",
-        width: 100,
+        // width: 100,
         render: (_: string, record: GistType) =>
           record.status ? (
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-2 justify-end w-[150px] lg:w-[250px] px-5">
-              <MoveServer
-                servers={servers}
-                gist={record}
-                handleReloadData={handleFetchData}
-              />
-            </div>
+            <MoveServer
+              servers={servers}
+              gist={record}
+              handleReloadData={handleFetchData}
+            />
           ) : null,
       },
     ],
@@ -492,6 +519,379 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
           scroll={{ x: 1120 }}
         />
       </div>
+    </div>
+  );
+};
+
+const HistoryCashUser = ({ accountId }: { accountId: string }) => {
+  const priceFomat = useFormatPrice();
+  const { i18n, t } = useTranslation();
+  const [listCash, setListCash] = useState<CashType[]>([]);
+  const [isloading, setIsLoading] = useState(false);
+  useEffect(() => {
+    if (isloading) fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isloading, accountId]);
+  const fetchData = useCallback(async () => {
+    try {
+      const result = await api.get<CashType[]>(`/cashs?userId=${accountId}`);
+      setListCash(result.data.map((item, index) => ({ index, ...item })));
+    } catch (error) {
+      console.log("error - ", error);
+      toast.error(messages.error);
+    }
+  }, [accountId]);
+  const columns: TableColumnsType<CashType> = useMemo(
+    () => [
+      {
+        title: () => <p className="font-semibold font-primary"></p>,
+        dataIndex: "index",
+        key: "index",
+        width: 70,
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text + 1}</p>
+        ),
+      },
+      {
+        title: () => (
+          <p className="font-semibold font-primary">
+            {t("page.cash.history.field.code")}
+          </p>
+        ),
+        dataIndex: "code",
+        key: "code",
+        render: (text: string) => (
+          <p className="text-sm font-primary">{text}</p>
+        ),
+      },
+      {
+        title: (
+          <p className="font-semibold font-primary">
+            {t("page.cash.history.field.transactionType")}
+          </p>
+        ),
+        dataIndex: "type",
+        key: "type",
+        render: (text: number) => (
+          <p className="text-sm font-primary">
+            {text === 0 ? (
+              <Tag color="blue">
+                {i18n.language === "ci" ? "自动银行支付" : "Auto Banking"}
+              </Tag>
+            ) : (
+              <Tag color="pink-inverse">
+                {i18n.language === "ci" ? "手动" : "Manual Banking"}
+              </Tag>
+            )}
+          </p>
+        ),
+        filters: [
+          {
+            text: i18n.language === "ci" ? "自动银行支付" : "Auto Banking",
+            value: 0,
+          },
+          {
+            text: i18n.language === "ci" ? "手动" : "Manual Banking",
+            value: 1,
+          },
+        ],
+        onFilter: (value: boolean | Key, record: CashType) => {
+          if (typeof value === "boolean") {
+            // Xử lý trường hợp value là boolean
+            return record.type === (value ? 1 : 0);
+          } else {
+            // Xử lý trường hợp value là Key (đối với trường hợp khi dùng dropdown filter)
+            return record.type === value;
+          }
+        },
+      },
+      {
+        title: () => (
+          <p className="text-sm font-semibold font-primary">
+            {t("page.cash.history.field.money")}
+          </p>
+        ),
+        dataIndex: "money",
+        key: "money",
+        render: (text: number) => (
+          <p className="text-sm font-primary">{priceFomat(text)}</p>
+        ),
+        sorter: (a, b) => a.money - b.money,
+      },
+      {
+        title: () => (
+          <p className="text-sm font-semibold font-primary">
+            {t("page.cash.history.field.created_at")}
+          </p>
+        ),
+        dataIndex: "createdAt",
+        key: "createdAt",
+        render: (text: Date) => (
+          <p className="text-sm font-primary">{DAY_FORMAT(text)}</p>
+        ),
+        sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
+      },
+      {
+        title: () => (
+          <p className="text-sm font-semibold font-primary">
+            {t("page.cash.history.field.updated_at")}
+          </p>
+        ),
+        dataIndex: "updatedAt",
+        key: "updatedAt",
+        render: (text: Date, record: CashType) => (
+          <p className="text-sm font-primary">
+            {record.status !== 2 ? DAY_FORMAT(text) : null}
+          </p>
+        ),
+        sorter: (a, b) => dayjs(a.updatedAt).unix() - dayjs(b.updatedAt).unix(),
+      },
+      {
+        title: () => (
+          <p className="text-sm font-semibold font-primary">
+            {t("page.cash.history.field.status")}
+          </p>
+        ),
+        dataIndex: "status",
+        key: "status",
+        render: (_: number, record: CashType) => (
+          <div className="text-sm font-primary">
+            {record.status === 0 ? (
+              <Tag color="red">
+                <span className="font-primary">
+                  {t("page.cash.history.status.reject")}
+                </span>
+              </Tag>
+            ) : null}
+            {record.status === 1 ? (
+              <Tag color="green">
+                <span className="font-primary">
+                  {t("page.cash.history.status.approve")}
+                </span>
+              </Tag>
+            ) : null}
+            {record.status === 2 ? (
+              <Tag color="lime">
+                <span className="font-primary">
+                  {t("page.cash.history.status.pending")}
+                </span>
+              </Tag>
+            ) : null}
+          </div>
+        ),
+        filters: [
+          {
+            text: t("page.cash.history.status.reject"),
+            value: 0,
+          },
+          {
+            text: t("page.cash.history.status.approve"),
+            value: 1,
+          },
+          {
+            text: t("page.cash.history.status.pending"),
+            value: 2,
+          },
+        ],
+        onFilter: (value: boolean | Key, record: CashType) => {
+          if (typeof value === "boolean") {
+            // Xử lý trường hợp value là boolean
+            return record.status === (value ? 1 : 0);
+          } else {
+            // Xử lý trường hợp value là Key (đối với trường hợp khi dùng dropdown filter)
+            return record.status === value;
+          }
+        },
+      },
+      {
+        title: () => (
+          <p className="text-sm font-semibold font-primary">
+            {t("page.cash.history.field.content")}
+          </p>
+        ),
+        dataIndex: "content",
+        key: "content",
+        render: (text: string) => (
+          <p className="text-sm font-primary font-semibold">{text}</p>
+        ),
+      },
+      {
+        title: () => (
+          <p className="text-sm font-semibold font-primary">
+            {t("page.cash.history.field.description")}
+          </p>
+        ),
+        dataIndex: "description",
+        key: "description",
+        render: (text: string) => (
+          <p className="text-sm font-primary text-error">{text}</p>
+        ),
+      },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.language]
+  );
+  return (
+    <div className="space-y-5">
+      <div onClick={() => setIsLoading(true)}>
+        <Heading className="mb-4 cursor-pointer">Lịch sử nạp tiền</Heading>
+      </div>
+
+      {isloading && (
+        <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
+          <Table
+            dataSource={listCash}
+            columns={columns}
+            scroll={{ x: 1300, y: 600 }}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+const HistoryTransactionUser = ({ accountId }: { accountId: string }) => {
+  const priceFomat = useFormatPrice()
+  const { t, i18n } = useTranslation();
+  const [isloading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [transactions, setTransactions] = useState<TransactionType[]>([]);
+  const fetchUserCashHistory = async () => {
+    try {
+      setLoading(true);
+      const result = await api.get<TransactionType[]>(
+        `/transactions?userId=${accountId}&approve=true`
+      );
+      setTransactions(result.data.map((item, index) => ({ index, ...item })));
+    } catch (error) {
+      toast.error(messages.error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (isloading) fetchUserCashHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isloading, accountId]);
+  const columns: TableColumnsType<TransactionType> = useMemo(
+    () => [
+      {
+        title: () => <p className="text-base font-semibold font-primary"></p>,
+        dataIndex: "index",
+        key: "index",
+        width: 70,
+        render: (text: number) => (
+          <p className="text-sm font-primary">{text + 1}</p>
+        ),
+      },
+      {
+        title: () => (
+          <p className="font-semibold font-primary">
+            {t("page.transaction.field.code")}
+          </p>
+        ),
+        dataIndex: "code",
+        key: "code",
+        render: (text: string) => (
+          <p className="text-sm font-primary">{text}</p>
+        ),
+        // responsive: ["md"],
+      },
+      {
+        title: (
+          <p className="font-semibold font-primary">
+            {t("page.transaction.field.package")}
+          </p>
+        ),
+        dataIndex: "name",
+        key: "name",
+        render: (_: string, record: TransactionType) => (
+          <p className="text-sm font-primary">
+            {record.extendPlanId
+              ? record.extendPlanId.name
+              : record.planId?.name}
+          </p>
+        ),
+      },
+      {
+        title: (
+          <p className="font-semibold font-primary">
+            {t("page.transaction.field.pricePackage")}
+          </p>
+        ),
+        dataIndex: "price",
+        key: "price",
+        render: (_: string, record: TransactionType) => (
+          <p className="text-sm font-primary">
+            {priceFomat(record.money / ((100 - record.discount) / 100))}
+          </p>
+        ),
+        sorter: {
+          compare: (a, b) =>
+            a.money / ((100 - a.discount) / 100) -
+            b.money / ((100 - b.discount) / 100),
+          multiple: 3,
+        },
+      },
+      {
+        title: <p className="font-semibold font-primary">CK</p>,
+        dataIndex: "discount",
+        key: "discount",
+        render: (_: string, record: TransactionType) => (
+          <p className="text-sm font-primary">{record.discount}%</p>
+        ),
+        sorter: {
+          compare: (a, b) => a.discount - b.discount,
+          multiple: 2,
+        },
+      },
+      {
+        title: (
+          <p className="font-semibold font-primary">
+            {t("page.transaction.field.disCountPrice")}
+          </p>
+        ),
+        dataIndex: "money",
+        key: "money",
+        render: (_: string, record: TransactionType) => (
+          <p className="text-sm font-primary">{priceFomat(record.money)}</p>
+        ),
+        sorter: {
+          compare: (a, b) => a.money - b.money,
+          multiple: 1,
+        },
+      },
+      {
+        title: (
+          <p className="font-semibold font-primary">
+            {t("page.transaction.field.createdAt")}
+          </p>
+        ),
+        dataIndex: "createdAt",
+        key: "createdAt",
+        render: (text: Date) => (
+          <p className="text-sm font-primary">{DAY_FORMAT(text)}</p>
+        ),
+        sorter: (a, b) => dayjs(a.createdAt).unix() - dayjs(b.createdAt).unix(),
+      },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.language]
+  );
+  return (
+    <div className="space-y-5">
+      <div onClick={() => setIsLoading(true)}>
+        <Heading className="mb-4 cursor-pointer">Lịch sử mua gói</Heading>
+      </div>
+      {isloading && (
+        <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
+          <Table
+            dataSource={transactions}
+            columns={columns}
+            loading={loading}
+            scroll={{ x: 1180 }}
+          />
+        </div>
+      )}
     </div>
   );
 };

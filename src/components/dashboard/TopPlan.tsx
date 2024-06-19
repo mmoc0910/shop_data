@@ -3,10 +3,9 @@ import { SatifyItem } from "../../pages/admin/DashboardAdminPage";
 import { PlanType } from "../../type";
 import Heading from "../common/Heading";
 import { api } from "../../api";
-import { priceFomat } from "../../utils/formatPrice";
-import { useTranslation } from "react-i18next";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
+import { useFormatPrice } from "../../hooks/useFormatPrice";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 type DataType = {
@@ -16,7 +15,7 @@ type DataType = {
   plan: [PlanType];
 };
 const TopPlan = () => {
-  const { i18n } = useTranslation();
+  const priceFomat = useFormatPrice();
   const [data, setData] = useState<DataType[]>([]);
   useEffect(() => {
     (async () => {
@@ -76,7 +75,7 @@ const TopPlan = () => {
                   <div className="flex flex-col gap-2 text-lg">
                     <p>Lượt mua: {item.count}</p>
                     <p>
-                      Tổng thu: {priceFomat(item.totalMoney, i18n.language)}
+                      Tổng thu: {priceFomat(item.totalMoney)}
                     </p>
                   </div>
                 }

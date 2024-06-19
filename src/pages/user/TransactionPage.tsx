@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
-import { CoutryType, TransactionType } from "../../type";
+import { TransactionType } from "../../type";
 import { api } from "../../api";
 import { toast } from "react-toastify";
 import {
@@ -15,9 +15,10 @@ import { DatePicker, DatePickerProps, Table, TableColumnsType } from "antd";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
-import { priceFomat } from "../../utils/formatPrice";
+import { useFormatPrice } from "../../hooks/useFormatPrice";
 
 const TransactionPage = () => {
+  const priceFomat = useFormatPrice();
   const { t, i18n } = useTranslation();
   const [inputValue, setInputValue] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -122,8 +123,7 @@ const TransactionPage = () => {
         render: (_: string, record: TransactionType) => (
           <p className="text-sm font-primary">
             {priceFomat(
-              record.money / ((100 - record.discount) / 100),
-              i18n.language as CoutryType
+              record.money / ((100 - record.discount) / 100)
             )}
           </p>
         ),
@@ -160,7 +160,7 @@ const TransactionPage = () => {
         key: "money",
         render: (_: string, record: TransactionType) => (
           <p className="text-sm font-primary">
-            {priceFomat(record.money, i18n.language as CoutryType)}
+            {priceFomat(record.money)}
           </p>
         ),
         sorter: {
@@ -207,8 +207,7 @@ const TransactionPage = () => {
             {priceFomat(
               transactions
                 .map((item) => item.money)
-                .reduce((prev, cur) => (prev += cur), 0),
-              i18n.language as CoutryType
+                .reduce((prev, cur) => (prev += cur), 0)
             )}
           </span>
         </p>

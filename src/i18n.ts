@@ -257,7 +257,8 @@ i18n.use(LanguageDetector).use(initReactI18next),
               instruct1:
                 "Please get the key below and Paste it into Outline software following",
               instruct2:
-                "Click on the button to copy the key (This key can use for all of devices iphone, android, Windows, MAC)",
+                "Click to get the key (Main)",
+              instruct3: "Click to get Alternated key (Only use when Admin advises)",
               field: {
                 code: "Trading code",
                 package: "Package",
@@ -677,7 +678,9 @@ i18n.use(LanguageDetector).use(initReactI18next),
             myOrder: {
               instruct1:
                 "Vui lòng lấy key bên dưới của bạn và dán vào phần mềm theo hướng dẫn",
-              instruct2: "nhấn để copy Link kết nối",
+              instruct2: "Nhấn để copy Link kết nối chính",
+              instruct3:
+                "Nhấn để copy Link kết nối dự phòng(Chỉ dùng trong trường hợp admin khuyến cáo)",
               field: {
                 code: "Mã GD",
                 package: "Tên gói",
@@ -1080,13 +1083,14 @@ i18n.use(LanguageDetector).use(initReactI18next),
                 title: "您要买 ",
                 confirmButton: "确定",
                 cancelButton: "取消",
-                success: "买了成功",
+                success: "订单成功",
                 warn: "你的钱不够，清付款",
               },
             },
             myOrder: {
               instruct1: "请获取下面的密钥并按照说明将其粘贴到 Outline 软件中",
-              instruct2: "单击按钮复制密钥",
+              instruct2: "点击获取密钥（主要）",
+              instruct3: "单击获取备用密钥（仅在管理员建议时使用）",
               field: {
                 code: "单号",
                 package: "包裹名",

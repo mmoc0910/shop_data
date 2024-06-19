@@ -16,16 +16,20 @@ import {
   Table,
   TableColumnsType,
   Tag,
+  Tooltip,
 } from "antd";
-import { VND, priceFomat } from "../../utils/formatPrice";
+import { VND } from "../../utils/formatPrice";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import Swal from "sweetalert2";
 import axios from "axios";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import IconCheckBadge from "../../icons/IconCheckBadge";
+import IconXCircle from "../../icons/IconXCircle";
+import { useFormatPrice } from "../../hooks/useFormatPrice";
 
-const CashAdminPage = () => {
+const CashAdminPage = () => {  const priceFomat = useFormatPrice();
   const { i18n } = useTranslation();
   const [listCash, setListCash] = useState<CashType[]>([]);
   const [startDate, setStartDate] = useState<dayjs.Dayjs | undefined>();
@@ -249,7 +253,7 @@ const CashAdminPage = () => {
         render: (_: string, record: CashType) => (
           <p className="text-sm font-primary">
             {" "}
-            {priceFomat(record.money, i18n.language)}
+            {priceFomat(record.money)}
           </p>
         ),
         sorter: (a, b) => a.money - b.money,
@@ -336,9 +340,7 @@ const CashAdminPage = () => {
         dataIndex: "content",
         key: "content",
         render: (text?: string) => (
-          <p className="text-sm font-primary text-primary">
-            {text || ""}
-          </p>
+          <p className="text-sm font-primary text-primary">{text || ""}</p>
         ),
       },
       {
@@ -361,22 +363,26 @@ const CashAdminPage = () => {
         width: 200,
         render: (_: string, record: CashType) => (
           <div className="flex gap-2 text-xs font-primary">
-            {record.status !== 2 ? null : (
+            {/* {record.status !== 2 ? null : ( */}
               <>
-                <button
-                  className="px-4 py-2 font-medium text-white rounded-lg bg-primary"
-                  onClick={() => handleApproveCash(record)}
-                >
-                  Approve
-                </button>
-                <button
-                  className="px-4 py-2 font-medium text-white rounded-lg bg-error"
-                  onClick={() => handleCancelCash(record)}
-                >
-                  Cancel
-                </button>
+                <Tooltip title="Approve">
+                  <button
+                    className="px-2 aspect-square font-medium text-white rounded-md bg-[#389e0d]"
+                    onClick={() => handleApproveCash(record)}
+                  >
+                    <IconCheckBadge className="size-5" />
+                  </button>
+                </Tooltip>
+                <Tooltip title="Cancel">
+                  <button
+                    className="px-2 aspect-square font-medium text-white rounded-md bg-error"
+                    onClick={() => handleCancelCash(record)}
+                  >
+                    <IconXCircle className="size-5" />
+                  </button>
+                </Tooltip>
               </>
-            )}
+            {/* )} */}
           </div>
         ),
       },

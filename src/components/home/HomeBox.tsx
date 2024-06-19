@@ -19,7 +19,7 @@ const HomeBox = () => {
       <Container className="pb-14 md:pb-20 grid grid-cols-10 relative z-10 md:gap-x-8">
         <div className="col-span-10 md:col-span-7">
           <div className="flex item md:items-center gap-2 mb-5">
-            <img src={logo} className="w-40 md:w-56 xl:w-60 object-cover" />
+            <img src={logo} className="w-40 md:w-56 xl:w-60 object-contain" />
             <h1 className="text-3xl lg:text-5xl font-medium text-white !leading-relaxed tracking-wide">
               {t("page.home.home.heading")}
             </h1>

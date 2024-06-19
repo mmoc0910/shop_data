@@ -12,13 +12,13 @@ import { Input } from "../components/input";
 import { api } from "../api";
 import { AuthState } from "../store/auth/authSlice";
 import { toast } from "react-toastify";
-import { countries, purposes } from "../constants";
+// import { countries, purposes } from "../constants";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/configureStore";
 import axios from "axios";
-import { DropdownWithComponents } from "../components/dropdown";
-import { v4 as uuidv4 } from "uuid";
+// import { DropdownWithComponents } from "../components/dropdown";
+// import { v4 as uuidv4 } from "uuid";
 import { useTranslation } from "react-i18next";
 import Loading from "../components/common/Loading";
 
@@ -53,8 +53,8 @@ const SignUpPage = () => {
             .required(t("form.re_password.error.required"))
             .min(8, t("form.old_password.error.min")),
           phone: yup.string().required(t("form.phone.error.required")),
-          country: yup.string().required(t("form.country.error.required")),
-          purpose: yup.number().required(t("form.purpose.error.required")),
+          // country: yup.string().required(t("form.country.error.required")),
+          // purpose: yup.number().required(t("form.purpose.error.required")),
           introduceCode: yup.string(),
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -65,13 +65,10 @@ const SignUpPage = () => {
   const {
     handleSubmit,
     control,
-    watch,
-    setValue,
     setError,
-    formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
-    mode: "onSubmit",
+    mode: "onChange",
   });
   useEffect(() => {
     if (email) {
@@ -80,15 +77,13 @@ const SignUpPage = () => {
         : navigation("/user/dashboard");
     }
   }, [email, navigation, role]);
-  const country = watch("country");
-  const purpose = watch("purpose");
   const onSubmit = async (data: {
     username: string;
     email: string;
     password: string;
     phone: string;
-    country: string;
-    purpose: number;
+    // country: string;
+    // purpose: number;
     introduceCode?: string;
     rePassword: string;
   }) => {
@@ -97,9 +92,9 @@ const SignUpPage = () => {
         username,
         email,
         password,
-        country,
+        // country,
         phone,
-        purpose,
+        // purpose,
         rePassword,
         introduceCode,
       } = data;
@@ -111,9 +106,9 @@ const SignUpPage = () => {
               username: username.toLowerCase(),
               email,
               password,
-              country,
+              country: "",
               phone,
-              purpose,
+              purpose: 1,
               introduceCode,
             });
             navigation("/sign-in");
@@ -135,9 +130,9 @@ const SignUpPage = () => {
             username: username.toLowerCase(),
             email,
             password,
-            country,
+            country: "",
             phone,
-            purpose,
+            purpose: 1,
           });
           navigation("/sign-in");
           toast.success("Đăng ký tài khoản thành công");
@@ -207,7 +202,7 @@ const SignUpPage = () => {
             control={control}
           />
         </FormGroup>
-        <FormGroup>
+        {/* <FormGroup>
           <Label>{t("form.country.label")}</Label>
           <DropdownWithComponents>
             <DropdownWithComponents.Select
@@ -274,7 +269,7 @@ const SignUpPage = () => {
               {errors.purpose.message}
             </p>
           ) : null}
-        </FormGroup>
+        </FormGroup> */}
         <FormGroup>
           <Label htmlFor="password">{t("form.password.label")}</Label>
           <Input

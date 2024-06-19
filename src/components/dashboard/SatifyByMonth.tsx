@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { api } from "../../api";
 import { SatifyItem } from "../../pages/admin/DashboardAdminPage";
-import { priceFomat } from "../../utils/formatPrice";
-import { useTranslation } from "react-i18next";
+import { useFormatPrice } from "../../hooks/useFormatPrice";
 
 type DataType = {
   cash: [
@@ -28,7 +27,7 @@ type DataType = {
   ];
 };
 const SatifyByMonth = () => {
-  const { i18n } = useTranslation();
+  const priceFomat = useFormatPrice();
   const [date, setDate] = useState<dayjs.Dayjs>(dayjs());
   const [data, setData] = useState<DataType>();
   console.log(dayjs(date).get("months"), dayjs(date).get("year"));
@@ -64,15 +63,15 @@ const SatifyByMonth = () => {
         <div className="p-5 gap-y-5 grid grid-cols-2 md:grid-cols-3 rounded-xl border-2 border-[#eeeeed]">
           <SatifyItem
             title="Tổng nạp tiền"
-            content={priceFomat(data.cash[0]?.money || 0, i18n.language)}
+            content={priceFomat(data.cash[0]?.money || 0)}
           />
           <SatifyItem
             title="Tổng đã mua"
-            content={priceFomat(data.transaction[0]?.money || 0, i18n.language)}
+            content={priceFomat(data.transaction[0]?.money || 0)}
           />
           <SatifyItem
             title="Tổng hoa hồng đã trừ"
-            content={priceFomat(data.rose[0]?.money || 0, i18n.language)}
+            content={priceFomat(data.rose[0]?.money || 0)}
           />
         </div>
       </div>

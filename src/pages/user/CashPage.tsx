@@ -9,7 +9,7 @@ import {
 import Heading from "../../components/common/Heading";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import { Key, useCallback, useEffect, useMemo, useState } from "react";
-import { CashType, CoutryType } from "../../type";
+import { CashType} from "../../type";
 import { api } from "../../api";
 import { toast } from "react-toastify";
 import {
@@ -26,10 +26,11 @@ import { RootState } from "../../store/configureStore";
 import dayjs from "dayjs";
 import RechargePage from "./RechargePage";
 import { useTranslation } from "react-i18next";
-import { priceFomat } from "../../utils/formatPrice";
 import Loading from "../../components/common/Loading";
+import { useFormatPrice } from "../../hooks/useFormatPrice";
 
 const CashPage = () => {
+  const priceFomat = useFormatPrice();
   const { i18n, t } = useTranslation();
   const { _id } = useSelector((state: RootState) => state.auth);
   const [listCash, setListCash] = useState<CashType[]>([]);
@@ -45,10 +46,10 @@ const CashPage = () => {
         const currentTime = new Date().getTime(); // Thời gian hiện tại (timestamp)
         const createdAtTime = new Date(item.createdAt).getTime(); // Thời gian tạo (timestamp)
         const tenMinutesInMilliseconds = 10 * 60 * 1000; // 10 phút tính bằng mili giây
-        console.log(
-          `${item.code} - `,
-          currentTime - createdAtTime > tenMinutesInMilliseconds
-        );
+        // console.log(
+        //   `${item.code} - `,
+        //   currentTime - createdAtTime > tenMinutesInMilliseconds
+        // );
         if (
           item.status === 2 &&
           item.type === 0 &&
@@ -186,9 +187,7 @@ const CashPage = () => {
         dataIndex: "money",
         key: "money",
         render: (text: number) => (
-          <p className="text-sm font-primary">
-            {priceFomat(text, i18n.language as CoutryType)}
-          </p>
+          <p className="text-sm font-primary">{priceFomat(text)}</p>
         ),
         sorter: (a, b) => a.money - b.money,
       },
@@ -324,8 +323,7 @@ const CashPage = () => {
             listCash
               .filter((item) => item.status === 1)
               .map((item) => item.money)
-              .reduce((prev, cur) => (prev += cur), 0),
-            i18n.language as CoutryType
+              .reduce((prev, cur) => (prev += cur), 0)
           )}
         </Heading>
         <div className="flex items-center justify-end gap-5">
@@ -366,6 +364,7 @@ const ButtonDetailCash = ({
   cash: CashType;
   onSuccess: () => void;
 }) => {
+  const priceFomat = useFormatPrice();
   const { i18n, t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -461,9 +460,7 @@ const ButtonDetailCash = ({
           </p>
           <p>
             {t("page.cash.history.field.money")}:{" "}
-            <span className="font-semibold">
-              {priceFomat(cash.money, i18n.language as CoutryType)}
-            </span>
+            <span className="font-semibold">{priceFomat(cash.money)}</span>
           </p>
           <p>
             {t("page.cash.history.field.created_at")}:{" "}

@@ -1,7 +1,6 @@
 import { Modal, Table, TableColumnsType } from "antd";
 import Heading from "../../components/common/Heading";
 import { ExtendPlanType } from "../../type";
-import { priceFomat } from "../../utils/formatPrice";
 import { toast } from "react-toastify";
 import { api } from "../../api";
 import { DAY_FORMAT, messages } from "../../constants";
@@ -18,6 +17,10 @@ import RequireAuthPage from "../../components/common/RequireAuthPage";
 import Swal from "sweetalert2";
 import RoseExtendPlan from "../../components/extendPlan/RoseExtendPlan";
 import { useTranslation } from "react-i18next";
+import IconTrash from "../../icons/IconTrash";
+import IconEdit from "../../icons/IconEdit";
+import { Checkbox } from "../../components/checkbox";
+import { useFormatPrice } from "../../hooks/useFormatPrice";
 
 const schema = yup
   .object({
@@ -28,6 +31,7 @@ const schema = yup
   .required();
 
 const ExtendPlanPage = () => {
+  const priceFomat = useFormatPrice();
   const { i18n } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [listExtendPlan, setListExtendPlan] = useState<ExtendPlanType[]>([]);
@@ -156,7 +160,7 @@ const ExtendPlanPage = () => {
         render: (text: number) => (
           <p className="text-sm font-primary">
             {" "}
-            {priceFomat(text, i18n.language)}
+            {priceFomat(text)}
           </p>
         ),
         sorter: {
@@ -201,21 +205,21 @@ const ExtendPlanPage = () => {
         dataIndex: "action",
         key: "action",
         render: (_: string, record: ExtendPlanType) => (
-          <div className="flex gap-4">
+          <div className="flex gap-2">
             <button
-              className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-error font-primary"
+              className="px-2 aspect-square text-sm font-medium text-white rounded-md bg-error font-primary"
               onClick={() => handleDeleteExtendPlan(record._id)}
             >
-              Xóa
+              <IconTrash className="size-4" />
             </button>
             <button
-              className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary font-primary"
+              className="px-2 aspect-square text-sm font-medium text-white rounded-md bg-primary font-primary"
               onClick={() => {
                 setSelectRow(record);
                 showModal();
               }}
             >
-              Edit
+              <IconEdit className="size-4" />
             </button>
           </div>
         ),
@@ -264,7 +268,7 @@ const ExtendPlanPage = () => {
         render: (text: number) => (
           <p className="text-sm font-primary">
             {" "}
-            {priceFomat(text, i18n.language)}
+            {priceFomat(text)}
           </p>
         ),
         sorter: {
@@ -423,7 +427,12 @@ const ExtendPlanPage = () => {
               min={0}
             />
           </FormGroup>
-
+          <FormGroup>
+            <Label htmlFor="price">Status*</Label>
+            <Checkbox checked={!!selectRow?.status}>
+              {selectRow?.status ? "Active" : "InActive"}
+            </Checkbox>
+          </FormGroup>
           <Button type="submit" className="w-full text-white bg-primary">
             {selectRow ? "Chỉnh sửa" : "Thêm mới"}
           </Button>

@@ -10,7 +10,6 @@ import FormGroup from "../../components/common/FormGroup";
 import { Label } from "../../components/label";
 import Button from "../../components/button/Button";
 import Radio from "../../components/radio/Radio";
-import { priceFomat } from "../../utils/formatPrice";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -18,6 +17,7 @@ import { RootState } from "../../store/configureStore";
 import { UserState } from "../../type";
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
+import { useFormatPrice } from "../../hooks/useFormatPrice";
 
 const levels = [
   { id: 0, title: "Cộng tác viên" },
@@ -33,6 +33,7 @@ const schema = yup
   .required();
 
 const AccountAdminPage = () => {
+  const priceFomat = useFormatPrice();
   const { i18n } = useTranslation();
   const collab = useSelector((state: RootState) => state.collab);
   const location = useLocation();
@@ -44,9 +45,8 @@ const AccountAdminPage = () => {
   const [selectRow, setSelectRow] = useState<UserState | undefined>(undefined);
   const [inputValue, setInputValue] = useState<string>("");
   const listUserFilter = inputValue
-    ? listUser.filter(
-        (item) =>
-          item?.username?.toLowerCase().includes(inputValue.toLowerCase())
+    ? listUser.filter((item) =>
+        item?.username?.toLowerCase().includes(inputValue.toLowerCase())
       )
     : listUser;
   const { handleSubmit, reset, setValue, watch } = useForm({
@@ -149,7 +149,7 @@ const AccountAdminPage = () => {
         key: "cash",
         render: (text: number) => (
           <p className="text-sm font-primary">
-            {priceFomat(text || 0, i18n.language)}
+            {priceFomat(text || 0)}
           </p>
         ),
         sorter: {
@@ -166,7 +166,7 @@ const AccountAdminPage = () => {
         render: (text: number) => (
           <p className="text-sm font-primary">
             {" "}
-            {priceFomat(text, i18n.language)}
+            {priceFomat(text)}
           </p>
         ),
         sorter: {

@@ -18,6 +18,8 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import Loading from "../components/common/Loading";
+import { setLanguage } from "../store/lang/languageSlice";
+import { setCurrency } from "../store/currency/currencySlice";
 // import { regexUserName } from "../constants";
 
 const SignInPage = () => {
@@ -65,7 +67,8 @@ const SignInPage = () => {
         password,
       });
       dispatch(setAuth(result.data.data));
-
+      dispatch(setLanguage("en"));
+      dispatch(setCurrency("en"));
       if (result.data.data.role === 1) {
         navigation("/admin/dashboard");
       } else if (result.data.data.role === 2) {

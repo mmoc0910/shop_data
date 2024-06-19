@@ -29,13 +29,13 @@ import * as yup from "yup";
 
 const menu = [
   { to: "/admin/dashboard", title: "Dashboard" },
-  { to: "/admin/pack", title: "Gói cước" },
-  { to: "/admin/extend-plan", title: "Gói cước mở rộng" },
+  { to: "/admin/pack", title: "QL gói cước" },
+  // { to: "/admin/extend-plan", title: "Gói cước mở rộng" },
   { to: "/admin/account", title: "Người dùng" },
   { to: "/admin/server", title: "Quản lý máy chủ" },
   // { to: "/admin/key", title: "Quản lý key" },
   { to: "/admin/cash", title: "Yêu cầu nạp" },
-  { to: "/admin/commision", title: "Chính sách CTV-Đại lý" },
+  { to: "/admin/commision", title: "QL CTV-Đại lý" },
   // { to: "/admin/post", title: "Bài viết" },
 ];
 

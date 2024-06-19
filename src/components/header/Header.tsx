@@ -173,7 +173,7 @@ export const SelectLanguage = () => {
         </span>
       </div>
       <div className="absolute z-50 right-0 top-[calc(100%+1rem)] invisible opacity-0 group-hover:visible group-hover:opacity-100 group-hover:top-full transition-all duration-300">
-        <div className="p-3 mt-3 rounded-md shadow-xl bg-white space-y-2 flex flex-col text-black">
+        <div className="p-4 mt-3 rounded-md shadow-xl bg-white space-y-2 flex flex-col text-black">
           {languages.map((item) => (
             <div
               onClick={() => dispatch(setLanguage(item.key))}
@@ -190,5 +190,6 @@ export const SelectLanguage = () => {
     </div>
   );
 };
+
 
 export default Header;

@@ -1,6 +1,5 @@
 import { Modal, Tooltip } from "antd";
 import Heading from "../../components/common/Heading";
-import { priceFomat } from "../../utils/formatPrice";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -15,12 +14,7 @@ import { messages } from "../../constants";
 import { api } from "../../api";
 import CashHistory from "../../components/user/CashHistory";
 import RoseHistory from "../../components/user/RoseHistory";
-import {
-  CashType,
-  CoutryType,
-  RoseType,
-  TransactionType,
-} from "../../type";
+import { CashType,  RoseType, TransactionType } from "../../type";
 import Swal from "sweetalert2";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import classNames from "../../utils/classNames";
@@ -36,6 +30,7 @@ import Post from "../../components/user/Post";
 import { useTranslation } from "react-i18next";
 import logoOutline from "../../assets/logo_outline.jpg";
 import i18n from "../../i18n";
+import { useFormatPrice } from "../../hooks/useFormatPrice";
 
 const schema = yup
   .object({
@@ -44,7 +39,8 @@ const schema = yup
   .required();
 
 const DashboardUserPage = () => {
-  const { t, i18n } = useTranslation();
+  const priceFomat = useFormatPrice();
+  const { t } = useTranslation();
   const { _id } = useSelector((state: RootState) => state.auth);
   const satisfy = useSelector((state: RootState) => state.satisfy);
   const commision = useSelector((state: RootState) => state.commision);
@@ -85,8 +81,7 @@ const DashboardUserPage = () => {
     try {
       Swal.fire({
         title: `<p class="leading-tight">Bạn có muốn nạp <span class="text-secondary">${priceFomat(
-          data.money,
-          i18n.language as CoutryType
+          data.money
         )}</span></p>`,
 
         icon: "success",
@@ -134,7 +129,7 @@ const DashboardUserPage = () => {
               </p>
 
               <p className="text-xl font-medium md:text-2xl">
-                {priceFomat(satisfy.cash, i18n.language as CoutryType)}
+                {priceFomat(satisfy.cash)}
               </p>
             </div>
             <div className="flex-1 p-5 space-y-3">
@@ -150,8 +145,7 @@ const DashboardUserPage = () => {
               </div>
               <p className="text-xl font-medium md:text-2xl">
                 {priceFomat(
-                  satisfy ? satisfy.currentMoney : 0,
-                  i18n.language as CoutryType
+                  satisfy ? satisfy.currentMoney : 0
                 )}
               </p>
             </div>
@@ -161,7 +155,7 @@ const DashboardUserPage = () => {
               </p>
               <div className="">
                 <p className="text-xl font-medium md:text-2xl text-error">
-                  {priceFomat(satisfy.transaction, i18n.language as CoutryType)}
+                  {priceFomat(satisfy.transaction)}
                 </p>
                 <Link
                   to={"/user/cash"}
@@ -188,7 +182,7 @@ const DashboardUserPage = () => {
                 </Tooltip>
               </div>
               <p className="text-xl font-medium md:text-2xl">
-                {priceFomat(satisfy.rose, i18n.language as CoutryType)}
+                {priceFomat(satisfy.rose)}
               </p>
             </div>
             <div className="flex-1 hidden p-5 space-y-3 md:block">

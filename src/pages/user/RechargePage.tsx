@@ -18,6 +18,7 @@ import {
   ACCOUNT_NO,
   APP_SCRIPT_URL,
   BANK_ID,
+  listCurrency,
   TEMPLATE,
 } from "../../constants";
 import { useEffect, useState } from "react";
@@ -40,6 +41,7 @@ const schema = yup
 const RechargePage = () => {
   const { t, i18n } = useTranslation();
   const { _id } = useSelector((state: RootState) => state.auth);
+  const currency = useSelector((state: RootState) => state.currency);
   const { handleSubmit, control, setValue } = useForm({
     resolver: yupResolver(schema),
     mode: "onSubmit",
@@ -62,9 +64,9 @@ const RechargePage = () => {
         }).then(async (result) => {
           if (result.isConfirmed) {
             const money =
-              i18n.language === "vi"
+              currency === "vi"
                 ? data.money
-                : i18n.language === "ci"
+                : currency === "ci"
                 ? data.money * EXCHANGE_RATE_CHINA
                 : data.money * EXCHANGE_RATE_ENGLISH;
             await api.post("/cashs", { money, userId: _id, type: 1 });
@@ -129,11 +131,7 @@ const RechargePage = () => {
             containerclass="flex-1"
           >
             <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
-              {i18n.language === "vi"
-                ? "VND"
-                : i18n.language === "ci"
-                ? "元"
-                : "$"}
+              {listCurrency.find((item) => item.key === currency)?.title}
             </span>
           </Input>
           <Button

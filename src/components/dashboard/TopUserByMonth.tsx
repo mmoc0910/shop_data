@@ -3,10 +3,10 @@ import Heading from "../common/Heading";
 import { useEffect, useMemo, useState } from "react";
 import { UserState } from "../../type";
 import { api } from "../../api";
-import { priceFomat } from "../../utils/formatPrice";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
+import { useFormatPrice } from "../../hooks/useFormatPrice";
 
 type DataType = {
   _id: string;
@@ -14,6 +14,7 @@ type DataType = {
   user: [UserState];
 };
 const TopUserByMonth = () => {
+  const priceFomat = useFormatPrice();
   const { i18n } = useTranslation();
   const [date, setDate] = useState<dayjs.Dayjs>(dayjs());
   const [data, setData] = useState<DataType[]>([]);
@@ -77,7 +78,7 @@ const TopUserByMonth = () => {
         key: "totalMoney",
         render: (text: number) => (
           <p className="text-sm font-primary">
-            {priceFomat(text, i18n.language)}
+            {priceFomat(text)}
           </p>
         ),
       },
