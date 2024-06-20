@@ -14,7 +14,7 @@ import { messages } from "../../constants";
 import { api } from "../../api";
 import CashHistory from "../../components/user/CashHistory";
 import RoseHistory from "../../components/user/RoseHistory";
-import { CashType,  RoseType, TransactionType } from "../../type";
+import { CashType, RoseType, TransactionType } from "../../type";
 import Swal from "sweetalert2";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import classNames from "../../utils/classNames";
@@ -127,7 +127,6 @@ const DashboardUserPage = () => {
               <p className="text-base text-gray-500 lg:text-lg">
                 {t("page.dashboard.satify.cash")}
               </p>
-
               <p className="text-xl font-medium md:text-2xl">
                 {priceFomat(satisfy.cash)}
               </p>
@@ -144,9 +143,7 @@ const DashboardUserPage = () => {
                 </Tooltip>
               </div>
               <p className="text-xl font-medium md:text-2xl">
-                {priceFomat(
-                  satisfy ? satisfy.currentMoney : 0
-                )}
+                {priceFomat(satisfy?.currentMoney || 0)}
               </p>
             </div>
             <div className="flex-1 hidden p-5 space-y-3 md:block">

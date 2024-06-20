@@ -39,7 +39,7 @@ const schema = yup
   .required();
 
 const RechargePage = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { _id } = useSelector((state: RootState) => state.auth);
   const currency = useSelector((state: RootState) => state.currency);
   const { handleSubmit, control, setValue } = useForm({
@@ -53,7 +53,7 @@ const RechargePage = () => {
           title: `<p class="leading-tight">${t(
             "page.cash.payment.manual.ques"
           )}<span class="text-secondary">${VND.format(data.money)}${
-            i18n.language === "vi" ? "VND" : i18n.language === "ci" ? "元" : "$"
+            currency === "vi" ? "VND" : currency === "ci" ? "元" : "$"
           }</span></p>`,
           icon: "success",
           showCancelButton: true,
@@ -180,7 +180,7 @@ const AutoBanking = () => {
               onChange={(e) => setAmount(e.target.value)}
               placeholder={t("page.cash.payment.auto.form.placeholder")}
               type="number"
-              className="focus:border-primary text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock text-text1  "
+              className="pr-16 focus:border-primary text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock text-text1  "
             />
             <p className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2 font-semibold text-icon-color">
               VND
