@@ -26,6 +26,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import Button from "../components/button/Button";
 import * as yup from "yup";
+import SelectCurrency from "../components/common/SelectCurrency";
 
 const menu = [
   { to: "/admin/dashboard", title: "Dashboard" },
@@ -215,7 +216,7 @@ const LayoutAdmin = () => {
                 />
               </svg>
             </div>
-            <div className="flex ml-auto gap-5">
+            <div className="flex ml-auto items-center gap-5">
               <div
                 className="flex gap-1 items-center text-white bg-primary px-4 py-2 rounded-xl cursor-pointer"
                 onClick={showModal}
@@ -238,6 +239,7 @@ const LayoutAdmin = () => {
                 <p>Đăng xuất</p>
               </div>
               <SelectLanguage />
+              <SelectCurrency />
             </div>
           </div>
           <div className="py-14">
