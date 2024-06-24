@@ -13,8 +13,6 @@ import { copyToClipboard } from "../utils/copyToClipboard";
 import useOnClickOutside from "../hooks/useOnClickOutside";
 import { useTranslation } from "react-i18next";
 import { SelectLanguage } from "../components/header/Header";
-import IconChevronDown from "../icons/IconChevronDown";
-import { listCurrency } from "../constants";
 import { setCurrency } from "../store/currency/currencySlice";
 import { useFormatPrice } from "../hooks/useFormatPrice";
 import { setLanguage } from "../store/lang/languageSlice";
