@@ -166,6 +166,7 @@ export const SelectLanguage = () => {
               ? chinaFlag
               : engFlag
           }
+          alt="country flag"
           className="w-5 md:w-7 h-auto rounded-md"
         />
         <span>

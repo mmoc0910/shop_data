@@ -14,12 +14,20 @@ const HomeBox = () => {
       id="home"
       className="bg-[url('https://images.unsplash.com/photo-1644088379091-d574269d422f?q=80&w=1993&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center relative pt-4"
     >
-      <img src={bg} className="absolute bottom-0 left-0 right-0 z-[2]" />
+      <img
+        alt="background image"
+        src={bg}
+        className="absolute bottom-0 left-0 right-0 z-[2]"
+      />
       <div className="absolute w-full h-full inset-0 bg-[#000000a0] z-[1]"></div>
       <Container className="pb-14 md:pb-20 grid grid-cols-10 relative z-10 md:gap-x-8">
         <div className="col-span-10 md:col-span-7">
           <div className="flex item md:items-center gap-2 mb-5">
-            <img src={logo} className="w-40 md:w-56 xl:w-60 object-contain" />
+            <img
+              src={logo}
+              alt="vncpn2 logo"
+              className="w-40 md:w-56 xl:w-60 object-contain"
+            />
             <h1 className="text-3xl lg:text-5xl font-medium text-white !leading-relaxed tracking-wide">
               {t("page.home.home.heading")}
             </h1>
@@ -35,7 +43,7 @@ const HomeBox = () => {
           </ul>
         </div>
         <div className="col-span-3 lg:pl-5 items-center justify-center hidden md:flex">
-          <img src={img} className="h-[400px] object-cover" />
+          <img src={img} alt="phone image" className="h-[400px] object-cover" />
         </div>
         <div className="col-span-10 mt-5 mb-0 lg:mb-24">
           <div className="grid grid-cols-12">
@@ -139,6 +147,7 @@ const HomeBox = () => {
               <div className="flex gap-5 justify-evenly xl:justify-start xl:gap-10">
                 <div className="flex flex-col items-center gap-3">
                   <img
+                    alt="QR Zalo"
                     src={qrZalo}
                     className="w-32 lg:w-40 aspect-square object-cover rounded-md"
                   />
@@ -146,6 +155,7 @@ const HomeBox = () => {
                 </div>
                 <div className="flex flex-col items-center gap-3">
                   <img
+                    alt="QR Wechat"
                     src={qrWechat}
                     className="w-32 lg:w-40 aspect-square object-cover rounded-md"
                   />
