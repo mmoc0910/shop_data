@@ -27,6 +27,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
 import { DropdownWithComponents } from "../../components/dropdown";
 import classNames from "../../utils/classNames";
+import ButtonConnectKuma from "../../components/server/ButtonConnectKuma";
 
 const ServerDetailAdminPage = () => {
   const { serverId } = useParams();
@@ -358,6 +359,12 @@ const ServerDetailAdminPage = () => {
                     Server version
                   </div>
                   <div>{serverDetail.version}</div>
+                </div>
+                <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg">
+                  <div className="font-medium text-gray-500">Connect Kuma</div>
+                  <div>
+                    <ButtonConnectKuma server={serverDetail} />
+                  </div>
                 </div>
               </div>
             </div>

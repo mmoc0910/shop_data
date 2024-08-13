@@ -26,6 +26,8 @@ import classNames from "../../utils/classNames";
 import IconTrash from "../../icons/IconTrash";
 import IconArrowRightLeft from "../../icons/IconArrowRightLeft";
 import { Checkbox } from "../../components/checkbox";
+import IconEyeToogle from "../../icons/IconEyeToogle";
+import { useToogleValue } from "../../hooks/useToogleValue";
 
 const schema = yup
   .object({
@@ -40,6 +42,10 @@ const schema = yup
 const ServerAdminPage = () => {
   const dispatch = useDispatch();
   const listServerStore = useSelector((state: RootState) => state.server);
+  const {
+    value: showHistoryServer,
+    handleToogleValue: handleToogleHistoryServer,
+  } = useToogleValue(false);
   const [listServer, setListServer] = useState<ServerType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingtable, setLoadingTable] = useState<boolean>(false);
@@ -51,6 +57,14 @@ const ServerAdminPage = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isModalAddServerOpen, setIsModalAddServerOpen] = useState(false);
   const [locations, setLocations] = useState<LocationType[]>([]);
+  const { maintenanceServer, downServer } = useMemo(
+    () => ({
+      activeSever: listServer.filter((item) => item.status === 1).length,
+      downServer: listServer.filter((item) => item.status === 2).length,
+      maintenanceServer: listServer.filter((item) => item.status === 3).length,
+    }),
+    []
+  );
   const listFilterServer = listServer.filter(
     (item) =>
       item.name.toLowerCase().includes(inputValue.toLowerCase()) ||
@@ -521,12 +535,6 @@ const ServerAdminPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [locations]
   );
-  // const totalKey =
-  //   servers.length > 0
-  //     ? servers
-  //         .map((item) => item.numberRecomendKey)
-  //         .reduce((prev, cur) => (prev += cur), 0)
-  //     : 0;
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -559,11 +567,13 @@ const ServerAdminPage = () => {
           </div>
           <div className="flex-1 space-y-3">
             <p className="text-lg text-[#ffaa01]">Maintenance</p>
-            <p className="text-2xl font-medium text-[#ffaa01]"></p>
+            <p className="text-2xl font-medium text-[#ffaa01]">
+              {maintenanceServer}
+            </p>
           </div>
           <div className="flex-1 space-y-3">
             <p className="text-lg text-error">Down</p>
-            <p className="text-2xl font-medium text-error"></p>
+            <p className="text-2xl font-medium text-error">{downServer}</p>
           </div>
           <div className="flex-1 space-y-3">
             <p className="text-lg text-gray-500">Total keys</p>
@@ -636,20 +646,13 @@ const ServerAdminPage = () => {
             </form>
           </div>
         </Modal>
-        <div className="flex items-center justify-between">
-          <Heading>
-            Danh sách máy chủ(
-            {listServer.filter((item) => item.status === 1).length})
-          </Heading>
-          <button
-            className="py-2 px-5 text-white bg-secondary20 rounded-lg font-medium"
-            type="button"
-            onClick={() => setIsModalAddServerOpen(true)}
-          >
-            Thêm máy chủ
-          </button>
-        </div>
-
+        <button
+          className="py-2 px-5 text-white bg-secondary20 rounded-lg font-medium"
+          type="button"
+          onClick={() => setIsModalAddServerOpen(true)}
+        >
+          Thêm máy chủ
+        </button>
         <div className="relative flex-1">
           <input
             type="text"
@@ -678,6 +681,12 @@ const ServerAdminPage = () => {
             </span>
           ) : null}
         </div>
+        <div className="flex items-center justify-between">
+          <Heading>
+            Danh sách máy chủ active(
+            {listServer.filter((item) => item.status === 1).length})
+          </Heading>
+        </div>
         <Table
           loading={loadingtable}
           dataSource={listFilterServer
@@ -686,15 +695,61 @@ const ServerAdminPage = () => {
           columns={columns}
           scroll={{ x: 1120 }}
         />
-        <Heading>Lịch sử máy chủ</Heading>
-        <Table
-          loading={loadingtable}
-          dataSource={listFilterServer
-            .filter((item) => item.status === 0)
-            .map((item, index) => ({ index, ...item }))}
-          columns={columnsHistory}
-          scroll={{ x: 1120 }}
-        />
+        {downServer > 0 ? (
+          <>
+            <div className="flex items-center justify-between">
+              <Heading>
+                Danh sách máy chủ Down(
+                {downServer})
+              </Heading>
+            </div>
+            <Table
+              loading={loadingtable}
+              dataSource={listFilterServer
+                .filter((item) => item.status === 2)
+                .map((item, index) => ({ index, ...item }))}
+              columns={columns}
+              scroll={{ x: 1120 }}
+            />
+          </>
+        ) : null}
+        {maintenanceServer > 0 ? (
+          <>
+            <div className="flex items-center justify-between">
+              <Heading>
+                Danh sách máy chủ Maintenance(
+                {maintenanceServer})
+              </Heading>
+            </div>
+            <Table
+              loading={loadingtable}
+              dataSource={listFilterServer
+                .filter((item) => item.status === 3)
+                .map((item, index) => ({ index, ...item }))}
+              columns={columns}
+              scroll={{ x: 1120 }}
+            />
+          </>
+        ) : null}
+
+        <div className="flex items-center gap-5">
+          <Heading>Lịch sử máy chủ</Heading>
+          <IconEyeToogle
+            className="cursor-pointer text-black"
+            open={showHistoryServer}
+            onClick={handleToogleHistoryServer}
+          />
+        </div>
+        {showHistoryServer ? (
+          <Table
+            loading={loadingtable}
+            dataSource={listFilterServer
+              .filter((item) => item.status === 0)
+              .map((item, index) => ({ index, ...item }))}
+            columns={columnsHistory}
+            scroll={{ x: 1120 }}
+          />
+        ) : null}
       </div>
       <Modal
         title="Chọn máy chủ"
