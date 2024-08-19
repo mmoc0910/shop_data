@@ -28,6 +28,7 @@ import IconArrowRightLeft from "../../icons/IconArrowRightLeft";
 import { Checkbox } from "../../components/checkbox";
 import IconEyeToogle from "../../icons/IconEyeToogle";
 import { useToogleValue } from "../../hooks/useToogleValue";
+import ChangeStatusServerButton from "../../components/server/ChangeStatusServerButton";
 
 const schema = yup
   .object({
@@ -36,6 +37,7 @@ const schema = yup
     remark: yup.string().required("This field is required"),
     location: yup.string().required("This field is required"),
     totalBandWidth: yup.number().required("This field is required"),
+    active: yup.boolean(),
   })
   .required();
 
@@ -63,7 +65,7 @@ const ServerAdminPage = () => {
       downServer: listServer.filter((item) => item.status === 2).length,
       maintenanceServer: listServer.filter((item) => item.status === 3).length,
     }),
-    []
+    [listServer]
   );
   const listFilterServer = listServer.filter(
     (item) =>
@@ -94,6 +96,7 @@ const ServerAdminPage = () => {
     mode: "onSubmit",
   });
   const locationWatch = watch("location");
+  const activeWatch = watch("active");
   useEffect(() => {
     handleFetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -139,24 +142,22 @@ const ServerAdminPage = () => {
     // numberRecomendKey: number;
     // defaultBandWidth: number;
     totalBandWidth: number;
+    active: boolean;
   }) => {
+    // console.log("data ~ ", data);
     try {
-      try {
-        await api.post("/servers", data);
-        handleFetchData();
-        toast.success("Import Server thành công");
-        reset();
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.log("error message: ", error);
-          toast.error(error.response?.data.message);
-        } else {
-          console.log("unexpected error: ", error);
-          return "An unexpected error occurred";
-        }
-      }
+      await api.post("/servers", { ...data, status: activeWatch ? 1 : 33});
+      handleFetchData();
+      toast.success("Import Server thành công");
+      reset();
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error)) {
+        console.log("error message: ", error);
+        toast.error(error.response?.data.message);
+      } else {
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
+      }
     }
   };
   const handleRemoveServer = async (_id: string) => {
@@ -393,6 +394,10 @@ const ServerAdminPage = () => {
         width: 170,
         render: (_: string, record: ServerType) => (
           <div className="flex gap-2">
+            <ChangeStatusServerButton
+              serverId={record._id}
+              status={record.status}
+            />
             <Tooltip title="Migrate server">
               <button
                 className="px-2 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary"
@@ -636,7 +641,12 @@ const ServerAdminPage = () => {
                 control={control}
                 className="!h-[100px]"
               />
-              <Checkbox checked>Active</Checkbox>
+              <Checkbox
+                checked={activeWatch}
+                onClick={() => setValue("active", !activeWatch)}
+              >
+                Active
+              </Checkbox>
               <Button
                 className="w-full px-5 py-2 text-white bg-secondary20 lg:w-fit"
                 type="submit"

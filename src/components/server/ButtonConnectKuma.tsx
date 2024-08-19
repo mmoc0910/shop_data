@@ -10,12 +10,12 @@ const ButtonConnectKuma: FC<Props> = ({ server }) => {
   const handleConnectKuma = async () => {
     try {
       setLoading(true);
-      const { location, hostnameForAccessKeys, apiUrl, portForNewAccessKeys } =
+      const { name, hostnameForAccessKeys, apiUrl, portForNewAccessKeys } =
         server;
       const parsedUrl = new URL(apiUrl);
       const portM = parsedUrl.port;
-     await api.post("/kuma/create", {
-        name: location,
+      await api.post("/kuma/create", {
+        name,
         hostname: hostnameForAccessKeys,
         portC: `${portForNewAccessKeys}`,
         portM: portM,
