@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 export const BANK_ID = import.meta.env.VITE_BANK_ID;
 export const ACCOUNT_NO = import.meta.env.VITE_ACCOUNT_NO;
 export const ACCOUNT_NAME = import.meta.env.VITE_ACCOUNT_NAME;
@@ -30,7 +30,7 @@ export const regexUserName = /^[a-z0-9!@#$%^&*()_+{}[\]:;<>,.?/~`|-]+$/;
 
 export const linkGist = import.meta.env.VITE_LINK_GIST;
 
-export const DAY_FORMAT = (date: Date) =>
+export const DAY_FORMAT = (date: Date | Dayjs) =>
   dayjs(date).format("DD-MM-YYYY HH:mm");
 
 export function isSameOrBefore(

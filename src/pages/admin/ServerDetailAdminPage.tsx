@@ -28,6 +28,7 @@ import { RootState } from "../../store/configureStore";
 import { DropdownWithComponents } from "../../components/dropdown";
 import classNames from "../../utils/classNames";
 import ButtonConnectKuma from "../../components/server/ButtonConnectKuma";
+import ButtonRemoveKuma from "../../components/server/ButtonRemoveKuma";
 
 const ServerDetailAdminPage = () => {
   const { serverId } = useParams();
@@ -361,9 +362,10 @@ const ServerDetailAdminPage = () => {
                   <div>{serverDetail.version}</div>
                 </div>
                 <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg">
-                  <div className="font-medium text-gray-500">Connect Kuma</div>
-                  <div>
+                  <div className="font-medium text-gray-500">Kuma</div>
+                  <div className="flex gap-2 w-full">
                     <ButtonConnectKuma server={serverDetail} />
+                    <ButtonRemoveKuma server={serverDetail} />
                   </div>
                 </div>
               </div>

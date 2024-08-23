@@ -14,6 +14,8 @@ import { setCollab } from "./store/collab/collabSlice";
 import { setSatify } from "./store/satisfy/satisfySlice";
 import { api } from "./api";
 import { CollabType, CommisionType, SatisfyType } from "./type";
+import ListKeyAdminPage from "./pages/admin/ListKeyAdminPage";
+import { CloudAdminPage } from "./pages/admin/CloudAdminPage";
 const RechargePage = lazy(() => import("./pages/user/RechargePage"));
 const AccountDetailPage = lazy(() => import("./pages/admin/AccountDetailPage"));
 const CashPage = lazy(() => import("./pages/user/CashPage"));
@@ -131,8 +133,10 @@ function App() {
               element={<ServerDetailAdminPage />}
             />
             <Route path="/admin/key" element={<KeyAdminPage />} />
+            <Route path="/admin/list-key" element={<ListKeyAdminPage />} />
             <Route path="/admin/cash" element={<CashAdminPage />} />
             <Route path="/admin/commision" element={<CommisionAdminPage />} />
+            <Route path="/admin/cloud" element={<CloudAdminPage />} />
           </Route>
           <Route element={<LayoutUser />}>
             <Route path="/user/dashboard" element={<DashboardUserPage />} />

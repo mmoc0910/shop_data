@@ -1,10 +1,10 @@
-import React from "react";
+
 import { FC } from "react";
-import { DropdownWithComponents } from "../dropdown";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { api } from "../../api";
+import { AdjustmentsHorizontal } from "../../icons/AdjustmentsHorizontal";
 
 type Props = {
   serverId: string;
@@ -55,19 +55,25 @@ const ChangeStatusServerButton: FC<Props> = ({
     }
   };
   return (
-    <div className="flex gap-2">
-      {SERVER_STATUS.map((item) =>
-        item.id !== status ? (
-          <button
-            type="button"
-            key={item.id}
-            className="px-2 text-xs font-medium text-white rounded-md bg-secondary40 font-primary"
-            onClick={() => handleChangeStatusServer(serverId, item.id)}
-          >
-            {item.title}
-          </button>
-        ) : null
-      )}
+    <div className="flex gap-2 relative group">
+      <div className="size-7 rounded-md bg-primary40 flex items-center justify-center text-white">
+        <AdjustmentsHorizontal />
+      </div>
+      <div className="absolute z-[10000000000] bg-primary40 rounded-md overflow-hidden shadow-xl bottom-full left-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible">
+        {SERVER_STATUS.map((item) =>
+          item.id !== status ? (
+            <button
+              type="button"
+              key={item.id}
+              // className="px-2 text-xs font-medium text-white rounded-md bg-secondary40 font-primary"
+              className="px-5 py-1 font-medium text-white"
+              onClick={() => handleChangeStatusServer(serverId, item.id)}
+            >
+              {item.title}
+            </button>
+          ) : null
+        )}
+      </div>
     </div>
   );
 };

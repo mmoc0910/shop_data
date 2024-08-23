@@ -23,12 +23,12 @@ import { setServer } from "../../store/server/serverSlice";
 import { DropdownWithComponents } from "../../components/dropdown";
 import { v4 as uuidv4 } from "uuid";
 import classNames from "../../utils/classNames";
-import IconTrash from "../../icons/IconTrash";
 import IconArrowRightLeft from "../../icons/IconArrowRightLeft";
 import { Checkbox } from "../../components/checkbox";
 import IconEyeToogle from "../../icons/IconEyeToogle";
 import { useToogleValue } from "../../hooks/useToogleValue";
 import ChangeStatusServerButton from "../../components/server/ChangeStatusServerButton";
+import { ButtonDeleteServer } from "../../components/server/ButtonDeleteServer";
 
 const schema = yup
   .object({
@@ -36,8 +36,11 @@ const schema = yup
     fingerPrint: yup.string().required("This field is required"),
     remark: yup.string().required("This field is required"),
     location: yup.string().required("This field is required"),
-    totalBandWidth: yup.number().required("This field is required"),
-    active: yup.boolean(),
+    totalBandWidth: yup
+      .number()
+      .required("This field is required")
+      .default(3000),
+    active: yup.boolean().required(),
   })
   .required();
 
@@ -94,6 +97,14 @@ const ServerAdminPage = () => {
   } = useForm({
     resolver: yupResolver(schema),
     mode: "onSubmit",
+    defaultValues: {
+      totalBandWidth: 3000,
+      active: false,
+      apiUrl: "",
+      fingerPrint: "",
+      location: "",
+      remark: "",
+    },
   });
   const locationWatch = watch("location");
   const activeWatch = watch("active");
@@ -146,7 +157,7 @@ const ServerAdminPage = () => {
   }) => {
     // console.log("data ~ ", data);
     try {
-      await api.post("/servers", { ...data, status: activeWatch ? 1 : 33});
+      await api.post("/servers", { ...data, status: activeWatch ? 1 : 3 });
       handleFetchData();
       toast.success("Import Server thành công");
       reset();
@@ -160,41 +171,41 @@ const ServerAdminPage = () => {
       }
     }
   };
-  const handleRemoveServer = async (_id: string) => {
-    try {
-      const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn xóa máy chủ này</p>`,
-        icon: "success",
-        showCancelButton: true,
-        confirmButtonColor: "#1DC071",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Thoát",
-        confirmButtonText: "Xóa",
-      });
-      if (isConfirmed) {
-        const result = await api.get<KeySeverType[]>(
-          `/keys?serverId=${_id}&status=1`
-        );
-        if (result.data.length > 0) {
-          toast.warn(
-            "Bạn phải migrate key sang server khác trước khi muốn xóa"
-          );
-        } else {
-          await api.delete(`/servers/${_id}`);
-          handleFetchData();
-          toast.success("Xóa thành công");
-        }
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log("error message: ", error);
-        toast.error(error.response?.data.message);
-      } else {
-        console.log("unexpected error: ", error);
-        return "An unexpected error occurred";
-      }
-    }
-  };
+  // const handleRemoveServer = async (_id: string) => {
+  //   try {
+  //     const { isConfirmed } = await Swal.fire({
+  //       title: `<p class="leading-tight">Bạn có muốn xóa máy chủ này</p>`,
+  //       icon: "success",
+  //       showCancelButton: true,
+  //       confirmButtonColor: "#1DC071",
+  //       cancelButtonColor: "#d33",
+  //       cancelButtonText: "Thoát",
+  //       confirmButtonText: "Xóa",
+  //     });
+  //     if (isConfirmed) {
+  //       const result = await api.get<KeySeverType[]>(
+  //         `/keys?serverId=${_id}&status=1`
+  //       );
+  //       if (result.data.length > 0) {
+  //         toast.warn(
+  //           "Bạn phải migrate key sang server khác trước khi muốn xóa"
+  //         );
+  //       } else {
+  //         await api.delete(`/servers/${_id}`);
+  //         handleFetchData();
+  //         toast.success("Xóa thành công");
+  //       }
+  //     }
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       console.log("error message: ", error);
+  //       toast.error(error.response?.data.message);
+  //     } else {
+  //       console.log("unexpected error: ", error);
+  //       return "An unexpected error occurred";
+  //     }
+  //   }
+  // };
   const handleMigrateServer = async (_oldId: string, _newId: string) => {
     try {
       const { isConfirmed } = await Swal.fire({
@@ -397,10 +408,11 @@ const ServerAdminPage = () => {
             <ChangeStatusServerButton
               serverId={record._id}
               status={record.status}
+              handleFetchData={handleFetchData}
             />
             <Tooltip title="Migrate server">
               <button
-                className="px-2 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary"
+                className="flex items-center justify-center w-7 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary"
                 onClick={() => {
                   setSelectRow(record._id);
                   showModal();
@@ -409,12 +421,10 @@ const ServerAdminPage = () => {
                 <IconArrowRightLeft className="size-4" />
               </button>
             </Tooltip>
-            <button
-              className="px-2 aspect-square text-xs font-medium text-white rounded-md bg-error font-primary"
-              onClick={() => handleRemoveServer(record._id)}
-            >
-              <IconTrash className="size-4" />
-            </button>
+            <ButtonDeleteServer
+              handleFetchData={handleFetchData}
+              serverId={record._id}
+            />
           </div>
         ),
       },
@@ -656,41 +666,44 @@ const ServerAdminPage = () => {
             </form>
           </div>
         </Modal>
-        <button
-          className="py-2 px-5 text-white bg-secondary20 rounded-lg font-medium"
-          type="button"
-          onClick={() => setIsModalAddServerOpen(true)}
-        >
-          Thêm máy chủ
-        </button>
-        <div className="relative flex-1">
-          <input
-            type="text"
-            value={inputValue}
-            onChange={handleChange}
-            className="focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock"
-            placeholder={"Search..."}
-          />
-          {inputValue.length > 0 ? (
-            <span
-              className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2"
-              onClick={() => setInputValue("")}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="w-5 h-5 text-icon-color"
+        <div className="flex gap-5">
+          <button
+            className="py-2 px-5 text-white bg-secondary20 rounded-lg font-medium"
+            type="button"
+            onClick={() => setIsModalAddServerOpen(true)}
+          >
+            Thêm máy chủ
+          </button>
+          <div className="relative flex-1">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={handleChange}
+              className="focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock"
+              placeholder={"Search..."}
+            />
+            {inputValue.length > 0 ? (
+              <span
+                className="absolute -translate-y-1/2 cursor-pointer right-5 top-1/2"
+                onClick={() => setInputValue("")}
               >
-                <path
-                  fillRule="evenodd"
-                  d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </span>
-          ) : null}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-5 h-5 text-icon-color"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </span>
+            ) : null}
+          </div>
         </div>
+
         <div className="flex items-center justify-between">
           <Heading>
             Danh sách máy chủ active(

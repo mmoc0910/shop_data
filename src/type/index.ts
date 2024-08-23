@@ -61,6 +61,7 @@ export type ServerType = {
   numberKey: number;
   __v: 0;
   listKeys?: KeySeverType[];
+  isConnectKuma: 0 | 1;
 };
 
 type AWSType = {
@@ -256,3 +257,22 @@ export type KeyDetailType = {
   __v: 0;
   gist: GistType;
 };
+
+export type CloudManagerType = {
+  "_id": string,
+  "name": string,
+  "startDate": Date,
+  "endDate": Date,
+  "status": 0 | 1,
+  "cloudId": string,
+  "providerId": string,
+  "key": string,
+  "price": number,
+  "remark": string,
+  "isDelete": 1 | 0,
+  "createdAt": Date,
+  "updatedAt": Date,
+  "__v": 0,
+  "remain": number,
+  "server": number
+}

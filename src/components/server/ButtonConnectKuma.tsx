@@ -27,6 +27,7 @@ const ButtonConnectKuma: FC<Props> = ({ server }) => {
       setLoading(false);
     }
   };
+  // if (server.isConnectKuma === 1) return;
   return (
     <button
       type="button"
