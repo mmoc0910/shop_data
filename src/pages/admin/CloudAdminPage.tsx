@@ -19,6 +19,7 @@ import classNames from "../../utils/classNames";
 import Swal from "sweetalert2";
 import { DatePickerProps } from "antd";
 import { DAY_FORMAT } from "../../constants";
+import { Link } from "react-router-dom";
 
 const schema = yup
   .object({
@@ -89,7 +90,7 @@ export const CloudAdminPage = () => {
       );
       setListCloud(
         response.data.listData.map((item, index) => ({
-          index: index + 1,
+          index,
           ...item,
         }))
       );
@@ -178,8 +179,13 @@ export const CloudAdminPage = () => {
         title: <p className="font-semibold font-primary">Name</p>,
         dataIndex: "name",
         key: "name",
-        render: (text: string) => (
-          <p className="text-sm font-primary">{text}</p>
+        render: (text: string, record) => (
+          <Link
+            to={`/admin/cloud/${record._id}`}
+            className="text-sm font-primary text-primary"
+          >
+            {text}
+          </Link>
         ),
       },
       {
@@ -187,26 +193,23 @@ export const CloudAdminPage = () => {
         dataIndex: "status",
         key: "status",
         render: (status: 0 | 1, record) => (
-          <div
-            onClick={() => handleChangeStatus(record._id, status === 0 ? 1 : 0)}
-            className={classNames(
-              "w-2 h-2 rounded-full",
-              status === 1 ? "bg-primary20" : "bg-error"
+          <div className="flex items-center gap-5">
+            <div
+              onClick={() =>
+                handleChangeStatus(record._id, status === 0 ? 1 : 0)
+              }
+              className={classNames(
+                "w-2 h-2 rounded-full",
+                status === 1 ? "bg-primary20" : "bg-error"
+              )}
+            ></div>
+            {record.remain >= 0 ? (
+              <Tag color="green">Valid</Tag>
+            ) : (
+              <Tag color="red">Expired</Tag>
             )}
-          ></div>
+          </div>
         ),
-        width: 40,
-      },
-      {
-        title: <p className="font-semibold font-primary">Valid</p>,
-        dataIndex: "valid",
-        key: "valid",
-        render: (_, record) =>
-          record.remain >= 0 ? (
-            <Tag color="green">Valid</Tag>
-          ) : (
-            <Tag color="red">Expired</Tag>
-          ),
       },
       {
         title: <p className="font-semibold font-primary">Date</p>,
@@ -252,14 +255,14 @@ export const CloudAdminPage = () => {
           </p>
         ),
       },
-      {
-        title: <p className="font-semibold font-primary">Key</p>,
-        dataIndex: "key",
-        key: "key",
-        render: (text: number) => (
-          <p className="text-sm font-primary">{text}</p>
-        ),
-      },
+      // {
+      //   title: <p className="font-semibold font-primary">Key</p>,
+      //   dataIndex: "key",
+      //   key: "key",
+      //   render: (text: number) => (
+      //     <p className="text-sm font-primary">{text}</p>
+      //   ),
+      // },
       {
         title: <p className="font-semibold font-primary">Server</p>,
         dataIndex: "server",
@@ -276,14 +279,14 @@ export const CloudAdminPage = () => {
           <p className="text-sm font-primary">{VND.format(text)}</p>
         ),
       },
-      {
-        title: <p className="font-semibold font-primary">Remark</p>,
-        dataIndex: "remark",
-        key: "remark",
-        render: (text: number) => (
-          <p className="text-sm font-primary">{text}</p>
-        ),
-      },
+      // {
+      //   title: <p className="font-semibold font-primary">Remark</p>,
+      //   dataIndex: "remark",
+      //   key: "remark",
+      //   render: (text: number) => (
+      //     <p className="text-sm font-primary">{text}</p>
+      //   ),
+      // },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [clouds, providers]

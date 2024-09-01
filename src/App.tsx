@@ -16,6 +16,7 @@ import { api } from "./api";
 import { CollabType, CommisionType, SatisfyType } from "./type";
 import ListKeyAdminPage from "./pages/admin/ListKeyAdminPage";
 import { CloudAdminPage } from "./pages/admin/CloudAdminPage";
+import { CloudDetailAdminPage } from "./pages/admin/CloudDetailAdminPage";
 const RechargePage = lazy(() => import("./pages/user/RechargePage"));
 const AccountDetailPage = lazy(() => import("./pages/admin/AccountDetailPage"));
 const CashPage = lazy(() => import("./pages/user/CashPage"));
@@ -46,8 +47,12 @@ const AccountPage = lazy(() => import("./pages/user/AccountPage"));
 const PlanPage = lazy(() => import("./pages/user/PlanPage"));
 const OrderPage = lazy(() => import("./pages/user/OrderPage"));
 const InvitePage = lazy(() => import("./pages/user/InvitePage"));
-const AndroidGuidePost = lazy(() => import("./pages/user/post/AndroidGuidePost"));
-const TiTokIphoneGuide = lazy(() => import("./pages/user/post/TiTokIphoneGuide"));
+const AndroidGuidePost = lazy(
+  () => import("./pages/user/post/AndroidGuidePost")
+);
+const TiTokIphoneGuide = lazy(
+  () => import("./pages/user/post/TiTokIphoneGuide")
+);
 const QuestionPost = lazy(() => import("./pages/user/post/QuestionPost"));
 const KeyDetailAdminPage = lazy(
   () => import("./pages/admin/KeyDetailAdminPage")
@@ -137,6 +142,10 @@ function App() {
             <Route path="/admin/cash" element={<CashAdminPage />} />
             <Route path="/admin/commision" element={<CommisionAdminPage />} />
             <Route path="/admin/cloud" element={<CloudAdminPage />} />
+            <Route
+              path="/admin/cloud/:cloudId"
+              element={<CloudDetailAdminPage />}
+            />
           </Route>
           <Route element={<LayoutUser />}>
             <Route path="/user/dashboard" element={<DashboardUserPage />} />
@@ -147,9 +156,18 @@ function App() {
             <Route path="/user/transaction" element={<TransactionPage />} />
             <Route path="/user/cash" element={<CashPage />} />
             <Route path="/user/recharge" element={<RechargePage />} />
-            <Route path="/user/dashboard/post/android-vi_outline-phone-guide" element={<AndroidGuidePost />} />
-            <Route path="/user/dashboard/post/tiktok-iphone-guide" element={<TiTokIphoneGuide />} />
-            <Route path="/user/dashboard/post/questions" element={<QuestionPost />} />
+            <Route
+              path="/user/dashboard/post/android-vi_outline-phone-guide"
+              element={<AndroidGuidePost />}
+            />
+            <Route
+              path="/user/dashboard/post/tiktok-iphone-guide"
+              element={<TiTokIphoneGuide />}
+            />
+            <Route
+              path="/user/dashboard/post/questions"
+              element={<QuestionPost />}
+            />
           </Route>
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
