@@ -402,7 +402,7 @@ const CashAdminPage = () => {  const priceFomat = useFormatPrice();
     setInputValue(value);
   };
   return (
-    <RequireAuthPage rolePage={1}>
+    <RequireAuthPage rolePage={[1,3]}>
       <div className="space-y-6">
         <Heading>Danh sách yêu cầu nạp</Heading>
         <div className="items-center block gap-5 space-y-3 md:flex md:space-y-0">

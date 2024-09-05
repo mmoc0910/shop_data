@@ -31,7 +31,7 @@ const KeyAdminPage = () => {
     }
   };
   return (
-    <RequireAuthPage rolePage={1}>
+    <RequireAuthPage rolePage={[1, 3]}>
       {keys.length > 0 && !loading ? (
         <div className="space-y-7">
           <div className="grid grid-cols-4 gap-6">

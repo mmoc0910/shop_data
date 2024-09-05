@@ -1,7 +1,7 @@
 import { Key, useEffect, useMemo, useState } from "react";
 import { api } from "../../api";
 import Heading from "../../components/common/Heading";
-import { KeySeverType, LocationType, ServerType } from "../../type";
+import { LocationType, ServerType } from "../../type";
 import { toast } from "react-toastify";
 import { DAY_FORMAT } from "../../constants";
 import { Link } from "react-router-dom";
@@ -29,6 +29,7 @@ import IconEyeToogle from "../../icons/IconEyeToogle";
 import { useToogleValue } from "../../hooks/useToogleValue";
 import ChangeStatusServerButton from "../../components/server/ChangeStatusServerButton";
 import { ButtonDeleteServer } from "../../components/server/ButtonDeleteServer";
+import { PickCloudManagerForm } from "../../components/server/PickCloudManagerForm";
 
 const schema = yup
   .object({
@@ -36,6 +37,7 @@ const schema = yup
     fingerPrint: yup.string().required("This field is required"),
     remark: yup.string().required("This field is required"),
     location: yup.string().required("This field is required"),
+    cloudManagerId: yup.string().required("This field is required"),
     totalBandWidth: yup
       .number()
       .required("This field is required")
@@ -104,10 +106,12 @@ const ServerAdminPage = () => {
       fingerPrint: "",
       location: "",
       remark: "",
+      cloudManagerId: "",
     },
   });
   const locationWatch = watch("location");
   const activeWatch = watch("active");
+  const cloudManagerIdWatch = watch("cloudManagerId");
   useEffect(() => {
     handleFetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -154,8 +158,9 @@ const ServerAdminPage = () => {
     // defaultBandWidth: number;
     totalBandWidth: number;
     active: boolean;
+    cloudManagerId: string;
   }) => {
-    // console.log("data ~ ", data);
+    console.log("data ~ ", data);
     try {
       await api.post("/servers", { ...data, status: activeWatch ? 1 : 3 });
       handleFetchData();
@@ -566,7 +571,7 @@ const ServerAdminPage = () => {
     setInputValue(value);
   };
   return (
-    <RequireAuthPage rolePage={1}>
+    <RequireAuthPage rolePage={[1, 3]}>
       {loading && <Loading />}
       <div className="space-y-10">
         <div className="grid grid-cols-2 p-5 gap-5 md:grid-cols-5 rounded-xl border-2 border-[#eeeeed]">
@@ -623,6 +628,19 @@ const ServerAdminPage = () => {
                   error={
                     errors?.location?.message
                       ? errors.location.message
+                      : undefined
+                  }
+                />
+              </div>
+              <div className="w-full lg:flex-1">
+                <PickCloudManagerForm
+                  data={cloudManagerIdWatch}
+                  onSelect={(value) => {
+                    setValue("cloudManagerId", value);
+                  }}
+                  error={
+                    errors?.cloudManagerId?.message
+                      ? errors?.cloudManagerId.message
                       : undefined
                   }
                 />
@@ -860,10 +878,10 @@ const TotalKeyUsage = ({ serverId = "" }: { serverId?: string }) => {
   useEffect(() => {
     (async () => {
       try {
-        const result = await api.get<KeySeverType[]>(
+        const result = await api.get<{ totalItems: number }>(
           `/keys?serverId=${serverId}&status=1`
         );
-        setTotal(result.data.length);
+        setTotal(result.data.totalItems);
       } catch (error) {
         console.log(error);
       }

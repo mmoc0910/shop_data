@@ -314,7 +314,7 @@ const CashPage = () => {
   };
 
   return (
-    <RequireAuthPage rolePage={2}>
+    <RequireAuthPage rolePage={[2]}>
       <RechargePage />
       <div className="mt-10 space-y-4 md:space-y-6">
         <Heading>

@@ -43,6 +43,8 @@ const AccountAdminPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [listUser, setListUser] = useState<UserState[]>([]);
   const [selectRow, setSelectRow] = useState<UserState | undefined>(undefined);
+  const [totalItems, setTotalItems] = useState<number>();
+  const [page, setPage] = useState(1);
   const [inputValue, setInputValue] = useState<string>("");
   const listUserFilter = inputValue
     ? listUser.filter((item) =>
@@ -60,8 +62,8 @@ const AccountAdminPage = () => {
     }
   }, [selectRow, setValue]);
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData(page);
+  }, [page]);
   const onSubmit = async (data: { level: number }) => {
     try {
       if (selectRow) {
@@ -70,7 +72,7 @@ const AccountAdminPage = () => {
           username: selectRow.username,
           email: selectRow.email,
         });
-        fetchData();
+        fetchData(page);
         toast.success("Thành công");
       }
     } catch (error) {
@@ -82,11 +84,17 @@ const AccountAdminPage = () => {
       reset();
     }
   };
-  const fetchData = async () => {
+  const fetchData = async (_page: number) => {
     try {
       setLoading(true);
-      const result = await api.get<UserState[]>(`/users`);
-      const data = result?.data?.filter((i) => i.role !== 1);
+      const result = await api.get<{
+        resultList: UserState[];
+        totalItems: number;
+      }>(`/users`, {
+        params: { page: _page },
+      });
+      const data = result?.data?.resultList.filter((i) => i.role !== 1);
+      setTotalItems(result.data.totalItems);
       setListUser(data);
     } catch (error) {
       toast.error(messages.error);
@@ -148,9 +156,7 @@ const AccountAdminPage = () => {
         dataIndex: "cash",
         key: "cash",
         render: (text: number) => (
-          <p className="text-sm font-primary">
-            {priceFomat(text || 0)}
-          </p>
+          <p className="text-sm font-primary">{priceFomat(text || 0)}</p>
         ),
         sorter: {
           compare: (a, b) => a.cash - b.cash,
@@ -164,10 +170,7 @@ const AccountAdminPage = () => {
         dataIndex: "money",
         key: "money",
         render: (text: number) => (
-          <p className="text-sm font-primary">
-            {" "}
-            {priceFomat(text)}
-          </p>
+          <p className="text-sm font-primary"> {priceFomat(text)}</p>
         ),
         sorter: {
           compare: (a, b) => a.money - b.money,
@@ -255,7 +258,7 @@ const AccountAdminPage = () => {
     setInputValue(value);
   };
   return (
-    <RequireAuthPage rolePage={1}>
+    <RequireAuthPage rolePage={[1, 3]}>
       <div className="space-y-6">
         <div className="flex items-center gap-5">
           <div className="relative flex-1">
@@ -299,6 +302,12 @@ const AccountAdminPage = () => {
             columns={columns}
             loading={loading}
             scroll={{ y: 420, x: 1120 }}
+            pagination={{
+              defaultCurrent: 1,
+              total: totalItems,
+              onChange: (index) => setPage(index),
+              pageSize: 10,
+            }}
           />
         </div>
       </div>{" "}

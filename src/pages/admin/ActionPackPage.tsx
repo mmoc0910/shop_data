@@ -105,7 +105,7 @@ const ActionPackPage = () => {
     }
   };
   return (
-    <RequireAuthPage rolePage={1}>
+    <RequireAuthPage rolePage={[1]}>
       <div className="space-y-4">
         <Heading>Thêm gói cước mới</Heading>
         <form

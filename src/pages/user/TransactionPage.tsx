@@ -198,7 +198,7 @@ const TransactionPage = () => {
     setEndDate(date);
   };
   return (
-    <RequireAuthPage rolePage={2}>
+    <RequireAuthPage rolePage={[2]}>
       <div className="space-y-6">
         <Heading>{t("page.transaction.heading")}</Heading>
         <p className="text-base font-semibold">

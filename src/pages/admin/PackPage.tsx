@@ -327,7 +327,7 @@ const PackPage = () => {
     setInputValue(value);
   };
   return (
-    <RequireAuthPage rolePage={1}>
+    <RequireAuthPage rolePage={[1]}>
       <div className="pb-10">
         <div className="hidden mt-10 space-y-6 lg:block">
           <Heading>Gói cước hiển thị trang chủ</Heading>

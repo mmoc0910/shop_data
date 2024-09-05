@@ -259,20 +259,20 @@ export type KeyDetailType = {
 };
 
 export type CloudManagerType = {
-  "_id": string,
-  "name": string,
-  "startDate": Date,
-  "endDate": Date,
-  "status": 0 | 1,
-  "cloudId": string,
-  "providerId": string,
-  "key": string,
-  "price": number,
-  "remark": string,
-  "isDelete": 1 | 0,
-  "createdAt": Date,
-  "updatedAt": Date,
-  "__v": 0,
-  "remain": number,
-  "server": number
-}
+  _id: string;
+  name: string;
+  startDate: Date;
+  endDate: Date;
+  status: 0 | 1;
+  cloudId: string;
+  providerId: string;
+  key: string;
+  price: number;
+  remark: string;
+  isDelete: 1 | 0;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: 0;
+  remain: number;
+  server: number;
+};

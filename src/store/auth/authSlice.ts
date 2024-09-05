@@ -4,7 +4,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 export interface AuthState {
   level?: number;
   email?: string;
-  role?: 1 | 2;
+  role?: 1 | 2 | 3;
   phone?: string;
   country?: "vi" | "ci" | "ir" | "orther";
   purpose?: number;

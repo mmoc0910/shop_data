@@ -18,7 +18,6 @@ import { VND } from "../../utils/formatPrice";
 import classNames from "../../utils/classNames";
 import Swal from "sweetalert2";
 import { DatePickerProps } from "antd";
-import { DAY_FORMAT } from "../../constants";
 import { Link } from "react-router-dom";
 
 const schema = yup
@@ -113,6 +112,7 @@ export const CloudAdminPage = () => {
     status: number;
   }) => {
     try {
+      console.log("data ~ ", data);
       await api.post("/cloud-managers", data);
       handleFetchData();
       setOpenModal(false);
@@ -159,10 +159,10 @@ export const CloudAdminPage = () => {
     }
   };
   const onChangeStartDate: DatePickerProps["onChange"] = (date) => {
-    setValue("startDate", DAY_FORMAT(date));
+    setValue("startDate", dayjs(date).format("DD/MM/YYYY"));
   };
   const onChangeEndDate: DatePickerProps["onChange"] = (date) => {
-    setValue("endDate", DAY_FORMAT(date));
+    setValue("endDate", dayjs(date).format("DD/MM/YYYY"));
   };
   const columns: TableColumnsType<CloudManagerType> = useMemo(
     () => [

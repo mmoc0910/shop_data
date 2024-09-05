@@ -56,10 +56,10 @@ const ServerDetailAdminPage = () => {
     try {
       const [resultServer, resultKey] = await Promise.all([
         api.get<ServerType>(`/servers/${serverId}`),
-        api.get<KeySeverType[]>(`/keys?serverId=${serverId}`),
+        api.get<{ data: KeySeverType[] }>(`/keys?serverId=${serverId}`),
       ]);
       setServerDetail(resultServer.data);
-      setListKey(resultKey.data.filter((item) => item.status !== 0));
+      setListKey(resultKey.data.data.filter((item) => item.status !== 0));
     } catch (error) {
       console.log(error);
       toast.error(messages.error);
@@ -253,7 +253,7 @@ const ServerDetailAdminPage = () => {
     }
   };
   return (
-    <RequireAuthPage rolePage={1}>
+    <RequireAuthPage rolePage={[1, 3]}>
       <div className="space-y-10">
         {serverDetail && (
           <>

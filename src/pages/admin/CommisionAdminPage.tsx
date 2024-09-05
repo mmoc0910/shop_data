@@ -386,7 +386,7 @@ const Collab = () => {
     }
   };
   return (
-    <RequireAuthPage rolePage={1}>
+    <RequireAuthPage rolePage={[1]}>
       <p className="mb-5">
         Tỉ lệ % chiết khấu mà Đại lý nhận được khi mua gói cước.
       </p>

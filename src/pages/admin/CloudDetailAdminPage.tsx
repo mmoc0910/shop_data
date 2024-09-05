@@ -78,7 +78,7 @@ export const CloudDetailAdminPage = () => {
   };
   if (!cloudDetail) return null;
   return (
-    <RequireAuthPage rolePage={1}>
+    <RequireAuthPage rolePage={[1]}>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
         <BoxInfo label={"Cloud Name"}>{cloudDetail.name}</BoxInfo>
         <BoxInfo label={"Status"}>

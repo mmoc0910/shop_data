@@ -29,7 +29,6 @@ export const ListKeyAdmin = () => {
         });
         setTotalItems(response.data.totalItems);
         setListKey(response.data.data);
-        console.log("response ~ ", response.data);
       } catch (error) {
         console.log(error);
       } finally {

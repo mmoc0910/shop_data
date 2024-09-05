@@ -28,6 +28,7 @@ import { useTranslation } from "react-i18next";
 import { Checkbox } from "../../components/checkbox";
 import MoveServer from "../../components/user/MoveServer";
 import { useFormatPrice } from "../../hooks/useFormatPrice";
+import RequireAuthPage from "../../components/common/RequireAuthPage";
 
 const AccountDetailPage = () => {
   const priceFomat = useFormatPrice();
@@ -467,7 +468,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
     setInputValue(value);
   };
   return (
-    <div>
+    <RequireAuthPage rolePage={[1, 3]}>
       <Heading className="mb-4">Danh sách key đã mua</Heading>
       <div className="items-center block gap-5 mb-5 space-y-3 md:flex md:space-y-0">
         <div className="relative flex-1">
@@ -519,7 +520,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
           scroll={{ x: 1120 }}
         />
       </div>
-    </div>
+    </RequireAuthPage>
   );
 };
 

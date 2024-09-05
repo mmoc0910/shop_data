@@ -510,7 +510,7 @@ const OrderPage = () => {
     setInputValue(value);
   };
   return (
-    <RequireAuthPage rolePage={2}>
+    <RequireAuthPage rolePage={[2]}>
       {loading ? <Loading /> : null}
       <div className="bg-[#ffeaa754] rounded-lg p-5 mb-5">
         <p className="mb-1">

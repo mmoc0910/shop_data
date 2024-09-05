@@ -8,7 +8,7 @@ export type ListKeyForm = { searchTerm: string };
 const ListKeyAdminPage = () => {
   const methods = useForm<ListKeyForm>();
   return (
-    <RequireAuthPage rolePage={1}>
+    <RequireAuthPage rolePage={[1,3]}>
       <FormProvider {...methods}>
         <div className="space-y-5">
           <div className="grid grid-cols-2 p-5 gap-5 md:grid-cols-5 rounded-xl border-2 border-[#eeeeed]">

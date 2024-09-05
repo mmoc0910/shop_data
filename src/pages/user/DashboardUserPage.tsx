@@ -118,7 +118,7 @@ const DashboardUserPage = () => {
     setIsModalOpen(false);
   };
   return (
-    <RequireAuthPage rolePage={2}>
+    <RequireAuthPage rolePage={[2]}>
       <div className="grid-cols-12 lg:grid gap-x-12 gap-y-10">
         <div className="col-span-12 mb-5 space-y-4 lg:mb-0">
           {/* <Heading>Thống kê chi tiết</Heading> */}

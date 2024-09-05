@@ -223,7 +223,7 @@ const KeyDetailAdminPage = () => {
       accessUrl,
     } = key;
     return (
-      <RequireAuthPage rolePage={1}>
+      <RequireAuthPage rolePage={[1, 3]}>
         <div className="space-y-10">
           <div className="space-y-10">
             <div className="flex items-center justify-between">

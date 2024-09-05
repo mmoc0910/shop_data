@@ -22,7 +22,6 @@ const PickLocationForm: FC<PickLocationFormProps> = ({
   location,
   onSelectLocation,
 }) => {
-  console.log("error - ", error);
   const [locations, setLocations] = useState<LocationType[]>([]);
   const [mode, setMode] = useState<"action" | "normal">("normal");
   useEffect(() => {

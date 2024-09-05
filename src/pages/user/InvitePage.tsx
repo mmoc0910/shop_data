@@ -220,7 +220,7 @@ const InvitePage = () => {  const priceFomat = useFormatPrice();
     level3: collab.level3,
   });
   return (
-    <RequireAuthPage rolePage={2}>
+    <RequireAuthPage rolePage={[2]}>
       <div className="space-y-8">
         <div className="grid grid-cols-2 md:grid-cols-4 items-start rounded-xl border-2 border-[#eeeeed]">
           <div className="flex flex-col items-center flex-1 px-5 py-5 space-y-2 md:py-7 rounded-xl md:space-y-4">

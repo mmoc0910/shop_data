@@ -315,7 +315,7 @@ const ChangeProfile = () => {
   };
   const country = watch("country");
   return (
-    <RequireAuthPage rolePage={2}>
+    <RequireAuthPage rolePage={[2]}>
       <form
         className="space-y-[15px] md:space-y-5"
         onSubmit={handleSubmit(onSubmit)}

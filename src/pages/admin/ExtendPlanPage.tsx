@@ -323,7 +323,7 @@ const ExtendPlanPage = () => {
   };
 
   return (
-    <RequireAuthPage rolePage={1}>
+    <RequireAuthPage rolePage={[1]}>
       <div className="space-y-6">
         <div className="space-y-6">
           <RoseExtendPlan />
