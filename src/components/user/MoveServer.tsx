@@ -1,5 +1,5 @@
 import { FC, memo, useState } from "react";
-import { GistType, ServerType } from "../../type";
+import { ServerType } from "../../type";
 import { Modal, Tooltip } from "antd";
 import { DropdownWithComponents } from "../dropdown";
 import { v4 as uuidv4 } from "uuid";
@@ -119,8 +119,7 @@ const MoveServer: FC<MoveServerProps> = memo(
             <p className="font-primary text-xl font-semibold">
               Máy chủ hiện tại:{" "}
               {servers.find((item) => item._id === gist.server_id)?.name}(
-              {servers.find((item) => item._id === gist.server_id)?.numberKey}
-              )
+              {servers.find((item) => item._id === gist.server_id)?.numberKey})
             </p>
           </div>
           <div className="mb-5">

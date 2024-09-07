@@ -1,3 +1,4 @@
+import { Dayjs } from "dayjs";
 import { AuthState } from "../store/auth/authSlice";
 
 export type CoutryType = "en" | "vi" | "ci";
@@ -248,12 +249,12 @@ export type KeyDetailType = {
   userId: string;
   awsId: AWSType;
   account: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: Dayjs;
+  endDate: Dayjs;
   status: 0 | 1 | 2;
   historyKey: KeySeverType[];
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: Dayjs;
+  updatedAt: Dayjs;
   __v: 0;
   gist: GistType;
 };

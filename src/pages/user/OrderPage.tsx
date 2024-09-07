@@ -490,7 +490,11 @@ const OrderPage = () => {
                   gist={{
                     key_id: record.keyId._id,
                     key_name: record.keyId.name,
-                    server_id: record.keyId.serverId,
+                    // server_id: record.keyId.serverId,
+                    server_id:
+                      typeof record.keyId.serverId === "string"
+                        ? record.keyId.serverId
+                        : "",
                   }}
                   handleReloadData={handleFetchData}
                 />

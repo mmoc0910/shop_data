@@ -4,10 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { KeySeverType, ServerType } from "../../type";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
-import { DAY_FORMAT } from "../../constants";
 import { api } from "../../api";
 import { useWatch } from "react-hook-form";
-import { copyToClipboard } from "../../utils/copyToClipboard";
 import { AndroidXML } from "../../pages/user/OrderPage";
 import MoveServer from "../user/MoveServer";
 import { toast } from "react-toastify";
@@ -73,7 +71,7 @@ export const ListKeyAdmin = () => {
         width: 200,
         dataIndex: "name",
         key: "name",
-        render: (text: string, record) => (
+        render: (text: string) => (
           // <Link
           //   to={`/admin/key/${record._id}`}
           //   className="text-sm font-primary text-primary"
@@ -85,6 +83,7 @@ export const ListKeyAdmin = () => {
             onSubmit={(value: string) => {
               // handleUpdateExtension(record._id, value);
               // handleFetchData();
+              console.log(value);
               toast.success("Thay đổi thành công");
             }}
           />
@@ -201,7 +200,7 @@ export const ListKeyAdmin = () => {
         title: <p className="font-semibold font-primary">Key</p>,
         dataIndex: "key",
         key: "key",
-        render: (_: string, record) => {
+        render: (_: string) => {
           // const {
           //   // keyId: { accessUrl, keyId, serverId },
           //   accessUrl,
@@ -271,7 +270,11 @@ export const ListKeyAdmin = () => {
               gist={{
                 key_id: record._id,
                 key_name: record.name,
-                server_id: record.serverId?._id,
+                // server_id: record.serverId?._id,
+                server_id:
+                  typeof record.serverId === "object"
+                    ? record.serverId._id
+                    : record.serverId,
               }}
               handleReloadData={handleFetchData}
             />

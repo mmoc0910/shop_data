@@ -1,8 +1,7 @@
 import { DatePicker, DatePickerProps } from "antd";
 import dayjs, { Dayjs } from "dayjs";
-import React, { useState } from "react";
+import { useState } from "react";
 import { FC } from "react";
-import Button from "../button/Button";
 import IconEdit from "../../icons/IconEdit";
 import Swal from "sweetalert2";
 import { api } from "../../api";
@@ -27,7 +26,7 @@ export const UpdateEndDateKey: FC<Props> = ({ defaultValue, key_id }) => {
         confirmButtonText: "Đồng ý",
       });
       if (isConfirmed) {
-        const result = await api.patch(`/keys/end-date/${_id}`, {
+        await api.patch(`/keys/end-date/${_id}`, {
           endDate: date,
         });
         toast.success("Sửa thành công");

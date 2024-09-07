@@ -354,7 +354,7 @@ const KeyDetailAdminPage = () => {
               </div>
               <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg flex flex-col gap-1">
                 Thời gian kết thúc:{" "}
-                <UpdateEndDateKey defaultValue={endDate} key_id={keyId} />
+                <UpdateEndDateKey defaultValue={endDate} key_id={keyId || ""} />
               </div>
               <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg flex flex-col gap-1">
                 Key Id: <span className="font-medium">{key.keyId}</span>
