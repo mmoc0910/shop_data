@@ -486,7 +486,12 @@ const OrderPage = () => {
               {canMigrate && (
                 <MoveServer
                   servers={servers}
-                  gist={record}
+                  // gist={record}
+                  gist={{
+                    key_id: record.keyId._id,
+                    key_name: record.keyId.name,
+                    server_id: record.keyId.serverId,
+                  }}
                   handleReloadData={handleFetchData}
                 />
               )}
@@ -649,7 +654,8 @@ const ExtendPlanItem = ({
   setLoading: (value: boolean) => void;
   onSubmit: () => void;
   roseExtend: RoseExtendType;
-}) => {const priceFomat = useFormatPrice();
+}) => {
+  const priceFomat = useFormatPrice();
   const { t } = useTranslation();
   const period =
     selectRow?.endDate && dayjs(selectRow.endDate).diff(dayjs(), "month") + 1;

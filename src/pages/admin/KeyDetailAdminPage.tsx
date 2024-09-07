@@ -17,6 +17,7 @@ import RequireAuthPage from "../../components/common/RequireAuthPage";
 import Loading from "../../components/common/Loading";
 import EditKeyNameForm from "../../components/server/EditKeyNameForm";
 import { v4 as uuidv4 } from "uuid";
+import { UpdateEndDateKey } from "../../components/key/UpdateEndDateKey";
 
 const KeyDetailAdminPage = () => {
   const { keyId } = useParams();
@@ -348,10 +349,12 @@ const KeyDetailAdminPage = () => {
                 </div>
               </div>
               <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg flex flex-col gap-1">
-                Thời gian:{" "}
-                <span className="font-medium">
-                  {DAY_FORMAT(startDate)} - {DAY_FORMAT(endDate)}
-                </span>
+                Thời gian bắt đầu:{" "}
+                <span className="font-medium">{DAY_FORMAT(startDate)}</span>
+              </div>
+              <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg flex flex-col gap-1">
+                Thời gian kết thúc:{" "}
+                <UpdateEndDateKey defaultValue={endDate} key_id={keyId} />
               </div>
               <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg flex flex-col gap-1">
                 Key Id: <span className="font-medium">{key.keyId}</span>

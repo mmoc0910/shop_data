@@ -166,6 +166,7 @@ const ServerAdminPage = () => {
       handleFetchData();
       toast.success("Import Server thành công");
       reset();
+      setIsModalAddServerOpen(false);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log("error message: ", error);

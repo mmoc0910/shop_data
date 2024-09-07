@@ -14,7 +14,12 @@ import IconArrowRightLeft from "../../icons/IconArrowRightLeft";
 
 type MoveServerProps = {
   servers: ServerType[];
-  gist: GistType;
+  // gist: GistType;
+  gist: {
+    key_id: string;
+    key_name: string;
+    server_id: string;
+  };
   handleReloadData: () => void;
 };
 const MoveServer: FC<MoveServerProps> = memo(
@@ -22,7 +27,7 @@ const MoveServer: FC<MoveServerProps> = memo(
     const { i18n } = useTranslation();
     const [selectServer, setSelectServer] = useState<
       { id: string; name: string } | undefined
-    >({ id: gist.keyId.serverId as string, name: gist.keyId.name });
+    >({ id: gist.key_id, name: gist.key_name });
     const [loading, setLoading] = useState<boolean>(false);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const showModal = () => {
@@ -64,7 +69,6 @@ const MoveServer: FC<MoveServerProps> = memo(
               : "OK",
         });
         if (isConfirmed) {
-          console.log("migrate signle key");
           setLoading(true);
           await api.post(`/keys/migrate`, {
             keyId,
@@ -113,15 +117,20 @@ const MoveServer: FC<MoveServerProps> = memo(
         >
           <div className="mb-3">
             <p className="font-primary text-xl font-semibold">
+              Máy chủ hiện tại:{" "}
+              {servers.find((item) => item._id === gist.server_id)?.name}(
+              {servers.find((item) => item._id === gist.server_id)?.numberKey}
+              )
+            </p>
+          </div>
+          <div className="mb-5">
+            <p className="font-primary text-base font-semibold mb-2">
               {i18n.language === "vi"
                 ? "Chọn máy chủ"
                 : i18n.language === "ci"
                 ? "选server location"
                 : "Select server location"}
-              [{servers.find((item) => item._id === gist.keyId.serverId)?.name}]
             </p>
-          </div>
-          <div className="mb-5">
             <DropdownWithComponents>
               <DropdownWithComponents.Select
                 placeholder={
@@ -141,7 +150,7 @@ const MoveServer: FC<MoveServerProps> = memo(
                 }
               ></DropdownWithComponents.Select>
               <DropdownWithComponents.List>
-                {servers.map(
+                {/* {servers.map(
                   (item) => (
                     // item._id !== (gist.keyId.serverId as string) ? (
                     <DropdownWithComponents.Option
@@ -163,7 +172,31 @@ const MoveServer: FC<MoveServerProps> = memo(
                     </DropdownWithComponents.Option>
                   )
                   // ) : null
-                )}
+                )} */}
+                {servers.map((item) => {
+                  if (item._id !== gist.server_id) {
+                    return (
+                      <DropdownWithComponents.Option
+                        key={uuidv4()}
+                        onClick={() =>
+                          setSelectServer({ id: item._id, name: item.name })
+                        }
+                      >
+                        <span
+                          className={classNames(
+                            "capitalize",
+                            item._id === selectServer?.id
+                              ? "font-semibold text-primary"
+                              : ""
+                          )}
+                        >
+                          {item.name} ({item.numberKey} keys)
+                        </span>
+                      </DropdownWithComponents.Option>
+                    );
+                  }
+                  return;
+                })}
               </DropdownWithComponents.List>
             </DropdownWithComponents>
           </div>
@@ -183,7 +216,7 @@ const MoveServer: FC<MoveServerProps> = memo(
               onClick={() => {
                 if (selectServer)
                   handleMigratekey(
-                    gist.keyId._id,
+                    gist.key_id,
                     selectServer.id,
                     selectServer.name
                   );

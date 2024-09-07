@@ -397,6 +397,7 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
         width: 120,
         render: (_: string, record: GistType) => (
           <p className="text-sm font-primary">
+            {record.keyId.dataLimit / 1000 / 1000 / 1000}GB/
             {record.keyId.dataExpand / 1000 / 1000 / 1000}GB
           </p>
         ),
@@ -423,20 +424,20 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
           multiple: 2,
         },
       },
-      {
-        title: (
-          <p className="font-semibold font-primary text-sm">Date Expand</p>
-        ),
-        dataIndex: "endExpandDate",
-        key: "endExpandDate",
-        width: 120,
-        render: (_: string, record: GistType) => (
-          <p className="text-sm font-primary">
-            {record.keyId?.endExpandDate &&
-              DAY_FORMAT(record.keyId.endExpandDate)}
-          </p>
-        ),
-      },
+      // {
+      //   title: (
+      //     <p className="font-semibold font-primary text-sm">Date Expand</p>
+      //   ),
+      //   dataIndex: "endExpandDate",
+      //   key: "endExpandDate",
+      //   width: 120,
+      //   render: (_: string, record: GistType) => (
+      //     <p className="text-sm font-primary">
+      //       {record.keyId?.endExpandDate &&
+      //         DAY_FORMAT(record.keyId.endExpandDate)}
+      //     </p>
+      //   ),
+      // },
       {
         title: <p className="font-semibold font-primary text-sm"></p>,
         dataIndex: "action",
@@ -446,7 +447,11 @@ const OrderKeyUser = ({ accountId }: { accountId: string }) => {
           record.status ? (
             <MoveServer
               servers={servers}
-              gist={record}
+              gist={{
+                key_id: record.keyId._id,
+                key_name: record.keyId.name,
+                server_id: record.keyId.serverId as string,
+              }}
               handleReloadData={handleFetchData}
             />
           ) : null,
@@ -751,7 +756,7 @@ const HistoryCashUser = ({ accountId }: { accountId: string }) => {
   );
 };
 const HistoryTransactionUser = ({ accountId }: { accountId: string }) => {
-  const priceFomat = useFormatPrice()
+  const priceFomat = useFormatPrice();
   const { t, i18n } = useTranslation();
   const [isloading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);

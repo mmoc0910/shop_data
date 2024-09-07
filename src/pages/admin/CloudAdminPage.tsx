@@ -118,6 +118,7 @@ export const CloudAdminPage = () => {
       setOpenModal(false);
       toast.success("Thêm Cloud Server thành công");
       reset();
+      setOpenModal(false);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log("error message: ", error);
