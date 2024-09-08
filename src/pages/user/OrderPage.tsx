@@ -1,13 +1,5 @@
-import {
-  DatePicker,
-  DatePickerProps,
-  Modal,
-  Table,
-  TableColumnsType,
-  Tag,
-  Tooltip,
-} from "antd";
-import { Key, useCallback, useEffect, useMemo, useState } from "react";
+import { Modal, Table, TableColumnsType, Tag, Tooltip } from "antd";
+import { Key, useEffect, useMemo, useState } from "react";
 import {
   ExtendPlanType,
   GistType,
@@ -18,8 +10,7 @@ import {
 import { toast } from "react-toastify";
 import {
   DAY_FORMAT,
-  isSameOrAfter,
-  isSameOrBefore,
+  DEFAULT_PAGE_SIZE,
   // linkGist,
   messages,
   translateType,
@@ -51,12 +42,14 @@ const OrderPage = () => {
   const [selectRow, setSelectRow] = useState<
     { id: string; endDate: Date } | undefined
   >();
+  const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [listExtendPlan, setListExtendPlan] = useState<ExtendPlanType[]>([]);
   const { _id } = useSelector((state: RootState) => state.auth);
-  const [listGist, setListGist] = useState<GistType[]>([]);
-  const [startDate, setStartDate] = useState<dayjs.Dayjs | undefined>();
-  const [endDate, setEndDate] = useState<dayjs.Dayjs | undefined>();
+  const [listGist, setListGist] = useState<{
+    data: GistType[];
+    totalItems: number;
+  }>();
   const [inputValue, setInputValue] = useState<string>("");
   const [roseExtend, setRoseExtend] = useState<RoseExtendType>();
   const [servers, setServers] = useState<ServerType[]>([]);
@@ -86,54 +79,64 @@ const OrderPage = () => {
       }
     })();
   }, []);
-  const listGistFilter =
-    startDate && endDate && !inputValue
-      ? listGist.filter(
-          (item) =>
-            isSameOrAfter(item.keyId.startDate, startDate) &&
-            isSameOrBefore(item.keyId.endDate, endDate)
-        )
-      : startDate && endDate && inputValue
-      ? listGist.filter(
-          (item) =>
-            item?.planId &&
-            (item.planId.name
-              .toLowerCase()
-              .includes(inputValue.toLowerCase()) ||
-              item.extension
-                .toLowerCase()
-                .includes(inputValue.toLowerCase())) &&
-            isSameOrAfter(item.keyId.startDate, startDate) &&
-            isSameOrBefore(item.keyId.endDate, endDate)
-        )
-      : inputValue
-      ? listGist.filter(
-          (item) =>
-            item?.planId &&
-            (item.planId.name
-              .toLowerCase()
-              .includes(inputValue.toLowerCase()) ||
-              item.extension.toLowerCase().includes(inputValue.toLowerCase()))
-        )
-      : listGist;
+  // const listGistFilter =
+  //   startDate && endDate && !inputValue
+  //     ? listGist.filter(
+  //         (item) =>
+  //           isSameOrAfter(item.keyId.startDate, startDate) &&
+  //           isSameOrBefore(item.keyId.endDate, endDate)
+  //       )
+  //     : startDate && endDate && inputValue
+  //     ? listGist.filter(
+  //         (item) =>
+  //           item?.planId &&
+  //           (item.planId.name
+  //             .toLowerCase()
+  //             .includes(inputValue.toLowerCase()) ||
+  //             item.extension
+  //               .toLowerCase()
+  //               .includes(inputValue.toLowerCase())) &&
+  //           isSameOrAfter(item.keyId.startDate, startDate) &&
+  //           isSameOrBefore(item.keyId.endDate, endDate)
+  //       )
+  //     : inputValue
+  //     ? listGist.filter(
+  //         (item) =>
+  //           item?.planId &&
+  //           (item.planId.name
+  //             .toLowerCase()
+  //             .includes(inputValue.toLowerCase()) ||
+  //             item.extension.toLowerCase().includes(inputValue.toLowerCase()))
+  //       )
+  //     : listGist;
   useEffect(() => {
     setLoadingTable(true);
     handleFetchData();
     setLoadingTable(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  const handleFetchData = useCallback(async () => {
+  }, [page, inputValue]);
+  const handleFetchData = async () => {
     try {
-      const result = await api.get<GistType[]>(`/gists?userId=${_id}`);
-      setListGist(result.data.filter((item) => item.status !== 2));
-      // setListGist(result.data);
+      const result = await api.get<{
+        data: GistType[];
+        totalItems: number;
+      }>(`/gists`, {
+        params: {
+          userId: _id,
+          page,
+          extension: inputValue,
+        },
+      });
+      setListGist({
+        data: result.data.data,
+        totalItems: result.data.totalItems,
+      });
       console.log("abc");
     } catch (error) {
       console.log("error - ", error);
       toast.error(messages.error);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  };
   useEffect(() => {
     (async () => {
       try {
@@ -219,16 +222,16 @@ const OrderPage = () => {
   };
   const columns: TableColumnsType<GistType> = useMemo(
     () => [
-      {
-        title: () => <p className="font-semibold font-primary text-sm"></p>,
-        dataIndex: "index",
-        key: "index",
-        width: 50,
-        fixed: "left",
-        render: (text: string) => (
-          <p className="text-sm font-primary">{text + 1}</p>
-        ),
-      },
+      // {
+      //   title: () => <p className="font-semibold font-primary text-sm"></p>,
+      //   dataIndex: "index",
+      //   key: "index",
+      //   width: 50,
+      //   fixed: "left",
+      //   render: (text: string) => (
+      //     <p className="text-sm font-primary">{text + 1}</p>
+      //   ),
+      // },
       {
         title: (
           <p className="font-semibold font-primary text-sm">
@@ -507,17 +510,11 @@ const OrderPage = () => {
     [t, canMigrate, i18n.language, servers]
   );
 
-  const onChangeStartDate: DatePickerProps["onChange"] = (date) => {
-    setStartDate(date);
-  };
-  const onChangeEndDate: DatePickerProps["onChange"] = (date) => {
-    setEndDate(date);
-  };
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setInputValue(value);
   };
+  if (!listGist) return null;
   return (
     <RequireAuthPage rolePage={[2]}>
       {loading ? <Loading /> : null}
@@ -545,7 +542,6 @@ const OrderPage = () => {
           <p>: {t("page.myOrder.instruct3")}</p>
         </div>
       </div>
-
       {/* <p className="flex items-center gap-2 mb-5">
         <span>
           <AndroidXML />
@@ -581,7 +577,7 @@ const OrderPage = () => {
             </span>
           ) : null}
         </div>
-        <div className="flex items-center gap-5">
+        {/* <div className="flex items-center gap-5">
           <DatePicker
             onChange={onChangeStartDate}
             className="!focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock"
@@ -592,14 +588,21 @@ const OrderPage = () => {
             className="!focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock"
             placeholder="End date"
           />
-        </div>
+        </div> */}
       </div>
       <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
         <Table
-          dataSource={listGistFilter.map((item, index) => ({ index, ...item }))}
+          // dataSource={listGist.data.map((item, index) => ({ index, ...item }))}
+          dataSource={listGist.data}
           columns={columns}
           loading={loadingTable}
           scroll={{ x: 1600, y: 500 }}
+          pagination={{
+            defaultCurrent: 1,
+            total: listGist.totalItems,
+            onChange: (index) => setPage(index),
+            pageSize: DEFAULT_PAGE_SIZE,
+          }}
         />
       </div>
       <Modal

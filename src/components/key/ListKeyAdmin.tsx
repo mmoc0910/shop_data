@@ -9,7 +9,8 @@ import { useWatch } from "react-hook-form";
 import { AndroidXML } from "../../pages/user/OrderPage";
 import MoveServer from "../user/MoveServer";
 import { toast } from "react-toastify";
-import UpdateExtension from "../user/UpdateExtension";
+import UpdateExtensionKey from "./UpdateExtensionKey";
+import { copyToClipboard } from "../../utils/copyToClipboard";
 
 const DEFAULT_PAGE_SIZE = 10;
 export const ListKeyAdmin = () => {
@@ -52,6 +53,19 @@ export const ListKeyAdmin = () => {
       setLoading(false);
     }
   };
+  const handleUpdateExtension = async (_id: string, value: string) => {
+    try {
+      const response = await api.get(`/gists?keyId=${_id}&status=1`);
+      if (response.data.data.length > 0) {
+        await api.patch(`/gists/extension/${response.data.data[0]._id}`, {
+          extension: value,
+        });
+        toast.success("Thay đổi thành công");
+      }
+    } catch (error) {
+      toast.error("Xảy ra lỗi trong quá trình xử lý");
+    }
+  };
   const columns: TableColumnsType<KeySeverType> = useMemo(
     () => [
       // {
@@ -68,24 +82,23 @@ export const ListKeyAdmin = () => {
         title: () => (
           <p className="text-sm font-semibold font-primary">Key Name</p>
         ),
-        width: 200,
+        width: 250,
         dataIndex: "name",
         key: "name",
-        render: (text: string) => (
+        render: (text: string, record) => (
           // <Link
           //   to={`/admin/key/${record._id}`}
           //   className="text-sm font-primary text-primary"
           // >
           //   {text}
           // </Link>
-          <UpdateExtension
+          <UpdateExtensionKey
             initialValue={text}
             onSubmit={(value: string) => {
-              // handleUpdateExtension(record._id, value);
-              // handleFetchData();
-              console.log(value);
-              toast.success("Thay đổi thành công");
+              handleUpdateExtension(record._id, value);
+              handleFetchData();
             }}
+            key_id={record._id}
           />
         ),
       },
@@ -200,13 +213,8 @@ export const ListKeyAdmin = () => {
         title: <p className="font-semibold font-primary">Key</p>,
         dataIndex: "key",
         key: "key",
-        render: (_: string) => {
-          // const {
-          //   // keyId: { accessUrl, keyId, serverId },
-          //   accessUrl,
-          //   _id,
-          //   serverId: { _id },
-          // } = record;
+        render: (_: string, record) => {
+          const { awsId, accessUrl, _id, name, serverId } = record;
           // const key = `${linkGist}/${record.gistId}/raw/${record?.fileName}#`;
           return (
             <div className="space-y-2">
@@ -214,14 +222,11 @@ export const ListKeyAdmin = () => {
                 <Tooltip title="Copy link chính">
                   <button
                     className="text-white px-2 w-fit aspect-square rounded-md bg-secondary20"
-                    // onClick={() =>
-                    //   copyToClipboard(
-                    //     `${record.keyId.awsId?.fileName.replace(
-                    //       /https/g,
-                    //       "ssconf"
-                    //     )}#${record.extension}`
-                    //   )
-                    // }
+                    onClick={() =>
+                      copyToClipboard(
+                        `${awsId?.fileName.replace(/https/g, "ssconf")}#${name}`
+                      )
+                    }
                   >
                     <AndroidXML />
                   </button>
@@ -229,9 +234,13 @@ export const ListKeyAdmin = () => {
                 <Tooltip title="Copy link dự phòng">
                   <button
                     className="text-white px-2 w-fit aspect-square rounded-md bg-gray-400"
-                    // onClick={() =>
-                    //   copyToClipboard(`${accessUrl}#${serverId}-k${keyId}`)
-                    // }
+                    onClick={() =>
+                      copyToClipboard(
+                        `${accessUrl}#${
+                          typeof serverId === "object" ? serverId._id : serverId
+                        }-k${_id}`
+                      )
+                    }
                   >
                     <AndroidXML />
                   </button>

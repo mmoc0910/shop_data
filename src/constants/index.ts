@@ -5,7 +5,7 @@ export const ACCOUNT_NAME = import.meta.env.VITE_ACCOUNT_NAME;
 export const TEMPLATE = import.meta.env.VITE_TEMPLATE;
 export const APP_SCRIPT_URL = import.meta.env.VITE_APP_SCRIPT_URL;
 export const messages = { error: "Xảy ra lỗi trong quá trình xử lý" };
-
+export const DEFAULT_PAGE_SIZE = 10;
 export const countries = [
   // { key: "en", title: "English" },
   { key: "vi", title: "Việt Nam" },

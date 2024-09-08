@@ -1,244 +1,42 @@
-import { Link, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import Heading from "../../components/common/Heading";
 import { useEffect, useState } from "react";
-import { KeySeverType, ServerType } from "../../type";
+import {  ServerType } from "../../type";
 import { toast } from "react-toastify";
-import { messages } from "../../constants";
 import { api } from "../../api";
 import dayjs from "dayjs";
 import Radio from "../../components/radio/Radio";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { v4 as uuidv4 } from "uuid";
 import { Input } from "../../components/input";
 import Button from "../../components/button/Button";
 import IconEdit from "../../icons/IconEdit";
-import Swal from "sweetalert2";
-import axios from "axios";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
-import { Modal, Tag } from "antd";
-import Loading from "../../components/common/Loading";
-import EditKeyLimitForm from "../../components/server/EditKeyLimitForm";
 import EditRemarkServer from "../../components/server/EditRemarkServer";
 import EditLocationServerForm from "../../components/server/EditLocationServerForm";
-import { Checkbox } from "../../components/checkbox";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/configureStore";
-import { DropdownWithComponents } from "../../components/dropdown";
-import classNames from "../../utils/classNames";
 import ButtonConnectKuma from "../../components/server/ButtonConnectKuma";
 import ButtonRemoveKuma from "../../components/server/ButtonRemoveKuma";
+import { ListKeyByServerId } from "../../components/server/ListKeyByServerId";
 
 const ServerDetailAdminPage = () => {
   const { serverId } = useParams();
-  const servers = useSelector((state: RootState) => state.server).filter(
-    (item) => item.status === 1 && item._id !== serverId
-  );
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [serverDetail, setServerDetail] = useState<ServerType>();
-  const [listKey, setListKey] = useState<KeySeverType[]>([]);
-  const [selectRow, setSelectRow] = useState<string | undefined>();
-  const [selectServer, setSelectServer] = useState<string | undefined>(
-    undefined
-  );
-  const [migrateMode, setMigrateMode] = useState<
-    "multiple" | "single" | undefined
-  >();
-  const [selectKeys, setSelectKeys] = useState<string[]>([]);
+
   useEffect(() => {
     handleFetchServerDetail();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serverId]);
   const handleFetchServerDetail = async () => {
     try {
-      const [resultServer, resultKey] = await Promise.all([
-        api.get<ServerType>(`/servers/${serverId}`),
-        api.get<{ data: KeySeverType[] }>(`/keys?serverId=${serverId}`),
-      ]);
-      setServerDetail(resultServer.data);
-      setListKey(resultKey.data.data.filter((item) => item.status !== 0));
+      const response = await api.get<ServerType>(`/servers/${serverId}`);
+      setServerDetail(response.data);
     } catch (error) {
-      console.log(error);
-      toast.error(messages.error);
+      toast.error('Xảy ra lỗi trong quá trìn xử lý');
     }
-  };
-  // const handleSync = async (apiUrl: string, fingerPrint: string) => {
-  //   try {
-  //     await api.post("/servers", {
-  //       apiUrl,
-  //       fingerPrint,
-  //     });
-  //     handleFetchServerDetail();
-  //   } catch (error) {
-  //     console.log("error - ", error);
-  //   }
-  // };
-
-  const handleMigratekey = async (keyId: string, serverId: string) => {
-    try {
-      const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn migate key này</p>`,
-        icon: "success",
-        showCancelButton: true,
-        confirmButtonColor: "#1DC071",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Thoát",
-        confirmButtonText: "Đồng ý",
-      });
-      if (isConfirmed) {
-        console.log("migrate signle key");
-        setLoading(true);
-        await api.post(`/keys/migrate`, {
-          keyId,
-          serverId,
-        });
-        handleFetchServerDetail();
-        handleCancel();
-        toast.success("Migrate key thành công");
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log("error message: ", error);
-        toast.error(error.response?.data.message);
-      } else {
-        console.log("unexpected error: ", error);
-        return "An unexpected error occurred";
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-  const handelMigrateMultipleKey = async (
-    selectServer: string,
-    selectKeys: string[]
-  ) => {
-    try {
-      const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn migate những key đã chọn</p>`,
-        icon: "success",
-        showCancelButton: true,
-        confirmButtonColor: "#1DC071",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Thoát",
-        confirmButtonText: "Đồng ý",
-      });
-      if (isConfirmed) {
-        console.log(selectServer, selectKeys);
-        setLoading(true);
-        await api.post(`/keys/multi-migrate`, {
-          listKeyId: selectKeys,
-          serverId: selectServer,
-        });
-        handleFetchServerDetail();
-        handleCancel();
-        setSelectKeys([]);
-        toast.success("Migrate key thành công");
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log("error message: ", error);
-        toast.error(error.response?.data.message);
-      } else {
-        console.log("unexpected error: ", error);
-        return "An unexpected error occurred";
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-  const handleDisableKey = async (keyId: string) => {
-    try {
-      const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn disable key này</p>`,
-        icon: "success",
-        showCancelButton: true,
-        confirmButtonColor: "#1DC071",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Thoát",
-        confirmButtonText: "Đồng ý",
-      });
-      if (isConfirmed) {
-        await api.get(`/keys/disable/${keyId}`);
-        handleFetchServerDetail();
-        toast.success("Disable thành công");
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log("error message: ", error);
-        toast.error(error.response?.data.message);
-      } else {
-        console.log("unexpected error: ", error);
-        return "An unexpected error occurred";
-      }
-    }
-  };
-  const handleEnableKey = async (keyId: string) => {
-    try {
-      const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn enable key này</p>`,
-        icon: "success",
-        showCancelButton: true,
-        confirmButtonColor: "#1DC071",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Thoát",
-        confirmButtonText: "Đồng ý",
-      });
-      if (isConfirmed) {
-        await api.get(`/keys/enable/${keyId}`);
-        handleFetchServerDetail();
-        toast.success("Enable thành công");
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log("error message: ", error);
-        toast.error(error.response?.data.message);
-      } else {
-        console.log("unexpected error: ", error);
-        return "An unexpected error occurred";
-      }
-    }
-  };
-  const handleAddLimitData = async (keyId: string, data: number) => {
-    try {
-      const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn sửa data limit key này</p>`,
-        icon: "success",
-        showCancelButton: true,
-        confirmButtonColor: "#1DC071",
-        cancelButtonColor: "#d33",
-        cancelButtonText: "Thoát",
-        confirmButtonText: "Đồng ý",
-      });
-      if (isConfirmed) {
-        await api.patch(`/keys/add-data-limit/${keyId}`, { data });
-        handleFetchServerDetail();
-        toast.success("Thành công");
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log("error message: ", error);
-        toast.error(error.response?.data.message);
-      } else {
-        console.log("unexpected error: ", error);
-        return "An unexpected error occurred";
-      }
-    }
-  };
-  const showModal = () => {
-    setIsModalOpen(true);
   };
 
-  const handleCancel = () => {
-    if (selectRow) {
-      setSelectRow(undefined);
-    }
-    setSelectServer(undefined);
-    setMigrateMode(undefined);
-    setIsModalOpen(false);
-  };
+
   const handleChangeLocation = async (value: string) => {
     if (serverDetail) {
       try {
@@ -370,409 +168,27 @@ const ServerDetailAdminPage = () => {
                 </div>
               </div>
             </div>
-            {listKey.filter((item) => item.status === 1).length > 0 ? (
-              <div className="space-y-7">
-                <div className="flex items-center justify-between h-14">
-                  <Heading>Keys Active</Heading>
-                  <button
-                    className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
-                    onClick={() => {
-                      if (selectKeys.length > 0) {
-                        setMigrateMode("multiple");
-                        showModal();
-                      } else {
-                        toast.warn("Bạn chưa chọn key để migrate");
-                      }
-                    }}
-                  >
-                    Migrate (select {selectKeys.length} keys)
-                  </button>
-                </div>
-                <div className="w-full space-y-5 overflow-x-scroll">
-                  <div className="grid grid-cols-5 w-[1180px] lg:w-full">
-                    <div className="flex col-span-2 pb-3">
-                      <div className="px-4 font-semibold">
-                        <Checkbox
-                          checked={
-                            selectKeys.length ===
-                            listKey.filter((item) => item.status === 1).length
-                          }
-                          onClick={(checked) =>
-                            checked
-                              ? setSelectKeys([])
-                              : setSelectKeys(
-                                  listKey
-                                    .filter((item) => item.status === 1)
-                                    .map((item) => item._id)
-                                )
-                          }
-                        />
-                      </div>
-                      <div className="px-4 font-semibold">#</div>
-                      <div className="flex-1 px-4 font-semibold">OrderID</div>
-                      <div className="flex-1 px-4 font-semibold">Email</div>
-                      <div className="flex-1 px-4 font-semibold">Usage</div>
-                    </div>
-                    <div className="flex col-span-3 pb-3">
-                      <div className="px-4 font-semibold">Limit</div>
-                      <div className="px-4 font-semibold">Status</div>
-                      <div className="text-end flex-1 px-4 font-semibold">
-                        Actions
-                      </div>
-                    </div>
-                    {listKey.length > 0 &&
-                      listKey.map((item) =>
-                        item.status === 1 ? (
-                          <div
-                            className="grid grid-cols-5 col-span-5 py-5 border border-gray-200 rounded-xl"
-                            key={uuidv4()}
-                          >
-                            <div className="flex items-center col-span-2">
-                              <div className="px-4 font-semibold">
-                                <Checkbox
-                                  checked={selectKeys.some(
-                                    (i) => i === item._id
-                                  )}
-                                  onClick={(checked) =>
-                                    checked
-                                      ? setSelectKeys((prev) =>
-                                          prev.filter((i) => i !== item._id)
-                                        )
-                                      : setSelectKeys((prev) => [
-                                          ...prev,
-                                          item._id,
-                                        ])
-                                  }
-                                />
-                              </div>
-                              <div className="px-4">{item.keyId}</div>
-                              <Link
-                                to={`/admin/key/${item._id}`}
-                                className="flex-1 px-4 text-primary font-medium hover:underline hover:decoration-primary"
-                              >
-                                {item.name || "no name"}
-                              </Link>
-                              <div className="flex-1 px-4">{item.account}</div>
-                              <div className="px-4 flex-1">
-                                {item.dataUsage
-                                  ? `${(
-                                      item.dataUsage /
-                                      1000 /
-                                      1000 /
-                                      1000
-                                    ).toFixed(2)} GB`
-                                  : "00.00 GB"}
-                              </div>
-                            </div>
-                            <div className="flex items-center col-span-3">
-                              <div className="px-4">
-                                {item.dataExpand / 1000 / 1000 / 1000}GB
-                              </div>
-                              <div className="px-4">
-                                {item?.enable && (
-                                  <Tag color="green">Hoạt động</Tag>
-                                )}
-                                {!item?.enable && (
-                                  <Tag color="red">Ngưng hoạt động</Tag>
-                                )}
-                              </div>
-                              <div className="flex items-center justify-end flex-1 gap-2 px-4">
-                                {item.status === 1 && item.enable ? (
-                                  <>
-                                    <EditKeyLimitForm
-                                      placeholder={`${
-                                        item.dataLimit / 1000 / 1000 / 1000
-                                      } GB`}
-                                      handleAddLimitData={(bytes: number) =>
-                                        handleAddLimitData(item.keyId, bytes)
-                                      }
-                                    />
-                                    <button
-                                      className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
-                                      onClick={() => {
-                                        setMigrateMode("single");
-                                        setSelectRow(item._id);
-                                        showModal();
-                                      }}
-                                    >
-                                      Migrate
-                                    </button>
-                                    <button
-                                      className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
-                                      onClick={() => handleDisableKey(item._id)}
-                                    >
-                                      Disable
-                                    </button>
-                                    <button
-                                      className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
-                                      onClick={async () => {
-                                        try {
-                                          const { isConfirmed } =
-                                            await Swal.fire({
-                                              title: `<p class="leading-tight">Bạn có nâng cấp key này</p>`,
-                                              icon: "success",
-                                              showCancelButton: true,
-                                              confirmButtonColor: "#1DC071",
-                                              cancelButtonColor: "#d33",
-                                              cancelButtonText: "Thoát",
-                                              confirmButtonText:
-                                                "Có, nâng cấp ngay",
-                                            });
-                                          if (isConfirmed) {
-                                            await api.patch(
-                                              `/keys/upgrade/${item._id}`
-                                            );
-                                            handleFetchServerDetail();
-                                            toast.success("Thành công");
-                                          }
-                                        } catch (error) {
-                                          if (axios.isAxiosError(error)) {
-                                            console.log(
-                                              "error message: ",
-                                              error
-                                            );
-                                            toast.error(
-                                              error.response?.data.message
-                                            );
-                                          } else {
-                                            console.log(
-                                              "unexpected error: ",
-                                              error
-                                            );
-                                            return "An unexpected error occurred";
-                                          }
-                                        }
-                                      }}
-                                    >
-                                      Gia hạn
-                                    </button>
-                                  </>
-                                ) : null}
-                                {item.status === 1 && !item.enable && (
-                                  <button
-                                    className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
-                                    onClick={() => handleEnableKey(item._id)}
-                                  >
-                                    Enable
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ) : null
-                      )}
-                  </div>
-                </div>
-              </div>
-            ) : null}
-            {listKey.filter((item) => item.status === 0).length > 0 ? (
-              <div className="space-y-7">
-                <Heading>Keys Inactive</Heading>
-                <div className="w-full space-y-5 overflow-x-scroll">
-                  {/* <CreateNewKeyForm
-                handleAddNewKey={() =>
-                  handleAddNewKey(serverDetail.apiUrl, serverDetail.fingerPrint)
-                }
-              /> */}
-                  <div className="grid grid-cols-5 w-[1180px] lg:w-full">
-                    <div className="flex col-span-2 pb-3">
-                      <div className="px-4 font-semibold">#</div>
-                      <div className="flex-1 px-4 font-semibold">OrderID</div>
-                      <div className="flex-1 px-4 font-semibold">Email</div>
-                    </div>
-                    <div className="flex col-span-3 pb-3">
-                      <div className="px-4 font-semibold flex-1">Usage</div>
-                      <div className="px-4 font-semibold flex-1">Limit</div>
-                      <div className="px-4 font-semibold flex-1">Status</div>
-                    </div>
-                    {listKey.length > 0 &&
-                      listKey.map((item) =>
-                        item.status === 0 ? (
-                          <div
-                            className="grid grid-cols-5 col-span-5 py-5 border border-gray-200 rounded-xl"
-                            key={uuidv4()}
-                          >
-                            <div className="flex items-center col-span-2">
-                              <div className="px-4">{item.keyId}</div>
-                              <Link
-                                to={`/admin/key/${item._id}`}
-                                className="flex-1 px-4 text-primary font-medium hover:underline hover:decoration-primary"
-                              >
-                                {item.name || "no name"}
-                              </Link>
-                              <div className="flex-1 px-4">{item.account}</div>
-                            </div>
-                            <div className="flex items-center col-span-3 flex-1">
-                              <div className="px-4">
-                                {item.dataUsage
-                                  ? `${(
-                                      item.dataUsage /
-                                      1000 /
-                                      1000 /
-                                      1000
-                                    ).toFixed(2)} GB`
-                                  : "00.00 GB"}
-                              </div>
-                              <div className="px-4 flex-1">
-                                {item.dataLimit / 1000 / 1000 / 1000}GB
-                              </div>
-                              <div className="px-4 flex-1">
-                                <Tag color="red">Hết hạn</Tag>
-                              </div>
-                            </div>
-                          </div>
-                        ) : null
-                      )}
-                  </div>
-                </div>
-              </div>
-            ) : null}
-            {listKey.filter((item) => item.status === 2).length > 0 ? (
-              <div className="space-y-7">
-                <Heading>Keys Migrate</Heading>
-                <div className="w-full space-y-5 overflow-x-scroll">
-                  {/* <CreateNewKeyForm
-                handleAddNewKey={() =>
-                  handleAddNewKey(serverDetail.apiUrl, serverDetail.fingerPrint)
-                }
-              /> */}
-                  <div className="grid grid-cols-5 w-[1180px] lg:w-full">
-                    <div className="flex col-span-2 pb-3">
-                      <div className="px-4 font-semibold">#</div>
-                      <div className="flex-1 px-4 font-semibold">OrderID</div>
-                      <div className="flex-1 px-4 font-semibold">Email</div>
-                    </div>
-                    <div className="flex col-span-3 pb-3">
-                      <div className="px-4 font-semibold flex-1">Usage</div>
-                      <div className="px-4 font-semibold flex-1">Limit</div>
-                      <div className="px-4 font-semibold flex-1">Status</div>
-                    </div>
-                    {listKey.length > 0 &&
-                      listKey.map((item) =>
-                        item.status === 2 ? (
-                          <div
-                            className="grid grid-cols-5 col-span-5 py-5 border border-gray-200 rounded-xl"
-                            key={uuidv4()}
-                          >
-                            <div className="flex items-center col-span-2">
-                              <div className="px-4">{item.keyId}</div>
-                              <Link
-                                to={`/admin/key/${item._id}`}
-                                className="flex-1 px-4 text-primary font-medium hover:underline hover:decoration-primary"
-                              >
-                                {item.name || "no name"}
-                              </Link>
-                              <div className="flex-1 px-4">{item.account}</div>
-                            </div>
-                            <div className="flex items-center col-span-3">
-                              <div className="px-4 flex-1">
-                                {item.dataUsage
-                                  ? `${(
-                                      item.dataUsage /
-                                      1000 /
-                                      1000 /
-                                      1000
-                                    ).toFixed(2)} GB`
-                                  : "00.00 GB"}
-                              </div>
-                              <div className="px-4 flex-1">
-                                {item.dataLimit / 1000 / 1000 / 1000}GB
-                              </div>
-                              <div className="px-4 flex-1">
-                                <Tag color="blue">Migrate</Tag>
-                              </div>
-                            </div>
-                          </div>
-                        ) : null
-                      )}
-                  </div>
-                </div>
-              </div>
-            ) : null}
+            <ListKeyByServerId
+              handleFetchServerDetail={handleFetchServerDetail}
+              serverId={serverId as string}
+              status={1}
+              heading={"Keys Active"}
+            />
+            <ListKeyByServerId
+              handleFetchServerDetail={handleFetchServerDetail}
+              serverId={serverId as string}
+              status={0}
+              heading={"Keys Inactive"}
+            />
+            <ListKeyByServerId
+              handleFetchServerDetail={handleFetchServerDetail}
+              serverId={serverId as string}
+              status={2}
+              heading={"Keys Migrate"}
+            />
           </>
         )}
       </div>
-      {loading && <Loading />}
-      <Modal
-        title="Chọn máy chủ"
-        open={isModalOpen}
-        onCancel={() => {
-          handleCancel();
-        }}
-        footer={[]}
-      >
-        <div className="mb-3">
-          <p className="font-primary">Chọn máy chủ để migrate key</p>
-          {selectRow &&
-            servers.filter((item) => item._id !== serverId).length === 0 && (
-              <p className="text-error font-primary">
-                Bạn cần thêm server mới để migrate key sang
-              </p>
-            )}
-        </div>
-        <div className="mb-5">
-          <DropdownWithComponents>
-            <DropdownWithComponents.Select
-              placeholder={
-                selectServer ? (
-                  <span className="text-black">
-                    {servers.find((i) => i._id === selectServer)?.name}
-                  </span>
-                ) : (
-                  <span className="text-text4">Chọn server</span>
-                )
-              }
-            ></DropdownWithComponents.Select>
-            <DropdownWithComponents.List>
-              {servers.map((item) => (
-                <DropdownWithComponents.Option
-                  key={uuidv4()}
-                  onClick={() => setSelectServer(item._id)}
-                >
-                  <span
-                    className={classNames(
-                      "capitalize",
-                      selectServer === item._id
-                        ? "font-semibold text-primary"
-                        : ""
-                    )}
-                  >
-                    {item.name} ({item.numberKey} keys)
-                  </span>
-                </DropdownWithComponents.Option>
-              ))}
-            </DropdownWithComponents.List>
-          </DropdownWithComponents>
-        </div>
-        <div className="flex items-center justify-end gap-5">
-          <button
-            className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-error font-primary"
-            onClick={() => handleCancel()}
-          >
-            Thoát
-          </button>
-          <button
-            className="px-4 py-2 text-sm font-medium text-white rounded-lg bg-secondary40 font-primary"
-            onClick={() => {
-              if (migrateMode === "single") {
-                if (selectRow && selectServer) {
-                  handleMigratekey(selectRow, selectServer);
-                } else {
-                  toast.warn("bạn chưa chọn server để migrate key sang");
-                }
-              } else if (migrateMode === "multiple") {
-                if (selectServer) {
-                  handelMigrateMultipleKey(selectServer, selectKeys);
-                } else {
-                  toast.warn("bạn chưa chọn server để migrate key sang");
-                }
-              }
-            }}
-          >
-            Migrate key
-          </button>
-        </div>
-      </Modal>
     </RequireAuthPage>
   );
 };
@@ -782,7 +198,7 @@ const schema = yup
     value: yup.string(),
   })
   .required();
-const EditServerForm = ({
+export const EditServerForm = ({
   placeholder = "",
   handleEdit,
 }: {

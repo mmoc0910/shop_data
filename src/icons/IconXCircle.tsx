@@ -1,7 +1,7 @@
 
 import classNames from "../utils/classNames";
 
-const IconXCircle = ({ className = "" }: { className: string }) => {
+const IconXCircle = ({ className = "" }: { className?: string }) => {
   return (
     <span>
       <svg
