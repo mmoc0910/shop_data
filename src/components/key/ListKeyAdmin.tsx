@@ -237,7 +237,7 @@ export const ListKeyAdmin = () => {
                     onClick={() =>
                       copyToClipboard(
                         `${accessUrl}#${
-                          typeof serverId === "object" ? serverId._id : serverId
+                          typeof serverId === "object" ? serverId.name : serverId
                         }-k${_id}`
                       )
                     }
