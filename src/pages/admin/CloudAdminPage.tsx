@@ -160,10 +160,10 @@ export const CloudAdminPage = () => {
     }
   };
   const onChangeStartDate: DatePickerProps["onChange"] = (date) => {
-    setValue("startDate", dayjs(date).format("DD/MM/YYYY"));
+    setValue("startDate", dayjs(date).format("YYYY/MM/DD"));
   };
   const onChangeEndDate: DatePickerProps["onChange"] = (date) => {
-    setValue("endDate", dayjs(date).format("DD/MM/YYYY"));
+    setValue("endDate", dayjs(date).format("YYYY/MM/DD"));
   };
   const columns: TableColumnsType<CloudManagerType> = useMemo(
     () => [
