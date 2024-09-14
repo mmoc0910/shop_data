@@ -116,7 +116,7 @@ const Header = () => {
                 </Link>
               </div>
             ) : (
-              <Link to={getURL} className="flex gap-3 items-center">
+              <Link to={getURL()} className="flex gap-3 items-center">
                 <div className="text-primary">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
