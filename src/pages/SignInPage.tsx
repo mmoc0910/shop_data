@@ -73,6 +73,8 @@ const SignInPage = () => {
         navigation("/admin/dashboard");
       } else if (result.data.data.role === 2) {
         navigation("/user/dashboard");
+      } else if (result.data.data.role === 3) {
+        navigation("/admin/list-key");
       }
       toast.success("Login Success");
     } catch (error) {

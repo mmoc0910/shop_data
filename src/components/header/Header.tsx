@@ -25,6 +25,12 @@ const Header = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [t, i18n.language]
   );
+  const getURL = () => {
+    if (role === 1) return "admin/dashboard";
+    if (role === 2) return "/user/dashboard";
+    if (role === 3) return "/admin/list-key";
+    return "/";
+  };
   return (
     <div
       className="z-20 shadow-sm bg-black"
@@ -110,10 +116,7 @@ const Header = () => {
                 </Link>
               </div>
             ) : (
-              <Link
-                to={role === 2 ? "/user/dashboard" : "admin/dashboard"}
-                className="flex gap-3 items-center"
-              >
+              <Link to={getURL} className="flex gap-3 items-center">
                 <div className="text-primary">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -191,6 +194,5 @@ export const SelectLanguage = () => {
     </div>
   );
 };
-
 
 export default Header;
