@@ -5,9 +5,9 @@ import { ServerType } from "../../type";
 import { FC } from "react";
 import { toast } from "react-toastify";
 
-type Props = { server: ServerType };
+type Props = { server: ServerType; onSubmit: () => void };
 
-const ButtonRemoveKuma: FC<Props> = ({ server }) => {
+const ButtonRemoveKuma: FC<Props> = ({ server, onSubmit }) => {
   const [loading, setLoading] = useState(false);
   const handleRemoveKuma = async () => {
     try {
@@ -25,6 +25,7 @@ const ButtonRemoveKuma: FC<Props> = ({ server }) => {
         await api.post(`/kuma/remove`, {
           name: `${server.name}-${server.hostnameForAccessKeys}`,
         });
+        onSubmit();
         toast.success("Thành công");
       }
     } catch (error) {
@@ -33,7 +34,7 @@ const ButtonRemoveKuma: FC<Props> = ({ server }) => {
       setLoading(false);
     }
   };
-  // if (server.isConnectKuma === 0) return;
+  if (server.isConnectKuma === 0) return;
   return (
     <button
       type="button"

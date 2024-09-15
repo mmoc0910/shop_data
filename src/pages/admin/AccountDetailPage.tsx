@@ -1,11 +1,7 @@
 import { useParams } from "react-router-dom";
 import { CashType, TransactionType, UserState } from "../../type";
 import { countries, DAY_FORMAT, purposes } from "../../constants";
-import {
-  Table,
-  TableColumnsType,
-  Tag,
-} from "antd";
+import { Table, TableColumnsType, Tag } from "antd";
 import { Key, useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import {
@@ -22,6 +18,7 @@ import RequireAuthPage from "../../components/common/RequireAuthPage";
 import ListOrder from "../../components/user/ListOrder";
 import { FormProvider, useForm } from "react-hook-form";
 import { SearchOrderBar } from "../../components/user/SearchOrderBar";
+import { AdminManualDeposit } from "../../components/user/AdminManualDeposit";
 
 const AccountDetailPage = () => {
   const methods = useForm({
@@ -129,6 +126,7 @@ const AccountDetailPage = () => {
               </div>
             ) : null}
           </div>
+          <AdminManualDeposit accountId={accountId || ''}/>
           <div>
             <Heading className="mb-4">Danh sách key đã mua</Heading>
             <SearchOrderBar />

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Container from "../common/Container";
-import {  PlanType } from "../../type";
+import { PlanType } from "../../type";
 import { v4 as uuidv4 } from "uuid";
 import { IconCheck } from "../checkbox/Checkbox";
 import { api } from "../../api";
@@ -14,6 +14,7 @@ import Loading from "../common/Loading";
 import { useTranslation } from "react-i18next";
 import { translateType } from "../../constants";
 import { useFormatPrice } from "../../hooks/useFormatPrice";
+// import { Modal } from "antd";
 
 const PricingBox = () => {
   const { t } = useTranslation();
@@ -93,12 +94,11 @@ const PricingBox = () => {
 export const PricingItem = ({ plan }: { plan: PlanType }) => {
   const priceFomat = useFormatPrice();
   const { t, i18n } = useTranslation();
-  // const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [isModalOpen, setIsModalOpen] = useState(true);
   const [loading, setLoading] = useState<boolean>(false);
   const { _id } = useSelector((state: RootState) => state.auth);
   const navigation = useNavigate();
   const { name, price, description, type, bandWidth } = plan;
-  console.log(type.split("_"));
   const handleBuy = async (_id: string | undefined) => {
     if (_id) {
       try {
@@ -119,12 +119,13 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
         });
         if (isConfirmed) {
           setLoading(true);
-          await api.post("/gists", {
+          const result = await api.post("/gists", {
             userId: _id,
             planId: plan._id,
           });
+          console.log("result ~ ", result.data);
           toast.success(t("page.package.swal.success"));
-          navigation("/user/order");
+          // navigation("/user/order");
         }
       } catch (error) {
         if (axios.isAxiosError(error)) {

@@ -160,7 +160,6 @@ const ServerAdminPage = () => {
     active: boolean;
     cloudManagerId: string;
   }) => {
-    console.log("data ~ ", data);
     try {
       await api.post("/servers", { ...data, status: activeWatch ? 1 : 3 });
       handleFetchData();

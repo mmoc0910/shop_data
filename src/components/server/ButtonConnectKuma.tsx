@@ -4,8 +4,8 @@ import { FC } from "react";
 import { toast } from "react-toastify";
 import { api } from "../../api";
 
-type Props = { server: ServerType };
-const ButtonConnectKuma: FC<Props> = ({ server }) => {
+type Props = { server: ServerType; handleSubmit: () => void };
+const ButtonConnectKuma: FC<Props> = ({ server, handleSubmit }) => {
   const [loading, setLoading] = useState(false);
   const handleConnectKuma = async () => {
     try {
@@ -20,6 +20,7 @@ const ButtonConnectKuma: FC<Props> = ({ server }) => {
         portC: `${portForNewAccessKeys}`,
         portM: portM,
       });
+      handleSubmit();
       toast.success("Connect Kuma success");
     } catch (error) {
       toast.error("Xảy ra lỗi");
@@ -27,7 +28,7 @@ const ButtonConnectKuma: FC<Props> = ({ server }) => {
       setLoading(false);
     }
   };
-  // if (server.isConnectKuma === 1) return;
+  if (server.isConnectKuma === 1) return;
   return (
     <button
       type="button"

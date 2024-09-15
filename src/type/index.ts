@@ -114,6 +114,7 @@ export type PlanType = {
   numberPurchase: number;
   display: 0 | 1;
   status: 0 | 1;
+  enable: 0 | 1 // 1:enable - 0: disable
 };
 
 export type CashType = {

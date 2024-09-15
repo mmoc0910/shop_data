@@ -7,6 +7,7 @@ import TopPlan from "../../components/dashboard/TopPlan";
 import SatifyByMonth from "../../components/dashboard/SatifyByMonth";
 import SatifyByYear from "../../components/dashboard/SatifyByYear";
 import TopUserByMonth from "../../components/dashboard/TopUserByMonth";
+import TopUserRegister from "../../components/dashboard/TopUserRegister";
 
 const DashboardAdminPage = () => {
   return (
@@ -20,6 +21,7 @@ const DashboardAdminPage = () => {
         <ServerSatify />
         <UserPieChart />
         <div className="space-y-10 col-span-12 md:col-span-8">
+          <TopUserRegister />
           <TopUser />
           <TopUserByMonth />
         </div>

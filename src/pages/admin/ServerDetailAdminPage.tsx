@@ -1,7 +1,7 @@
-import {  useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Heading from "../../components/common/Heading";
 import { useEffect, useState } from "react";
-import {  ServerType } from "../../type";
+import { ServerType } from "../../type";
 import { toast } from "react-toastify";
 import { api } from "../../api";
 import dayjs from "dayjs";
@@ -32,10 +32,9 @@ const ServerDetailAdminPage = () => {
       const response = await api.get<ServerType>(`/servers/${serverId}`);
       setServerDetail(response.data);
     } catch (error) {
-      toast.error('Xảy ra lỗi trong quá trìn xử lý');
+      toast.error("Xảy ra lỗi trong quá trìn xử lý");
     }
   };
-
 
   const handleChangeLocation = async (value: string) => {
     if (serverDetail) {
@@ -162,8 +161,14 @@ const ServerDetailAdminPage = () => {
                 <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg">
                   <div className="font-medium text-gray-500">Kuma</div>
                   <div className="flex gap-2 w-full">
-                    <ButtonConnectKuma server={serverDetail} />
-                    <ButtonRemoveKuma server={serverDetail} />
+                    <ButtonConnectKuma
+                      server={serverDetail}
+                      handleSubmit={handleFetchServerDetail}
+                    />
+                    <ButtonRemoveKuma
+                      server={serverDetail}
+                      onSubmit={handleFetchServerDetail}
+                    />
                   </div>
                 </div>
               </div>

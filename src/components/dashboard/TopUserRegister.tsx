@@ -12,14 +12,14 @@ type DataType = {
   totalMoney: number;
   user: [UserState];
 };
-const TopUser = () => {
+const TopUserRegister = () => {
   const priceFomat = useFormatPrice();
   const { i18n } = useTranslation();
   const [data, setData] = useState<DataType[]>([]);
   useEffect(() => {
     (async () => {
       try {
-        const result = await api.get("/satisfy/get-top-user");
+        const result = await api.get("/satisfy/new-user-today");
         setData(result.data);
       } catch (error) {
         console.log(error);
@@ -73,9 +73,7 @@ const TopUser = () => {
         dataIndex: "totalMoney",
         key: "totalMoney",
         render: (text: number) => (
-          <p className="text-sm font-primary">
-            {priceFomat(text)}
-          </p>
+          <p className="text-sm font-primary">{priceFomat(text)}</p>
         ),
       },
     ],
@@ -83,7 +81,7 @@ const TopUser = () => {
   );
   return (
     <div className="space-y-5">
-      <Heading>Top người dùng</Heading>
+      <Heading>Người dùng mới</Heading>
       <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
         <Table
           dataSource={data.map((item, index) => ({
@@ -99,4 +97,4 @@ const TopUser = () => {
   );
 };
 
-export default TopUser;
+export default TopUserRegister;

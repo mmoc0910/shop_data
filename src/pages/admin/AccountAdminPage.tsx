@@ -46,11 +46,11 @@ const AccountAdminPage = () => {
   const [totalItems, setTotalItems] = useState<number>();
   const [page, setPage] = useState(1);
   const [inputValue, setInputValue] = useState<string>("");
-  const listUserFilter = inputValue
-    ? listUser.filter((item) =>
-        item?.username?.toLowerCase().includes(inputValue.toLowerCase())
-      )
-    : listUser;
+  // const listUserFilter = inputValue
+  //   ? listUser.filter((item) =>
+  //       item?.username?.toLowerCase().includes(inputValue.toLowerCase())
+  //     )
+  //   : listUser;
   const { handleSubmit, reset, setValue, watch } = useForm({
     resolver: yupResolver(schema),
     mode: "onSubmit",
@@ -64,6 +64,12 @@ const AccountAdminPage = () => {
   useEffect(() => {
     fetchData(page);
   }, [page]);
+  useEffect(() => {
+    const timeout = setTimeout(() => fetchData(1, inputValue), 500);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [inputValue]);
   const onSubmit = async (data: { level: number }) => {
     try {
       if (selectRow) {
@@ -84,14 +90,16 @@ const AccountAdminPage = () => {
       reset();
     }
   };
-  const fetchData = async (_page: number) => {
+  const fetchData = async (_page: number, search?: string) => {
     try {
       setLoading(true);
+      const params: { page: number; username?: string } = { page: _page };
+      if (search) params.username = search;
       const result = await api.get<{
         resultList: UserState[];
         totalItems: number;
       }>(`/users`, {
-        params: { page: _page },
+        params,
       });
       const data = result?.data?.resultList.filter((i) => i.role !== 1);
       setTotalItems(result.data.totalItems);
@@ -261,7 +269,7 @@ const AccountAdminPage = () => {
     <RequireAuthPage rolePage={[1, 3]}>
       <div className="space-y-6">
         <div className="flex items-center gap-5">
-          <div className="relative flex-1">
+          <div className="relative w-1/2">
             <input
               type="text"
               value={inputValue}
@@ -289,15 +297,16 @@ const AccountAdminPage = () => {
               </span>
             ) : null}
           </div>
+          <p>Total user: <span className="font-semibold text-xl text-error">{totalItems}</span></p>
         </div>
         <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
           <Table
             dataSource={
               level
-                ? listUserFilter
+                ? listUser
                     .filter((item) => item.level === Number(level))
                     .map((item, index) => ({ index, ...item }))
-                : listUserFilter.map((item, index) => ({ index, ...item }))
+                : listUser.map((item, index) => ({ index, ...item }))
             }
             columns={columns}
             loading={loading}

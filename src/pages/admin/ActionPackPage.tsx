@@ -29,16 +29,19 @@ const schema = yup
     day: yup.number().required(),
     price: yup.number().required(),
     bandWidth: yup.number().required(),
+    enable: yup.boolean().required(),
   })
   .required();
 const ActionPackPage = () => {
   const { packId } = useParams();
   const navigation = useNavigate();
   const [plan, setPlan] = useState<PlanType>();
-  const { handleSubmit, control, setValue } = useForm({
+  const { handleSubmit, control, setValue, watch } = useForm({
     resolver: yupResolver(schema),
     mode: "onSubmit",
   });
+  const enableWatch = watch("enable");
+  console.log("enableWatch ~ ", enableWatch);
   useEffect(() => {
     if (packId) {
       (async () => {
@@ -53,13 +56,14 @@ const ActionPackPage = () => {
   }, [packId]);
   useEffect(() => {
     if (plan) {
-      const { name, price, description, type, day, bandWidth } = plan;
+      const { name, price, description, type, day, bandWidth, enable } = plan;
       setValue("name", name);
       setValue("type", type);
       setValue("day", day);
       setValue("description", description.join("\n"));
       setValue("price", price);
       setValue("bandWidth", bandWidth);
+      setValue("enable", !!enable);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -72,10 +76,11 @@ const ActionPackPage = () => {
     description: string;
     name: string;
     bandWidth: number;
+    enable: boolean;
   }) => {
     try {
       if (plan) {
-        const { name, type, day, description, price, bandWidth } = data;
+        const { name, type, day, description, price, bandWidth, enable } = data;
         await api.patch(`/plans/${packId}`, {
           name,
           price,
@@ -83,6 +88,7 @@ const ActionPackPage = () => {
           day,
           description: description.split("\n"),
           bandWidth,
+          enable: enable ? 1 : 0,
         });
         toast.success("Chỉnh sửa thành công");
         navigation("/admin/pack");
@@ -148,8 +154,12 @@ const ActionPackPage = () => {
             <FormGroup className="col-span-2">
               <Label htmlFor="day">Status*</Label>
               <div className="flex items-center h-full">
-                <Checkbox checked={!!plan.status}>
-                  {plan.status ? "Active" : "InActive"}
+                <Checkbox
+                  checked={enableWatch}
+                  onClick={() => setValue("enable", !enableWatch)}
+                >
+                  Enable
+                  {/* {enableWatch ? "Enable" : "Disable"} */}
                 </Checkbox>
               </div>
             </FormGroup>
