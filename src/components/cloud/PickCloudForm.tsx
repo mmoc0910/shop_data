@@ -30,7 +30,6 @@ const PickCloudForm: FC<PickCloudFormProps> = ({
   location,
   onSelectCloud,
 }) => {
-  console.log("error - ", error);
   const [locations, setLocations] = useState<CloudType[]>([]);
   const [mode, setMode] = useState<"action" | "normal">("normal");
   useEffect(() => {

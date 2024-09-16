@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import EditKeyLimitForm from "./EditKeyLimitForm";
 import Swal from "sweetalert2";
 import { api } from "../../api";
@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { DEFAULT_PAGE_SIZE } from "../../constants";
 import classNames from "../../utils/classNames";
+import Loading from "../common/Loading";
 
 type Props = {
   handleFetchServerDetail: () => void;
@@ -29,6 +30,7 @@ export const ListKeyByServerId: FC<Props> = ({
   status,
   heading,
 }) => {
+  const [loading, setLoading] = useState(false);
   const servers = useSelector((state: RootState) => state.server).filter(
     (item) => item.status === 1 && item._id !== serverId
   );
@@ -54,7 +56,7 @@ export const ListKeyByServerId: FC<Props> = ({
       const response = await api.get<{
         data: KeySeverType[];
         totalItems: number;
-      }>(`/keys?serverId=${serverId}`, {
+      }>(`/keys/outline-data-usage?serverId=${serverId}`, {
         params: { page, status },
       });
       setListKey({
@@ -62,7 +64,7 @@ export const ListKeyByServerId: FC<Props> = ({
         totalItems: response.data.totalItems,
       });
     } catch (error) {
-      toast.error('Xảy ra lỗi trong quá trình xử lý');
+      toast.error("Xảy ra lỗi trong quá trình xử lý");
     }
   };
 
@@ -78,7 +80,8 @@ export const ListKeyByServerId: FC<Props> = ({
         confirmButtonText: "Đồng ý",
       });
       if (isConfirmed) {
-        console.log("migrate signle key");
+        // console.log("migrate signle key");
+        setLoading(true);
         await api.post(`/keys/migrate`, {
           keyId,
           serverId,
@@ -95,6 +98,8 @@ export const ListKeyByServerId: FC<Props> = ({
         console.log("unexpected error: ", error);
         return "An unexpected error occurred";
       }
+    } finally {
+      setLoading(false);
     }
   };
   const handelMigrateMultipleKey = async (
@@ -112,7 +117,8 @@ export const ListKeyByServerId: FC<Props> = ({
         confirmButtonText: "Đồng ý",
       });
       if (isConfirmed) {
-        console.log(selectServer, selectKeys);
+        // console.log(selectServer, selectKeys);
+        setLoading(true);
         await api.post(`/keys/multi-migrate`, {
           listKeyId: selectKeys,
           serverId: selectServer,
@@ -130,6 +136,8 @@ export const ListKeyByServerId: FC<Props> = ({
         console.log("unexpected error: ", error);
         return "An unexpected error occurred";
       }
+    } finally {
+      setLoading(false);
     }
   };
   const handleDisableKey = async (keyId: string) => {
@@ -222,26 +230,29 @@ export const ListKeyByServerId: FC<Props> = ({
     setMigrateMode(undefined);
     setIsModalOpen(false);
   };
-  if (!listKey) return null;
+  if (!listKey || listKey.data.length === 0) return null;
   if (listKey.data.length > 0)
     return (
       <>
+        {loading && <Loading />}
         <div className="space-y-7">
           <div className="flex items-center justify-between h-14">
             <Heading>{heading}</Heading>
-            <button
-              className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
-              onClick={() => {
-                if (selectKeys.length > 0) {
-                  setMigrateMode("multiple");
-                  showModal();
-                } else {
-                  toast.warn("Bạn chưa chọn key để migrate");
-                }
-              }}
-            >
-              Migrate (select {selectKeys.length} keys)
-            </button>
+            {status === 1 && (
+              <button
+                className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
+                onClick={() => {
+                  if (selectKeys.length > 0) {
+                    setMigrateMode("multiple");
+                    showModal();
+                  } else {
+                    toast.warn("Bạn chưa chọn key để migrate");
+                  }
+                }}
+              >
+                Migrate (select {selectKeys.length} keys)
+              </button>
+            )}
           </div>
           <div className="w-full space-y-5 overflow-x-scroll text-sm">
             <div className="grid grid-cols-5 w-[1180px] lg:w-full">
@@ -260,6 +271,7 @@ export const ListKeyByServerId: FC<Props> = ({
                 <div className="flex-1 px-4 font-semibold">OrderID</div>
                 <div className="flex-1 px-4 font-semibold">Email</div>
                 <div className="flex-1 px-4 font-semibold">Usage</div>
+                <div className="flex-1 px-4 font-semibold">Outline Usage</div>
               </div>
               <div className="flex col-span-3 pb-3">
                 <div className="px-4 font-semibold">Limit</div>
@@ -269,126 +281,131 @@ export const ListKeyByServerId: FC<Props> = ({
                 </div>
               </div>
               {listKey.data.length > 0 &&
-                listKey.data.map((item) =>
-                  item.status === 1 ? (
-                    <div
-                      className="grid grid-cols-5 col-span-5 py-5 border border-gray-200 rounded-xl"
-                      key={uuidv4()}
-                    >
-                      <div className="flex items-center col-span-2">
-                        <div className="px-4 font-semibold">
-                          <Checkbox
-                            checked={selectKeys.some((i) => i === item._id)}
-                            onClick={(checked) =>
-                              checked
-                                ? setSelectKeys((prev) =>
-                                    prev.filter((i) => i !== item._id)
-                                  )
-                                : setSelectKeys((prev) => [...prev, item._id])
-                            }
-                          />
-                        </div>
-                        <div className="px-4">{item.keyId}</div>
-                        <Link
-                          to={`/admin/key/${item._id}`}
-                          className="flex-1 px-4 text-primary font-medium hover:underline hover:decoration-primary"
-                        >
-                          {item.name || "no name"}
-                        </Link>
-                        <div className="flex-1 px-4">{item.account}</div>
-                        <div className="px-4 flex-1">
-                          {item.dataUsage
-                            ? `${(item.dataUsage / 1000 / 1000 / 1000).toFixed(
-                                2
-                              )} GB`
-                            : "00.00 GB"}
-                        </div>
+                listKey.data.map((item) => (
+                  <div
+                    className="grid grid-cols-5 col-span-5 py-5 border border-gray-200 rounded-xl"
+                    key={uuidv4()}
+                  >
+                    <div className="flex items-center col-span-2">
+                      <div className="px-4 font-semibold">
+                        <Checkbox
+                          checked={selectKeys.some((i) => i === item._id)}
+                          onClick={(checked) =>
+                            checked
+                              ? setSelectKeys((prev) =>
+                                  prev.filter((i) => i !== item._id)
+                                )
+                              : setSelectKeys((prev) => [...prev, item._id])
+                          }
+                        />
                       </div>
-                      <div className="flex items-center col-span-3">
-                        <div className="px-4">
-                          {item.dataExpand / 1000 / 1000 / 1000}GB
-                        </div>
-                        <div className="px-4">
-                          {item?.enable && <Tag color="green">Hoạt động</Tag>}
-                          {!item?.enable && (
-                            <Tag color="red">Ngưng hoạt động</Tag>
-                          )}
-                        </div>
-                        <div className="flex items-center justify-end flex-1 gap-2 px-4">
-                          {item.status === 1 && item.enable ? (
-                            <>
-                              <EditKeyLimitForm
-                                placeholder={`${
-                                  item.dataLimit / 1000 / 1000 / 1000
-                                } GB`}
-                                handleAddLimitData={(bytes: number) =>
-                                  handleAddLimitData(item.keyId, bytes)
-                                }
-                              />
-                              <button
-                                className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
-                                onClick={() => {
-                                  setMigrateMode("single");
-                                  setSelectRow(item._id);
-                                  showModal();
-                                }}
-                              >
-                                Migrate
-                              </button>
-                              <button
-                                className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
-                                onClick={() => handleDisableKey(item._id)}
-                              >
-                                Disable
-                              </button>
-                              <button
-                                className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
-                                onClick={async () => {
-                                  try {
-                                    const { isConfirmed } = await Swal.fire({
-                                      title: `<p class="leading-tight">Bạn có nâng cấp key này</p>`,
-                                      icon: "success",
-                                      showCancelButton: true,
-                                      confirmButtonColor: "#1DC071",
-                                      cancelButtonColor: "#d33",
-                                      cancelButtonText: "Thoát",
-                                      confirmButtonText: "Có, nâng cấp ngay",
-                                    });
-                                    if (isConfirmed) {
-                                      await api.patch(
-                                        `/keys/upgrade/${item._id}`
-                                      );
-                                      handleFetchServerDetail();
-                                      toast.success("Thành công");
-                                    }
-                                  } catch (error) {
-                                    if (axios.isAxiosError(error)) {
-                                      console.log("error message: ", error);
-                                      toast.error(error.response?.data.message);
-                                    } else {
-                                      console.log("unexpected error: ", error);
-                                      return "An unexpected error occurred";
-                                    }
-                                  }
-                                }}
-                              >
-                                Gia hạn
-                              </button>
-                            </>
-                          ) : null}
-                          {item.status === 1 && !item.enable && (
-                            <button
-                              className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
-                              onClick={() => handleEnableKey(item._id)}
-                            >
-                              Enable
-                            </button>
-                          )}
-                        </div>
+                      <div className="px-4">{item.keyId}</div>
+                      <Link
+                        to={`/admin/key/${item._id}`}
+                        className="flex-1 px-4 text-primary font-medium hover:underline hover:decoration-primary"
+                      >
+                        {item.name || "no name"}
+                      </Link>
+                      <div className="flex-1 px-4">{item.account}</div>
+                      <div className="px-4 flex-1">
+                        {item.dataUsage
+                          ? `${(item.dataUsage / 1000 / 1000 / 1000).toFixed(
+                              2
+                            )} GB`
+                          : "00.00 GB"}
+                      </div>
+                      <div className="px-4 flex-1">
+                        {item.dataUsage
+                          ? `${(item.realtimeDataUsage / 1000 / 1000 / 1000).toFixed(
+                              2
+                            )} GB`
+                          : "00.00 GB"}
                       </div>
                     </div>
-                  ) : null
-                )}
+                    <div className="flex items-center col-span-3">
+                      <div className="px-4">
+                        {item.dataExpand / 1000 / 1000 / 1000}GB
+                      </div>
+                      <div className="px-4">
+                        {item?.enable && <Tag color="green">Hoạt động</Tag>}
+                        {!item?.enable && (
+                          <Tag color="red">Ngưng hoạt động</Tag>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-end flex-1 gap-2 px-4">
+                        {item.status === 1 && item.enable ? (
+                          <>
+                            <EditKeyLimitForm
+                              placeholder={`${
+                                item.dataLimit / 1000 / 1000 / 1000
+                              } GB`}
+                              handleAddLimitData={(bytes: number) =>
+                                handleAddLimitData(item.keyId, bytes)
+                              }
+                            />
+                            <button
+                              className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
+                              onClick={() => {
+                                setMigrateMode("single");
+                                setSelectRow(item._id);
+                                showModal();
+                              }}
+                            >
+                              Migrate
+                            </button>
+                            <button
+                              className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
+                              onClick={() => handleDisableKey(item._id)}
+                            >
+                              Disable
+                            </button>
+                            <button
+                              className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
+                              onClick={async () => {
+                                try {
+                                  const { isConfirmed } = await Swal.fire({
+                                    title: `<p class="leading-tight">Bạn có nâng cấp key này</p>`,
+                                    icon: "success",
+                                    showCancelButton: true,
+                                    confirmButtonColor: "#1DC071",
+                                    cancelButtonColor: "#d33",
+                                    cancelButtonText: "Thoát",
+                                    confirmButtonText: "Có, nâng cấp ngay",
+                                  });
+                                  if (isConfirmed) {
+                                    await api.patch(
+                                      `/keys/upgrade/${item._id}`
+                                    );
+                                    handleFetchServerDetail();
+                                    toast.success("Thành công");
+                                  }
+                                } catch (error) {
+                                  if (axios.isAxiosError(error)) {
+                                    console.log("error message: ", error);
+                                    toast.error(error.response?.data.message);
+                                  } else {
+                                    console.log("unexpected error: ", error);
+                                    return "An unexpected error occurred";
+                                  }
+                                }
+                              }}
+                            >
+                              Gia hạn
+                            </button>
+                          </>
+                        ) : null}
+                        {item.status === 1 && !item.enable && (
+                          <button
+                            className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
+                            onClick={() => handleEnableKey(item._id)}
+                          >
+                            Enable
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
           <div className="flex justify-end">

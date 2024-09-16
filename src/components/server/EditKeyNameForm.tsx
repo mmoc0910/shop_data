@@ -27,11 +27,7 @@ const EditKeyNameForm = ({
     defaultValues: { name: placeholder },
   });
   const onSubmit = (data: { name?: string }) => {
-    try {
-      data.name && handleRenameKey(data.name);
-    } catch (error) {
-      console.log(error);
-    }
+    data.name && handleRenameKey(data.name);
   };
   return (
     <form

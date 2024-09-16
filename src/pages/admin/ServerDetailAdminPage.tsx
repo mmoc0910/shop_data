@@ -18,6 +18,7 @@ import EditLocationServerForm from "../../components/server/EditLocationServerFo
 import ButtonConnectKuma from "../../components/server/ButtonConnectKuma";
 import ButtonRemoveKuma from "../../components/server/ButtonRemoveKuma";
 import { ListKeyByServerId } from "../../components/server/ListKeyByServerId";
+import EditCloudServerForm from "../../components/server/EditCloudServerForm";
 
 const ServerDetailAdminPage = () => {
   const { serverId } = useParams();
@@ -41,6 +42,19 @@ const ServerDetailAdminPage = () => {
       try {
         await api.patch(`/servers/location/${serverDetail._id}`, {
           location: value,
+        });
+        handleFetchServerDetail();
+        toast.success("Thành công");
+      } catch (error) {
+        console.log("error - ", error);
+      }
+    }
+  };
+  const handleChangeCloud = async (value: string) => {
+    if (serverDetail) {
+      try {
+        await api.patch(`/servers/cloud-manager/${serverDetail._id}`, {
+          cloudManagerId: value,
         });
         handleFetchServerDetail();
         toast.success("Thành công");
@@ -104,8 +118,19 @@ const ServerDetailAdminPage = () => {
                     <EditLocationServerForm
                       initialLocation={serverDetail.location}
                       onSubmit={(value) => {
-                        console.log("value - ", value);
                         handleChangeLocation(value);
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg">
+                  <div className="font-medium text-gray-500">Cloud</div>
+                  <div>
+                    <EditCloudServerForm
+                      initialLocation={serverDetail.cloudManagerId}
+                      onSubmit={(value) => {
+                        console.log("value ~ ", value);
+                        handleChangeCloud(value);
                       }}
                     />
                   </div>

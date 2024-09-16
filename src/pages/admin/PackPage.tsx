@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useTranslation } from "react-i18next";
 import IconTrash from "../../icons/IconTrash";
 import { useFormatPrice } from "../../hooks/useFormatPrice";
+import { ButtonEnablePack } from "../../components/pack/ButtonEnablePack";
 
 const PackPage = () => {
   const priceFomat = useFormatPrice();
@@ -210,19 +211,27 @@ const PackPage = () => {
         render: (_: string, record: PlanType) => (
           <div className="flex gap-4">
             {record.status === 1 ? (
-              <button
-                className="px-2 aspect-square text-xs font-medium text-white rounded-md bg-error font-primary"
-                onClick={() => handleRemovePlan(record._id)}
-              >
-                <IconTrash className="w-5 h-5" />
-              </button>
+              <div className="flex gap-2">
+                {" "}
+                <ButtonEnablePack
+                  _id={record._id}
+                  enable={!!record.enable}
+                  onSuccess={handleFetchPlans}
+                />
+                <button
+                  className="px-2 aspect-square text-xs font-medium text-white rounded-md bg-error font-primary"
+                  onClick={() => handleRemovePlan(record._id)}
+                >
+                  <IconTrash className="w-5 h-5" />
+                </button>
+              </div>
             ) : null}
           </div>
         ),
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [i18n.language]
+    [i18n.language, listPlanFilter]
   );
   const columnHistory: TableColumnsType<PlanType> = useMemo(
     () => [

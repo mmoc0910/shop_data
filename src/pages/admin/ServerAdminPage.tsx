@@ -577,7 +577,14 @@ const ServerAdminPage = () => {
         <div className="grid grid-cols-2 p-5 gap-5 md:grid-cols-5 rounded-xl border-2 border-[#eeeeed]">
           <div className="flex-1 space-y-3">
             <p className="text-lg text-gray-500">Total servers</p>
-            <p className="text-2xl font-medium">{listServer.length}</p>
+            <p className="text-2xl font-medium">
+              {
+                listServer.filter(
+                  (item) => item.status === 1 || item.status === 3
+                ).length
+              }
+              /{listServer.length}
+            </p>
           </div>
           <div className="flex-1 space-y-3">
             <p className="text-lg text-primary20">Active</p>
@@ -736,24 +743,6 @@ const ServerAdminPage = () => {
           columns={columns}
           scroll={{ x: 1120 }}
         />
-        {downServer > 0 ? (
-          <>
-            <div className="flex items-center justify-between">
-              <Heading>
-                Danh sách máy chủ Down(
-                {downServer})
-              </Heading>
-            </div>
-            <Table
-              loading={loadingtable}
-              dataSource={listFilterServer
-                .filter((item) => item.status === 2)
-                .map((item, index) => ({ index, ...item }))}
-              columns={columns}
-              scroll={{ x: 1120 }}
-            />
-          </>
-        ) : null}
         {maintenanceServer > 0 ? (
           <>
             <div className="flex items-center justify-between">
@@ -766,6 +755,25 @@ const ServerAdminPage = () => {
               loading={loadingtable}
               dataSource={listFilterServer
                 .filter((item) => item.status === 3)
+                .map((item, index) => ({ index, ...item }))}
+              columns={columns}
+              scroll={{ x: 1120 }}
+            />
+          </>
+        ) : null}
+
+        {downServer > 0 ? (
+          <>
+            <div className="flex items-center justify-between">
+              <Heading>
+                Danh sách máy chủ Down(
+                {downServer})
+              </Heading>
+            </div>
+            <Table
+              loading={loadingtable}
+              dataSource={listFilterServer
+                .filter((item) => item.status === 2)
                 .map((item, index) => ({ index, ...item }))}
               columns={columns}
               scroll={{ x: 1120 }}

@@ -32,6 +32,8 @@ import Radio from "../../components/radio/Radio";
 import { useTranslation } from "react-i18next";
 import MoveServer from "../../components/user/MoveServer";
 import { useFormatPrice } from "../../hooks/useFormatPrice";
+import IconDocumentPlus from "../../icons/IconDocumentPlus";
+import IconArrowPathRoundSquare from "../../icons/IconArrowPathRoundSquare";
 
 const OrderPage = () => {
   const priceFomat = useFormatPrice();
@@ -459,20 +461,50 @@ const OrderPage = () => {
               (record.keyId.endExpandDate &&
                 dayjs().isAfter(record.keyId.endExpandDate, "day") &&
                 record.planId.price > 0) ? (
-                <button
-                  className="px-2 py-1 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary shrink-0"
-                  onClick={() => {
-                    setSelectRow({
-                      id: record._id,
-                      endDate: record.keyId.endDate,
-                    });
-                    showModal();
-                  }}
-                >
-                  {t("page.myOrder.field.buyData")}
-                </button>
+                // <button
+                //   className="px-2 py-1 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary shrink-0"
+                //   onClick={() => {
+                //     setSelectRow({
+                //       id: record._id,
+                //       endDate: record.keyId.endDate,
+                //     });
+                //     showModal();
+                //   }}
+                // >
+                //   {t("page.myOrder.field.buyData")}
+                // </button>
+                <Tooltip title={t("page.myOrder.field.buyData")}>
+                  <button
+                    className="px-2 aspect-square grow-0 w-fit text-xs font-medium text-white rounded-md bg-primary font-primary"
+                    onClick={() => {
+                      setSelectRow({
+                        id: record._id,
+                        endDate: record.keyId.endDate,
+                      });
+                      showModal();
+                    }}
+                  >
+                    <IconDocumentPlus className="size-4" />
+                  </button>
+                </Tooltip>
               ) : null}
-              <button
+              <Tooltip title={t("page.myOrder.field.extend")}>
+                <button
+                  className="px-2 aspect-square grow-0 w-fit text-xs font-medium text-white rounded-md bg-primary font-primary"
+                  onClick={() =>
+                    handleUpgradPlan(
+                      record._id,
+                      record.planId.name,
+                      record.planId.price,
+                      record.planId.bandWidth,
+                      record.planId.type
+                    )
+                  }
+                >
+                  <IconArrowPathRoundSquare className="size-4" />
+                </button>
+              </Tooltip>
+              {/* <button
                 className="px-2 py-1 text-xs font-medium text-white rounded-lg bg-primary font-primary shrink-0"
                 onClick={() =>
                   handleUpgradPlan(
@@ -485,7 +517,7 @@ const OrderPage = () => {
                 }
               >
                 {t("page.myOrder.field.extend")}
-              </button>
+              </button> */}
               {canMigrate && (
                 <MoveServer
                   servers={servers}

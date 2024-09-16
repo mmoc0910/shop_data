@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Container from "../common/Container";
-import { PlanType } from "../../type";
+import { GistType, PlanType } from "../../type";
 import { v4 as uuidv4 } from "uuid";
 import { IconCheck } from "../checkbox/Checkbox";
 import { api } from "../../api";
@@ -91,10 +91,15 @@ const PricingBox = () => {
   return;
 };
 
-export const PricingItem = ({ plan }: { plan: PlanType }) => {
+export const PricingItem = ({
+  plan,
+  onSuccess,
+}: {
+  plan: PlanType;
+  onSuccess?: (gist: GistType) => void;
+}) => {
   const priceFomat = useFormatPrice();
   const { t, i18n } = useTranslation();
-  // const [isModalOpen, setIsModalOpen] = useState(true);
   const [loading, setLoading] = useState<boolean>(false);
   const { _id } = useSelector((state: RootState) => state.auth);
   const navigation = useNavigate();
@@ -119,12 +124,13 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
         });
         if (isConfirmed) {
           setLoading(true);
-          const result = await api.post("/gists", {
+          const result = await api.post<{data: GistType}>("/gists", {
             userId: _id,
             planId: plan._id,
           });
-          console.log("result ~ ", result.data);
+          console.log("result ~ ", result.data.data);
           toast.success(t("page.package.swal.success"));
+          onSuccess && onSuccess(result.data.data)
           // navigation("/user/order");
         }
       } catch (error) {
@@ -161,18 +167,6 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
       navigation("/sign-in");
     }
   };
-
-  // const showModal = () => {
-  //   setIsModalOpen(true);
-  // };
-
-  // const handleOk = () => {
-  //   setIsModalOpen(false);
-  // };
-
-  // const handleCancel = () => {
-  //   setIsModalOpen(false);
-  // };
   return (
     <>
       <div className="col-span-1 shadow-xl flex flex-col items-center rounded-2xl overflow-hidden">
@@ -213,7 +207,7 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
         <button
           className="flex items-center justify-center bg-primary w-full py-4 flex-col gap-2"
           onClick={() => handleBuy(_id)}
-          // onClick={showModal}
+          // onClick={() => onSuccess && onSuccess(res)}
         >
           <p className="font-medium text-white text-xl">
             {t("page.package.buyNow")}
@@ -221,56 +215,6 @@ export const PricingItem = ({ plan }: { plan: PlanType }) => {
         </button>
       </div>
       {loading ? <Loading /> : null}
-      {/* <Modal open={isModalOpen} onCancel={handleCancel} footer={[]} centered>
-        <div className="pt-5 font-primary">
-          <p className="text-center font-medium text-xl">
-            Bạn vừa mua thành công gói cước
-          </p>
-          <div className="space-y-2 pt-5">
-            <p>
-              <span className="font-medium">Hiệu lực từ:</span>{" "}
-              <span>19:20 21/12/2024</span>
-            </p>
-            <p>
-              <span className="font-medium">Đến ngày:</span>{" "}
-              <span>19:20 21/12/2024</span>
-            </p>
-            <p>
-              <span className="font-medium">Dung lượng:</span>{" "}
-              <span>60GB/30 ngày</span>
-            </p>
-            <div className="flex items-baseline gap-2">
-              <div className="font-medium">Tên key:</div>{" "}
-              <EditKeyNameForm
-                placeholder="abcdef-123"
-                handleRenameKey={(name) => console.log("name - ", name)}
-                // className="w-full flex-1"
-              />
-            </div>
-            <p className="font-medium">
-              Copy key này và dán vào phần mềm outline client để sử dụng
-            </p>
-            <div className="flex items-center gap-2">
-              <Tooltip title="Copy key">
-                <button
-                  className="text-white px-2 w-fit aspect-square rounded-md bg-secondary20"
-                  onClick={() =>
-                    copyToClipboard(
-                      `ssconf://s3.ap-northeast-3.amazonaws.com/vpncn2.top/20240618-mchina-manhnguyen-lwyc.json#mchina-zuhaib-240618-1
-`
-                    )
-                  }
-                >
-                  <AndroidXML />
-                </button>
-              </Tooltip>
-              <p className="line-clamp-2">
-                ssconf://s3.ap-northeast-3.amazonaws.com/vpncn2.top/20240618-mchina-manhnguyen-lwyc.json#mchina-zuhaib-240618-1
-              </p>
-            </div>
-          </div>
-        </div>
-      </Modal> */}
     </>
   );
 };

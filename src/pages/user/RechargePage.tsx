@@ -203,7 +203,6 @@ const AutoBanking = () => {
                     content: contentPayment,
                   }
                 );
-                console.log("result - ", result.data.data._id);
                 setOrderId(result.data.data._id);
                 setAddInfo(contentPayment);
                 setShowQR(true);

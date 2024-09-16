@@ -41,14 +41,16 @@ export const PickCloudManagerForm: FC<Props> = ({ onSelect, data, error }) => {
       ></DropdownWithComponents.Select>
       <DropdownWithComponents.List>
         {listCloud.length > 0 &&
-          listCloud.map((cloud) => (
-            <DropdownWithComponents.Option
-              key={cloud._id}
-              onClick={() => onSelect(cloud._id)}
-            >
-              <span className="capitalize">{cloud.name}</span>
-            </DropdownWithComponents.Option>
-          ))}
+          listCloud.map((cloud) =>
+            cloud.status === 1 ? (
+              <DropdownWithComponents.Option
+                key={cloud._id}
+                onClick={() => onSelect(cloud._id)}
+              >
+                <span className="capitalize">{cloud.name}</span>
+              </DropdownWithComponents.Option>
+            ) : null
+          )}
       </DropdownWithComponents.List>
     </DropdownWithComponents>
   );

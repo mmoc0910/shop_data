@@ -63,6 +63,7 @@ export type ServerType = {
   __v: 0;
   listKeys?: KeySeverType[];
   isConnectKuma: 0 | 1;
+  cloudManagerId: string;
 };
 
 type AWSType = {
@@ -97,6 +98,7 @@ export type KeySeverType = {
   endExpandDate: Date;
   createdAt: Date;
   updatedAt: Date;
+  realtimeDataUsage: number;
   __v: 0;
 };
 
@@ -114,7 +116,7 @@ export type PlanType = {
   numberPurchase: number;
   display: 0 | 1;
   status: 0 | 1;
-  enable: 0 | 1 // 1:enable - 0: disable
+  enable: 0 | 1; // 1:enable - 0: disable
 };
 
 export type CashType = {
