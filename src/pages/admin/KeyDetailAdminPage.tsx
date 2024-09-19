@@ -18,6 +18,7 @@ import Loading from "../../components/common/Loading";
 import EditKeyNameForm from "../../components/server/EditKeyNameForm";
 import { v4 as uuidv4 } from "uuid";
 import { UpdateEndDateKey } from "../../components/key/UpdateEndDateKey";
+import { KeyDataUseage } from "../../components/key/KeyDataUseage";
 
 const KeyDetailAdminPage = () => {
   const { keyId } = useParams();
@@ -29,7 +30,6 @@ const KeyDetailAdminPage = () => {
     undefined
   );
   const [key, setKey] = useState<KeyDetailType>();
-  console.log("key - ", key);
   useEffect(() => {
     if (keyId) {
       fetchData(keyId);
@@ -222,6 +222,7 @@ const KeyDetailAdminPage = () => {
       serverId,
       historyKey,
       accessUrl,
+      arrayDataUsage,
     } = key;
     return (
       <RequireAuthPage rolePage={[1, 3]}>
@@ -451,6 +452,10 @@ const KeyDetailAdminPage = () => {
               </div>
             </div>
           </div>
+          <KeyDataUseage
+            arrayDataUsage={arrayDataUsage}
+            dataUsage={dataUsage}
+          />
           {historyKey.length > 0 && (
             <div className="space-y-7">
               <Heading>History key</Heading>

@@ -260,6 +260,8 @@ export type KeyDetailType = {
   updatedAt: Dayjs;
   __v: 0;
   gist: GistType;
+  arrayDataUsage?: number[];
+  migrateDate?: Date;
 };
 
 export type CloudManagerType = {

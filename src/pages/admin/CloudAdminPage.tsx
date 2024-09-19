@@ -115,7 +115,6 @@ export const CloudAdminPage = () => {
       console.log("data ~ ", data);
       await api.post("/cloud-managers", data);
       handleFetchData();
-      setOpenModal(false);
       toast.success("Thêm Cloud Server thành công");
       reset();
       setOpenModal(false);
