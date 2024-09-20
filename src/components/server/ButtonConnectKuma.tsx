@@ -10,15 +10,12 @@ const ButtonConnectKuma: FC<Props> = ({ server, handleSubmit }) => {
   const handleConnectKuma = async () => {
     try {
       setLoading(true);
-      const { name, hostnameForAccessKeys, apiUrl, portForNewAccessKeys } =
+      const { name, hostnameForAccessKeys, portForNewAccessKeys } =
         server;
-      const parsedUrl = new URL(apiUrl);
-      const portM = parsedUrl.port;
       await api.post("/kuma/create", {
         name,
         hostname: hostnameForAccessKeys,
         portC: `${portForNewAccessKeys}`,
-        portM: portM,
       });
       handleSubmit();
       toast.success("Connect Kuma success");

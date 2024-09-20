@@ -23,7 +23,7 @@ const ButtonRemoveKuma: FC<Props> = ({ server, onSubmit }) => {
       if (isConfirmed) {
         setLoading(true);
         await api.post(`/kuma/remove`, {
-          name: `${server.name}-${server.hostnameForAccessKeys}`,
+          id: server._id,
         });
         onSubmit();
         toast.success("Thành công");
