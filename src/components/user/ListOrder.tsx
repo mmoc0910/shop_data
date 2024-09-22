@@ -1,4 +1,4 @@
-import { Table, Tag, Tooltip } from "antd";
+import { PaginationProps, Table, Tag, Tooltip } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import MoveServer from "./MoveServer";
 import dayjs from "dayjs";
@@ -10,14 +10,14 @@ import { GistType } from "../../type";
 import { api } from "../../api";
 import { FC } from "react";
 import { ServerType } from "../../type";
-import { DEFAULT_PAGE_SIZE, messages } from "../../constants";
+import {  messages } from "../../constants";
 import { useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
 import { copyToClipboard } from "../../utils/copyToClipboard";
 import { Key } from "react";
 
-type Props = { accountId: string };
-const ListOrder: FC<Props> = ({ accountId }) => {
+type Props = { accountId: string; status: 0 | 1 };
+const ListOrder: FC<Props> = ({ accountId, status }) => {
   const extensionSearchTermWatch = useWatch({
     name: "extensionSearchTerm",
     exact: true,
@@ -29,11 +29,12 @@ const ListOrder: FC<Props> = ({ accountId }) => {
   }>();
   const [servers, setServers] = useState<ServerType[]>([]);
   const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
   useEffect(() => {
     (async () => {
       try {
         const { data: dataServers } = await api.get<ServerType[]>(
-          "/servers/normal-server?status=1"
+          "/servers/normal-server"
         );
         setServers(dataServers);
       } catch (error) {
@@ -44,7 +45,7 @@ const ListOrder: FC<Props> = ({ accountId }) => {
   useEffect(() => {
     handleFetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, extensionSearchTermWatch]);
+  }, [page, extensionSearchTermWatch, pageSize]);
   const handleFetchData = async () => {
     try {
       setLoadingTable(true);
@@ -53,9 +54,11 @@ const ListOrder: FC<Props> = ({ accountId }) => {
         totalItems: number;
       }>(`/gists`, {
         params: {
+          status,
           userId: accountId,
           page,
           extension: extensionSearchTermWatch,
+          pageSize,
         },
       });
       setListGist({
@@ -201,7 +204,7 @@ const ListOrder: FC<Props> = ({ accountId }) => {
         key: "status",
         width: 130,
         render: (_: number, record: GistType) => (
-          <div className="text-sm font-primary">
+          <div className="text-sm font-primary space-y-1">
             {record.status === 1 && (
               <Tag color="green">
                 <span className="font-primary">Còn hạn</span>
@@ -216,6 +219,13 @@ const ListOrder: FC<Props> = ({ accountId }) => {
               <Tag color="blue">
                 <span className="font-primary">Migrate</span>
               </Tag>
+            )}
+            {!record.keyId.enable ? (
+              <Tag color="red">
+                <span className="font-primary">Locked</span>
+              </Tag>
+            ) : (
+              ""
             )}
           </div>
         ),
@@ -325,6 +335,13 @@ const ListOrder: FC<Props> = ({ accountId }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [servers]
   );
+  const onShowSizeChange: PaginationProps["onShowSizeChange"] = (
+    _current,
+    pageSize
+  ) => {
+    setPage(1);
+    setPageSize(pageSize);
+  };
   if (!listGist) return null;
   return (
     <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
@@ -338,7 +355,8 @@ const ListOrder: FC<Props> = ({ accountId }) => {
           defaultCurrent: 1,
           total: listGist.totalItems,
           onChange: (index) => setPage(index),
-          pageSize: DEFAULT_PAGE_SIZE,
+          pageSize,
+          onShowSizeChange: onShowSizeChange,
         }}
       />
     </div>

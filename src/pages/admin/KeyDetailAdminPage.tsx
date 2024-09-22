@@ -19,6 +19,8 @@ import EditKeyNameForm from "../../components/server/EditKeyNameForm";
 import { v4 as uuidv4 } from "uuid";
 import { UpdateEndDateKey } from "../../components/key/UpdateEndDateKey";
 import { KeyDataUseage } from "../../components/key/KeyDataUseage";
+import { DropdownWithComponents } from "../../components/dropdown";
+import classNames from "../../utils/classNames";
 
 const KeyDetailAdminPage = () => {
   const { keyId } = useParams();
@@ -38,8 +40,8 @@ const KeyDetailAdminPage = () => {
   }, [keyId]);
   const handleFetchDataServer = async () => {
     try {
-      const resultServer = await api.get("/servers?status=1");
-      setServers(resultServer.data);
+      const result = await api.get<ServerType[]>("/servers/normal-server");
+      setServers(result.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log("error message: ", error);
@@ -552,7 +554,7 @@ const KeyDetailAdminPage = () => {
                 </p>
               )}
           </div>
-          <div>
+          {/* <div>
             {selectRow &&
               servers.map((item) =>
                 item._id !== serverId._id ? (
@@ -564,6 +566,46 @@ const KeyDetailAdminPage = () => {
                   </Radio>
                 ) : null
               )}
+          </div> */}
+          <div className="mb-5">
+            <DropdownWithComponents>
+              <DropdownWithComponents.Select
+                placeholder={
+                  selectServer ? (
+                    <span className="text-black">
+                      {servers.find((i) => i._id === selectServer)?.name}
+                    </span>
+                  ) : (
+                    <span className="text-text4">Chọn server</span>
+                  )
+                }
+              ></DropdownWithComponents.Select>
+              <DropdownWithComponents.List>
+                {[
+                  ...servers.filter((item) => item.status === 1),
+                  ...servers.filter((item) => item.status === 3),
+                ].map((item) => (
+                  <DropdownWithComponents.Option
+                    key={uuidv4()}
+                    onClick={() => setSelectServer(item._id)}
+                  >
+                    <span
+                      className={classNames(
+                        "capitalize",
+                        selectServer === item._id
+                          ? "font-semibold text-primary"
+                          : ""
+                      )}
+                    >
+                      {item.name} ({item.numberKey} keys){" "}
+                      {item.status === 3 && (
+                        <span className="text-error">*</span>
+                      )}
+                    </span>
+                  </DropdownWithComponents.Option>
+                ))}
+              </DropdownWithComponents.List>
+            </DropdownWithComponents>
           </div>
           <div className="flex items-center justify-end gap-5">
             <button

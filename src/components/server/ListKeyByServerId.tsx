@@ -4,17 +4,14 @@ import Swal from "sweetalert2";
 import { api } from "../../api";
 import { toast } from "react-toastify";
 import Heading from "../common/Heading";
-import { KeySeverType } from "../../type";
+import { KeySeverType, ServerType } from "../../type";
 import axios from "axios";
 import { FC } from "react";
 import { Checkbox } from "../checkbox";
 import { v4 as uuidv4 } from "uuid";
-import { Modal, Pagination, Tag } from "antd";
+import { Modal, Pagination, PaginationProps, Tag } from "antd";
 import { DropdownWithComponents } from "../dropdown";
-import { RootState } from "../../store/configureStore";
-import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { DEFAULT_PAGE_SIZE } from "../../constants";
 import classNames from "../../utils/classNames";
 import Loading from "../common/Loading";
 
@@ -30,11 +27,11 @@ export const ListKeyByServerId: FC<Props> = ({
   status,
   heading,
 }) => {
+  const [loadingTable, setLoadingTable] = useState(false);
   const [loading, setLoading] = useState(false);
-  const servers = useSelector((state: RootState) => state.server).filter(
-    (item) => item.status === 1 && item._id !== serverId
-  );
+  const [servers, setServer] = useState<ServerType[]>([]);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [listKey, setListKey] = useState<{
     data: KeySeverType[];
     totalItems: number;
@@ -48,16 +45,29 @@ export const ListKeyByServerId: FC<Props> = ({
   const [migrateMode, setMigrateMode] = useState<
     "multiple" | "single" | undefined
   >();
+
+  useEffect(() => {
+    handleFetchNormalData();
+  }, []);
   useEffect(() => {
     handleFetchKeyByServerId();
-  }, [page]);
+  }, [page, pageSize]);
+  const handleFetchNormalData = async () => {
+    try {
+      const result = await api.get<ServerType[]>("/servers/normal-server");
+      setServer(result.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleFetchKeyByServerId = async () => {
     try {
+      setLoadingTable(true);
       const response = await api.get<{
         data: KeySeverType[];
         totalItems: number;
       }>(`/keys/outline-data-usage?serverId=${serverId}`, {
-        params: { page, status },
+        params: { page, status, pageSize },
       });
       setListKey({
         data: response.data.data,
@@ -65,6 +75,8 @@ export const ListKeyByServerId: FC<Props> = ({
       });
     } catch (error) {
       toast.error("Xảy ra lỗi trong quá trình xử lý");
+    } finally {
+      setLoadingTable(false);
     }
   };
 
@@ -230,6 +242,13 @@ export const ListKeyByServerId: FC<Props> = ({
     setMigrateMode(undefined);
     setIsModalOpen(false);
   };
+  const onShowSizeChange: PaginationProps["onShowSizeChange"] = (
+    _current,
+    pageSize
+  ) => {
+    setPage(1);
+    setPageSize(pageSize);
+  };
   if (!listKey || listKey.data.length === 0) return null;
   if (listKey.data.length > 0)
     return (
@@ -254,167 +273,177 @@ export const ListKeyByServerId: FC<Props> = ({
               </button>
             )}
           </div>
-          <div className="w-full space-y-5 overflow-x-scroll text-sm">
-            <div className="grid grid-cols-5 w-[1180px] lg:w-full">
-              <div className="flex col-span-2 pb-3">
-                <div className="px-4 font-semibold">
-                  <Checkbox
-                    checked={selectKeys.length === listKey.data.length}
-                    onClick={(checked) =>
-                      checked
-                        ? setSelectKeys([])
-                        : setSelectKeys(listKey.data.map((item) => item._id))
-                    }
-                  />
-                </div>
-                <div className="px-4 font-semibold">#</div>
-                <div className="flex-1 px-4 font-semibold">OrderID</div>
-                <div className="flex-1 px-4 font-semibold">Email</div>
-                <div className="flex-1 px-4 font-semibold">Usage</div>
-                <div className="flex-1 px-4 font-semibold">Outline Usage</div>
-              </div>
-              <div className="flex col-span-3 pb-3">
-                <div className="px-4 font-semibold">Limit</div>
-                <div className="px-4 font-semibold">Status</div>
-                <div className="text-end flex-1 px-4 font-semibold">
-                  Actions
-                </div>
-              </div>
-              {listKey.data.length > 0 &&
-                listKey.data.map((item) => (
-                  <div
-                    className="grid grid-cols-5 col-span-5 py-5 border border-gray-200 rounded-xl"
-                    key={uuidv4()}
-                  >
-                    <div className="flex items-center col-span-2">
-                      <div className="px-4 font-semibold">
-                        <Checkbox
-                          checked={selectKeys.some((i) => i === item._id)}
-                          onClick={(checked) =>
-                            checked
-                              ? setSelectKeys((prev) =>
-                                  prev.filter((i) => i !== item._id)
-                                )
-                              : setSelectKeys((prev) => [...prev, item._id])
-                          }
-                        />
-                      </div>
-                      <div className="px-4">{item.keyId}</div>
-                      <Link
-                        to={`/admin/key/${item._id}`}
-                        className="flex-1 px-4 text-primary font-medium hover:underline hover:decoration-primary"
-                      >
-                        {item.name || "no name"}
-                      </Link>
-                      <div className="flex-1 px-4">{item.account}</div>
-                      <div className="px-4 flex-1">
-                        {item.dataUsage
-                          ? `${(item.dataUsage / 1000 / 1000 / 1000).toFixed(
-                              2
-                            )} GB`
-                          : "00.00 GB"}
-                      </div>
-                      <div className="px-4 flex-1">
-                        {item.dataUsage
-                          ? `${(item.realtimeDataUsage / 1000 / 1000 / 1000).toFixed(
-                              2
-                            )} GB`
-                          : "00.00 GB"}
-                      </div>
-                    </div>
-                    <div className="flex items-center col-span-3">
-                      <div className="px-4">
-                        {item.dataExpand / 1000 / 1000 / 1000}GB
-                      </div>
-                      <div className="px-4">
-                        {item?.enable && <Tag color="green">Hoạt động</Tag>}
-                        {!item?.enable && (
-                          <Tag color="red">Ngưng hoạt động</Tag>
-                        )}
-                      </div>
-                      <div className="flex items-center justify-end flex-1 gap-2 px-4">
-                        {item.status === 1 && item.enable ? (
-                          <>
-                            <EditKeyLimitForm
-                              placeholder={`${
-                                item.dataLimit / 1000 / 1000 / 1000
-                              } GB`}
-                              handleAddLimitData={(bytes: number) =>
-                                handleAddLimitData(item.keyId, bytes)
-                              }
-                            />
-                            <button
-                              className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
-                              onClick={() => {
-                                setMigrateMode("single");
-                                setSelectRow(item._id);
-                                showModal();
-                              }}
-                            >
-                              Migrate
-                            </button>
-                            <button
-                              className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
-                              onClick={() => handleDisableKey(item._id)}
-                            >
-                              Disable
-                            </button>
-                            <button
-                              className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
-                              onClick={async () => {
-                                try {
-                                  const { isConfirmed } = await Swal.fire({
-                                    title: `<p class="leading-tight">Bạn có nâng cấp key này</p>`,
-                                    icon: "success",
-                                    showCancelButton: true,
-                                    confirmButtonColor: "#1DC071",
-                                    cancelButtonColor: "#d33",
-                                    cancelButtonText: "Thoát",
-                                    confirmButtonText: "Có, nâng cấp ngay",
-                                  });
-                                  if (isConfirmed) {
-                                    await api.patch(
-                                      `/keys/upgrade/${item._id}`
-                                    );
-                                    handleFetchServerDetail();
-                                    toast.success("Thành công");
-                                  }
-                                } catch (error) {
-                                  if (axios.isAxiosError(error)) {
-                                    console.log("error message: ", error);
-                                    toast.error(error.response?.data.message);
-                                  } else {
-                                    console.log("unexpected error: ", error);
-                                    return "An unexpected error occurred";
-                                  }
-                                }
-                              }}
-                            >
-                              Gia hạn
-                            </button>
-                          </>
-                        ) : null}
-                        {item.status === 1 && !item.enable && (
-                          <button
-                            className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
-                            onClick={() => handleEnableKey(item._id)}
-                          >
-                            Enable
-                          </button>
-                        )}
-                      </div>
-                    </div>
+          {loadingTable ? (
+            <p className="text-center">Loading ...</p>
+          ) : (
+            <div className="w-full space-y-5 overflow-x-scroll text-sm">
+              <div className="grid grid-cols-5 w-[1180px] lg:w-full">
+                <div className="flex col-span-2 pb-3">
+                  <div className="px-4 font-semibold">
+                    <Checkbox
+                      checked={selectKeys.length === listKey.data.length}
+                      onClick={(checked) =>
+                        checked
+                          ? setSelectKeys([])
+                          : setSelectKeys(listKey.data.map((item) => item._id))
+                      }
+                    />
                   </div>
-                ))}
+                  <div className="px-4 font-semibold">#</div>
+                  <div className="flex-1 px-4 font-semibold">OrderID</div>
+                  <div className="flex-1 px-4 font-semibold">Email</div>
+                  <div className="flex-1 px-4 font-semibold">Usage</div>
+                  <div className="flex-1 px-4 font-semibold">Outline Usage</div>
+                </div>
+                <div className="flex col-span-3 pb-3">
+                  <div className="px-4 font-semibold">Limit</div>
+                  <div className="px-4 font-semibold">Status</div>
+                  <div className="text-end flex-1 px-4 font-semibold">
+                    Actions
+                  </div>
+                </div>
+                {listKey.data.length > 0 &&
+                  listKey.data.map((item) => (
+                    <div
+                      className="grid grid-cols-5 col-span-5 py-5 border border-gray-200 rounded-xl"
+                      key={uuidv4()}
+                    >
+                      <div className="flex items-center col-span-2">
+                        <div className="px-4 font-semibold">
+                          <Checkbox
+                            checked={selectKeys.some((i) => i === item._id)}
+                            onClick={(checked) =>
+                              checked
+                                ? setSelectKeys((prev) =>
+                                    prev.filter((i) => i !== item._id)
+                                  )
+                                : setSelectKeys((prev) => [...prev, item._id])
+                            }
+                          />
+                        </div>
+                        <div className="px-4">{item.keyId}</div>
+                        <Link
+                          to={`/admin/key/${item._id}`}
+                          className="flex-1 px-4 text-primary font-medium hover:underline hover:decoration-primary"
+                        >
+                          {item.name || "no name"}
+                        </Link>
+                        <div className="flex-1 px-4">{item.account}</div>
+                        <div className="px-4 flex-1">
+                          {item.dataUsage
+                            ? `${(item.dataUsage / 1000 / 1000 / 1000).toFixed(
+                                2
+                              )} GB`
+                            : "00.00 GB"}
+                        </div>
+                        <div className="px-4 flex-1">
+                          {item.dataUsage
+                            ? `${(
+                                item.realtimeDataUsage /
+                                1000 /
+                                1000 /
+                                1000
+                              ).toFixed(2)} GB`
+                            : "00.00 GB"}
+                        </div>
+                      </div>
+                      <div className="flex items-center col-span-3">
+                        <div className="px-4">
+                          {item.dataExpand / 1000 / 1000 / 1000}GB
+                        </div>
+                        <div className="px-4">
+                          {item?.enable && <Tag color="green">Hoạt động</Tag>}
+                          {!item?.enable && (
+                            <Tag color="red">Ngưng hoạt động</Tag>
+                          )}
+                        </div>
+                        <div className="flex items-center justify-end flex-1 gap-2 px-4">
+                          {item.status === 1 && item.enable ? (
+                            <>
+                              <EditKeyLimitForm
+                                placeholder={`${
+                                  item.dataLimit / 1000 / 1000 / 1000
+                                } GB`}
+                                handleAddLimitData={(bytes: number) =>
+                                  handleAddLimitData(item.keyId, bytes)
+                                }
+                              />
+                              <button
+                                className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
+                                onClick={() => {
+                                  setMigrateMode("single");
+                                  setSelectRow(item._id);
+                                  showModal();
+                                }}
+                              >
+                                Migrate
+                              </button>
+                              <button
+                                className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
+                                onClick={() => handleDisableKey(item._id)}
+                              >
+                                Disable
+                              </button>
+                              <button
+                                className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
+                                onClick={async () => {
+                                  try {
+                                    const { isConfirmed } = await Swal.fire({
+                                      title: `<p class="leading-tight">Bạn có nâng cấp key này</p>`,
+                                      icon: "success",
+                                      showCancelButton: true,
+                                      confirmButtonColor: "#1DC071",
+                                      cancelButtonColor: "#d33",
+                                      cancelButtonText: "Thoát",
+                                      confirmButtonText: "Có, nâng cấp ngay",
+                                    });
+                                    if (isConfirmed) {
+                                      await api.patch(
+                                        `/keys/upgrade/${item._id}`
+                                      );
+                                      handleFetchServerDetail();
+                                      toast.success("Thành công");
+                                    }
+                                  } catch (error) {
+                                    if (axios.isAxiosError(error)) {
+                                      console.log("error message: ", error);
+                                      toast.error(error.response?.data.message);
+                                    } else {
+                                      console.log("unexpected error: ", error);
+                                      return "An unexpected error occurred";
+                                    }
+                                  }
+                                }}
+                              >
+                                Gia hạn
+                              </button>
+                            </>
+                          ) : null}
+                          {item.status === 1 && !item.enable && (
+                            <button
+                              className="p-2 text-xs font-medium text-white rounded-lg bg-secondary20"
+                              onClick={() => handleEnableKey(item._id)}
+                            >
+                              Enable
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
             </div>
-          </div>
+          )}
+
           <div className="flex justify-end">
             <Pagination
               defaultCurrent={1}
               total={listKey.totalItems}
               onChange={(index) => setPage(index)}
-              pageSize={DEFAULT_PAGE_SIZE}
+              pageSize={pageSize}
               hideOnSinglePage
+              onShowSizeChange={onShowSizeChange}
+              showSizeChanger
             />
           </div>
         </div>
@@ -449,7 +478,10 @@ export const ListKeyByServerId: FC<Props> = ({
                 }
               ></DropdownWithComponents.Select>
               <DropdownWithComponents.List>
-                {servers.map((item) => (
+                {[
+                  ...servers.filter((item) => item.status === 1),
+                  ...servers.filter((item) => item.status === 3),
+                ].map((item) => (
                   <DropdownWithComponents.Option
                     key={uuidv4()}
                     onClick={() => setSelectServer(item._id)}
@@ -462,7 +494,10 @@ export const ListKeyByServerId: FC<Props> = ({
                           : ""
                       )}
                     >
-                      {item.name} ({item.numberKey} keys)
+                      {item.name} ({item.numberKey} keys){" "}
+                      {item.status === 3 && (
+                        <span className="text-error">*</span>
+                      )}
                     </span>
                   </DropdownWithComponents.Option>
                 ))}

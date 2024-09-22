@@ -172,7 +172,10 @@ const MoveServer: FC<MoveServerProps> = memo(
                   )
                   // ) : null
                 )} */}
-                {servers.map((item) => {
+                {[
+                  ...servers.filter((item) => item.status === 1),
+                  ...servers.filter((item) => item.status === 3),
+                ].map((item) => {
                   if (item._id !== gist.server_id) {
                     return (
                       <DropdownWithComponents.Option
@@ -189,7 +192,10 @@ const MoveServer: FC<MoveServerProps> = memo(
                               : ""
                           )}
                         >
-                          {item.name} ({item.numberKey} keys)
+                          {item.name} ({item.numberKey} keys){" "}
+                          {item.status === 3 && (
+                            <span className="text-error">*</span>
+                          )}
                         </span>
                       </DropdownWithComponents.Option>
                     );

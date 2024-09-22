@@ -1,4 +1,11 @@
-import { Modal, Table, TableColumnsType, Tag, Tooltip } from "antd";
+import {
+  Modal,
+  PaginationProps,
+  Table,
+  TableColumnsType,
+  Tag,
+  Tooltip,
+} from "antd";
 import { Key, useEffect, useMemo, useState } from "react";
 import {
   ExtendPlanType,
@@ -10,8 +17,6 @@ import {
 import { toast } from "react-toastify";
 import {
   DAY_FORMAT,
-  DEFAULT_PAGE_SIZE,
-  // linkGist,
   messages,
   translateType,
 } from "../../constants";
@@ -45,6 +50,7 @@ const OrderPage = () => {
     { id: string; endDate: Date } | undefined
   >();
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [listExtendPlan, setListExtendPlan] = useState<ExtendPlanType[]>([]);
   const { _id } = useSelector((state: RootState) => state.auth);
@@ -112,13 +118,12 @@ const OrderPage = () => {
   //       )
   //     : listGist;
   useEffect(() => {
-    setLoadingTable(true);
     handleFetchData();
-    setLoadingTable(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, inputValue]);
+  }, [page, inputValue, pageSize]);
   const handleFetchData = async () => {
     try {
+      setLoadingTable(true);
       const result = await api.get<{
         data: GistType[];
         totalItems: number;
@@ -127,6 +132,7 @@ const OrderPage = () => {
           userId: _id,
           page,
           extension: inputValue,
+          pageSize,
         },
       });
       setListGist({
@@ -137,6 +143,8 @@ const OrderPage = () => {
     } catch (error) {
       console.log("error - ", error);
       toast.error(messages.error);
+    } finally {
+      setLoadingTable(false);
     }
   };
   useEffect(() => {
@@ -546,6 +554,13 @@ const OrderPage = () => {
     const value = event.target.value;
     setInputValue(value);
   };
+  const onShowSizeChange: PaginationProps["onShowSizeChange"] = (
+    _current,
+    pageSize
+  ) => {
+    setPage(1);
+    setPageSize(pageSize);
+  };
   if (!listGist) return null;
   return (
     <RequireAuthPage rolePage={[2]}>
@@ -633,7 +648,8 @@ const OrderPage = () => {
             defaultCurrent: 1,
             total: listGist.totalItems,
             onChange: (index) => setPage(index),
-            pageSize: DEFAULT_PAGE_SIZE,
+            pageSize,
+            onShowSizeChange,
           }}
         />
       </div>

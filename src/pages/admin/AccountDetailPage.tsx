@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
-import { CashType, TransactionType, UserState } from "../../type";
+import { CashType, CommisionType, SatisfyType, TransactionType, UserState } from "../../type";
 import { countries, DAY_FORMAT, purposes } from "../../constants";
-import { Table, TableColumnsType, Tag } from "antd";
+import { Table, TableColumnsType, Tag, Tooltip } from "antd";
 import { Key, useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import {
@@ -19,16 +19,51 @@ import ListOrder from "../../components/user/ListOrder";
 import { FormProvider, useForm } from "react-hook-form";
 import { SearchOrderBar } from "../../components/user/SearchOrderBar";
 import { AdminManualDeposit } from "../../components/user/AdminManualDeposit";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/configureStore";
+import IconQuesionMarkCircle from "../../icons/IconQuesionMarkCircle";
 
 const AccountDetailPage = () => {
+  const { t } = useTranslation();
   const methods = useForm({
     mode: "all",
     defaultValues: { extensionSearchTerm: "" },
   });
   const priceFomat = useFormatPrice();
   const { accountId } = useParams();
+  const { role } = useSelector((state: RootState) => state.auth);
+  const [satisfy  , setSatify] = useState<{
+    cash: number;
+    rose: number;
+    currentMoney: number;
+    numberIntoduce: number;
+    transaction: number;
+  }>();
+  const [commision, setCommision] = useState<{ value: number; min: number }>();
   const [user, setUser] = useState<UserState>();
   const [canMigrate, setCanMigrate] = useState<boolean>(false);
+  useEffect(() => {
+    (async () => {
+      if (accountId)
+        try {
+          const [{ data: dataSatify }, { data: dataCommision }] =
+            await Promise.all([
+              api.get<SatisfyType>(`/satisfy/${accountId}`),
+              api.get<CommisionType>("/commisions"),
+            ]);
+          setSatify({
+            cash: dataSatify.cash[0]?.money || 0,
+            rose: dataSatify.rose[0]?.money || 0,
+            currentMoney: dataSatify.currentMoney,
+            numberIntoduce: dataSatify.numberIntoduce,
+            transaction: dataSatify.transaction[0]?.money || 0,
+          });
+          setCommision({ value: dataCommision.value, min: dataCommision.min });
+        } catch (error) {
+          console.log("error - ", error);
+        }
+    })();
+  }, [accountId]);
   useEffect(() => {
     if (accountId) fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -56,6 +91,80 @@ const AccountDetailPage = () => {
     <RequireAuthPage rolePage={[1, 3]}>
       <FormProvider {...methods}>
         <div className="space-y-10">
+          {satisfy  && commision && (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 rounded-xl border-2 border-[#eeeeed]">
+              <div className="flex-1 p-5 space-y-3">
+                <p className="text-base text-gray-500 lg:text-lg">
+                  {t("page.dashboard.satify.cash")}
+                </p>
+                <p className="text-xl font-medium md:text-2xl">
+                  {priceFomat(satisfy.cash)}
+                </p>
+              </div>
+              <div className="flex-1 p-5 space-y-3">
+                <div className="flex items-center gap-2">
+                  <p className="text-base text-gray-500 lg:text-lg">
+                    {t("page.dashboard.satify.currentMoney")}
+                  </p>
+                  <Tooltip title={t("page.dashboard.satify.currentMoneyNode")}>
+                    <span className="cursor-pointer text-[#3d6dae]">
+                      <IconQuesionMarkCircle />
+                    </span>
+                  </Tooltip>
+                </div>
+                <p className="text-xl font-medium md:text-2xl">
+                  {priceFomat(satisfy?.currentMoney || 0)}
+                </p>
+              </div>
+              <div className="flex-1 hidden p-5 space-y-3 md:block">
+                <p className="text-base text-gray-500 lg:text-lg">
+                  {t("page.dashboard.satify.transaction")}
+                </p>
+                <div className="">
+                  <p className="text-xl font-medium md:text-2xl text-error">
+                    {priceFomat(satisfy.transaction)}
+                  </p>
+                </div>
+              </div>
+              <div className="flex-1 hidden p-5 space-y-3 md:block">
+                <p className="text-base text-gray-500 lg:text-lg">
+                Total Earn
+                </p>
+                <div className="">
+                  <p className="text-xl font-medium md:text-2xl text-error">
+                    {priceFomat(10)}
+                  </p>
+                </div>
+              </div>
+              <div className="flex-1 hidden p-5 space-y-3 md:block">
+                <div className="flex items-center gap-2">
+                  <p className="text-base text-gray-500 lg:text-lg">
+                    {t("page.dashboard.satify.rose")}
+                  </p>
+                  <Tooltip
+                    title={t("page.dashboard.satify.roseNode", {
+                      amount: commision,
+                    })}
+                  >
+                    <span className="cursor-pointer text-[#3d6dae]">
+                      <IconQuesionMarkCircle />
+                    </span>
+                  </Tooltip>
+                </div>
+                <p className="text-xl font-medium md:text-2xl">
+                  {priceFomat(satisfy.rose)}
+                </p>
+              </div>
+              <div className="flex-1 hidden p-5 space-y-3 md:block">
+                <p className="text-base text-gray-500 lg:text-lg">
+                  {t("page.dashboard.satify.numberIntoduce")}
+                </p>
+                <p className="text-xl font-medium md:text-2xl">
+                  {satisfy.numberIntoduce}
+                </p>
+              </div>
+            </div>
+          )}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Heading>Chi tiết người dùng</Heading>
@@ -126,11 +235,19 @@ const AccountDetailPage = () => {
               </div>
             ) : null}
           </div>
-          <AdminManualDeposit accountId={accountId || ''}/>
+          {role && role === 1 && (
+            <AdminManualDeposit accountId={accountId || ""} />
+          )}
+
           <div>
-            <Heading className="mb-4">Danh sách key đã mua</Heading>
+            <Heading className="mb-4">Danh sách key đã mua còn hạn</Heading>
             <SearchOrderBar />
-            <ListOrder accountId={accountId as string} />
+            <ListOrder accountId={accountId as string} status={1} />
+          </div>
+          <div>
+            <Heading className="mb-4">Danh sách key đã mua hết hạn</Heading>
+            <SearchOrderBar />
+            <ListOrder accountId={accountId as string} status={0} />
           </div>
           {/* <OrderKeyUser accountId={accountId as string} /> */}
           <HistoryCashUser accountId={accountId as string} />

@@ -1,4 +1,4 @@
-import { TableColumnsType, Tag, Tooltip } from "antd";
+import { PaginationProps, TableColumnsType, Tag, Tooltip } from "antd";
 import { Table } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { KeySeverType, ServerType } from "../../type";
@@ -12,13 +12,13 @@ import { toast } from "react-toastify";
 import UpdateExtensionKey from "./UpdateExtensionKey";
 import { copyToClipboard } from "../../utils/copyToClipboard";
 
-const DEFAULT_PAGE_SIZE = 10;
 export const ListKeyAdmin = () => {
   const [servers, setServers] = useState<ServerType[]>([]);
   const searchTerm = useWatch({ name: "searchTerm", exact: true });
   const [loading, setLoading] = useState(false);
   const [totalItems, setTotalItems] = useState<number>();
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState<number>(10);
   const [listKey, setListKey] = useState<KeySeverType[]>([]);
   useEffect(() => {
     (async () => {
@@ -34,7 +34,7 @@ export const ListKeyAdmin = () => {
   }, []);
   useEffect(() => {
     handleFetchData();
-  }, [page, searchTerm]);
+  }, [page, searchTerm, pageSize]);
   const handleFetchData = async () => {
     try {
       setLoading(true);
@@ -43,6 +43,7 @@ export const ListKeyAdmin = () => {
           status: 1,
           page,
           name: searchTerm,
+          pageSize,
         },
       });
       setTotalItems(response.data.totalItems);
@@ -214,7 +215,7 @@ export const ListKeyAdmin = () => {
         dataIndex: "key",
         key: "key",
         render: (_: string, record) => {
-          const { awsId, accessUrl, _id, name, serverId } = record;
+          const { awsId, accessUrl, keyId, name, serverId } = record;
           // const key = `${linkGist}/${record.gistId}/raw/${record?.fileName}#`;
           return (
             <div className="space-y-2">
@@ -237,8 +238,10 @@ export const ListKeyAdmin = () => {
                     onClick={() =>
                       copyToClipboard(
                         `${accessUrl}#${
-                          typeof serverId === "object" ? serverId.name : serverId
-                        }-k${_id}`
+                          typeof serverId === "object"
+                            ? serverId.name
+                            : serverId
+                        }-k${keyId}`
                       )
                     }
                   >
@@ -292,6 +295,13 @@ export const ListKeyAdmin = () => {
     ],
     [servers]
   );
+  const onShowSizeChange: PaginationProps["onShowSizeChange"] = (
+    _current,
+    pageSize
+  ) => {
+    setPage(1);
+    setPageSize(pageSize);
+  };
   return (
     <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
       <Table
@@ -303,7 +313,8 @@ export const ListKeyAdmin = () => {
           defaultCurrent: 1,
           total: totalItems,
           onChange: (index) => setPage(index),
-          pageSize: DEFAULT_PAGE_SIZE,
+          pageSize,
+          onShowSizeChange: onShowSizeChange,
         }}
       />
     </div>

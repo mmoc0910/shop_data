@@ -16,10 +16,12 @@ const EditKeyNameForm = ({
   placeholder,
   handleRenameKey,
   className = "",
+  inputClassName = "",
 }: {
   placeholder: string;
   handleRenameKey: (name: string) => void;
   className?: string;
+  inputClassName?: string;
 }) => {
   const { handleSubmit, control } = useForm({
     resolver: yupResolver(schema),
@@ -38,7 +40,8 @@ const EditKeyNameForm = ({
         name="name"
         placeholder={placeholder}
         control={control}
-        containerclass="w-full"
+        containerclass={classNames("w-full")}
+        className={inputClassName}
       />
       <Button type="submit" className="text-gray-500 px-4">
         <IconEdit className="size-6" />

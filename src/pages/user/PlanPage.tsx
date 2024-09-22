@@ -111,7 +111,13 @@ const PlanPage = () => {
                     })}
                   </span>{" "}
                   <span>
-                    {DAY_FORMAT(gist.startDate)} - {DAY_FORMAT(gist.endDate)}
+                    <span className="text-secondary">
+                      {DAY_FORMAT(gist.startDate)}
+                    </span>{" "}
+                    -{" "}
+                    <span className="text-secondary">
+                      {DAY_FORMAT(gist.endDate)}
+                    </span>
                   </span>
                 </p>
                 <div className="flex items-baseline gap-2">
@@ -122,6 +128,7 @@ const PlanPage = () => {
                       handleUpdateExtension(gist._id, name)
                     }
                     className="w-full flex-1"
+                    inputClassName="!text-secondary"
                   />
                 </div>
                 <p className="font-medium flex items-center gap-1">

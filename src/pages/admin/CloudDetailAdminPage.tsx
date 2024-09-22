@@ -171,7 +171,8 @@ export const CloudDetailAdminPage = () => {
                 cloudDetail.status === 1 ? "bg-primary20" : "bg-error"
               )}
             ></div>
-            {cloudDetail.remain >= 0 ? (
+
+            {dayjs(cloudDetail.endDate).diff(dayjs(), "days") >= 0 ? (
               <Tag color="green">Valid</Tag>
             ) : (
               <Tag color="red">Expired</Tag>

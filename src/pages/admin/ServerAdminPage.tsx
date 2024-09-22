@@ -30,6 +30,7 @@ import { useToogleValue } from "../../hooks/useToogleValue";
 import ChangeStatusServerButton from "../../components/server/ChangeStatusServerButton";
 import { ButtonDeleteServer } from "../../components/server/ButtonDeleteServer";
 import { PickCloudManagerForm } from "../../components/server/PickCloudManagerForm";
+import _ from "lodash";
 
 const schema = yup
   .object({
@@ -49,6 +50,7 @@ const schema = yup
 const ServerAdminPage = () => {
   const dispatch = useDispatch();
   const listServerStore = useSelector((state: RootState) => state.server);
+  console.log("list server store ~ ", listServerStore);
   const {
     value: showHistoryServer,
     handleToogleValue: handleToogleHistoryServer,
@@ -117,18 +119,17 @@ const ServerAdminPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
-    (async () => {
-      try {
-        const result = await api.get<ServerType[]>(
-          "/servers/normal-server?status=1"
-        );
-        dispatch(setServer(result.data));
-      } catch (error) {
-        console.log(error);
-      }
-    })();
+    handleFetchNormalData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const handleFetchNormalData = async () => {
+    try {
+      const result = await api.get<ServerType[]>("/servers/normal-server");
+      dispatch(setServer(result.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleFetchData = async () => {
     try {
       console.log("load server");
@@ -161,9 +162,21 @@ const ServerAdminPage = () => {
     cloudManagerId: string;
   }) => {
     try {
-      await api.post("/servers", { ...data, status: activeWatch ? 1 : 3 });
-      handleFetchData();
-      toast.success("Import Server thành công");
+      const result = await api.post<{ isCheckUnique?: 1 }>("/servers", {
+        ...data,
+        status: activeWatch ? 1 : 3,
+      });
+      if (result.data.isCheckUnique) {
+        toast.warn("IP này đã được sử dụng không thể add");
+      } else {
+        await api.post<{ isCheckUnique?: 1 }>("/servers", {
+          ...data,
+          status: activeWatch ? 1 : 3,
+        });
+        handleFetchData();
+        handleFetchNormalData();
+        toast.success("Import Server thành công");
+      }
       reset();
       setIsModalAddServerOpen(false);
     } catch (error) {
@@ -229,6 +242,7 @@ const ServerAdminPage = () => {
           newServerId: _newId,
         });
         handleFetchData();
+        handleFetchNormalData();
         handleCancel();
         toast.success("Migrate server thành công");
       }
@@ -295,6 +309,7 @@ const ServerAdminPage = () => {
           <Link
             to={`/admin/server/${record._id}`}
             className="text-sm font-primary text-primary"
+            target="_blank"
           >
             {text}
           </Link>
@@ -415,17 +430,22 @@ const ServerAdminPage = () => {
               status={record.status}
               handleFetchData={handleFetchData}
             />
-            <Tooltip title="Migrate server">
-              <button
-                className="flex items-center justify-center w-7 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary"
-                onClick={() => {
-                  setSelectRow(record._id);
-                  showModal();
-                }}
-              >
-                <IconArrowRightLeft className="size-4" />
-              </button>
-            </Tooltip>
+            {record.status === 1 || record.status === 3 ? (
+              <Tooltip title="Migrate server">
+                <button
+                  className="flex items-center justify-center w-7 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary"
+                  onClick={() => {
+                    setSelectRow(record._id);
+                    showModal();
+                  }}
+                >
+                  <IconArrowRightLeft className="size-4" />
+                </button>
+              </Tooltip>
+            ) : (
+              ""
+            )}
+
             <ButtonDeleteServer
               handleFetchData={handleFetchData}
               serverId={record._id}
@@ -737,9 +757,13 @@ const ServerAdminPage = () => {
         </div>
         <Table
           loading={loadingtable}
-          dataSource={listFilterServer
-            .filter((item) => item.status === 1)
-            .map((item, index) => ({ index, ...item }))}
+          dataSource={_.orderBy(
+            listFilterServer
+              .filter((item) => item.status === 1)
+              .map((item, index) => ({ index, ...item })),
+            ["createdAt"],
+            ["desc"]
+          )}
           columns={columns}
           scroll={{ x: 1120 }}
         />
@@ -753,9 +777,13 @@ const ServerAdminPage = () => {
             </div>
             <Table
               loading={loadingtable}
-              dataSource={listFilterServer
-                .filter((item) => item.status === 3)
-                .map((item, index) => ({ index, ...item }))}
+              dataSource={_.orderBy(
+                listFilterServer
+                  .filter((item) => item.status === 3)
+                  .map((item, index) => ({ index, ...item })),
+                ["createdAt"],
+                ["desc"]
+              )}
               columns={columns}
               scroll={{ x: 1120 }}
             />
@@ -772,9 +800,13 @@ const ServerAdminPage = () => {
             </div>
             <Table
               loading={loadingtable}
-              dataSource={listFilterServer
-                .filter((item) => item.status === 2)
-                .map((item, index) => ({ index, ...item }))}
+              dataSource={_.orderBy(
+                listFilterServer
+                  .filter((item) => item.status === 2)
+                  .map((item, index) => ({ index, ...item })),
+                ["createdAt"],
+                ["desc"]
+              )}
               columns={columns}
               scroll={{ x: 1120 }}
             />
@@ -792,9 +824,13 @@ const ServerAdminPage = () => {
         {showHistoryServer ? (
           <Table
             loading={loadingtable}
-            dataSource={listFilterServer
-              .filter((item) => item.status === 0)
-              .map((item, index) => ({ index, ...item }))}
+            dataSource={_.orderBy(
+              listFilterServer
+                .filter((item) => item.status === 0)
+                .map((item, index) => ({ index, ...item })),
+              ["updatedAt"],
+              ["desc"]
+            )}
             columns={columnsHistory}
             scroll={{ x: 1120 }}
           />
@@ -832,27 +868,31 @@ const ServerAdminPage = () => {
               }
             ></DropdownWithComponents.Select>
             <DropdownWithComponents.List>
-              {listServerStore
-                .filter((item) => item.status === 1)
-                .map((item) =>
-                  item._id !== selectRow ? (
-                    <DropdownWithComponents.Option
-                      key={uuidv4()}
-                      onClick={() => setSelectServer(item._id)}
+              {[
+                ...listServerStore.filter((item) => item.status === 1),
+                ...listServerStore.filter((item) => item.status === 3),
+              ].map((item) =>
+                item._id !== selectRow ? (
+                  <DropdownWithComponents.Option
+                    key={uuidv4()}
+                    onClick={() => setSelectServer(item._id)}
+                  >
+                    <span
+                      className={classNames(
+                        "capitalize",
+                        selectServer && selectServer === item._id
+                          ? "font-semibold text-primary"
+                          : ""
+                      )}
                     >
-                      <span
-                        className={classNames(
-                          "capitalize",
-                          selectServer && selectServer === item._id
-                            ? "font-semibold text-primary"
-                            : ""
-                        )}
-                      >
-                        {item.name} ({item.numberKey} keys)
-                      </span>
-                    </DropdownWithComponents.Option>
-                  ) : null
-                )}
+                      {item.name} ({item.numberKey} keys){" "}
+                      {item.status === 3 && (
+                        <span className="text-error">*</span>
+                      )}
+                    </span>
+                  </DropdownWithComponents.Option>
+                ) : null
+              )}
             </DropdownWithComponents.List>
           </DropdownWithComponents>
         </div>

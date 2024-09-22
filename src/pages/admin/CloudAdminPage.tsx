@@ -189,52 +189,76 @@ export const CloudAdminPage = () => {
         ),
       },
       {
-        title: <p className="font-semibold font-primary"></p>,
+        title: <p className="font-semibold font-primary">Status</p>,
         dataIndex: "status",
         key: "status",
-        render: (status: 0 | 1, record) => (
-          <div className="flex items-center gap-5">
-            <div
-              onClick={() =>
-                handleChangeStatus(record._id, status === 0 ? 1 : 0)
-              }
-              className={classNames(
-                "w-2 h-2 rounded-full",
-                status === 1 ? "bg-primary20" : "bg-error"
+        render: (status: 0 | 1, record) => {
+          const remain = dayjs(record.endDate).diff(dayjs(), "days");
+          return (
+            <div className="flex items-center gap-5">
+              <div
+                onClick={() =>
+                  handleChangeStatus(record._id, status === 0 ? 1 : 0)
+                }
+                className={classNames(
+                  "w-2 h-2 rounded-full",
+                  status === 1 ? "bg-primary20" : "bg-error"
+                )}
+              ></div>
+              {remain >= 0 ? (
+                <Tag color="green">Valid</Tag>
+              ) : (
+                <Tag color="red">Expired</Tag>
               )}
-            ></div>
-            {record.remain >= 0 ? (
-              <Tag color="green">Valid</Tag>
-            ) : (
-              <Tag color="red">Expired</Tag>
-            )}
-          </div>
-        ),
+            </div>
+          );
+        },
+      },
+      {
+        title: <p className="font-semibold font-primary">Live/Valid</p>,
+        dataIndex: "Live",
+        key: "Live",
+        render: (_, record) => {
+          const live = dayjs().diff(dayjs(record.startDate), "days");
+          const valid = dayjs(record.endDate).diff(
+            dayjs(record.startDate),
+            "days"
+          );
+
+          return (
+            <p>
+              {live} / {valid} days
+            </p>
+          );
+        },
+        width: 120,
       },
       {
         title: <p className="font-semibold font-primary">Date</p>,
         dataIndex: "date",
         key: "date",
-        render: (_, record) => (
-          <>
-            <p className="text-sm font-primary">
-              {dayjs(record.startDate).format("DD-MM-YYYY")}
-            </p>
-            <p className="text-sm font-primary">
-              {dayjs(record.endDate).format("DD-MM-YYYY")}
-            </p>
-          </>
-        ),
+        render: (_, record) => {
+          return (
+            <>
+              <p className="text-sm font-primary">
+                {dayjs(record.startDate).format("DD-MM-YYYY")}
+              </p>
+              <p className="text-sm font-primary">
+                {dayjs(record.endDate).format("DD-MM-YYYY")}
+              </p>
+            </>
+          );
+        },
         width: 120,
       },
-      {
-        title: <p className="font-semibold font-primary">Remain</p>,
-        dataIndex: "remain",
-        key: "remain",
-        render: (text: number) => (
-          <p className="text-sm font-primary">{text}</p>
-        ),
-      },
+      // {
+      //   title: <p className="font-semibold font-primary">Remain</p>,
+      //   dataIndex: "remain",
+      //   key: "remain",
+      //   render: (text: number) => (
+      //     <p className="text-sm font-primary">{text}</p>
+      //   ),
+      // },
       {
         title: <p className="font-semibold font-primary">Provider</p>,
         dataIndex: "provider",
@@ -293,6 +317,29 @@ export const CloudAdminPage = () => {
   );
   return (
     <div>
+      <div className="grid grid-cols-2 p-5 gap-5 md:grid-cols-5 rounded-xl border-2 border-[#eeeeed] mb-5">
+        <div className="flex-1 space-y-3">
+          <p className="text-lg text-gray-500">Total cloud</p>
+          <p className="text-2xl font-medium">{listCloud.length}</p>
+        </div>
+        <div className="flex-1 space-y-3">
+          <p className="text-lg text-primary20">Total cost</p>
+          <p className="text-2xl font-medium text-primary20">
+            {VND.format(
+              listCloud.reduce((prev, cur) => (prev += cur.price), 0)
+            )}
+            VND
+          </p>
+        </div>
+        <div className="flex-1 space-y-3">
+          <p className="text-lg text-[#ffaa01]">Buy Today</p>
+          <p className="text-2xl font-medium text-[#ffaa01]">10</p>
+        </div>
+        <div className="flex-1 space-y-3">
+          <p className="text-lg text-error">Over BW today</p>
+          <p className="text-2xl font-medium text-error">{10}</p>
+        </div>
+      </div>
       <button
         className="py-2 px-5 text-white bg-secondary20 rounded-lg font-medium mb-5"
         type="button"

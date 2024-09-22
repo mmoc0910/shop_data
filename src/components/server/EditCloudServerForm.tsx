@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import IconEdit from "../../icons/IconEdit";
-import PickCloudForm from "../cloud/PickCloudForm";
+import { PickCloudManagerForm } from "./PickCloudManagerForm";
 type EditLocationServerFormProps = {
   initialLocation: string;
   onSubmit: (value: string) => void;
@@ -13,9 +13,9 @@ const EditCloudServerForm: FC<EditLocationServerFormProps> = ({
   return (
     <div className="flex items-center">
       <div className="w-full">
-        <PickCloudForm
-          onSelectCloud={(value) => setLocation(value)}
-          location={location}
+        <PickCloudManagerForm
+          onSelect={(value) => setLocation(value)}
+          data={location}
         />
       </div>
       <button

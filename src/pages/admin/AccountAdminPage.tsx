@@ -2,7 +2,7 @@ import { Key, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { DAY_FORMAT, messages } from "../../constants";
 import { api } from "../../api";
-import { Modal, Table, TableColumnsType } from "antd";
+import { Modal, PaginationProps, Table, TableColumnsType } from "antd";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -46,6 +46,7 @@ const AccountAdminPage = () => {
   const [totalItems, setTotalItems] = useState<number>();
   const [page, setPage] = useState(1);
   const [inputValue, setInputValue] = useState<string>("");
+  const [pageSize, setPageSize] = useState<number>(10);
   // const listUserFilter = inputValue
   //   ? listUser.filter((item) =>
   //       item?.username?.toLowerCase().includes(inputValue.toLowerCase())
@@ -63,7 +64,7 @@ const AccountAdminPage = () => {
   }, [selectRow, setValue]);
   useEffect(() => {
     fetchData(page);
-  }, [page]);
+  }, [page, pageSize]);
   useEffect(() => {
     const timeout = setTimeout(() => fetchData(1, inputValue), 500);
     return () => {
@@ -93,7 +94,10 @@ const AccountAdminPage = () => {
   const fetchData = async (_page: number, search?: string) => {
     try {
       setLoading(true);
-      const params: { page: number; username?: string } = { page: _page };
+      const params: { page: number; username?: string; pageSize: number } = {
+        page: _page,
+        pageSize,
+      };
       if (search) params.username = search;
       const result = await api.get<{
         resultList: UserState[];
@@ -265,6 +269,13 @@ const AccountAdminPage = () => {
     const value = event.target.value;
     setInputValue(value);
   };
+  const onShowSizeChange: PaginationProps["onShowSizeChange"] = (
+    _current,
+    pageSize
+  ) => {
+    setPage(1);
+    setPageSize(pageSize);
+  };
   return (
     <RequireAuthPage rolePage={[1, 3]}>
       <div className="space-y-6">
@@ -297,7 +308,12 @@ const AccountAdminPage = () => {
               </span>
             ) : null}
           </div>
-          <p>Total user: <span className="font-semibold text-xl text-error">{totalItems}</span></p>
+          <p>
+            Total user:{" "}
+            <span className="font-semibold text-xl text-error">
+              {totalItems}
+            </span>
+          </p>
         </div>
         <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
           <Table
@@ -315,7 +331,8 @@ const AccountAdminPage = () => {
               defaultCurrent: 1,
               total: totalItems,
               onChange: (index) => setPage(index),
-              pageSize: 10,
+              pageSize,
+              onShowSizeChange: onShowSizeChange,
             }}
           />
         </div>
