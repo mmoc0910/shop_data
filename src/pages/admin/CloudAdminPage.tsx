@@ -201,7 +201,7 @@ export const CloudAdminPage = () => {
                   handleChangeStatus(record._id, status === 0 ? 1 : 0)
                 }
                 className={classNames(
-                  "w-2 h-2 rounded-full",
+                  "w-2 h-2 rounded-full shrink-0",
                   status === 1 ? "bg-primary20" : "bg-error"
                 )}
               ></div>

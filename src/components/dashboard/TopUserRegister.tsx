@@ -5,17 +5,15 @@ import { UserState } from "../../type";
 import { api } from "../../api";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useFormatPrice } from "../../hooks/useFormatPrice";
 
-type DataType = {
-  _id: string;
-  totalMoney: number;
-  user: [UserState];
-};
+// type DataType = {
+//   _id: string;
+//   totalMoney: number;
+//   user: [UserState];
+// };
 const TopUserRegister = () => {
-  const priceFomat = useFormatPrice();
   const { i18n } = useTranslation();
-  const [data, setData] = useState<DataType[]>([]);
+  const [data, setData] = useState<UserState[]>([]);
   useEffect(() => {
     (async () => {
       try {
@@ -26,7 +24,7 @@ const TopUserRegister = () => {
       }
     })();
   }, []);
-  const columns: TableColumnsType<DataType> = useMemo(
+  const columns: TableColumnsType<UserState> = useMemo(
     () => [
       {
         title: () => <p className="font-semibold font-primary">STT</p>,
@@ -41,12 +39,12 @@ const TopUserRegister = () => {
         title: () => <p className="font-semibold font-primary">Người dùng</p>,
         dataIndex: "name",
         key: "name",
-        render: (_: string, record: DataType) => (
+        render: (_: string, record) => (
           <Link
-            to={`/admin/account/${record.user[0]._id}`}
+            to={`/admin/account/${record._id}`}
             className="text-sm font-primary text-primary font-medium"
           >
-            {record.user[0].username}
+            {record.username}
           </Link>
         ),
       },
@@ -54,8 +52,8 @@ const TopUserRegister = () => {
         title: () => <p className="font-semibold font-primary">Email</p>,
         dataIndex: "name",
         key: "name",
-        render: (_: string, record: DataType) => (
-          <p className="text-sm font-primary">{record.user[0].email}</p>
+        render: (_: string, record) => (
+          <p className="text-sm font-primary">{record.email}</p>
         ),
       },
       // {
@@ -68,14 +66,14 @@ const TopUserRegister = () => {
       //     <p className="text-sm font-primary">{record.user[0].phone}</p>
       //   ),
       // },
-      {
-        title: () => <p className="font-semibold font-primary">Tổng nạp</p>,
-        dataIndex: "totalMoney",
-        key: "totalMoney",
-        render: (text: number) => (
-          <p className="text-sm font-primary">{priceFomat(text)}</p>
-        ),
-      },
+      // {
+      //   title: () => <p className="font-semibold font-primary">Tổng nạp</p>,
+      //   dataIndex: "totalMoney",
+      //   key: "totalMoney",
+      //   render: (text: number) => (
+      //     <p className="text-sm font-primary">{priceFomat(text)}</p>
+      //   ),
+      // },
     ],
     [i18n.language]
   );
