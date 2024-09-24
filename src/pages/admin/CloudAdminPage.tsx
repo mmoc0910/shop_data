@@ -8,7 +8,7 @@ import { Input, Textarea } from "../../components/input";
 import { DatePicker, Modal, Table, Tag } from "antd";
 import PickCloudForm from "../../components/cloud/PickCloudForm";
 import PickProviderForm from "../../components/cloud/PickProviderForm";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import axios from "axios";
 import { api } from "../../api";
 import { toast } from "react-toastify";
@@ -19,6 +19,7 @@ import classNames from "../../utils/classNames";
 import Swal from "sweetalert2";
 import { DatePickerProps } from "antd";
 import { Link } from "react-router-dom";
+import { messages } from "../../constants";
 
 const schema = yup
   .object({
@@ -41,6 +42,10 @@ export const CloudAdminPage = () => {
   );
   const [listCloud, setListCloud] = useState<CloudManagerType[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectDateTotalCost, setSelectDateTotalCost] = useState<Date | Dayjs>(
+    dayjs()
+  );
+  const [costSelectMonth, setCostSelectMonth] = useState<number>(0);
   const {
     handleSubmit,
     control,
@@ -64,6 +69,19 @@ export const CloudAdminPage = () => {
   });
   const cloudWatch = watch("cloudId");
   const providerWatch = watch("providerId");
+  useEffect(() => {
+    (async () => {
+      try {
+        const result = await api.post<{ cost?: number }>(
+          `/cloud-managers/total-cost`,
+          { month: dayjs(selectDateTotalCost).format("YYYY-MM") }
+        );
+        setCostSelectMonth(result.data?.cost || 0);
+      } catch (error) {
+        console.log(messages.error);
+      }
+    })();
+  }, [selectDateTotalCost]);
   useEffect(() => {
     (async () => {
       try {
@@ -120,8 +138,6 @@ export const CloudAdminPage = () => {
       setOpenModal(false);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log("error message: ", error);
-
         toast.error(error.response?.data.message);
       } else {
         console.log("unexpected error: ", error);
@@ -163,6 +179,9 @@ export const CloudAdminPage = () => {
   };
   const onChangeEndDate: DatePickerProps["onChange"] = (date) => {
     setValue("endDate", dayjs(date).format("YYYY/MM/DD"));
+  };
+  const onChangeDateTotalCoast: DatePickerProps["onChange"] = (date) => {
+    setSelectDateTotalCost(dayjs(date));
   };
   const columns: TableColumnsType<CloudManagerType> = useMemo(
     () => [
@@ -317,10 +336,16 @@ export const CloudAdminPage = () => {
   );
   return (
     <div>
-      <div className="grid grid-cols-2 p-5 gap-5 md:grid-cols-5 rounded-xl border-2 border-[#eeeeed] mb-5">
+      <div className="grid grid-cols-2 p-5 gap-5 md:grid-cols-3 rounded-xl border-2 border-[#eeeeed] mb-5">
         <div className="flex-1 space-y-3">
           <p className="text-lg text-gray-500">Total cloud</p>
-          <p className="text-2xl font-medium">{listCloud.length}</p>
+          <p className="text-2xl font-medium">
+            {
+              listCloud.filter((item) => item.status === 1 && item.remain > 0)
+                .length
+            }{" "}
+            live / {listCloud.length}
+          </p>
         </div>
         <div className="flex-1 space-y-3">
           <p className="text-lg text-primary20">Total cost</p>
@@ -332,12 +357,18 @@ export const CloudAdminPage = () => {
           </p>
         </div>
         <div className="flex-1 space-y-3">
-          <p className="text-lg text-[#ffaa01]">Buy Today</p>
-          <p className="text-2xl font-medium text-[#ffaa01]">10</p>
-        </div>
-        <div className="flex-1 space-y-3">
-          <p className="text-lg text-error">Over BW today</p>
-          <p className="text-2xl font-medium text-error">{10}</p>
+          <p className="text-lg text-[#ffaa01]">Total cost month</p>
+          <div className="flex items-center gap-5">
+            <p className="text-2xl font-medium text-[#ffaa01]">
+              {VND.format(costSelectMonth)}VND
+            </p>
+            <DatePicker
+              onChange={onChangeDateTotalCoast}
+              value={dayjs(selectDateTotalCost)}
+              placeholder="Select month"
+              picker="month"
+            />
+          </div>
         </div>
       </div>
       <button

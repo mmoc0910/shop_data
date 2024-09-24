@@ -95,7 +95,7 @@ export type KeySeverType = {
   endDate: Date;
   status: 1 | 0 | 2;
   dataExpand: number;
-  endExpandDate: Date;
+  endExpandDate?: Date;
   createdAt: Date;
   updatedAt: Date;
   realtimeDataUsage: number;
@@ -262,6 +262,7 @@ export type KeyDetailType = {
   gist: GistType;
   arrayDataUsage?: number[];
   migrateDate?: Date;
+  endExpandDate?: Date;
 };
 
 export type CloudManagerType = {
@@ -281,4 +282,81 @@ export type CloudManagerType = {
   __v: 0;
   remain: number;
   server: number;
+};
+
+export type NewCashType = {
+  _id: string;
+  code: string;
+  userId: string;
+  money: number;
+  content: string;
+  status: 1 | 0 | 2;
+  type: 1 | 0;
+  description: string;
+  createByAdmin: 1;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: 0;
+  user: [UserState];
+};
+
+export type BuyPlanTodayType = {
+  _id: string;
+  code: string;
+  userId: string;
+  gistId: string;
+  planId: string;
+  description: string;
+  amount: number;
+  discount: number;
+  money: number;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: 0;
+  user: [UserState];
+  plan: [PlanType];
+  extendPlan: [ExtendPlanType];
+};
+
+export type KeyExpriredTodayType = {
+  _id: string;
+  keyId: string;
+  name: string;
+  password: string;
+  port: string;
+  method: string;
+  accessUrl: string;
+  enable: boolean;
+  enableByAdmin: boolean;
+  dataLimit: number;
+  dataUsageYesterday: number;
+  dataUsage: number;
+  arrayDataUsage: number[];
+  dataExpand: number;
+  serverId: string;
+  userId: string;
+  awsId: string;
+  account: string;
+  startDate: string;
+  endDate: string;
+  status: 1 | 0 | 2;
+  createDate: Date;
+  migrateDate: Date;
+  counterMigrate: number;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: 0;
+  server: [ServerType];
+  user: [UserState];
+  aws: [
+    {
+      _id: string;
+      awsId: string;
+      fileName: string;
+      status: number;
+      createdAt: Date;
+      updatedAt: Date;
+      __v: 0;
+    }
+  ];
 };

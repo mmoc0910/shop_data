@@ -31,6 +31,7 @@ import ChangeStatusServerButton from "../../components/server/ChangeStatusServer
 import { ButtonDeleteServer } from "../../components/server/ButtonDeleteServer";
 import { PickCloudManagerForm } from "../../components/server/PickCloudManagerForm";
 import _ from "lodash";
+import { ButtonChangeServerName } from "../../components/server/ButtonChangeServerName";
 
 const schema = yup
   .object({
@@ -50,7 +51,6 @@ const schema = yup
 const ServerAdminPage = () => {
   const dispatch = useDispatch();
   const listServerStore = useSelector((state: RootState) => state.server);
-  console.log("list server store ~ ", listServerStore);
   const {
     value: showHistoryServer,
     handleToogleValue: handleToogleHistoryServer,
@@ -132,17 +132,13 @@ const ServerAdminPage = () => {
   };
   const handleFetchData = async () => {
     try {
-      console.log("load server");
       setLoadingTable(true);
       const resultServer = await api.get<ServerType[]>("/servers");
-      // dispatch(setServer(resultServer.data));
       setListServer(resultServer.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log("error message: ", error);
         toast.error(error.response?.data.message);
       } else {
-        console.log("unexpected error: ", error);
         return "An unexpected error occurred";
       }
     } finally {
@@ -305,14 +301,15 @@ const ServerAdminPage = () => {
         ),
         dataIndex: "name",
         key: "name",
-        render: (text: string, record: ServerType) => (
-          <Link
-            to={`/admin/server/${record._id}`}
-            className="text-sm font-primary text-primary"
-            target="_blank"
-          >
-            {text}
-          </Link>
+        render: (_text: string, record: ServerType) => (
+          // <Link
+          //   to={`/admin/server/${record._id}`}
+          //   className="text-sm font-primary text-primary"
+          //   target="_blank"
+          // >
+          //   {text}
+          // </Link>
+          <ButtonChangeServerName serverId={record._id} serverName={record.name} onSuccess={handleFetchData} />
         ),
       },
       {

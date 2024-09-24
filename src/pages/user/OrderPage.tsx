@@ -15,11 +15,7 @@ import {
   UserState,
 } from "../../type";
 import { toast } from "react-toastify";
-import {
-  DAY_FORMAT,
-  messages,
-  translateType,
-} from "../../constants";
+import { DAY_FORMAT, messages, translateType } from "../../constants";
 import { api } from "../../api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/configureStore";
@@ -304,7 +300,13 @@ const OrderPage = () => {
                   <button
                     className="text-white px-2 w-fit aspect-square rounded-md bg-gray-400"
                     onClick={() =>
-                      copyToClipboard(`${accessUrl}#${serverId}-k${keyId}`)
+                      copyToClipboard(
+                        `${accessUrl}#${
+                          typeof serverId === "object"
+                            ? serverId?.name
+                            : serverId
+                        }-k${keyId}`
+                      )
                     }
                   >
                     <AndroidXML />
@@ -335,6 +337,21 @@ const OrderPage = () => {
                 toast.success("Thay đổi thành công");
               }}
             />
+          );
+        },
+      },
+      {
+        title: <p className="font-semibold font-primary text-sm">Location</p>,
+        dataIndex: "location",
+        key: "location",
+        width: 100,
+        render: (_: string, record: GistType) => {
+          return (
+            <p className="text-sm font-primary">
+              {typeof record.keyId.serverId === "object"
+                ? record.keyId.serverId?.location
+                : record.keyId.serverId}
+            </p>
           );
         },
       },
@@ -462,9 +479,10 @@ const OrderPage = () => {
         title: <p className="font-semibold font-primary text-sm"></p>,
         dataIndex: "action",
         key: "action",
+        width: 120,
         render: (_: string, record: GistType) =>
           record.status ? (
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-2 justify-end w-[150px] lg:w-[250px] px-5">
+            <div className="flex gap-3 lg:gap-2 justify-end w-[150px] lg:w-[250px] px-5">
               {!record.keyId.endExpandDate ||
               (record.keyId.endExpandDate &&
                 dayjs().isAfter(record.keyId.endExpandDate, "day") &&
@@ -643,7 +661,7 @@ const OrderPage = () => {
           dataSource={listGist.data}
           columns={columns}
           loading={loadingTable}
-          scroll={{ x: 1600, y: 500 }}
+          scroll={{ x: 1400, y: 500 }}
           pagination={{
             defaultCurrent: 1,
             total: listGist.totalItems,

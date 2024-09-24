@@ -19,6 +19,8 @@ import ButtonConnectKuma from "../../components/server/ButtonConnectKuma";
 import ButtonRemoveKuma from "../../components/server/ButtonRemoveKuma";
 import { ListKeyByServerId } from "../../components/server/ListKeyByServerId";
 import EditCloudServerForm from "../../components/server/EditCloudServerForm";
+import { messages } from "../../constants";
+import classNames from "../../utils/classNames";
 
 const ServerDetailAdminPage = () => {
   const { serverId } = useParams();
@@ -231,9 +233,13 @@ const schema = yup
 export const EditServerForm = ({
   placeholder = "",
   handleEdit,
+  isButtonSubmit = true,
+  containerClass = "",
 }: {
   placeholder?: string;
   handleEdit: (value: string) => void;
+  isButtonSubmit?: boolean;
+  containerClass?: string;
 }) => {
   const { handleSubmit, control } = useForm({
     resolver: yupResolver(schema),
@@ -244,11 +250,14 @@ export const EditServerForm = ({
     try {
       data.value && handleEdit(data.value);
     } catch (error) {
-      console.log(error);
+      toast.error(messages.error);
     }
   };
   return (
-    <form className="flex items-center" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className={classNames("flex items-center", containerClass)}
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <div className="w-full">
         <Input
           name="value"
@@ -257,9 +266,11 @@ export const EditServerForm = ({
           className="placeholder:text-gray-500"
         />
       </div>
-      <Button type="submit" className="px-4 text-gray-500">
-        <IconEdit />
-      </Button>
+      {isButtonSubmit && (
+        <Button type="submit" className="px-4 text-gray-500">
+          <IconEdit />
+        </Button>
+      )}
     </form>
   );
 };

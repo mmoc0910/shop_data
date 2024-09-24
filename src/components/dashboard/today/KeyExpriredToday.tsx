@@ -1,57 +1,32 @@
-import { PaginationProps, TableColumnsType, Tag, Tooltip } from "antd";
-import { Table } from "antd";
 import { useEffect, useMemo, useState } from "react";
-import { KeySeverType, ServerType } from "../../type";
-import { Link } from "react-router-dom";
-import dayjs from "dayjs";
-import { api } from "../../api";
-import { useWatch } from "react-hook-form";
-import { AndroidXML } from "../../pages/user/OrderPage";
-import MoveServer from "../user/MoveServer";
+import { api } from "../../../api";
 import { toast } from "react-toastify";
-import UpdateExtensionKey from "./UpdateExtensionKey";
-import { copyToClipboard } from "../../utils/copyToClipboard";
+import { messages } from "../../../constants";
+import { Modal, Table, Tag, Tooltip } from "antd";
+import { TableColumnsType } from "antd";
+import { Link } from "react-router-dom";
+import dayjs, { Dayjs } from "dayjs";
+import { AndroidXML } from "../../../pages/user/OrderPage";
+import { copyToClipboard } from "../../../utils/copyToClipboard";
+import UpdateExtensionKey from "../../key/UpdateExtensionKey";
+import { FC } from "react";
+import { KeyExpriredTodayType } from "../../../type";
 
-export const ListKeyAdmin = () => {
-  const [servers, setServers] = useState<ServerType[]>([]);
-  const searchTerm = useWatch({ name: "searchTerm", exact: true });
-  const [loading, setLoading] = useState(false);
-  const [totalItems, setTotalItems] = useState<number>();
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState<number>(10);
-  const [listKey, setListKey] = useState<KeySeverType[]>([]);
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data: dataServers } = await api.get<ServerType[]>(
-          "/servers/normal-server?status=1"
-        );
-        setServers(dataServers);
-      } catch (error) {
-        toast.error("Xảy ra lỗi trong quá trình xử lý");
-      }
-    })();
-  }, []);
+type Props = { title: String; date: Date | Dayjs };
+export const KeyExpriredToday: FC<Props> = ({ date, title }) => {
+  const [data, setData] = useState<KeyExpriredTodayType[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
     handleFetchData();
-  }, [page, searchTerm, pageSize]);
+  }, []);
   const handleFetchData = async () => {
     try {
-      setLoading(true);
-      const response = await api.get(`/keys`, {
-        params: {
-          status: 1,
-          page,
-          name: searchTerm,
-          pageSize,
-        },
+      const result = await api.post("/satisfy/expried-key", {
+        day: dayjs(date).format("YYYY-MM-DD"),
       });
-      setTotalItems(response.data.totalItems);
-      setListKey(response.data.data);
+      setData(result.data);
     } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
+      toast.error(messages.error);
     }
   };
   const handleUpdateExtension = async (_id: string, value: string) => {
@@ -67,18 +42,17 @@ export const ListKeyAdmin = () => {
       toast.error("Xảy ra lỗi trong quá trình xử lý");
     }
   };
-  const columns: TableColumnsType<KeySeverType> = useMemo(
+  const columns: TableColumnsType<KeyExpriredTodayType> = useMemo(
     () => [
-      // {
-      //   title: () => <p className="font-semibold font-primary">STT</p>,
-      //   dataIndex: "index",
-      //   key: "index",
-      //   width: 70,
-      //   render: (text: string) => (
-      //     <p className="text-sm font-primary">{text + 1}</p>
-      //   ),
-      // },
-
+      {
+        title: () => <p className="font-semibold font-primary">STT</p>,
+        dataIndex: "index",
+        key: "index",
+        width: 70,
+        render: (text: string) => (
+          <p className="text-sm font-primary">{text + 1}</p>
+        ),
+      },
       {
         title: () => (
           <p className="text-sm font-semibold font-primary">Key Name</p>
@@ -111,10 +85,10 @@ export const ListKeyAdmin = () => {
         key: "account",
         render: (_, record) => (
           <Link
-            to={`/admin/account/${record.userId._id}`}
+            to={`/admin/account/${record.user[0]._id}`}
             className="text-sm font-primary text-primary"
           >
-            {record.userId.username}
+            {record.user[0].username}
           </Link>
         ),
       },
@@ -124,14 +98,9 @@ export const ListKeyAdmin = () => {
         ),
         dataIndex: "server",
         key: "server",
-        render: (_, record) =>
-          typeof record.serverId === "object" &&
-          record.serverId !== null &&
-          "name" in record.serverId && (
-            <p className="text-sm font-primary">
-              {record.serverId.name as string}
-            </p>
-          ),
+        render: (_, record) => (
+          <p className="text-sm font-primary">{record.server[0].name}</p>
+        ),
       },
       {
         title: () => (
@@ -204,26 +173,12 @@ export const ListKeyAdmin = () => {
           </p>
         ),
       },
-      // {
-      //   title: (
-      //     <p className="font-semibold font-primary text-sm">Date Expand</p>
-      //   ),
-      //   dataIndex: "endExpandDate",
-      //   key: "endExpandDate",
-      //   width: 120,
-      //   render: (_: string, record) => (
-      //     <p className="text-sm font-primary">
-      //       {record?.endExpandDate && DAY_FORMAT(record.endExpandDate)}
-      //     </p>
-      //   ),
-      // },
       {
         title: <p className="font-semibold font-primary">Key</p>,
         dataIndex: "key",
         key: "key",
         render: (_: string, record) => {
-          const { awsId, accessUrl, keyId, name, serverId } = record;
-          // const key = `${linkGist}/${record.gistId}/raw/${record?.fileName}#`;
+          const { aws, accessUrl, keyId, name, server } = record;
           return (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
@@ -232,7 +187,7 @@ export const ListKeyAdmin = () => {
                     className="text-white px-2 w-fit aspect-square rounded-md bg-secondary20"
                     onClick={() =>
                       copyToClipboard(
-                        `${awsId?.fileName.replace(/https/g, "ssconf")}#${name}`
+                        `${aws[0].fileName.replace(/https/g, "ssconf")}#${name}`
                       )
                     }
                   >
@@ -244,86 +199,54 @@ export const ListKeyAdmin = () => {
                     className="text-white px-2 w-fit aspect-square rounded-md bg-gray-400"
                     onClick={() =>
                       copyToClipboard(
-                        `${accessUrl}#${
-                          typeof serverId === "object"
-                            ? serverId.name
-                            : serverId
-                        }-k${keyId}`
+                        `${accessUrl}#${server[0].name}-k${keyId}`
                       )
                     }
                   >
                     <AndroidXML />
                   </button>
                 </Tooltip>
-                {/* <p className="font-primary text-sm w-[200px] line-clamp-1">
-                  {record.keyId.awsId?.fileName.replace(/https/g, "ssconf")}#
-                  {record.extension}
-                </p> */}
               </div>
-              {/* <div className="flex items-center gap-2">
-                <Tooltip title="copy">
-                  <button
-                    onClick={() => copyToClipboard(`${key}${record.extension}`)}
-                  >
-                    <AndroidXML />
-                  </button>
-                </Tooltip>
-                <p className="font-primary text-sm w-[350px] line-clamp-1">
-                  {key}
-                  {record.extension}
-                </p>
-              </div> */}
             </div>
           );
         },
       },
-      {
-        title: <p className="font-semibold font-primary text-sm"></p>,
-        dataIndex: "action",
-        key: "action",
-        // width: 100,
-        render: (_: string, record) =>
-          record.status ? (
-            <MoveServer
-              servers={servers}
-              gist={{
-                key_id: record._id,
-                key_name: record.name,
-                // server_id: record.serverId?._id,
-                server_id:
-                  typeof record.serverId === "object"
-                    ? record.serverId._id
-                    : record.serverId,
-              }}
-              handleReloadData={handleFetchData}
-            />
-          ) : null,
-      },
     ],
-    [servers]
+    []
   );
-  const onShowSizeChange: PaginationProps["onShowSizeChange"] = (
-    _current,
-    pageSize
-  ) => {
-    setPage(1);
-    setPageSize(pageSize);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
   };
   return (
-    <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
-      <Table
-        dataSource={listKey}
-        columns={columns}
-        loading={loading}
-        scroll={{ y: 420, x: 1200 }}
-        pagination={{
-          defaultCurrent: 1,
-          total: totalItems,
-          onChange: (index) => setPage(index),
-          pageSize,
-          onShowSizeChange: onShowSizeChange,
-        }}
-      />
-    </div>
+    <>
+      <div className="space-y-2 cursor-pointer" onClick={showModal}>
+        <div className="">
+          <p className="text-gray-500 md:text-lg">{title}</p>
+        </div>
+        <p className="font-semibold text-xl md:text-2xl">{data.length}</p>
+      </div>
+      <Modal
+        title={<p className="font-primary">{title}</p>}
+        open={isModalOpen}
+        onCancel={handleCancel}
+        footer={[]}
+        width={"80%"}
+      >
+        <div className="rounded-xl border-2 border-[#eeeeed] overflow-hidden">
+          <Table
+            dataSource={data.map((item, index) => ({
+              index,
+              ...item,
+            }))}
+            columns={columns}
+            pagination={{ hideOnSinglePage: true }}
+          />
+        </div>
+      </Modal>
+    </>
   );
 };

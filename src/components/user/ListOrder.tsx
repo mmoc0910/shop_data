@@ -10,7 +10,7 @@ import { GistType } from "../../type";
 import { api } from "../../api";
 import { FC } from "react";
 import { ServerType } from "../../type";
-import {  messages } from "../../constants";
+import { messages } from "../../constants";
 import { useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
 import { copyToClipboard } from "../../utils/copyToClipboard";
@@ -152,7 +152,13 @@ const ListOrder: FC<Props> = ({ accountId, status }) => {
                   <button
                     className="text-white px-2 w-fit aspect-square rounded-md bg-gray-400"
                     onClick={() =>
-                      copyToClipboard(`${accessUrl}#${serverId}-k${keyId}`)
+                      copyToClipboard(
+                        `${accessUrl}#${
+                          typeof serverId === "object"
+                            ? serverId?.name
+                            : serverId
+                        }-k${keyId}`
+                      )
                     }
                   >
                     <AndroidXML />

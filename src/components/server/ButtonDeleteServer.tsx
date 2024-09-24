@@ -34,7 +34,7 @@ export const ButtonDeleteServer: FC<Props> = ({
             "Bạn phải migrate key sang server khác trước khi muốn xóa"
           );
         } else {
-          await api.delete(`/servers/${_id}`);
+          await api.delete(`/servers/${_id}`, { params: { isDeleteKuma: 1 } });
           handleFetchData();
           toast.success("Xóa thành công");
         }

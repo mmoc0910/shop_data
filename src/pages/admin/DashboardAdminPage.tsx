@@ -8,11 +8,15 @@ import SatifyByMonth from "../../components/dashboard/SatifyByMonth";
 import SatifyByYear from "../../components/dashboard/SatifyByYear";
 import TopUserByMonth from "../../components/dashboard/TopUserByMonth";
 import TopUserRegister from "../../components/dashboard/TopUserRegister";
+import { DashboardToday } from "../../components/dashboard/today/DashboardToday";
 
 const DashboardAdminPage = () => {
   return (
     <RequireAuthPage rolePage={[1]}>
       <div className="grid grid-cols-12 gap-x-10 gap-y-10">
+        <div className="col-span-12">
+          <DashboardToday />
+        </div>
         <div className="col-span-8 space-y-10">
           <SatifyByMonth />
           <SatifyByYear />

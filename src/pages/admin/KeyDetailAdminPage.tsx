@@ -21,6 +21,7 @@ import { UpdateEndDateKey } from "../../components/key/UpdateEndDateKey";
 import { KeyDataUseage } from "../../components/key/KeyDataUseage";
 import { DropdownWithComponents } from "../../components/dropdown";
 import classNames from "../../utils/classNames";
+import { HistoryExpandKey } from "../../components/key/HistoryExpandKey";
 
 const KeyDetailAdminPage = () => {
   const { keyId } = useParams();
@@ -225,6 +226,7 @@ const KeyDetailAdminPage = () => {
       historyKey,
       accessUrl,
       arrayDataUsage,
+      endExpandDate,
     } = key;
     return (
       <RequireAuthPage rolePage={[1, 3]}>
@@ -424,6 +426,15 @@ const KeyDetailAdminPage = () => {
                   {dataExpand / 1000 / 1000 / 1000}GB
                 </span>
               </div>
+              {endExpandDate && (
+                <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg flex flex-col gap-1">
+                  End Date expand:{" "}
+                  <span className="font-medium">
+                    {DAY_FORMAT(endExpandDate)}
+                  </span>
+                </div>
+              )}
+
               <div className="col-span-1 p-3 space-y-1 border border-gray-200 rounded-lg flex flex-col gap-1">
                 Server Name:{" "}
                 <span className="font-medium">{serverId.name}</span>
@@ -534,6 +545,7 @@ const KeyDetailAdminPage = () => {
               </div>
             </div>
           )}
+          <HistoryExpandKey keyId={keyId}/>
         </div>
         {loading && <Loading />}
         <Modal
