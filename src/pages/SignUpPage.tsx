@@ -38,7 +38,10 @@ const SignUpPage = () => {
           username: yup
             .string()
             .required(t("form.username.error.required"))
-            .matches(/^\S+$/, { message: "Không được để khoảng trắng" }),
+            .matches(/^[a-zA-Z0-9]+$/, {
+              message: "Không được để khoảng trắng",
+            }),
+          // .matches(/^\S+$/, { message: "Không được để khoảng trắng" }),
           // .matches(regexUserName, t("form.username.error.reg")),
           email: yup
             .string()
@@ -62,11 +65,7 @@ const SignUpPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [t, i18n.language]
   );
-  const {
-    handleSubmit,
-    control,
-    setError,
-  } = useForm({
+  const { handleSubmit, control, setError } = useForm({
     resolver: yupResolver(schema),
     mode: "onChange",
   });

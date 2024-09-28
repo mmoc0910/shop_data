@@ -282,6 +282,7 @@ export type CloudManagerType = {
   __v: 0;
   remain: number;
   server: number;
+  dieDate?: Date | Dayjs;
 };
 
 export type NewCashType = {

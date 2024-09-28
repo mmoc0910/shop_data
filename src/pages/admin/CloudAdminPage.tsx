@@ -224,7 +224,15 @@ export const CloudAdminPage = () => {
                   status === 1 ? "bg-primary20" : "bg-error"
                 )}
               ></div>
-              {remain >= 0 ? (
+              {/* {remain >= 0 ? (
+                <Tag color="green">Valid</Tag>
+              ) : (
+                <Tag color="red">Expired</Tag>
+              )} */}
+
+              {dayjs(
+                record.status === 0 ? record.dieDate : record.endDate
+              ).diff(dayjs(), "days") > 0 ? (
                 <Tag color="green">Valid</Tag>
               ) : (
                 <Tag color="red">Expired</Tag>
@@ -238,7 +246,10 @@ export const CloudAdminPage = () => {
         dataIndex: "Live",
         key: "Live",
         render: (_, record) => {
-          const live = dayjs().diff(dayjs(record.startDate), "days");
+          const live = dayjs().diff(
+            dayjs(record.status === 0 && record?.dieDate ? record.dieDate : record.startDate),
+            "days"
+          );
           const valid = dayjs(record.endDate).diff(
             dayjs(record.startDate),
             "days"

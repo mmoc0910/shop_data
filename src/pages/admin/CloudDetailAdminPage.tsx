@@ -106,7 +106,7 @@ export const CloudDetailAdminPage = () => {
       });
       console.log("isComfirm ~ ", isConfirmed);
       if (isConfirmed) {
-        await api.patch(`/cloud-managers/${_id}`, {
+        await api.put(`/cloud-managers/status/${_id}`, {
           status,
         });
         handleFetchData();
@@ -114,7 +114,6 @@ export const CloudDetailAdminPage = () => {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log("error message: ", error);
         toast.error(error.response?.data.message);
       } else {
         console.log("unexpected error: ", error);
@@ -172,7 +171,11 @@ export const CloudDetailAdminPage = () => {
               )}
             ></div>
 
-            {dayjs(cloudDetail.endDate).diff(dayjs(), "days") >= 0 ? (
+            {dayjs(
+              cloudDetail.status === 0 && cloudDetail?.dieDate
+                ? cloudDetail.dieDate
+                : cloudDetail.endDate
+            ).diff(dayjs(), "days") > 0 ? (
               <Tag color="green">Valid</Tag>
             ) : (
               <Tag color="red">Expired</Tag>
