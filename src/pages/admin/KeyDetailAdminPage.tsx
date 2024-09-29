@@ -469,6 +469,7 @@ const KeyDetailAdminPage = () => {
             arrayDataUsage={arrayDataUsage}
             dataUsage={dataUsage}
           />
+          <HistoryExpandKey keyId={keyId}/>
           {historyKey.length > 0 && (
             <div className="space-y-7">
               <Heading>History key</Heading>
@@ -545,7 +546,6 @@ const KeyDetailAdminPage = () => {
               </div>
             </div>
           )}
-          <HistoryExpandKey keyId={keyId}/>
         </div>
         {loading && <Loading />}
         <Modal

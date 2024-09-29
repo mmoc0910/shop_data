@@ -361,3 +361,18 @@ export type KeyExpriredTodayType = {
     }
   ];
 };
+
+export type HistoryExpandKeyType = {
+  _id: string;
+  code: string;
+  userId: AuthState;
+  gistId: GistType;
+  extendPlanId: ExtendPlanType;
+  description: string;
+  amount: number;
+  discount: number;
+  money: number;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: 0;
+};

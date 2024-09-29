@@ -7,22 +7,30 @@ import { KeySeverType } from "../../type";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-type Props = { serverId: string; handleFetchData: () => void };
+type Props = {
+  serverId: string;
+  serverName: string;
+  handleFetchData: () => void;
+};
 export const ButtonDeleteServer: FC<Props> = ({
   serverId,
   handleFetchData,
+  serverName,
 }) => {
   const [loading, setLoading] = useState(false);
   const handleRemoveServer = async (_id: string) => {
     try {
-      const { isConfirmed } = await Swal.fire({
-        title: `<p class="leading-tight">Bạn có muốn xóa máy chủ này</p>`,
+      const { isConfirmed, isDenied } = await Swal.fire({
+        title: `<p class="leading-tight">Xóa máy chủ ${serverName}</p>`,
         icon: "success",
         showCancelButton: true,
         confirmButtonColor: "#1DC071",
         cancelButtonColor: "#d33",
         cancelButtonText: "Thoát",
-        confirmButtonText: "Xóa",
+        confirmButtonText: "Xóa cùng Kuma",
+        denyButtonText: "Chỉ xóa",
+        denyButtonColor: "#d33",
+        showDenyButton: true,
       });
       if (isConfirmed) {
         setLoading(true);
@@ -34,7 +42,24 @@ export const ButtonDeleteServer: FC<Props> = ({
             "Bạn phải migrate key sang server khác trước khi muốn xóa"
           );
         } else {
-          await api.delete(`/servers/${_id}`, { params: { isDeleteKuma: 1 } });
+          await api.delete(`/servers/${_id}`, {
+            params: { isDeleteKuma: 1 },
+          });
+          handleFetchData();
+          toast.success("Xóa thành công");
+        }
+      }
+      if (isDenied) {
+        setLoading(true);
+        const result = await api.get<KeySeverType[]>(
+          `/keys?serverId=${_id}&status=1`
+        );
+        if (result.data.length > 0) {
+          toast.warn(
+            "Bạn phải migrate key sang server khác trước khi muốn xóa"
+          );
+        } else {
+          await api.delete(`/servers/${_id}`);
           handleFetchData();
           toast.success("Xóa thành công");
         }

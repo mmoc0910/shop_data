@@ -133,7 +133,9 @@ const ServerAdminPage = () => {
   const handleFetchData = async () => {
     try {
       setLoadingTable(true);
-      const resultServer = await api.get<ServerType[]>("/servers");
+      const resultServer = await api.get<ServerType[]>(
+        "/servers/normal-server"
+      );
       setListServer(resultServer.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -168,6 +170,7 @@ const ServerAdminPage = () => {
         await api.post<{ isCheckUnique?: 1 }>("/servers", {
           ...data,
           status: activeWatch ? 1 : 3,
+          // isCheckUnique: '1',
         });
         handleFetchData();
         handleFetchNormalData();
@@ -309,7 +312,11 @@ const ServerAdminPage = () => {
           // >
           //   {text}
           // </Link>
-          <ButtonChangeServerName serverId={record._id} serverName={record.name} onSuccess={handleFetchData} />
+          <ButtonChangeServerName
+            serverId={record._id}
+            serverName={record.name}
+            onSuccess={handleFetchData}
+          />
         ),
       },
       {
@@ -446,6 +453,7 @@ const ServerAdminPage = () => {
             <ButtonDeleteServer
               handleFetchData={handleFetchData}
               serverId={record._id}
+              serverName={record.name}
             />
           </div>
         ),

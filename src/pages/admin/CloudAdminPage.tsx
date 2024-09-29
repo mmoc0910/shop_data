@@ -212,7 +212,7 @@ export const CloudAdminPage = () => {
         dataIndex: "status",
         key: "status",
         render: (status: 0 | 1, record) => {
-          const remain = dayjs(record.endDate).diff(dayjs(), "days");
+          // const remain = dayjs(record.endDate).diff(dayjs(), "days");
           return (
             <div className="flex items-center gap-5">
               <div
