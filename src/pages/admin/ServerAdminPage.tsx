@@ -118,18 +118,18 @@ const ServerAdminPage = () => {
     handleFetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  useEffect(() => {
-    handleFetchNormalData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  const handleFetchNormalData = async () => {
-    try {
-      const result = await api.get<ServerType[]>("/servers/normal-server");
-      dispatch(setServer(result.data));
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // useEffect(() => {
+  //   handleFetchNormalData();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
+  // const handleFetchNormalData = async () => {
+  //   try {
+  //     const result = await api.get<ServerType[]>("/servers/normal-server");
+  //     dispatch(setServer(result.data));
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
   const handleFetchData = async () => {
     try {
       setLoadingTable(true);
@@ -137,6 +137,7 @@ const ServerAdminPage = () => {
         "/servers/normal-server"
       );
       setListServer(resultServer.data);
+      dispatch(setServer(resultServer.data));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data.message);
@@ -167,13 +168,13 @@ const ServerAdminPage = () => {
       if (result.data.isCheckUnique) {
         toast.warn("IP này đã được sử dụng không thể add");
       } else {
-        await api.post<{ isCheckUnique?: 1 }>("/servers", {
-          ...data,
-          status: activeWatch ? 1 : 3,
-          // isCheckUnique: '1',
-        });
+        // await api.post("/servers", {
+        //   ...data,
+        //   status: activeWatch ? 1 : 3,
+        //   // isCheckUnique: '1',
+        // });
         handleFetchData();
-        handleFetchNormalData();
+        // handleFetchNormalData();
         toast.success("Import Server thành công");
       }
       reset();
@@ -241,7 +242,7 @@ const ServerAdminPage = () => {
           newServerId: _newId,
         });
         handleFetchData();
-        handleFetchNormalData();
+        // handleFetchNormalData();
         handleCancel();
         toast.success("Migrate server thành công");
       }
@@ -394,7 +395,8 @@ const ServerAdminPage = () => {
         key: "usedkey",
         render: (_: string, record: ServerType) => (
           <p className="text-sm font-primary">
-            <TotalKeyUsage serverId={record._id} />
+            {/* <TotalKeyUsage serverId={record._id} /> */}
+            {record.numberKey}
           </p>
         ),
       },
@@ -932,7 +934,7 @@ const TotalKeyUsage = ({ serverId = "" }: { serverId?: string }) => {
     (async () => {
       try {
         const result = await api.get<{ totalItems: number }>(
-          `/keys?serverId=${serverId}&status=1`
+          `/keys/outline-data-usage?serverId=${serverId}&status=1`
         );
         setTotal(result.data.totalItems);
       } catch (error) {

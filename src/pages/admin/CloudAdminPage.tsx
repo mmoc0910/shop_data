@@ -5,7 +5,7 @@ import * as yup from "yup";
 import Button from "../../components/button/Button";
 import Heading from "../../components/common/Heading";
 import { Input, Textarea } from "../../components/input";
-import { DatePicker, Modal, Table, Tag } from "antd";
+import { DatePicker, Modal, Table, Tag, Tooltip } from "antd";
 import PickCloudForm from "../../components/cloud/PickCloudForm";
 import PickProviderForm from "../../components/cloud/PickProviderForm";
 import dayjs, { Dayjs } from "dayjs";
@@ -19,7 +19,7 @@ import classNames from "../../utils/classNames";
 import Swal from "sweetalert2";
 import { DatePickerProps } from "antd";
 import { Link } from "react-router-dom";
-import { messages } from "../../constants";
+import { DAY_FORMAT, messages } from "../../constants";
 
 const schema = yup
   .object({
@@ -215,21 +215,31 @@ export const CloudAdminPage = () => {
           // const remain = dayjs(record.endDate).diff(dayjs(), "days");
           return (
             <div className="flex items-center gap-5">
-              <div
-                onClick={() =>
-                  handleChangeStatus(record._id, status === 0 ? 1 : 0)
-                }
-                className={classNames(
-                  "w-2 h-2 rounded-full shrink-0",
-                  status === 1 ? "bg-primary20" : "bg-error"
-                )}
-              ></div>
+              <Tooltip
+                title={status === 0 && record?.dieDate ? DAY_FORMAT(record.dieDate) : ""}
+              >
+                <div
+                  onClick={() =>
+                    handleChangeStatus(record._id, status === 0 ? 1 : 0)
+                  }
+                  className={classNames(
+                    "w-2 h-2 rounded-full shrink-0",
+                    status === 1 ? "bg-primary20" : "bg-error"
+                  )}
+                ></div>
+              </Tooltip>
+
               {/* {remain >= 0 ? (
                 <Tag color="green">Valid</Tag>
               ) : (
                 <Tag color="red">Expired</Tag>
               )} */}
 
+              {/* {record > 0 ? (
+                <Tag color="green">Valid</Tag>
+              ) : (
+                <Tag color="red">Expired</Tag>
+              )} */}
               {dayjs(
                 record.status === 0 ? record.dieDate : record.endDate
               ).diff(dayjs(), "days") > 0 ? (
@@ -246,18 +256,22 @@ export const CloudAdminPage = () => {
         dataIndex: "Live",
         key: "Live",
         render: (_, record) => {
-          const live = dayjs().diff(
-            dayjs(record.status === 0 && record?.dieDate ? record.dieDate : record.startDate),
-            "days"
-          );
-          const valid = dayjs(record.endDate).diff(
-            dayjs(record.startDate),
-            "days"
-          );
+          // const live = dayjs().diff(
+          //   dayjs(
+          //     record.status === 0 && record?.dieDate
+          //       ? record.dieDate
+          //       : record.startDate
+          //   ),
+          //   "days"
+          // );
+          // const valid = dayjs(record.endDate).diff(
+          //   dayjs(record.startDate),
+          //   "days"
+          // );
 
           return (
             <p>
-              {live} / {valid} days
+              {record.live} / {record.valid} days
             </p>
           );
         },

@@ -18,12 +18,15 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { messages } from "../../constants";
+import FormGroup from "../../components/common/FormGroup";
+import { Label } from "../../components/label";
 
 const schema = yup
   .object({
     name: yup.string().required("This field is required"),
     startDate: yup.string().required("This field is required"),
     endDate: yup.string().required("This field is required"),
+    dieDate: yup.string(),
     providerId: yup.string().required("This field is required"),
     cloudId: yup.string().required("This field is required"),
     key: yup.string().required("This field is required"),
@@ -57,6 +60,7 @@ export const CloudDetailAdminPage = () => {
   const cloudWatch = watch("cloudId");
   const providerWatch = watch("providerId");
   const endDateWatch = watch("endDate");
+  const dieDateWatch = watch("dieDate");
   const startDateWatch = watch("startDate");
   useEffect(() => {
     handleFetchData();
@@ -82,7 +86,11 @@ export const CloudDetailAdminPage = () => {
         endDate: dayjs(endDate).format("YYYY/MM/DD"),
         key,
         startDate: dayjs(startDate).format("YYYY/MM/DD"),
+        // dieDate: "2024/09/30",
       });
+      cloudDetail.status === 0 &&
+        cloudDetail.dieDate &&
+        setValue("dieDate", dayjs(cloudDetail.dieDate).format("YYYY/MM/DD"));
     }
   }, [cloudDetail]);
   const handleFetchData = async () => {
@@ -130,9 +138,42 @@ export const CloudDetailAdminPage = () => {
     key: string;
     remark: string;
     price: number;
+    dieDate?: string;
   }) => {
     try {
-      await api.patch(`/cloud-managers/${cloudId}`, data);
+      const {
+        name,
+        startDate,
+        endDate,
+        providerId,
+        cloudId,
+        key,
+        remark,
+        price,
+        dieDate,
+      } = data;
+      const dataSubmit: {
+        name: string;
+        startDate: string;
+        endDate: string;
+        providerId: string;
+        cloudId: string;
+        key: string;
+        remark: string;
+        price: number;
+        dieDate?: string;
+      } = {
+        name,
+        startDate,
+        endDate,
+        providerId,
+        cloudId,
+        key,
+        remark,
+        price,
+      };
+      if (dieDate && cloudDetail?.status === 0) dataSubmit.dieDate = dieDate;
+      await api.patch(`/cloud-managers/${cloudId}`, dataSubmit);
       handleFetchData();
       toast.success("Chỉnh sửa Cloud Server thành công");
       reset();
@@ -150,6 +191,9 @@ export const CloudDetailAdminPage = () => {
   };
   const onChangeEndDate: DatePickerProps["onChange"] = (date) => {
     setValue("endDate", dayjs(date).format("YYYY/MM/DD"));
+  };
+  const onChangedieDate: DatePickerProps["onChange"] = (date) => {
+    setValue("dieDate", dayjs(date).format("YYYY/MM/DD"));
   };
   if (!cloudDetail) return null;
   return (
@@ -186,40 +230,55 @@ export const CloudDetailAdminPage = () => {
           className="gap-5 grid grid-cols-2"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <div className="w-full lg:flex-1 col-span-1">
+          <FormGroup className="w-full lg:flex-1 col-span-1">
+            <Label htmlFor="name">Tên cloud*</Label>
             <Input
               name="name"
               type="text"
               placeholder={"Name"}
               control={control}
             />
-          </div>
-          <div className="w-full lg:flex-1 col-span-1">
+          </FormGroup>
+          <FormGroup className="w-full lg:flex-1 col-span-1">
+            <Label htmlFor="name">Tên key*</Label>
             <Input
               name="key"
               type="text"
               placeholder={"Key"}
               control={control}
             />
-          </div>
-          <div className="w-full lg:flex-1">
+          </FormGroup>
+          <FormGroup className="w-full lg:flex-1 col-span-1">
+            <Label htmlFor="name">Start date*</Label>
             <DatePicker
               onChange={onChangeStartDate}
               className="!focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock"
               placeholder="Start date"
               value={dayjs(startDateWatch)}
             />
-          </div>
-          <div className="w-full lg:flex-1">
+          </FormGroup>
+          <FormGroup className="w-full lg:flex-1 col-span-1">
+            <Label htmlFor="name">End date*</Label>
             <DatePicker
               onChange={onChangeEndDate}
               className="!focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock"
               placeholder="End date"
               value={dayjs(endDateWatch)}
             />
-          </div>
-
-          <div className="w-full lg:flex-1 col-span-1">
+          </FormGroup>
+          {cloudDetail.status === 0 && cloudDetail.dieDate && (
+            <FormGroup className="w-full lg:flex-1 col-span-1">
+              <Label htmlFor="name">Die date*</Label>
+              <DatePicker
+                onChange={onChangedieDate}
+                className="!focus:border-primary text-black text-sm font-medium placeholder:text-text4 py-[15px] px-[25px] rounded-[10px] border border-solid w-full bg-inherit peer outline-none border-strock"
+                placeholder="Die date"
+                value={dayjs(dieDateWatch)}
+              />
+            </FormGroup>
+          )}
+          <FormGroup className="w-full lg:flex-1 col-span-1">
+            <Label htmlFor="name">Cloud*</Label>
             <PickCloudForm
               location={cloudWatch}
               onSelectCloud={(value) => {
@@ -229,8 +288,9 @@ export const CloudDetailAdminPage = () => {
                 errors?.cloudId?.message ? errors.cloudId.message : undefined
               }
             />
-          </div>
-          <div className="w-full lg:flex-1 col-span-1">
+          </FormGroup>
+          <FormGroup className="w-full lg:flex-1 col-span-1">
+            <Label htmlFor="name">Provider*</Label>
             <PickProviderForm
               location={providerWatch}
               onSelectLocation={(value) => {
@@ -240,24 +300,25 @@ export const CloudDetailAdminPage = () => {
                 errors?.cloudId?.message ? errors.cloudId.message : undefined
               }
             />
-          </div>
-
-          <div className="w-full lg:flex-1 col-span-1">
+          </FormGroup>
+          <FormGroup className="w-full lg:flex-1 col-span-1">
+            <Label htmlFor="name">Price*</Label>
             <Input
               name="price"
               type="number"
               placeholder={"Price"}
               control={control}
             />
-          </div>
-          <div className="w-full lg:flex-1 col-span-1">
+          </FormGroup>
+          <FormGroup className="w-full lg:flex-1 col-span-2">
+            <Label htmlFor="name">Description*</Label>
             <Textarea
               name="remark"
               placeholder={"Remark"}
               control={control}
               className="!h-[100px]"
             />
-          </div>
+          </FormGroup>
           <div className="w-full lg:flex-1 col-span-2">
             <Button
               className="w-full px-5 py-2 text-white bg-secondary20"
