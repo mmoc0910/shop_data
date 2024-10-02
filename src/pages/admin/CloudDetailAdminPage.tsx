@@ -266,7 +266,7 @@ export const CloudDetailAdminPage = () => {
               value={dayjs(endDateWatch)}
             />
           </FormGroup>
-          {cloudDetail.status === 0 && cloudDetail.dieDate && (
+          {cloudDetail.status === 0 && (
             <FormGroup className="w-full lg:flex-1 col-span-1">
               <Label htmlFor="name">Die date*</Label>
               <DatePicker

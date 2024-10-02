@@ -1,5 +1,11 @@
 import { useParams } from "react-router-dom";
-import { CashType, CommisionType, SatisfyType, TransactionType, UserState } from "../../type";
+import {
+  CashType,
+  CommisionType,
+  SatisfyType,
+  TransactionType,
+  UserState,
+} from "../../type";
 import { countries, DAY_FORMAT, purposes } from "../../constants";
 import { Table, TableColumnsType, Tag, Tooltip } from "antd";
 import { Key, useCallback, useEffect, useMemo, useState } from "react";
@@ -32,12 +38,13 @@ const AccountDetailPage = () => {
   const priceFomat = useFormatPrice();
   const { accountId } = useParams();
   const { role } = useSelector((state: RootState) => state.auth);
-  const [satisfy  , setSatify] = useState<{
+  const [satisfy, setSatify] = useState<{
     cash: number;
     rose: number;
     currentMoney: number;
     numberIntoduce: number;
     transaction: number;
+    discount: number;
   }>();
   const [commision, setCommision] = useState<{ value: number; min: number }>();
   const [user, setUser] = useState<UserState>();
@@ -57,6 +64,7 @@ const AccountDetailPage = () => {
             currentMoney: dataSatify.currentMoney,
             numberIntoduce: dataSatify.numberIntoduce,
             transaction: dataSatify.transaction[0]?.money || 0,
+            discount: dataSatify.discount[0]?.totalAdjustedMoney || 0,
           });
           setCommision({ value: dataCommision.value, min: dataCommision.min });
         } catch (error) {
@@ -91,7 +99,7 @@ const AccountDetailPage = () => {
     <RequireAuthPage rolePage={[1, 3]}>
       <FormProvider {...methods}>
         <div className="space-y-10">
-          {satisfy  && commision && (
+          {satisfy && commision && (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 rounded-xl border-2 border-[#eeeeed]">
               <div className="flex-1 p-5 space-y-3">
                 <p className="text-base text-gray-500 lg:text-lg">
@@ -128,11 +136,11 @@ const AccountDetailPage = () => {
               </div>
               <div className="flex-1 hidden p-5 space-y-3 md:block">
                 <p className="text-base text-gray-500 lg:text-lg">
-                Total Earn
+                  Total Discount
                 </p>
                 <div className="">
                   <p className="text-xl font-medium md:text-2xl text-error">
-                    {priceFomat(10)}
+                    {priceFomat(satisfy.discount)}
                   </p>
                 </div>
               </div>

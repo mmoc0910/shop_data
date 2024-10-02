@@ -18,7 +18,6 @@ import {
   ACCOUNT_NO,
   APP_SCRIPT_URL,
   BANK_ID,
-  listCurrency,
   TEMPLATE,
 } from "../../constants";
 import { useEffect, useState } from "react";
@@ -30,6 +29,7 @@ import {
 import { useTranslation } from "react-i18next";
 import logoMB from "../../assets/th (1).jpg";
 import dayjs from "dayjs";
+import SelectCurrency from "../../components/common/SelectCurrency";
 
 const { Countdown } = Statistic;
 const schema = yup
@@ -130,9 +130,12 @@ const RechargePage = () => {
             control={control}
             containerclass="flex-1"
           >
-            <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
+            {/* <span className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
               {listCurrency.find((item) => item.key === currency)?.title}
-            </span>
+            </span> */}
+            <div className="absolute font-semibold -translate-y-1/2 cursor-pointer right-5 top-1/2 text-icon-color">
+              <SelectCurrency />
+            </div>
           </Input>
           <Button
             type="submit"

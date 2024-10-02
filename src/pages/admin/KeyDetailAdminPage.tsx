@@ -22,6 +22,7 @@ import { KeyDataUseage } from "../../components/key/KeyDataUseage";
 import { DropdownWithComponents } from "../../components/dropdown";
 import classNames from "../../utils/classNames";
 import { HistoryExpandKey } from "../../components/key/HistoryExpandKey";
+import { HistoryUpgradeKey } from "../../components/key/HistoryUpgradeKey";
 
 const KeyDetailAdminPage = () => {
   const { keyId } = useParams();
@@ -470,6 +471,7 @@ const KeyDetailAdminPage = () => {
             dataUsage={dataUsage}
           />
           <HistoryExpandKey keyId={keyId}/>
+          <HistoryUpgradeKey keyId={keyId}/>
           {historyKey.length > 0 && (
             <div className="space-y-7">
               <Heading>History key</Heading>

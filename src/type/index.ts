@@ -213,6 +213,12 @@ export type SatisfyType = {
       money: number;
     }
   ];
+  discount: [
+    {
+      _id: null;
+      totalAdjustedMoney: number;
+    }
+  ];
   currentMoney: number;
   numberIntoduce: number;
 };
@@ -283,7 +289,8 @@ export type CloudManagerType = {
   remain: number;
   server: number;
   dieDate?: Date | Dayjs;
-  live: number,valid: number
+  live: number;
+  valid: number;
 };
 
 export type NewCashType = {
@@ -369,6 +376,20 @@ export type HistoryExpandKeyType = {
   userId: AuthState;
   gistId: GistType;
   extendPlanId: ExtendPlanType;
+  description: string;
+  amount: number;
+  discount: number;
+  money: number;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: 0;
+};
+export type HistoryUpgradeKeyType = {
+  _id: string;
+  code: string;
+  userId: UserState;
+  gistId: GistType;
+  planId: PlanType;
   description: string;
   amount: number;
   discount: number;
