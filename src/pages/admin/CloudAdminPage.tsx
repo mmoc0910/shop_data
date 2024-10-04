@@ -20,6 +20,7 @@ import Swal from "sweetalert2";
 import { DatePickerProps } from "antd";
 import { Link } from "react-router-dom";
 import { DAY_FORMAT, messages } from "../../constants";
+import IconTrash from "../../icons/IconTrash";
 
 const schema = yup
   .object({
@@ -111,7 +112,6 @@ export const CloudAdminPage = () => {
           ...item,
         }))
       );
-      console.log("response ~ ", response.data);
     } catch (error) {
       toast.error("Xảy ra lỗi");
     } finally {
@@ -216,7 +216,11 @@ export const CloudAdminPage = () => {
           return (
             <div className="flex items-center gap-5">
               <Tooltip
-                title={status === 0 && record?.dieDate ? DAY_FORMAT(record.dieDate) : ""}
+                title={
+                  status === 0 && record?.dieDate
+                    ? DAY_FORMAT(record.dieDate)
+                    : ""
+                }
               >
                 <div
                   onClick={() =>
@@ -347,17 +351,21 @@ export const CloudAdminPage = () => {
           <p className="text-sm font-primary">{VND.format(text)}</p>
         ),
       },
-      // {
-      //   title: <p className="font-semibold font-primary">Remark</p>,
-      //   dataIndex: "remark",
-      //   key: "remark",
-      //   render: (text: number) => (
-      //     <p className="text-sm font-primary">{text}</p>
-      //   ),
-      // },
+      {
+        title: <p className="font-semibold font-primary"></p>,
+        dataIndex: "action",
+        key: "action",
+        render: (_, record) => (
+          <ButtonDeleteCloud
+            cloudId={record._id}
+            cloudName={record.name}
+            handleFetchData={handleFetchData}
+          />
+        ),
+      },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [clouds, providers]
+    [clouds, providers, listCloud]
   );
   return (
     <div>
@@ -511,5 +519,58 @@ export const CloudAdminPage = () => {
         </div>
       </Modal>
     </div>
+  );
+};
+
+export const ButtonDeleteCloud = ({
+  cloudId,
+  handleFetchData,
+  cloudName,
+}: {
+  cloudId: string;
+  handleFetchData: () => void;
+  cloudName: string;
+}) => {
+  const [loading, setLoading] = useState(false);
+  const handleRemoveCloud = async (_id: string) => {
+    try {
+      const { isConfirmed } = await Swal.fire({
+        title: `<p class="leading-tight">Xoá cloud ${cloudName}</p>`,
+        icon: "success",
+        showCancelButton: true,
+        confirmButtonColor: "#1DC071",
+        cancelButtonColor: "#d33",
+        cancelButtonText: "Thoát",
+        confirmButtonText: "Xóa",
+      });
+      if (isConfirmed) {
+        setLoading(true);
+        await api.delete(`/cloud-managers/${cloudId}`);
+        handleFetchData();
+        toast.success("Xóa thành công");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log("error message: ", error);
+        toast.error(error.response?.data.message);
+      } else {
+        console.log("unexpected error: ", error);
+        return "An unexpected error occurred";
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  return (
+    <button
+      className="w-7 flex items-center justify-center aspect-square text-xs font-medium text-white rounded-md bg-error font-primary"
+      onClick={() => handleRemoveCloud(cloudId)}
+    >
+      {loading ? (
+        <div className="w-3 h-3 border-white border-2 border-solid border-t-transparent animate-spin rounded-full" />
+      ) : (
+        <IconTrash className="size-4" />
+      )}
+    </button>
   );
 };

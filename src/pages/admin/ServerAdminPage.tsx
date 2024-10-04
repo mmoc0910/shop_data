@@ -436,7 +436,7 @@ const ServerAdminPage = () => {
               status={record.status}
               handleFetchData={handleFetchData}
             />
-            {record.status === 1 || record.status === 3 ? (
+            {record.status === 1 || record.status === 3 || record.status === 2 ? (
               <Tooltip title="Migrate server">
                 <button
                   className="flex items-center justify-center w-7 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary"
@@ -451,7 +451,6 @@ const ServerAdminPage = () => {
             ) : (
               ""
             )}
-
             <ButtonDeleteServer
               handleFetchData={handleFetchData}
               serverId={record._id}
