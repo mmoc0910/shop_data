@@ -142,12 +142,12 @@ export const FullDataToday = () => {
     <>
       <div className="space-y-2 cursor-pointer" onClick={showModal}>
         <div className="">
-          <p className="text-gray-500 md:text-lg">New Cash Today</p>
+          <p className="text-gray-500 md:text-lg">Over BandWidth</p>
         </div>
         <p className="font-semibold text-xl md:text-2xl">{data.length}</p>
       </div>
       <Modal
-        title={<p className="font-primary">New Cash Today</p>}
+        title={<p className="font-primary">Over BandWidth</p>}
         open={isModalOpen}
         onCancel={handleCancel}
         footer={[]}

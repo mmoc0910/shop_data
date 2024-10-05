@@ -191,10 +191,11 @@ const AccountAdminPage = () => {
       },
       {
         title: () => (
-          <p className="text-sm font-semibold font-primary">Số gói đã mua</p>
+          <p className="text-sm font-semibold font-primary">Số gói</p>
         ),
         dataIndex: "transaction",
         key: "transaction",
+        width: 100,
         render: (_: string, record: UserState) => (
           <p className="text-sm font-primary">{record.transaction}</p>
         ),

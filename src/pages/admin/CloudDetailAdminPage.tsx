@@ -173,7 +173,7 @@ export const CloudDetailAdminPage = () => {
         price,
       };
       if (dieDate && cloudDetail?.status === 0) dataSubmit.dieDate = dieDate;
-      await api.patch(`/cloud-managers/${cloudId}`, dataSubmit);
+      await api.patch(`/cloud-managers/${cloudDetail?._id}`, dataSubmit);
       handleFetchData();
       toast.success("Chỉnh sửa Cloud Server thành công");
       reset();

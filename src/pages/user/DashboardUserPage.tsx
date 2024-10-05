@@ -122,7 +122,7 @@ const DashboardUserPage = () => {
       <div className="grid-cols-12 lg:grid gap-x-12 gap-y-10">
         <div className="col-span-12 mb-5 space-y-4 lg:mb-0">
           {/* <Heading>Thống kê chi tiết</Heading> */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 rounded-xl border-2 border-[#eeeeed]">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 rounded-xl border-2 border-[#eeeeed]">
             <div className="flex-1 p-5 space-y-3">
               <p className="text-base text-gray-500 lg:text-lg">
                 {t("page.dashboard.satify.cash")}
@@ -189,6 +189,15 @@ const DashboardUserPage = () => {
               <p className="text-xl font-medium md:text-2xl">
                 {/* {satisfy?.numberIntoduce || 0} */}
                 {satisfy.numberIntoduce}
+              </p>
+            </div>
+            <div className="flex-1 hidden p-5 space-y-3 md:block">
+              <p className="text-base text-gray-500 lg:text-lg">
+                {/* {t("page.dashboard.satify.numberIntoduce")} */}
+                Total Earn
+              </p>
+              <p className="text-xl font-medium md:text-2xl">
+                {priceFomat(satisfy.discount)}
               </p>
             </div>
           </div>

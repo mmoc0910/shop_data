@@ -83,6 +83,7 @@ function App() {
               currentMoney: dataSatify.currentMoney,
               numberIntoduce: dataSatify.numberIntoduce,
               transaction: dataSatify.transaction[0]?.money || 0,
+              discount: dataSatify.discount[0]?.totalAdjustedMoney || 0,
             })
           );
           dispatch(

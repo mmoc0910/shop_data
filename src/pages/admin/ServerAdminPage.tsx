@@ -388,11 +388,10 @@ const ServerAdminPage = () => {
       //   ),
       // },
       {
-        title: () => (
-          <p className="text-sm font-semibold font-primary">Key Nums</p>
-        ),
+        title: () => <p className="text-sm font-semibold font-primary">Key </p>,
         dataIndex: "usedkey",
         key: "usedkey",
+        width: 70,
         render: (_: string, record: ServerType) => (
           <p className="text-sm font-primary">
             {/* <TotalKeyUsage serverId={record._id} /> */}
@@ -425,6 +424,21 @@ const ServerAdminPage = () => {
         ),
       },
       {
+        title: () => (
+          <p className="text-sm font-semibold font-primary">Created At</p>
+        ),
+        dataIndex: "createdAt",
+        key: "createdAt",
+        render: (_, record) =>
+          record.status === 2 ? (
+            <p className="text-sm font-primary">
+              {DAY_FORMAT(record.createdAt)}
+            </p>
+          ) : (
+            ""
+          ),
+      },
+      {
         title: () => <p className="text-sm font-semibold font-primary"></p>,
         dataIndex: "action",
         key: "action",
@@ -436,7 +450,9 @@ const ServerAdminPage = () => {
               status={record.status}
               handleFetchData={handleFetchData}
             />
-            {record.status === 1 || record.status === 3 || record.status === 2 ? (
+            {record.status === 1 ||
+            record.status === 3 ||
+            record.status === 2 ? (
               <Tooltip title="Migrate server">
                 <button
                   className="flex items-center justify-center w-7 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary"
@@ -843,7 +859,9 @@ const ServerAdminPage = () => {
         ) : null}
       </div>
       <Modal
-        title="Chọn máy chủ"
+        title={`Máy chủ source ${
+          listServer.find((item) => item._id === selectRow)?.name
+        }`}
         open={isModalOpen}
         onCancel={() => {
           handleCancel();
@@ -851,7 +869,7 @@ const ServerAdminPage = () => {
         footer={[]}
       >
         <div className="mb-3">
-          <p className="font-primary">Chọn máy chủ để migrate key</p>
+          {/* <p className="font-primary">Chọn máy chủ để migrate key</p> */}
           {selectRow &&
             listServerStore.filter((item) => item._id !== selectRow).length ===
               0 && (
@@ -933,7 +951,7 @@ const TotalKeyUsage = ({ serverId = "" }: { serverId?: string }) => {
     (async () => {
       try {
         const result = await api.get<{ totalItems: number }>(
-          `/keys/outline-data-usage?serverId=${serverId}&status=1`
+          `/keys?serverId=${serverId}&status=1`
         );
         setTotal(result.data.totalItems);
       } catch (error) {

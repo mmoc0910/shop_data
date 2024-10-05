@@ -7,6 +7,7 @@ export interface SatifyState {
   transaction: number;
   currentMoney: number;
   numberIntoduce: number;
+  discount: number;
 }
 
 // Define the initial state using that type
@@ -16,6 +17,7 @@ const initialState: SatifyState = {
   transaction: 0,
   currentMoney: 0,
   numberIntoduce: 0,
+  discount: 0,
 };
 
 const satisfySlice = createSlice({

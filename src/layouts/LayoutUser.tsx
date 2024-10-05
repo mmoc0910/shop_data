@@ -144,7 +144,7 @@ const LayoutUser = () => {
               <p className=""> - {priceFomat(currentMoney)}</p>
             </Link>
             {cash >= commision.min && (
-              <div className="hidden md:block rounded-xl border-2 border-[#eeeeed] p-5 w-full md:w-5/6 lg:w-[80%] space-y-2 mr-5">
+              <div className="hidden md:block w-full flex-1 space-y-2 mr-5">
                 <div className="flex items-center gap-2">
                   <p className="">
                     <span className="font-medium">
@@ -178,11 +178,11 @@ const LayoutUser = () => {
                     </button>
                   </Tooltip>
                 </div>
-                <p className="">
+                {/* <p className="opacity-0">
                   {t("page.dashboard.ctvcode.desc", {
                     amount: commision.value,
                   })}
-                </p>
+                </p> */}
               </div>
             )}
           </div>

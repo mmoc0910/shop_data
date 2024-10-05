@@ -116,7 +116,7 @@ i18n.use(LanguageDetector).use(initReactI18next),
             my_order: "My Orders",
             transaction_history: "Transaction history",
             deposit_history: "Payment",
-            collaborators: "Collaborators",
+            collaborators: "Agency",
             user_information: "User information",
           },
           page: {
@@ -313,7 +313,7 @@ i18n.use(LanguageDetector).use(initReactI18next),
             account: {
               applyBtn: "Apply",
               info: {
-                level: "Contributor",
+                level: "Normal User",
                 leveln: "Agent level {{level}}",
                 heading: "Account information",
                 field: {

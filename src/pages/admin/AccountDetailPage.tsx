@@ -136,11 +136,11 @@ const AccountDetailPage = () => {
               </div>
               <div className="flex-1 hidden p-5 space-y-3 md:block">
                 <p className="text-base text-gray-500 lg:text-lg">
-                  Total Discount
+                  Total Earn
                 </p>
                 <div className="">
                   <p className="text-xl font-medium md:text-2xl text-error">
-                    {priceFomat(satisfy.discount)}
+                   {priceFomat(satisfy.discount)} 
                   </p>
                 </div>
               </div>

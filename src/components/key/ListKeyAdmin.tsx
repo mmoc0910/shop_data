@@ -21,20 +21,24 @@ export const ListKeyAdmin = () => {
   const [pageSize, setPageSize] = useState<number>(10);
   const [listKey, setListKey] = useState<KeySeverType[]>([]);
   useEffect(() => {
-    (async () => {
-      try {
-        const { data: dataServers } = await api.get<ServerType[]>(
-          "/servers/normal-server?status=1"
-        );
-        setServers(dataServers);
-      } catch (error) {
-        toast.error("Xảy ra lỗi trong quá trình xử lý");
-      }
-    })();
+    handleFetchServer();
   }, []);
   useEffect(() => {
     handleFetchData();
   }, [page, searchTerm, pageSize]);
+  const handleFetchServer = async () => {
+    try {
+      setLoading(true);
+      const { data: dataServers } = await api.get<ServerType[]>(
+        "/servers/normal-server"
+      );
+      setServers(dataServers);
+    } catch (error) {
+      toast.error("Xảy ra lỗi trong quá trình xử lý");
+    } finally {
+      setLoading(false);
+    }
+  }
   const handleFetchData = async () => {
     try {
       setLoading(true);
