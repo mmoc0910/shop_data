@@ -1,4 +1,4 @@
-import { Key, useEffect, useMemo, useState } from "react";
+import React, { Key, useEffect, useMemo, useState } from "react";
 import { api } from "../../api";
 import Heading from "../../components/common/Heading";
 import { LocationType, ServerType } from "../../type";
@@ -32,6 +32,7 @@ import { ButtonDeleteServer } from "../../components/server/ButtonDeleteServer";
 import { PickCloudManagerForm } from "../../components/server/PickCloudManagerForm";
 import _ from "lodash";
 import { ButtonChangeServerName } from "../../components/server/ButtonChangeServerName";
+import { ButtonActionKuam } from "../../components/server/ButtonActionKuam";
 
 const schema = yup
   .object({
@@ -453,17 +454,23 @@ const ServerAdminPage = () => {
             {record.status === 1 ||
             record.status === 3 ||
             record.status === 2 ? (
-              <Tooltip title="Migrate server">
-                <button
-                  className="flex items-center justify-center w-7 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary"
-                  onClick={() => {
-                    setSelectRow(record._id);
-                    showModal();
-                  }}
-                >
-                  <IconArrowRightLeft className="size-4" />
-                </button>
-              </Tooltip>
+              <React.Fragment>
+                <Tooltip title="Migrate server">
+                  <button
+                    className="flex items-center justify-center w-7 text-xs font-medium text-white rounded-lg bg-secondary40 font-primary"
+                    onClick={() => {
+                      setSelectRow(record._id);
+                      showModal();
+                    }}
+                  >
+                    <IconArrowRightLeft className="size-4" />
+                  </button>
+                </Tooltip>
+                <ButtonActionKuam
+                  server={record}
+                  handleSubmit={handleFetchData}
+                />
+              </React.Fragment>
             ) : (
               ""
             )}
