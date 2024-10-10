@@ -9,7 +9,7 @@ export const ButtonActionKuam: FC<Props> = ({ server, handleSubmit }) => {
   return (
     <React.Fragment>
       <ButtonConnectKuma server={server} handleSubmit={handleSubmit} />
-      <ButtonRemoveKuma server={server} onSubmit={handleSubmit} />
+      <ButtonRemoveKuma server={server} onSubmit={handleSubmit} icon={true} />
     </React.Fragment>
   );
 };
