@@ -8,7 +8,11 @@ type Props = { server: ServerType; handleSubmit: () => void };
 export const ButtonActionKuam: FC<Props> = ({ server, handleSubmit }) => {
   return (
     <React.Fragment>
-      <ButtonConnectKuma server={server} handleSubmit={handleSubmit} />
+      <ButtonConnectKuma
+        server={server}
+        handleSubmit={handleSubmit}
+        icon={true}
+      />
       <ButtonRemoveKuma server={server} onSubmit={handleSubmit} icon={true} />
     </React.Fragment>
   );

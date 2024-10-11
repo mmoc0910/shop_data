@@ -470,8 +470,8 @@ const KeyDetailAdminPage = () => {
             arrayDataUsage={arrayDataUsage}
             dataUsage={dataUsage}
           />
-          <HistoryExpandKey keyId={keyId}/>
-          <HistoryUpgradeKey keyId={keyId}/>
+          <HistoryExpandKey keyId={keyId} />
+          <HistoryUpgradeKey keyId={keyId} />
           {historyKey.length > 0 && (
             <div className="space-y-7">
               <Heading>History key</Heading>
@@ -551,7 +551,9 @@ const KeyDetailAdminPage = () => {
         </div>
         {loading && <Loading />}
         <Modal
-          title="Chọn máy chủ"
+          title={`Máy chủ hiện tại (${
+            servers.find((i) => i._id === serverId._id)?.name
+          })`}
           open={isModalOpen}
           onCancel={() => {
             handleCancel();
