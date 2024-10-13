@@ -17,7 +17,7 @@ import { AuthState } from "../../store/auth/authSlice";
 import { setCollab } from "../../store/collab/collabSlice";
 import { useDispatch } from "react-redux";
 import { VND } from "../../utils/formatPrice";
-import { Table, TableColumnsType } from "antd";
+import { PaginationProps, Table, TableColumnsType } from "antd";
 import dayjs from "dayjs";
 
 const schema = yup
@@ -49,10 +49,15 @@ const CommisionAdminPage = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const result = await api.get<UserState[]>(`/users`, {
+      const result = await api.get<{
+        resultList: UserState[];
+        totalItems: number;
+      }>(`/users`, {
         params: { page, pageSize },
       });
-      const data = result?.data?.resultList.filter((i) => i.role !== 1 && i.level !== 0);
+      const data = result?.data?.resultList.filter(
+        (i) => i.role !== 1 && i.level !== 0
+      );
       setListUser(data);
       setTotalItems(result.data.totalItems);
       // const data = result?.data?.resultList.filter((i) => i.role !== 1);
@@ -347,8 +352,8 @@ const Collab = () => {
   useEffect(() => {
     (async () => {
       try {
-        const result = await api.get<AuthState[]>(`/users`);
-        const data = result?.data?.filter((i) => i.role !== 1);
+        const result = await api.get<{ resultList: AuthState[] }>(`/users`);
+        const data = result?.data?.resultList.filter((i) => i.role !== 1);
         setListUser(data);
       } catch (error) {
         toast.error(messages.error);
