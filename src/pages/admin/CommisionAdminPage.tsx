@@ -32,6 +32,9 @@ const CommisionAdminPage = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [commision, setCommision] = useState<CommisionType>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [totalItems, setTotalItems] = useState<number>();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState<number>(10);
   const listUserFilter = inputValue
     ? listUser.filter(
         (item) =>
@@ -42,13 +45,18 @@ const CommisionAdminPage = () => {
     : listUser;
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [page, pageSize]);
   const fetchData = async () => {
     try {
       setLoading(true);
-      const result = await api.get<UserState[]>(`/users`);
-      const data = result?.data?.filter((i) => i.role !== 1 && i.level !== 0);
+      const result = await api.get<UserState[]>(`/users`, {
+        params: { page, pageSize },
+      });
+      const data = result?.data?.resultList.filter((i) => i.role !== 1 && i.level !== 0);
       setListUser(data);
+      setTotalItems(result.data.totalItems);
+      // const data = result?.data?.resultList.filter((i) => i.role !== 1);
+      // setListUser(data);
     } catch (error) {
       toast.error(messages.error);
     } finally {
@@ -64,12 +72,12 @@ const CommisionAdminPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
-    if(commision){
-setValue("value", commision.value);
-setValue("min", commision.min);
-    } 
+    if (commision) {
+      setValue("value", commision.value);
+      setValue("min", commision.min);
+    }
   }, [commision, setValue]);
-  const onSubmit = async (data: { value: number, min: number }) => {
+  const onSubmit = async (data: { value: number; min: number }) => {
     try {
       await api.post("/commisions", data);
       //   handleOk();
@@ -91,9 +99,7 @@ setValue("min", commision.min);
   const columns: TableColumnsType<UserState> = useMemo(
     () => [
       {
-        title: () => (
-          <p className="font-semibold font-primary">STT</p>
-        ),
+        title: () => <p className="font-semibold font-primary">STT</p>,
         dataIndex: "index",
         key: "index",
         width: 70,
@@ -187,6 +193,13 @@ setValue("min", commision.min);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setInputValue(value);
+  };
+  const onShowSizeChange: PaginationProps["onShowSizeChange"] = (
+    _current,
+    pageSize
+  ) => {
+    setPage(1);
+    setPageSize(pageSize);
   };
   return (
     <div className="grid grid-cols-2 gap-10 lg:gap-20">
@@ -298,6 +311,13 @@ setValue("min", commision.min);
             columns={columns}
             loading={loading}
             scroll={{ y: 420, x: 1120 }}
+            pagination={{
+              defaultCurrent: 1,
+              total: totalItems,
+              onChange: (index) => setPage(index),
+              pageSize,
+              onShowSizeChange: onShowSizeChange,
+            }}
           />
         </div>
       </div>
