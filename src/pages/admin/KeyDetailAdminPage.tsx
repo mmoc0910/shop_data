@@ -23,6 +23,7 @@ import { DropdownWithComponents } from "../../components/dropdown";
 import classNames from "../../utils/classNames";
 import { HistoryExpandKey } from "../../components/key/HistoryExpandKey";
 import { HistoryUpgradeKey } from "../../components/key/HistoryUpgradeKey";
+import _ from "lodash";
 
 const KeyDetailAdminPage = () => {
   const { keyId } = useParams();
@@ -495,55 +496,57 @@ const KeyDetailAdminPage = () => {
                     <div className="flex-1 px-4 font-semibold">Date end</div>
                   </div>
                   {historyKey.length > 0 &&
-                    historyKey.map((item, index) => {
-                      const server = item.serverId as ServerType;
-                      return (
-                        <div
-                          className="grid grid-cols-5 col-span-5 py-5 border border-gray-200 rounded-xl"
-                          key={uuidv4()}
-                        >
-                          <div className="flex items-center col-span-2">
-                            <div className="px-4">{index + 1}</div>
-                            <div className="flex-1 px-4 text-primary font-medium hover:underlineff hover:decoration-primary">
-                              {server.name}
+                    _.orderBy(historyKey, ["updatedAt"], ["desc"]).map(
+                      (item, index) => {
+                        const server = item.serverId as ServerType;
+                        return (
+                          <div
+                            className="grid grid-cols-5 col-span-5 py-5 border border-gray-200 rounded-xl"
+                            key={uuidv4()}
+                          >
+                            <div className="flex items-center col-span-2">
+                              <div className="px-4">{index + 1}</div>
+                              <div className="flex-1 px-4 text-primary font-medium hover:underlineff hover:decoration-primary">
+                                {server.name}
+                              </div>
+                              <div className="flex-1 px-4">
+                                {server.hostnameForAccessKeys}
+                              </div>
+                              <div className="px-4 flex-1">{item.keyId}</div>
                             </div>
-                            <div className="flex-1 px-4">
-                              {server.hostnameForAccessKeys}
+                            <div className="flex items-center col-span-3">
+                              <div className="flex-1 px-4">
+                                {item.status === 1 ? (
+                                  <Tag color="green">Active</Tag>
+                                ) : null}
+                                {item.status === 0 ? (
+                                  <Tag color="red">Inactive</Tag>
+                                ) : null}
+                                {item.status === 2 ? (
+                                  <Tag color="blue">Migrate</Tag>
+                                ) : null}
+                              </div>
+                              <div className="flex-1 px-4">
+                                {item.dataUsage
+                                  ? `${(
+                                      item.dataUsage /
+                                      1000 /
+                                      1000 /
+                                      1000
+                                    ).toFixed(2)} GB`
+                                  : "00.00 GB"}
+                              </div>
+                              <div className="flex-1 px-4">
+                                {DAY_FORMAT(item.createdAt)}
+                              </div>
+                              <div className="flex-1 px-4">
+                                {DAY_FORMAT(item.updatedAt)}
+                              </div>
                             </div>
-                            <div className="px-4 flex-1">{item.keyId}</div>
                           </div>
-                          <div className="flex items-center col-span-3">
-                            <div className="flex-1 px-4">
-                              {item.status === 1 ? (
-                                <Tag color="green">Active</Tag>
-                              ) : null}
-                              {item.status === 0 ? (
-                                <Tag color="red">Inactive</Tag>
-                              ) : null}
-                              {item.status === 2 ? (
-                                <Tag color="blue">Migrate</Tag>
-                              ) : null}
-                            </div>
-                            <div className="flex-1 px-4">
-                              {item.dataUsage
-                                ? `${(
-                                    item.dataUsage /
-                                    1000 /
-                                    1000 /
-                                    1000
-                                  ).toFixed(2)} GB`
-                                : "00.00 GB"}
-                            </div>
-                            <div className="flex-1 px-4">
-                              {DAY_FORMAT(item.createdAt)}
-                            </div>
-                            <div className="flex-1 px-4">
-                              {DAY_FORMAT(item.updatedAt)}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      }
+                    )}
                 </div>
               </div>
             </div>

@@ -29,17 +29,24 @@ const schema = yup
     day: yup.number().required(),
     price: yup.number().required(),
     bandWidth: yup.number().required(),
-    enable: yup.boolean().required(),
+    enable: yup.boolean()
   })
   .required();
 const ActionPackPage = () => {
   const { packId } = useParams();
   const navigation = useNavigate();
   const [plan, setPlan] = useState<PlanType>();
-  const { handleSubmit, control, setValue, watch } = useForm({
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(schema),
     mode: "onSubmit",
   });
+  console.log("errors ~ ", errors);
   const enableWatch = watch("enable");
   console.log("enableWatch ~ ", enableWatch);
   useEffect(() => {
@@ -76,7 +83,7 @@ const ActionPackPage = () => {
     description: string;
     name: string;
     bandWidth: number;
-    enable: boolean;
+    enable?: boolean;
   }) => {
     try {
       if (plan) {
@@ -88,7 +95,7 @@ const ActionPackPage = () => {
           day,
           description: description.split("\n"),
           bandWidth,
-          enable: enable ? 1 : 0,
+          enable: !!enable ? 1 : 0,
         });
         toast.success("Chỉnh sửa thành công");
         navigation("/admin/pack");
