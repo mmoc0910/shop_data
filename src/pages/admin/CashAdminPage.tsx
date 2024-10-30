@@ -273,8 +273,8 @@ const CashAdminPage = () => {  const priceFomat = useFormatPrice();
         title: () => (
           <p className="text-sm font-semibold font-primary">Ngày duyệt</p>
         ),
-        dataIndex: "updated",
-        key: "updated",
+        dataIndex: "updatedAt",
+        key: "updatedAt",
         render: (text: Date, record: CashType) => (
           <p className="text-sm font-primary">
             {record.status !== 2 ? DAY_FORMAT(text) : null}

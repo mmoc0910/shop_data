@@ -54,7 +54,7 @@ export const ListKeyByServerId: FC<Props> = ({
   }, [page, pageSize]);
   const handleFetchNormalData = async () => {
     try {
-      const result = await api.get<ServerType[]>("/servers/normal-server");
+      const result = await api.get<ServerType[]>("/servers/server-to-migrate");
       setServer(result.data);
     } catch (error) {
       console.log(error);

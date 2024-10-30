@@ -43,7 +43,7 @@ const KeyDetailAdminPage = () => {
   }, [keyId]);
   const handleFetchDataServer = async () => {
     try {
-      const result = await api.get<ServerType[]>("/servers/normal-server");
+      const result = await api.get<ServerType[]>("/servers/server-to-migrate");
       setServers(result.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {

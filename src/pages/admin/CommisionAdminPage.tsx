@@ -13,7 +13,6 @@ import { useEffect, useMemo, useState } from "react";
 import { CollabType, CommisionType, UserState } from "../../type";
 import RequireAuthPage from "../../components/common/RequireAuthPage";
 import { Link } from "react-router-dom";
-import { AuthState } from "../../store/auth/authSlice";
 import { setCollab } from "../../store/collab/collabSlice";
 import { useDispatch } from "react-redux";
 import { VND } from "../../utils/formatPrice";
@@ -53,12 +52,12 @@ const CommisionAdminPage = () => {
         resultList: UserState[];
         totalItems: number;
       }>(`/users`, {
-        params: { page, pageSize },
+        params: { page, pageSize, level: "1,2,3" },
       });
-      const data = result?.data?.resultList.filter(
-        (i) => i.role !== 1 && i.level !== 0
-      );
-      setListUser(data);
+      // const data = result?.data?.resultList.filter(
+      //   (i) => i.role !== 1 && i.level !== 0
+      // );
+      setListUser(result?.data?.resultList);
       setTotalItems(result.data.totalItems);
       // const data = result?.data?.resultList.filter((i) => i.role !== 1);
       // setListUser(data);
@@ -341,7 +340,7 @@ const schemaCollab = yup
   })
   .required();
 const Collab = () => {
-  const [listUser, setListUser] = useState<AuthState[]>([]);
+  // const [listUser, setListUser] = useState<AuthState[]>([]);
   const [collab, setcollab] = useState<CollabType>();
   const dispatch = useDispatch();
   const { handleSubmit, control, setValue } = useForm({
@@ -349,17 +348,17 @@ const Collab = () => {
     mode: "onSubmit",
   });
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const result = await api.get<{ resultList: AuthState[] }>(`/users`);
-        const data = result?.data?.resultList.filter((i) => i.role !== 1);
-        setListUser(data);
-      } catch (error) {
-        toast.error(messages.error);
-      }
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       const result = await api.get<{ resultList: AuthState[] }>(`/users`);
+  //       const data = result?.data?.resultList.filter((i) => i.role !== 1);
+  //       setListUser(data);
+  //     } catch (error) {
+  //       toast.error(messages.error);
+  //     }
+  //   })();
+  // }, []);
   useEffect(() => {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -422,7 +421,8 @@ const Collab = () => {
         <FormGroup>
           <Label htmlFor="value">
             Đại lý cấp 1: [Hiện tại có{" "}
-            {listUser.filter((item) => item.level === 1).length} đại lý.{" "}
+            {/* {listUser.filter((item) => item.level === 1).length} đại lý.{" "} */}
+            <TotalUser level={1} />{" "}
             <Link
               to={"/admin/account?level=1"}
               className="font-medium underline text-primary decoration-primary"
@@ -464,7 +464,8 @@ const Collab = () => {
         <FormGroup>
           <Label htmlFor="value">
             Đại lý cấp 2: [Hiện tại có{" "}
-            {listUser.filter((item) => item.level === 2).length} đại lý.{" "}
+            {/* {listUser.filter((item) => item.level === 2).length} đại lý.{" "} */}
+            <TotalUser level={2} />{" "}
             <Link
               to={"/admin/account?level=2"}
               className="font-medium underline text-primary decoration-primary"
@@ -508,7 +509,8 @@ const Collab = () => {
         <FormGroup>
           <Label htmlFor="value">
             Đại lý cấp 3: [Hiện tại có{" "}
-            {listUser.filter((item) => item.level === 3).length} đại lý.{" "}
+            {/* {listUser.filter((item) => item.level === 3).length} đại lý.{" "} */}
+            <TotalUser level={3} />{" "}
             <Link
               to={"/admin/account?level=3"}
               className="font-medium underline text-primary decoration-primary"
@@ -555,6 +557,26 @@ const Collab = () => {
       </form>
     </RequireAuthPage>
   );
+};
+
+const TotalUser = ({ level }: { level: 1 | 2 | 3 }) => {
+  const [total, setTotal] = useState<number>(0);
+  useEffect(() => {
+    (async () => {
+      try {
+        const result = await api.get<{
+          resultList: UserState[];
+          totalItems: number;
+        }>(`/users`, {
+          params: { level },
+        });
+        setTotal(result.data.totalItems);
+      } catch (error) {
+        console.warn(error);
+      }
+    })();
+  }, []);
+  return total;
 };
 
 export default CommisionAdminPage;

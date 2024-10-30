@@ -57,7 +57,7 @@ export const ListOrderTable: FC<Props> = ({ status }) => {
       try {
         const [{ data: infoUser }, { data: dataServers }] = await Promise.all([
           api.get<UserState>(`/users/${_id}`),
-          api.get<ServerType[]>("/servers/normal-server?status=1"),
+          api.get<ServerType[]>("/servers/server-to-migrate?status=1"),
         ]);
         console.log(infoUser, dataServers);
         setServers(dataServers);

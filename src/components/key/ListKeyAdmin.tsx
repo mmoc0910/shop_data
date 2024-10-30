@@ -30,7 +30,7 @@ export const ListKeyAdmin = () => {
     try {
       setLoading(true);
       const { data: dataServers } = await api.get<ServerType[]>(
-        "/servers/normal-server"
+        "/servers/server-to-migrate"
       );
       setServers(dataServers);
     } catch (error) {

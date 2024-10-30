@@ -7,9 +7,20 @@ import { toast } from "react-toastify";
 import IconBoltSplash from "../../icons/IconBoltSplash";
 import classNames from "../../utils/classNames";
 
-type Props = { server: ServerType; onSubmit: () => void; icon?: boolean };
+type Props = {
+  server: ServerType;
+  onSubmit?: () => void;
+  icon?: boolean;
+};
 
-const ButtonRemoveKuma: FC<Props> = ({ server, onSubmit, icon = false }) => {
+const ButtonRemoveKuma: FC<Props> = ({
+  server,
+   onSubmit = () => {},
+  icon = false,
+}) => {
+  const [enable, setEnable] = useState(
+    server.isConnectKuma === 0 ? false : true
+  );
   const [loading, setLoading] = useState(false);
   const handleRemoveKuma = async () => {
     try {
@@ -27,6 +38,7 @@ const ButtonRemoveKuma: FC<Props> = ({ server, onSubmit, icon = false }) => {
         await api.post(`/kuma/remove`, {
           id: server._id,
         });
+        setEnable(false);
         onSubmit();
         toast.success("Thành công");
       }
@@ -36,12 +48,13 @@ const ButtonRemoveKuma: FC<Props> = ({ server, onSubmit, icon = false }) => {
       setLoading(false);
     }
   };
-  if (server.isConnectKuma === 0) return;
+  if (!enable) return;
   return (
     <button
       type="button"
       className={classNames(
-        "text-xs font-medium text-white rounded-lg bg-error flex items-center justify-center", icon ? "w-7 aspect-square" : 'p-2 w-28'
+        "text-xs font-medium text-white rounded-lg bg-error flex items-center justify-center",
+        icon ? "w-7 aspect-square" : "p-2 w-28"
       )}
       onClick={handleRemoveKuma}
     >

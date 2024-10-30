@@ -94,10 +94,16 @@ const AccountAdminPage = () => {
   const fetchData = async (_page: number, search?: string) => {
     try {
       setLoading(true);
-      const params: { page: number; username?: string; pageSize: number } = {
+      const params: {
+        page: number;
+        username?: string;
+        pageSize: number;
+        level?: string;
+      } = {
         page: _page,
         pageSize,
       };
+      if (level) params.level = level;
       if (search) params.username = search;
       const result = await api.get<{
         resultList: UserState[];

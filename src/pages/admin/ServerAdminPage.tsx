@@ -468,7 +468,7 @@ const ServerAdminPage = () => {
                 </Tooltip>
                 <ButtonActionKuam
                   server={record}
-                  handleSubmit={handleFetchData}
+                  // handleSubmit={handleFetchData}
                 />
               </React.Fragment>
             ) : (

@@ -34,7 +34,7 @@ const ListOrder: FC<Props> = ({ accountId, status }) => {
     (async () => {
       try {
         const { data: dataServers } = await api.get<ServerType[]>(
-          "/servers/normal-server"
+          "/servers/server-to-migrate"
         );
         setServers(dataServers);
       } catch (error) {
