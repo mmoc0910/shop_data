@@ -117,7 +117,7 @@ function App() {
         }
       >
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          {/* <Route path="/" element={<HomePage />} /> */}
           <Route element={<LayoutAdmin />}>
             <Route path="/admin/dashboard" element={<DashboardAdminPage />} />
             <Route path="/admin/pack" element={<PackPage />} />

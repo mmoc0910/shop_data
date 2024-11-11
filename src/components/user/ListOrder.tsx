@@ -107,7 +107,7 @@ const ListOrder: FC<Props> = ({ accountId, status }) => {
             to={`/admin/key/${record.keyId._id}`}
             className="text-sm font-primary text-primary"
           >
-            {text}
+            {text || '...............'}
           </Link>
         ),
       },

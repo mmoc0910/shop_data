@@ -4,7 +4,7 @@ import logo from '../../assets/logo.svg'
 const Logo = ({ className = "" }: { className?: string }) => {
   return (
     <Link
-      to={"/"}
+      to={"https://home.vpncn2.net"}
       className={classNames(
         "font-semibold text-lg xl:text-2xl text-primary uppercase block",
         className

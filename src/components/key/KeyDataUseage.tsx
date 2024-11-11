@@ -46,7 +46,7 @@ export const KeyDataUseage: FC<Props> = ({ arrayDataUsage, dataUsage }) => {
                     className="text-sm px-3 py-2 border border-black border-solid"
                     key={index}
                   >
-                    D{index}
+                   {index > 0 ? `D${index - 1}` : 'Hôm qua'} 
                   </td>
                 ))}
               </tr>
