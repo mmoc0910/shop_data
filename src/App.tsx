@@ -41,7 +41,7 @@ const DashboardAdminPage = lazy(
 );
 const SignInPage = lazy(() => import("./pages/SignInPage"));
 const SignUpPage = lazy(() => import("./pages/SignUpPage"));
-const HomePage = lazy(() => import("./pages/HomePage"));
+// const HomePage = lazy(() => import("./pages/HomePage"));
 const DashboardUserPage = lazy(() => import("./pages/user/DashboardUserPage"));
 const AccountPage = lazy(() => import("./pages/user/AccountPage"));
 const PlanPage = lazy(() => import("./pages/user/PlanPage"));
