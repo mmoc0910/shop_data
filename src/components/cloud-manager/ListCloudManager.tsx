@@ -1,5 +1,5 @@
 import { Table, TableColumnsType, Tag, Tooltip } from "antd";
-import  { useMemo } from "react";
+import { useMemo } from "react";
 import { CloudManagerType } from "../../type";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
@@ -154,10 +154,12 @@ export const ListCloudManager: FC<Props> = ({
           //   dayjs(record.startDate),
           //   "days"
           // );
-
+          const live =
+            record.live ||
+            dayjs().diff(dayjs(record.startDate), "days");
           return (
             <p>
-              {record.live} / {record.valid} days
+              {live} / {record.valid} days
             </p>
           );
         },

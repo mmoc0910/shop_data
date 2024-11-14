@@ -1,4 +1,3 @@
-
 import { FC } from "react";
 import Heading from "../common/Heading";
 import dayjs from "dayjs";
@@ -8,7 +7,7 @@ export const KeyDataUseage: FC<Props> = ({ arrayDataUsage, dataUsage }) => {
   if (!arrayDataUsage) return;
   if (arrayDataUsage) {
     const arrayDataUsageTransform: (number | null)[] = [
-      ...arrayDataUsage,
+      ...arrayDataUsage.reverse(),
       ...new Array(30 - arrayDataUsage.length).fill(null),
     ];
     return (
@@ -31,7 +30,9 @@ export const KeyDataUseage: FC<Props> = ({ arrayDataUsage, dataUsage }) => {
                     className="font-normal text-sm text-left px-3 py-2 border border-black border-solid"
                     key={index}
                   >
-                    {dayjs().subtract(index, "day").format("DD/MM")}
+                    {dayjs()
+                      .subtract(index + 1, "day")
+                      .format("DD/MM")}
                   </th>
                 ))}
               </tr>
@@ -46,7 +47,8 @@ export const KeyDataUseage: FC<Props> = ({ arrayDataUsage, dataUsage }) => {
                     className="text-sm px-3 py-2 border border-black border-solid"
                     key={index}
                   >
-                   {index > 0 ? `D${index - 1}` : 'Hôm qua'} 
+                    {/* {index > 0 ? `D${index - 1}` : "Hôm qua"} */} D
+                    {index + 1}
                   </td>
                 ))}
               </tr>
@@ -61,7 +63,7 @@ export const KeyDataUseage: FC<Props> = ({ arrayDataUsage, dataUsage }) => {
                   >
                     {item
                       ? `${(item / 1000 / 1000 / 1000).toFixed(2)}GB`
-                      : "null"}
+                      : ""}
                   </td>
                 ))}
               </tr>
