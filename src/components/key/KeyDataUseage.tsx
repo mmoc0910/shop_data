@@ -79,16 +79,22 @@ export const KeyDataUseage: FC<Props> = memo(
                   <td className="text-sm px-3 py-2 border border-black border-solid font-semibold">
                     {(dataUsage / 1000 / 1000 / 1000).toFixed(2)}GB
                   </td>
-                  <td
-                    colSpan={3}
-                    className="text-sm px-3 py-2 border border-black border-solid font-semibold"
-                  >
-                    Yesterday:{" "}
-                    {(arrayDataUsageTransform[0] / 1000 / 1000 / 1000).toFixed(
-                      2
-                    )}
-                    GB
-                  </td>
+                  {arrayDataUsageTransform?.[0] && (
+                    <td
+                      colSpan={3}
+                      className="text-sm px-3 py-2 border border-black border-solid font-semibold"
+                    >
+                      Yesterday:{" "}
+                      {(
+                        arrayDataUsageTransform?.[0] /
+                        1000 /
+                        1000 /
+                        1000
+                      ).toFixed(2)}
+                      GB
+                    </td>
+                  )}
+
                   <td
                     colSpan={3}
                     className="text-sm px-3 py-2 border border-black border-solid font-semibold"
