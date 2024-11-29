@@ -431,13 +431,13 @@ const ServerAdminPage = () => {
         dataIndex: "createdAt",
         key: "createdAt",
         render: (_, record) =>
-          record.status === 2 ? (
+          // record.status === 2 ? (
             <p className="text-sm font-primary">
               {DAY_FORMAT(record.createdAt)}
             </p>
-          ) : (
-            ""
-          ),
+          // ) : (
+          //   ""
+          // ),
       },
       {
         title: () => <p className="text-sm font-semibold font-primary"></p>,

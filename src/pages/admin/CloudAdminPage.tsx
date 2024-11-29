@@ -440,11 +440,30 @@ export const CloudAdminPage = () => {
           providers={providers}
         />
         <ListCloudManager
+          heading="List Cloud Die Valid"
+          clouds={clouds}
+          handleFetchData={handleFetchData}
+          listCloud={_.orderBy(
+            listCloud.filter(
+              (item) =>
+                item.status === 0 &&
+                dayjs(item.endDate).diff(dayjs(), "days") > 0
+            ),
+            ["startDate", ["desc"]]
+          )}
+          loading={loading}
+          providers={providers}
+        />
+        <ListCloudManager
           heading="List Cloud Die"
           clouds={clouds}
           handleFetchData={handleFetchData}
           listCloud={_.orderBy(
-            listCloud.filter((item) => item.status === 0),
+            listCloud.filter(
+              (item) =>
+                item.status === 0 &&
+                dayjs(item.endDate).diff(dayjs(), "days") <= 0
+            ),
             ["startDate", ["desc"]]
           )}
           loading={loading}

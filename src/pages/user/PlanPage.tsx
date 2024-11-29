@@ -90,7 +90,7 @@ const PlanPage = () => {
     return (
       <RequireAuthPage rolePage={[2]}>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-9 w-full px-5">
-          {plans.map((plan) => (
+          {plans.filter(item => item.enable === 1).map((plan) => (
             <PricingItem key={uuidv4()} plan={plan} onSuccess={handleSuccess} />
           ))}
         </div>

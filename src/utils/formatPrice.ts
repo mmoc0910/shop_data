@@ -12,10 +12,13 @@ export const USD = new Intl.NumberFormat("en-US", {
   currency: "USD",
 });
 
+// export const EXCHANGE_RATE_CHINA = 3400;
+// export const EXCHANGE_RATE_ENGLISH = 24000;
+export const EXCHANGE_RATE_CHINA = import.meta.env.VITE_EXCHANGE_RATE_CHINA;
+export const EXCHANGE_RATE_ENGLISH = import.meta.env.VITE_EXCHANGE_RATE_ENGLISH;
 
-export const EXCHANGE_RATE_CHINA = 3400;
-export const EXCHANGE_RATE_ENGLISH = 24000;
-
+console.log("EXCHANGE_RATE_CHINA ~ ", EXCHANGE_RATE_CHINA);
+console.log("EXCHANGE_RATE_ENGLISH ~ ", EXCHANGE_RATE_ENGLISH);
 // export const priceFomat = (price: number, country: string = "vi") => {
 //   if (country === "vi") {
 //     return `${VND.format(price)}VND`;

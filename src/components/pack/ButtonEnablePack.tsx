@@ -5,6 +5,7 @@ import { api } from "../../api";
 import IconCloseLock from "../../icons/IconCloseLock";
 import IconLockOpen from "../../icons/IconLockOpen";
 import { toast } from "react-toastify";
+import classNames from "../../utils/classNames";
 
 type Props = { _id: string; enable: boolean; onSuccess: () => void };
 export const ButtonEnablePack: FC<Props> = ({ _id, onSuccess, enable }) => {
@@ -37,7 +38,10 @@ export const ButtonEnablePack: FC<Props> = ({ _id, onSuccess, enable }) => {
   };
   return (
     <button
-      className="px-2 aspect-square text-xs font-medium text-white rounded-md bg-primary20 font-primary"
+      className={classNames(
+        "px-2 aspect-square text-xs font-medium text-white rounded-md font-primary",
+        enable ? "bg-primary20" : "bg-error"
+      )}
       onClick={handleSubmit}
     >
       {enable ? <IconLockOpen /> : <IconCloseLock />}

@@ -153,10 +153,25 @@ const CommisionAdminPage = () => {
       },
       {
         title: () => (
-          <p className="text-sm font-semibold font-primary">Số gói đã mua</p>
+          <p className="text-sm font-semibold font-primary">Tổng nạp</p>
+        ),
+        dataIndex: "cash",
+        key: "cash",
+        render: (text: number) => (
+          <p className="text-sm font-primary">{VND.format(text)}VND</p>
+        ),
+        sorter: {
+          compare: (a, b) => a.cash - b.cash,
+          multiple: 1,
+        },
+        defaultSortOrder: "descend",
+      },
+      {
+        title: () => (
+          <p className="text-sm font-semibold font-primary">Số gói</p>
         ),
         dataIndex: "transaction",
-        key: "transaction",
+        key: "transaction",width: 100,
         render: (_: string, record: UserState) => (
           <p className="text-sm font-primary">{record.transaction}</p>
         ),

@@ -44,7 +44,7 @@ const ButtonConnectKuma: FC<Props> = ({
     <button
       type="button"
       className={classNames(
-        "text-xs font-medium text-white rounded-lg bg-error flex items-center justify-center",
+        "text-xs font-medium text-white rounded-lg bg-primary20 flex items-center justify-center",
         icon ? "w-7 aspect-square" : "p-2 w-28"
       )}
       onClick={handleConnectKuma}
